@@ -1,0 +1,155 @@
+{
+	comment: "Custom report used by Lady  hospital (now Cradle)",
+	title: "Daily MIS",
+	reportGroup: "Financial Reports",
+	dateFields: ["txn_date"],
+	description: "This MIS Report showing total IP/OP revenue, Patient counts, service counts and bed occupancy based on the From date selected for the current date, month-till-date and year-till-date. (Note: To Date is ignored).",
+
+	queryLines: [[
+" SELECT 'Revenue' as grp, (CASE WHEN b.visit_type = 'i' THEN 'IP' ELSE 'OP' END) as item,",
+"   sum(CASE WHEN finalized_date::date = ${fromDate} THEN amount ELSE 0 END) as ftd,",
+"   sum(CASE WHEN finalized_date::date BETWEEN date_trunc('month', ${fromDate}::date) AND ${fromDate}",
+"     THEN amount ELSE 0 END) as mtd,",
+"   sum(amount) as ytd",
+
+" FROM bill_charge bc",
+"   JOIN bill b USING (bill_no)",
+" WHERE b.status IN ('F','C') AND bc.status != 'X'",
+"   AND finalized_date::date BETWEEN get_fin_year_start(${fromDate}) AND ${fromDate}",
+" GROUP BY grp, (CASE WHEN b.visit_type = 'i' THEN 'IP' ELSE 'OP' END)",
+" ",
+" UNION ALL",
+" ",
+" SELECT 'Out Patient' as grp, 'Patient Count' as item,",
+"   sum(CASE WHEN reg_date = ${fromDate} THEN 1 ELSE 0 END) AS ftd,",
+"   sum(CASE WHEN reg_date BETWEEN date_trunc('month', ${fromDate}::date) AND ${fromDate}",
+"     THEN 1 ELSE 0 END) AS mtd,",
+"   count(*) AS ytd",
+" FROM patient_registration",
+" WHERE visit_type != 'i'",
+"   AND reg_date BETWEEN get_fin_year_start(${fromDate}) AND ${fromDate}",
+" ",
+" UNION ALL",
+" ",
+" SELECT grp, item, coalesce(ftd,0) as ftd, coalesce(mtd,0) as mtd, coalesce(ytd,0) as ytd FROM (",
+" SELECT 'Out Patient' as grp, ",
+"   (CASE WHEN charge_group = 'DOC' THEN 'Consultation'",
+"     WHEN charge_group = 'DIA' THEN 'Diagnostics'",
+"     WHEN charge_head = 'PKGPKG' AND act_description_id IN ('21','25','26','27','31') THEN 'Health Checkups'",
+"     ELSE 'Other Procedures' END) AS item,",
+"   count(CASE WHEN posted_date::date = ${fromDate} THEN 1 ELSE NULL END) AS ftd,",
+"   count(CASE WHEN posted_date::date BETWEEN date_trunc('month', ${fromDate}::date) AND ${fromDate}",
+"     THEN 1 ELSE NULL END) AS mtd,",
+"   count(*) AS ytd",
+" FROM bill_charge bc",
+"   JOIN bill b USING (bill_no)",
+" WHERE bc.status != 'X' AND b.visit_type != 'i' AND amount != 0",
+"   AND posted_date::date BETWEEN get_fin_year_start(${fromDate}) AND ${fromDate}",
+" GROUP BY grp, item",
+" ) as opitems",
+"   RIGHT JOIN (values('Out Patient', 'Consultation'), ('Out Patient', 'Diagnostics'),",
+"     ('Out Patient', 'Health Checkups'), ('Out Patient', 'Other Procedures')",
+"   ) as allrows(grp, item)",
+"     USING (grp, item)",
+" ",
+" UNION ALL",
+" ",
+" SELECT 'In Patient' as grp, 'Admissions' as item,",
+"   count(CASE WHEN reg_date = ${fromDate} THEN 1 ELSE NULL END) AS ftd,",
+"   count(CASE WHEN reg_date BETWEEN date_trunc('month', ${fromDate}::date) AND ${fromDate}",
+"     THEN 1 ELSE NULL END) AS mtd,",
+"   count(*) AS ytd",
+" FROM patient_registration",
+" WHERE visit_type = 'i' AND reg_date BETWEEN get_fin_year_start(${fromDate}) AND ${fromDate}",
+" ",
+" UNION ALL",
+" ",
+" SELECT 'In Patient' as grp, 'Discharges' as item,",
+"   count(CASE WHEN discharge_date = ${fromDate} THEN 1 ELSE NULL END) AS ftd,",
+"   count(CASE WHEN discharge_date BETWEEN date_trunc('month', ${fromDate}::date) AND ${fromDate}",
+"     THEN 1 ELSE NULL END) AS mtd,",
+"   count(*) AS ytd",
+" FROM patient_registration",
+" WHERE visit_type = 'i'",
+"   AND discharge_date BETWEEN get_fin_year_start(${fromDate}) AND ${fromDate}",
+" ",
+" UNION ALL",
+" ",
+" SELECT 'In Patient' as grp, 'Deliveries' as item,",
+"   count(CASE WHEN admit_date = ${fromDate} THEN 1 ELSE NULL END) AS ftd,",
+"   count(CASE WHEN admit_date BETWEEN date_trunc('month', ${fromDate}::date) AND ${fromDate}",
+"     THEN 1 ELSE NULL END) AS mtd,",
+"   count(*) AS ytd",
+" FROM admission",
+" WHERE isbaby = 'Y'",
+"   AND admit_date BETWEEN get_fin_year_start(${fromDate}) AND ${fromDate}",
+" ",
+" UNION ALL",
+" ",
+" SELECT grp, item, coalesce(ftd,0) as ftd, coalesce(mtd,0) as mtd, coalesce(ytd,0) as ytd FROM (",
+" SELECT 'In Patient' as grp, ",
+"   (CASE WHEN charge_head = 'TCOPE' THEN 'Procedures'",
+"     WHEN charge_group = 'DIA' THEN 'Diagnostics'",
+"     END) AS item,",
+"   count(CASE WHEN posted_date::date = ${fromDate} THEN 1 ELSE NULL END) AS ftd,",
+"   count(CASE WHEN posted_date::date BETWEEN date_trunc('month', ${fromDate}::date) AND ${fromDate}",
+"     THEN 1 ELSE NULL END) AS mtd,",
+"   count(*) AS ytd",
+" FROM bill_charge bc",
+"   JOIN bill b USING (bill_no)",
+" WHERE bc.status != 'X' AND b.visit_type = 'i' AND amount != 0",
+"   AND charge_head IN ('LTDIA','RTDIA','TCOPE')",
+"   AND posted_date::date BETWEEN get_fin_year_start(${fromDate}) AND ${fromDate}",
+" GROUP BY grp, item",
+" ) as ipitems",
+"   RIGHT JOIN (values('In Patient', 'Procedures'), ('In Patient', 'Diagnostics')) as allrows(grp, item)",
+"     USING (grp, item)",
+" ",
+" UNION ALL",
+" ",
+" SELECT 'In Patient' as grp, 'Bed Occupancy' as item, ",
+"   count(CASE WHEN occ_date = ${fromDate} THEN 1 ELSE NULL END) AS ftd,",
+"   count(CASE WHEN occ_date BETWEEN date_trunc('month', ${fromDate}::date) AND ${fromDate}",
+"     THEN 1 ELSE NULL END) AS mtd,",
+"   count(*) AS ytd",
+" FROM bed_occupied_days_view",
+" WHERE occ_date BETWEEN get_fin_year_start(${fromDate}) AND ${fromDate}"
+	]],
+
+	filterOnlyFields: {
+		txn_date: {
+			displayName: "Date",
+			dataType: "date"
+		}
+	},
+
+	fields: {
+		grp: { 
+			displayName: "Group", width: "100",
+			groupable: true, filterable: true
+		},
+		item: {
+			displayName: "Item", width: "100",
+			groupable: true, filterable: true
+		},
+		ftd: {
+			displayName: "FTD",
+			dataType: "numeric"
+		},
+		mtd: {
+			displayName: "MTD",
+			dataType: "numeric"
+		},
+		ytd: {
+			displayName: "YTD",
+			dataType: "numeric"
+		}
+	},
+
+	defaultShowFields: [
+		"grp", "item", "ftd", "mtd", "ytd"
+	],
+}
+
+
+

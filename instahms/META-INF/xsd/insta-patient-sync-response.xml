@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<patient_record_response xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xsi:noNamespaceSchemaLocation='insta-patient-sync-response.xsd'>
+    <sync_operation>create</sync_operation>
+    <mr_no>mr012345678</mr_no>
+    <status>fail</status>
+    <errors>
+        <schema>invalid schema name</schema>
+        <visit_custom_list1>company code is not matching with masters </visit_custom_list1>
+        <remark>patient_details are missing or API is not available</remark>
+    </errors>
+</patient_record_response>

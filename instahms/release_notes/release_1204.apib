@@ -1,0 +1,1755 @@
+FORMAT: 1A
+HOST: http://blog.acme.com
+
+# Insta HMS 12.4 Release Notes
+
+## New Features [/]
+
+
+## New Features
+
+### Packages 4.0 - a revamped model of the static and multi-visit packages [GET]
+
+With v12.4, Insta introduces package definition, ordering, billing, claim submission and workflow changes in the new UX with additional features and functionalities as listed below:
+
+Package definition features:
+
+-   applicability by department, sponsor, plans, gender, age, number of visits and rate sheet/plans and describe terms, conditions and prerequisites.
+
+-   multi-visit packages are now applicable for both OP and IP visits
+
+-   allowing inclusion of inventory items in the Static/Multi Visit packages
+
+-   Allocating rates for individual items in the Static Packages
+
+Package billing/ordering/claim submission and workflow changes:
+
+-   Customization of packages for patients based on their health needs
+
+-   Multi visits packages can be ordered to patient without consuming any item.
+
+-   Consumption of multi-visit packages across OP and IP visits.
+
+-   Support for billing and claim submission of Health Check Packages (UAE Specific)
+
+-   Same package is possible to order before completion of the previous package which was purchased by a patient.
+
+-   View of all active packages of patients
+
+#### Package definition and master changes
+
+##### Package List
+
+-   It lists all existing packages in the application with package charges as per General Bed Type's General Rate Sheet tariff.
+
+-   Direct search by package description is given.
+
+-   Advanced Filters can be used to filter packages by any other criterias given
+
+![](media/image120400_5.png)
+
+##### Tables of Content
+
+The Table of Contents is given that summarizes the list of sections available in the package master and allows the user to quickly navigate to the relevant section and enables faster data entry.
+
+![](media/image120400_43.png)
+
+##### Package category
+
+Two new system categories have been added along with other custom categories, such as Panel Tests and Diag Packages.
+
+**Panel Tests**: to define the Laboratory Panel Tests, which is restricted to allow only lab investigations in the package.
+
+**Diag Packages**: As is In the previous versions, Diag package is a system package retained in definition which allows both lab and radiology activities to be defined as part of the package.
+
+![](media/image120400_18.png)
+
+##### Package Details
+
+**Order Code/Alias:** Like any other billing master, we have added a field for Order Code/Alias, which can be used to search packages with any code or short name
+
+**Allow Patientwise Customization**: Package personalisation being a major need amongst dermatology, aesthetics and skin treatments can be defined if applicable or not for the package. In such cases, the doctor can review the necessary tests and procedures which are most appropriate to each patient's needs after getting a thorough understanding of their current medical history, past medical history, family history, occupation, socio economic condition, skin/hair type etc, and all such necessary tests/procedures/treatments can be added to a baseline package forming a customized and bundled package at a discounted price.
+
+**Claim Submission Type (applicable only to UAE customers)**: Claim Submission Type is to configure if the package level code or Individual item codes are to be sent as per claim submission rules. There are two values applicable:
+
+-   Package - would mean that a bundle code / single line item activity is submitted in the claim.
+
+-   Individual - would mean that all items in the package will be submitted individually.
+
+![](media/image120400_19.png)
+
+##### Package Applicability
+
+**Visit Type**: Package Applicability based on Visit Type, a package can be applicable to both OP and IP
+
+**Gender**: packages can now be applicable gender wise. 'Any' is the default value. This allows for Women only packages to be applicable for female and not males, eliminating ordering and billing errors.
+
+**Min Age/Max Age/Age Unit**: it applies the age group rules to the package. For example, there are geriatric packages which are tailored to the health needs of senior citizens, this can be controlled by setting age applicability.
+
+-   All three fields become validated if value is keyed in any of the fields..
+
+-   max age must be greater than min age.
+
+-   age unit can be years & months
+
+**Single/Multiple**: This attribute to define whether a particular package is a one time - static or multi-visit supported package.
+
+-   Single Type - All the items in a package are allowed to order in one-go only.
+
+-   Multiple Type- Items can be ordered across multiple visits
+
+-   if atleast one package content is selected, then we can disable type they selected as content selection is different for both single/multi visit packages
+
+![](media/image120400_16.png)
+
+##### Department Applicability
+
+This configuration allows to define department wise package applicability
+
+![](media/image120400_50.png)
+
+##### Ratesheets/Rate Plan Applicability
+
+Packages are now onwards applicable to only those defined sets of rate sheets and rate plans, not to all. Every new package will by default be applicable to the General Rate Sheet.
+
+![](media/image120400_22.png)
+
+**Add/edit** - where all applicable rate sheets/rate plans can be chosen and add to the supported list.
+
+![](media/image120400_40.png)
+
+##### Terms & Conditions and Prerequisites
+
+**Package terms & conditions** may list exclusions and other descriptive content which can be used for marketing and patient information purposes, which will be available for billing users while ordering any package..
+
+**Prerequisites** which would display prerequisites so that the counsellor, doctor, front desk etc. can notify the patient such as come after having breakfast, come with fasting, etc.
+
+![](media/image120400_33.png)
+
+##### Package Summary
+
+The package summary section is to define the package constituents
+
+**Search:** There is provision to search and add the items to the package, by default all hospital items are available in the search field and a category wise filter is also given to narrow down the list further.
+
+![](media/image120400_30.png)
+
+To add any item to the package, it is mandated to confirm if a particular package is Single or Multi Visit package. While adding an item before defining single/multi visit type, there is a validation message.
+
+In case of single visit packages, the quantity field is enabled only for services, equipment, other charges and inventory items. For all other items, one quantity is defaulted per row and disabled as such, though multiple rows are allowed for an item.
+
+Once Single/Multiple type is defined, it is not allowed to change this type if atleast a single item is added to the package.
+
+Display Order can be given to all the package items, according to display order, it will be displayed in order and billing screens.
+
+##### Package Components
+
+**Panel or Diag packages:** Panel or Diag packages are allowed to be part of any other packages, All the tests under panel/diag packages together will be treated as one test and not possible to delete/edit individual components once it is added to the package.
+
+Each individual panel items should have rate allocation defined in the package charge master
+
+![](media/image120400_37.png)
+
+**Inventory Items:** With Packages 4.0, it is possible to add inventory items as part of both single and multi visit packages and supporting all downstream store billing workflows.
+
+Inventory items can be added to the package after choosing the 'inventory' from the category drop down given.
+
+![](media/image120400_25.png)
+
+**Operations:** The changes are made in such a way to define all operation components and its rates separately as part of the package. To add any operations, it is expected to choose all required operation charge components
+
+![](media/image120400_2.png)
+
+Surgeon/Doctor, Surgical assistance, Theatre charges are selected by default and can not be removed as all are primary key components for any operation.
+
+Anaesthesia types need not be mentioned in package master while adding operation. It is required to mention no. of anaesthesia type included in any particular package based on this, to enforce users to add as many anaesthesia types as mentioned in package master while ordering operation.
+
+All the operation components together will be treated as one operation and it is not possible to delete/edit individual components.
+
+![](media/image120400_7.png)
+
+**Bed Types**: Like operations, bed components and its rates to be defined separately
+
+![](media/image120400_38.png)
+
+Beds are allowed only for those packages that are applicable for visit type = IP. If any single visit package is applicable to both OP & IP, then beds are not allowed. At the same time, if the package is a multi visit package, then beds are allowed and available to be ordered as part of the package during patient stay.
+
+While defining packages, it is possible to choose all supported bed components and its rates for a package. The bed charges component is defaulted and cannot be removed.
+
+All the bed components together will be treated as one bed item and it is not possible to delete/edit individual components.
+
+#### Package Charges
+
+We have introduced individual item rate allocation for all package constituents, which in previous versions was applicable only to the multi visit package definition. This model change is introduced to overcome model issues for doctor payout calculations and department wise revenue sharing with regards to package billing.
+
+When we create a new package, individual items are updated with their actual rates of respective rate sheets/rate plans and the sum of all individual items will be the total package charge, though it can be edited through the edit rates screen .
+
+The sum of the individual item's rates must be equivalent to the package charge for all the bed types while editing rates, otherwise it shows variance as the balance amount in this screen and rate update will be blocked.
+
+![](media/image120400_51.png)
+
+#### Order Screen Changes
+
+Below are new features and changes with respect to the package billing
+
+##### Panel Tests/Diag Packages Ordering
+
+While ordering panel tests/ diag packages, users can view the list of all the investigations of the selected panel/diag test in the item pop up screen, As all investigations are expected to be ordered in one go, all items except inventory are selected by default and check-boxes disabled.
+
+![](media/image120400_28.png)
+
+##### Single Visit Package Ordering
+
+For single visit packages also, all package components are expected to be ordered in one go, therefore, all items are selected by default and check-boxes disabled.
+
+![](media/image120400_14.png)
+
+If the consultation is part of a selected package and any particular doctor was not defined in the master, then the system enforces to choose the doctor, otherwise the system defaults the defined doctor.
+
+System validates doctors for the tests and services for which conducting doctors are configured as mandatory in corresponding masters.
+
+Panel Tests/Diag packages which are part of any other single or multi visits packages will be showing in the single line in the item edit pop up.
+
+Even If all bed components are configured in the IP package, it shows only one line item while ordering a particular package.
+
+![](media/image120400_34.png)
+
+For operations, all operation charge items such as surgeon, anaesthetist, operation theatre, and anesthesia types are validated based on the particular package configurations in the master.
+
+![](media/image120400_44.png)
+
+**Single Visit Package with Inventory items**
+
+Showing the list of all inventory items which are included in the package, however, It is disabled and can not order through the order screen.
+
+When such packages are ordered, a package margin will be posted to the bill with the sum of all inventory items and later the package margin will start deducting when inventory items are issued to the patient.
+
+##### Multi Visit Package Ordering
+
+With new model changes, we decouple the ordering of both packages and individual items, which means, multi visit packages can now be ordered even without selecting any individual item. None of the package items will be checked by default and users can select the items if any items need to be ordered immediately along with package ordering.
+
+![](media/image120400_11.png)
+
+Multi visits allow consumption of package items across both OP and IP visits, if bed types are part of any multi visit package, then such items can be consumed only during only the IP visits even if packages are applicable to op visits as such.
+
+Usage of consultations are also restricted to the visits types. OP consultations can be billed only during OP visits and IP consultations during IP visits.
+
+Once packages are ordered, it is added to 'Patient Active Packages' list
+
+The same package can be ordered multiple times for a patient and consumption of such packages can happen in parallel.
+
+Multi visit packages are added to a separate bill in which adding normal items are restricted.
+
+Multi visits package contents and charges are now stored at patient transaction level, which means any future changes in package master will not affect any those packages which were purchased by patients and are still active in use. Even Rate Plan or bed types changes also will not affect the rates as when the package was ordered.
+
+When Panel/Diag packages are part of any multi visit packages, then it will be shown in the single line in the item edit pop up, however, once it is ordered, all the tests of particular panel/diag packages will be shown individually in the order and billing screens.
+
+##### Customization of Packages
+
+This feature allows customization of the base packages as per the patient's willingness to pay and personal needs.
+
+Customization is enabled only for those packages which 'Allow Patient Wise Customization' are configured in the package master, otherwise the custom link will be disabled.
+
+![](media/image120400_26.png)
+
+We allow customizing package name, package summary, individual components, charges, package code, terms and conditions, prerequisites and remarks
+
+On clicking the 'Save the customization' button, changes will be saved temporarily and changes will be discarded if such custom packages are not ordered immediately in continuation of the ordering process.
+
+Even Rate Plan or bed types changes will not affect the rates which were customized for single or multi visit packages by users.
+
+![](media/image120400_9.png)
+
+##### Order from Package: List of patient wise active packages 
+
+The active patient packages link lists all active multi visits packages running for any selected patient and gives the consumption history for each package so far, which also allows further ordering of all remaining non utilized package items.
+
+![](media/image120400_12.png)
+
+In the order screen, a link called 'Order from Package' is given, on clicking a particular link, a modal opens which shows all patient active packages.
+
+![](media/image120400_24.png)
+
+This popup gives the active package details for the patient, such as when the package was purchased, at what rate it was purchased, total deposit collected against each package etc.
+
+It also tells what was the total quantity in the package when it was sold and what is the remaining quantity of each item.
+
+There is a provision to collect deposits against each package, on clicking the deposit link, which opens the corresponding deposit collection screen with defaulted particular package details.
+
+Once all the items of any package are ordered, particular packages will disappear from this page.
+
+#### Registration Order Changes
+
+Though all the features with respect to package billing are more or less similar in both the OP registration screen and Order, the below are variations which require the user to use the Order screen:
+
+-   Customization of packages for patients is not available.
+
+-   Single Visit Package with Operations are not allowed to order from the OP registration screen
+
+-   Operations are not allowed and checkboxes disabled for multi visit packages.
+
+![](media/image120400_10.png)
+
+#### Billing Screen Changes
+
+The description of single visit packages billed is now a link, on the click of which provides the details of particular package components posting
+
+![](media/image120400_39.png)
+
+##### Package Details Screen
+
+On clicking the package description, package details gets opened up, where it gives the list of all billed individual items and its details such as description, code, qty, amount etc.
+
+![](media/image120400_1.png)
+
+#### Patient Issue Changes
+
+The following changes are incorporated to support inventory package inclusions:
+
+-   When a user enters a patient MRN, if any single visit package with inventory items is ordered in the same visit or any active multi visit package exists for a particular patient, then the system shows a drop down list with such packages.
+
+![](media/image120400_32.png)
+
+-   On selecting such a package, it defaults all pending inventory items for patient issues and is currently not allowed to override the medicines or substitute such package defined items, though users are allowed to split the consumptions into multiple issues.
+
+![](media/image120400_47.png)
+
+-   To issue inventory items from the single visit packages, Hospital bills in which other package items were posted must be kept open, otherwise the issue is restricted. In case of multi visit packages, there should be atleast one hospital item that has been billed and a particular bill kept open in the same visit in which inventory items have to be issued. Otherwise it shows a validation message.
+
+![](media/image120400_31.png)
+
+-   Patient issue return is allowed only for single visit packages now, to do the return any issue item, the original bill must be kept open.
+
+#### Insurance Changes
+
+There are some the changes made available with respect to Claim Submission type property in the package master
+
+##### Codification 
+
+-   if the claim submission type value is Package, then it should be showing the package line item in the codification screen with package level code.
+
+-   if claim submission type value is Individual, then shows all the individual items with their own properties and item level coding is allowed.
+
+![](media/image120400_8.png)
+
+##### E-Claim- Insurance/ Self Pay Claims
+
+-   If the Claim Submission type value is Package, then only package code will be showing in the xml. All observations will be under package item
+
+
+-   If the value is Individual, then all individual items with its code and rates will be showing in the xml
+
+-   Insurance Claim History - It is depending upon the the data what we send in the e-claim XML
+
+-   Accumed XML also follows the same property to construct the values.
+
+##### Claim Reconciliation
+
+The behaviour is as similar as codification screen, items display depends upon the claim submission type is configured in the package master when package was billed.
+
+### IP-EMR [GET]
+
+The IP EMR is now enhanced with the option to manage Generic Form / Generic Documentation from the IP EMR TOC. This enhancement aims to enable easy addition of clinical documents such as Assessments, Reassessments, amongst other forms of documentation with the ease of navigation. However the users can still choose to navigate from the old generic documentation screens as well.
+
+With the introduction of the IP Documentation tab, the existing TOC of the IP EMR is split into IP EMR and IP Documentation tabs along with navigation links.
+
+![](media/image120400_60.png)
+
+#### Summary
+
+The existing IP EMR Summary Insta and system sections are organised, additionally new section Documents & Forms are added to list down the documents added to the patient in the reverse chronological order with details of the Document
+
+![](media/image120400_52.png)
+
+#### Documentation
+
+Under the documentation tab in TOC all the generic forms, documents and the uploaded documents of the patient visit is listed and the user has provision to add new forms /documents. This feature allows the user to review all the patient related information in a single view.
+
+![](media/image120400_20.png)
+
+**Add new Document**
+
+New Generic Form or Generic Document can be added by selecting the option. The newly added Form/Document is saved and shown under the specified document category with timestamp and username. Document access is allowed by the EMR access rule set in the document category master.
+
+![](media/image120400_42.png)
+
+#### List Documents
+
+All the Generic forms/documents and uploaded documents added to the patient from various screens and processes are listed under the documentation section under the document types . Users are allowed to print or edit the document based on the access rights they have on the document.
+
+##### Generic Forms
+
+Generic Forms are presented in New UI and follow similar actions like OP Consultation forms.
+
+![](media/image120400_59.png)
+
+-   Forms are allowed to be discarded before save
+
+-   Saved forms are treated as draft and available for all the user to view as well
+
+-   Save and Finalise will do final save and the forms and changes are not allowed, except for the user with a special ACL to edit the save and finalised form.
+
+##### Generic Documents
+
+Not much changes made to generic documents from the existing behaviour, except for the rendering of the document happens in the iframe .
+
+### MAR v2.0 [GET]
+
+The Medication Administration chart (MAR) is enhanced with the option to modify the existing setup which is auto recommended by the system. Also further to help hospitals process advance setup days can be preset under the clinical preference.
+
+![](media/image120400_45.png)
+
+#### Medication Administration Setup
+
+After the physician order is completed the Medication has to be setup by the registered nurses with proper information for administration
+
+Once the medication is prescribed and saved the medication appears with 'setup pending' for all the normal/ urgent medication in the MAR section. For PRN and STAT Prescription the existing behaviour continues.
+
+![](media/image120400_54.png)
+
+Once the 'setup' link is open the user is allowed to set up the medication according to frequency and duration. Based on the advance setup days recommended in the clinical preference the system shows auto recommendation of serving times and duration. However the user is allowed to make changes in the serving time however they cannot set more serving time than specified frequency.
+
+The start time in the prescription or current time is picked up for auto recommendation of the setup, whichever is greater is picked up.
+
+![](media/image120400_56.png)
+
+In the setup window the user can also override advance setup days recommendation and further select lesser are more number of days and system display the auto recommendation which can be overridden by the user.
+
+![](media/image120400_57.png)
+
+Setup can be edited at anypoint of the time till the medication is active, however the past duration medication setup or the administered doses setup cannot be altered, this information is greyed out of the day and the previous day information will not be available.
+
+Everytime the setup is done or edited remarks will be mandated for recording .
+
+![](media/image120400_53.png)
+
+For IV continuous frequency only the start date and time can be specified in the setup, once its started the further administration is allowed with the add bag option in the Medication Administration window.
+
+![](media/image120400_55.png)
+
+#### Medication Administration Record
+
+In the existing Medication Administration record below enhancements are added in the newer version.
+
+**Setup**- Options to navigate to setup window, which allows the users to open the setup window to view or edit the setup
+
+**Stop** - Options to discontinue the medication from the Medication Administration Record section.
+
+![](media/image120400_49.png)
+
+In IV administration the “Update IV” option appears every hour from the time IV administration starts till it stops. The User is allowed to “Pause” , “Re-start” or “Stop” at any time.
+
+For IV continuous option the new bag is added the “Update IV” option available in the current serving window.
+
+![](media/image120400_58.png)
+
+#### Medication Administration
+
+Under Medication Administration below options are added in the newer version:
+
+**Patient Own Medication** - During the administration the user is allowed to mark the medication as patient own medication , once the option is marked the user is allowed to key-in the batch number and expiry details.
+
+**Add bag** - For IV medication when the frequency is marked as continuous the add bag option appears to add IV bags without making any specific setup. Like PRN medication, Update IV option appears every hour till the medication is discontinued thus it allows the update the administration status at any point in time.
+
+![](media/image120400_48.png)
+
+#### Terminology changes application wide and other minor enhancements to support the cardiological cath intervention workflow
+
+Insta has a Services module which caters to types of treatments and procedures to be ordered,billed, documented and reported for various workflow needs such as Dialysis, Physiotherapy, injections, minor dressing, TMT, minor procedures etc.
+
+Insta also has an OT or a Surgery module which is meant to be used for ordering a surgical intervention, surgery team, operation room, anesthesia details etc.
+
+Now in case of a cardiological cath intervention workflow there is a need to also support the scheduling of a procedure room, scheduling the anesthetist, billing for the anesthetist, anesthesia charges and cath lab procedure room charges. On Insta this workflow was only supported as part of surgeries and hence could not be modelled as part of the 'Services' module.
+
+In order to support the cath intervention workflow for hospitals the following changes have been incorporated
+
+-   Renaming the terminology of the word 'surgery' or 'OT' or 'operation' to 'surgery/procedure' universally across all modules, transaction screens and masters.
+
+-   Renaming the selection of the surgeon and assistant surgeon to surgeon/doctor or asst surgeon/doctor.
+
+-   Renaming the selection of the term pediatric in the OT module to doctor and allowing any doctor to be selected.
+
+-   Surgery scheduler user-wise controls so that only a user based on the mapped theater/rooms can book a surgery / procedure in the respective theater/room.
+
+![](media/image120400_3.png)
+
+-   The OT Bookings, Today's/Search appointments and Planned surgeries/procedures screens also apply the above user associated-theater/room controls so that only the relevant rows are displayed.
+
+-   The surgery can individually be mapped to a theater / room as well from the respective surgery/procedure masters so that only the relevant surgeries/procedures are available for appointment bookings based on the user's access controls.
+
+### Stock Taking: Counting, Reconciliation and Approval [GET]
+
+Stock Taking is a routine inventory stock checking process followed by most healthcare providers periodically every week / month / quarter as defined for the store based on movement of inventory. This feature facilitates the workflow process of tracking how often Stock Takes are done, enabling bulk stock adjustments and reconciliation.
+
+The Stock Take module can be accessed as part of the Stores Management menu.
+
+![](media/image120400_21.png)
+
+#### Stock Take List
+
+The Stock Take screen lists the stock takes done in the last month across all centers and stores.
+
+Each stock take has a stock take number, initiated date, store name for applicable stock taking, status (In Progress, Pending Reconciliation, Pending Approval and Completed), Variance, Cost Value and Updated by user.
+
+![](media/image120400_4.png)
+
+'Create new Stock Take' is an action which initiates the stock taking process for a store. The count of records is the total item-batches including 0 stock item-batches. Only one stock take can be active at a time per store.
+
+![](media/image120400_36.png)
+
+#### Stock Counting
+
+Stock Take header displays the Store Name, Stock Take Number and Completed Items count.
+
+There are filters to search and retrieve specific items during the stock counting process such as Item Name, Item Category, Manufacturer, Service Name, Service Subgroup, Rack/Bin, Show Items count, Sort Items by alphabetical order.
+
+Item Batch Physical stock count in units only can be entered one at a time. Remarks are optional.
+
+Terminal actions are print, audit log, Cancel Stock Take, Save & Stock Count Complete and Save.
+
+Intermediate saves for partial completion of data entry is allowed.
+
+![](media/image120400_29.png)
+
+#### Stock Reconciliation
+
+Here once the Stock count step is completed the Stock Reconciliation screen displays the item-batchwise variance of stock and if there is a variance enforces the remarks to be captured to proceed and complete the stock reconciliation check step.
+
+The Stock Take header has additional information such as Variance and Total Cost Value which is computed as below which is for informational purposes only:
+
+Variance Percentage = (+ve or -ve Variance Qty / System Qty) X 100
+
+Variance Cost Value = Wt Avg Cost across Item-Lots X Variance Qty
+
+_Example_
+
+Drug ABC with Item Batch ITMB0003 has 2 Lots
+
+Lot123 - Qty = 16, CP = 40.00;
+
+Lot124 - Qty = 9; CP = 10.00;
+
+Total System Stock : 25; and Total Physical Stock : 23
+
+Here, Variance : 23 - 25 = -2 (negative);
+
+Cost Value = Wt. Avg. Cost across Lots * Variance Qty
+= (40 * 16) + (9 * 10.00) / 25 * -2
+= (730) / 25 * -2
+= 29.2 * -2 = -58.4
+
+We do the same for all items and add up all the cost values:
+
+Drug DEF with Item Batch ITMB00023 has Cost value = -45.5
+
+Drug GHI with Item Batch ITMB00034 has Cost Value = 56.6
+
+Then total cost value = - 58.4 - 45.5 + 56.6 = - 47.3
+
+*Note*: the values are considered along with their sign
+
+The screen always loads the list with all the item-batches. There are 2 additional columns which are the system stock and variance details.
+
+Terminal Actions are Save & Reconciliation complete, Reopen Stock count which takes the user to the previous state of the Stock Take. Intermediate saves for partial completion of data entry is allowed.
+
+#### Stock Take Approval
+
+This is the final step in the Stock Taking process where an authorized user can approve the stock take and the respective bulk stock adjustment entries are posted to match the system and physical stock.
+
+Here the screen is only in a view only mode but as is the case with Stock Reconciliation, the user can go one step back if needed and if approved then the user can go ahead and hit the Approve stock take action.
+
+![](media/image120400_17.png)
+
+A single Stock Adjustment entry is created where we follow the FIFO method of increase/decrease of stock quantity against Item-Batch-Lots which means if an Item Batch has lots as listed below we will follow the FIFO method only:
+
+-   Lot A - CP: 80 - Date (Jan-2017)
+
+-   Lot B - CP: 79.5 - Date (Feb-2017)
+
+-   Lot C - CP: 81 - Date (Mar 2017)
+
+Stock Ledger and Stock Movement Report displays the resultant Stock Adjustment entry.
+
+#### Action Rights
+
+The below screen rights are important to note to authorize the user for access to specific steps in the stock taking process
+
+Stock Take List: view of Stock Take List screen
+
+Initiate new Stock Take: to initiate and kick start a fresh stock take.
+
+Update Stock Take to update the stock take count.
+
+Reconcile Stock Take is to enable the user post stock counting to verify the system stock and physical stock variance.
+
+Approval of Stock Take is an important financial and operational step which leads to inventory write-offs.
+
+Cancel Stock Take after the stock take has been initiated and for various reasons needs to be cancelled.
+
+![](media/image120400_6.png)
+
+#### Prints
+
+Both PDF and Text mode prints are supported for the Stock Take process and especially if the counting is done with a print out.
+
+![](media/image120400_27.png)
+
+#### Audit Log
+
+There is an audit log at the stock take level to track who initiated, reconciled, approved or cancelled the stock take steps and also at the item level to track who updated what count / reason in the stock take process
+
+![](media/image120400_13.png)
+
+#### Reports
+
+There is a Stock Take Report Builder made available with the Stock Take fields for reporting and tracking purposes.
+
+![](media/image120400_46.png)
+
+### Scheduler - Wait List  [GET]
+
+As some regions have a practice where providers give overbooked appointments due to the high incidence of No Shows or to incentivize doctors to meet the high patient demand. Patients are typically provided a confirmed appointment for the first slot at a particular date/time and other patients are given booked appointments with a wait list number attached to the booked appointment. In case of a cancellation from a confirmed appointment, the patient with the highest priority in the Wait List is considered for a confirmed appointment.
+
+Overbooked appointments are now allocated a Wait List number and this number can be viewed from various list and transaction screens that allow overbooking of slots.
+
+#### Calendar View
+
+On hover displays the appointment details and the appointment wait list number if applicable. The first appointment in a slot shows the appointment wait list number as NA. The following appointments display the appointment wait list number as 1,2 and so on.
+
+![](media/image120400_61.png)
+
+#### Appointment Activity
+
+Appointment Activity displays the wait list number applicable for the appointment.
+
+![](media/image120400_23.png)
+
+#### Today's/Search appointment worklist
+
+Today's/Search appointment worklist displays the wait list number on the list.
+
+![](media/image120400_41.png)
+
+In case of scenarios of appointment cancellation, rescheduling or mark for No Show, the next patient in the wait list gets upgraded with the higher priority wait list number. There is an additional token (waitlist) available to be configured in the respective appointment messaging notifications such as Appointment confirmed, Appointment details changed, etc. via SMS/Email to communicate the new wait list number applicable on modification of appointment details.
+
+#### The Slot availability view 
+
+The Slot availability view and the appointment popup which displays slots for selection displays the available overbook limit (such as 1/25) by resource selected.
+
+![](media/image120400_15.png)
+
+![](media/image120400_35.png)
+
+#### New Appointment Message Type
+
+New Appointment Message Type by SMS and Email called Waitlist Upgrade has been added which can be triggered to the patient on modification of the WaitList number.
+
+#### Reports
+
+Appointment Report Builders have the waitlist number available as a field.
+
+#### Public APIs
+
+Public APIs have the wait list number exposed to third party applications as well.
+
+## Minor Enhancements [/minor-enhancements]
+
+### Patient Administration [GET]
+
+-   Marking a patient duplicate is driven by a new action right for the edit Patient Details or edit Patient Header.
+
+-   Doctor Appointments Report Builder: has fields added for consultation start date/time and consultation end date/time.
+
+### Messaging [GET]
+
+-   Patient communications and Next of Kin are disabled for a patient marked 'Dead'.
+
+-   Modules which were redundant have been removed which are general messaging and scheduler messaging which are merged into messaging.
+
+-   Patient Admission to Doctor message now has a visit id attribute to configure the message body.
+
+### Billing [GET]
+
+-   Day Book Report Builder: has MR No field which is filterable.
+
+-   Bill, Bill Charge and Bill Charge Adjustment Reports have a new field made available,filterable,sortable and groupable which is Visit = New/Revisit.
+
+-   Bill Charge Adjustment Report Builder has the Order Code/Alias added as an available,filterable,sortable and groupable field.
+
+### Masters [GET]
+
+-   Doctor Master: Registration Number field is increased from 15 characters to 25 characters.
+
+-   Procedure Codes Report Builder has the fields added: Visit ID and Patient Type
+
+-   Stock Movement Report has an additional field called: 'Item Form' added.
+
+-   PO Report builder has additional fields added: remarks and purpose of purchase.
+
+-   Patient Indent Item Report Builder has a field 'Indent Type' made available.
+
+-   Purchase Items Report builder has an additional field 'margin %' added.
+
+-   Purchase Invoices Report Builder has additional fields for return type, return reason and return remarks.
+
+-   Stock Transfer Report Builder now has the Transfer No field as filterable and groupable.
+
+-   Pharmacy Label Print to display Item UoM details.
+
+# Clinical [GET]
+
+-   Prescription Ordering Report Builder has a field Diagnostic Department made available.
+
+-   Lab Test Results Report Builder has an additional field added 'Sample No'.
+
+-   Services Report Builder: has the additional field service conduction remarks made available.
+
+-   Diagnostics Report Builder: has the additional fields Service Group and Service Subgroup added.
+
+-   Doctor Consultation Report Builder has an additional field: Consultation Reopen Reason.
+
+# Reports [GET]
+
+-   The Patient Confidentiality Group name is added as part of the following Report Builders:Patient Details Report Builder, Visit Details Report Builder, Scheduled Appointment Report Favourites, Doctor Scheduled Report Builder, Tests Scheduled Report Builder, Services Scheduled Report Builder, Surgery Scheduled Report Builder, Consolidated Appointments Report, SMS Response Report Builder
+
+## Features in 12.4.1 [/cig-release-120401]
+
+### Billing [GET]
+
+#### Additional Packages 4.0 feature enhancements
+
+##### Define consumption validity period for Multi visit packages
+
+This master definition defines the consumption validity for multi visit packages from the date the packages are ordered to patients. This can be defined in terms of both number of days or months. The validity can also be defined at the time of package customization as well.
+
+![](media/image120401_2.png)
+
+Packages are likely to be expired after validity and such expired packages will be removed from the 'order from the package' list.
+
+##### Discontinuation of patient's active packages
+
+We have introduced a discontinue option for multi visit packages, which allows users to cancel the active packages for any patients. This option will be enabled against each package in the 'order from package' list for those authorized users with the action right 'multi-visit package discontinuation' enabled.
+
+![](media/image120401_3.png)
+
+Remarks are mandatory before confirming the discontinuation of any packages, all such discontinued packages will be removed from 'order from package' list.
+
+##### Other miscellaneous changes
+
+**Package Masters:** has an option to specify rate sheet/plan applicability to all for Panel/Diag Packages.
+
+> ![](media/image120401_1.png)
+
+**OP Registration:** support for ordering one time and multi-visit packages, in which case 2 separate bills for each are created.
+
+### Clinical
+
+#### Discharge Medications
+
+Discharge medications existed as separate screens with respective screen rights. In the current version the Discharge medication is moved as a system section and it has been enhanced to support functionalities similar to OP/IP Prescription like allowing to mark the drug as PRN/SOS or STAT, select medication from history and favourites.
+
+![](media/image120401_7.png)
+
+##### System Section
+
+Discharge Medication would be available by default in IP Forms and can be added in OP Forms through configuration.
+
+![](media/image120401_5.png)
+
+##### Define discharge medication priority
+
+Define discharge medication priority as Normal, PRN/SOS or STAT.
+
+##### Add from history
+
+Add from history feature which also displays the just completed IP medications as well to select from.
+
+##### Add from favourites
+
+If the prescription is created by non-doctors it will list the consulting doctor's favourite for op patients and admitting doctor favourite for ip cases or the logged in doctor's own favourite list
+
+##### Sales prescription list
+
+Discharge Medications create continue to reflect in the sales prescription list:
+
+-   Medications can be added to the discharge medication section at any point of the patient's visit, but for inpatients the medication for dispense is available only after the patient is marked for clinical discharge.
+
+-   Medication can be dispensed partially or fully from the prescription list and dispense status would be updated accordingly
+
+##### EPrescriptions (ERx) support for Dubai in Discharge Medications
+
+In the new discharge medication section, there is an option to submit the medications for ERx approval.
+
+-   Discharge Medications added to the patient in outpatient or inpatient visits can be submitted for ERx approvals.
+
+-   The ERx status will be reflected along with medications after approvals.
+
+-   The ERx submission can be cancelled and a new set of medications can be sent for approvals.
+
+-   ERx approvals of outpatient and discharge medications can be accessed at different points of time.
+
+![](media/image120401_6.png)
+
+### Scheduler [GET]
+
+#### Surgery/Procedure Master
+
+Surgery/Procedure Master has a duration configuration available such that if setup then the surgery appointment booking will apply the duration for the selected surgery.
+
+![](media/image120401_4.png)
+
+#### Resource to Activity mapping
+
+There are also the options to map the Surgery-Theater/Room, Service/Procedure-Service Resource, Test-Test-Equipment such that the respective surgery names, service names, diagnostics test names are filtered by the resource selected.
+
+#### Doctor Availability Calendar and Availability View
+
+Doctor Availability Calendar and Availability View has the doctor resource selected from the filters retained for selection on screen refresh or usage of the back-button. Do note that the selection is refreshed if on the same page user navigates to a new screen.
+
+#### Removal of deprecated options from Generic Preferences
+
+-   A redundant generic preference 'Registration Name Order (from Scheduler)' which auto populated the order of name from Scheduler to OP Registration has been removed as the scheduler and appointment activity popups now already capture the first and last name separately.
+
+-   A redundant generic preference 'SMS on Appointment' has been removed as there is already an option to define at a patient and message level whether communication is to be enabled or not.
+
+### Registration [GET]
+
+There is a new action right made available called: “Modify Referred by details” = Yes/No” such that only an authorized user is able to modify the Referrer details from the OP Registration and Edit Visit Details screen.
+
+### Bugs/Minor Enhancements fixed in v12.4.1 [GET]
+
+Issue Type|Module|JIRA ID|Summary
+----------|------|-------|-------
+Enhancement|Patient Administration|HMS-35823|Bed View: has a filter to identify the Bystander Bed.
+Enhancement|Patient Administration|HMS-36060|OP Registration: Read Card action is modified for positioning on the screen next to Patient Details label header section.
+Enhancement|Patient Administration|HMS-35766|Registration Barcode: Visit ID token is added.
+Enhancement|Billing|HMS-9560|Bill Reports: has the new/revisit information available as an available field.
+Enhancement|Billing|HMS-14971|Collection Allocation Report Builder: has an available field 'Rate Plan Code'
+Enhancement|Insurance|HMS-19511|Claim Batch Report Builder: has an available field: 'DoB'
+Enhancement|Inventory|HMS-15641|Purchase Invoice Report Builder: has Remarks and Purpose of Purchase fields added as available fields.
+Enhancement|Inventory|HMS-13254|Stock Movement Report has the available fields: Package UoM, Unit UoM added.
+Enhancement|Inventory|HMS-12961|Stock Issues Builder: has additional fields for Visit ID, Issue Date/Time and Ward Name.
+Bug|Patient Administration|HMS-27548|Scheduler: On blocking doctor slots the latest reason for blocking slot is updated to all slots.
+Bug|Patient Administration|HMS-21310|Edit Patient details: has the middle name 2 merged with middle name 1.
+Bug|Patient Administration|HMS-33972|Center Master: usage of back button action throws an HTTP 400 error.
+Bug|Clinical|HMS-24616|Services Scheduler Reports throw an SQL Exception incase of usage of available fields 'Service Department' and removing Service Name as a selected field.
+
+## Features in 12.4.2 [/cig-release-120402]
+
+### Platform [GET]
+
+#### Upgrade to Java 8 and Apache Tomcat 9.0
+
+We consistently work in making the application more secure and use the technology that is current. The technology stack for Insta HMS 12.4.2 has been upgraded to use Java 8 as the underlying Java Runtime and Apache Tomcat 9.0 as the application server. The upgrade enables support for following security enhancements:
+
+- Client-side TLS 1.2 as a default for SSL connections to third-party services
+
+- Client-side SNI Support for SSL connections to third-party services
+
+- Support for stronger cipher suites: AES/GCM/NoPadding cipher implementation
+
+
+### Registration [GET]
+
+#### Configurable defaults for OP Visit Auto Close Option 
+
+Due to the case that patients at some facilities may visit multiple doctors on the same day for which they are OP registered multiple times, a registration preference has been added to define the default behaviour of the close previous active visits checkbox. The registration preference added for this purpose is called: 'Default close previous active OP visit' = Yes/No
+
+### Bugs/Minor Enhancements fixed in v12.4.2 [GET]
+
+Issue Type|Module|JIRA ID|Summary
+----------|------|-------|-------
+Enhancement|Billing|HMS-36626|Package Masters: On add/edit of the package warn the user if the package code is duplicate.
+Enhancement|Billing|HMS-36783|Order Screen: Active Package details display the Deposit Balance collected against a package.
+Bug|Patient Administration|HMS-36801|Service Scheduler does not fetch patient details for some cases on search by MR No.
+Bug|Clinical|HMS-36688|IP-EMR/Physician Order: Duplicate item addition alert
+
+## Features in 12.4.3 [/cig-release-120403]
+
+### Clinical [GET]
+
+#### Services workflow changes
+
+The existing services conduction workflow has been enhanced to support management of states, a revert of conduction status for making modifications to documentation or updating conduction details.
+
+##### Modification to definition of services states
+
+Any service that is not started will be in 'Pending' state. 
+
+Once initiated the service will transition to a 'Partial' state.
+
+Once conducted, a service can now be modified to the 'Reopen' state.
+
+Once the service is marked as completed the conduction end time would be available with current time defaulted and the user would be able to change the conduction end time to future time or back date the time till the service conduction time.
+
+> ![](media/image120403_5.png)
+
+##### Pending Services List
+
+Additional Filter options added to retrieve records are conduction date range and Signed Off Reports status = All/Pending/Partial/Reopen.
+
+> ![](media/image120403_2.png)
+
+##### Conducted Services List
+
+In the Conducted Services list only services which are marked as conducted/completed would be listed from now on. There are filters made available to search by conduction date and states.
+
+> ![](media/image120403_3.png)
+
+##### Service Orders
+
+In the screen there are new flags introduced to highlight new states.
+
+> ![](media/image120403_6.png)
+
+##### Introduction of Revert Conduction and Sign-off states
+
+These options are made available basis access rights called 'Revert Services Conduction Status' and 'Revert Sign-off'.
+
+> ![](media/image120403_1.png)
+
+Once the service is reverted from conduction state, it would be reverted to Reopen state and the service would be available in the pending list for further updates/modifications such as conduction date, documentation etc.
+
+Revert Sign-off, will revert the sign-off report to conducted state and the service would be available for sign-off again.
+
+> ![](media/image120403_4.png)
+
+
+### Bugs/Minor Enhancements fixed in v12.4.3 [GET]
+
+Issue Type|Module|JIRA ID|Summary
+----------|------|-------|-------
+Enhancement|Billing|HMS-34535|In the Davita specific billing dialysis order screen, there is a new defaulting behaviour such that the patient's last visited / applicable Rate Plan is applied for the first visit of a month.
+Enhancement|Inventory|HMS-26802|Pharmacy Sales: The External PBM checkbox is selected by default.
+
+## Features in 12.4.4 [/cig-release-120404]
+
+### Billing [GET]
+
+Users can now obtain the patient's digital signature on the respective bill using touch enabled monitors or supported WACOM digital signature pads. The user can access the "Patient Signature" option under "Other Actions" link on the hospital bill screen. This is enabled only if the bill status is Finalized.
+
+![](media/image120404_7.png)
+
+Upon clicking "Patient Signature", a window appears for the patient to sign.
+
+![](media/image120404_13.png)
+
+If the signature is to be obtained from the attached signature pad, one must click on the "Read Signature Pad" button. Please note that Nexus application must be configured with the signature pad to access this functionality. Only WACOM 530/540 signature pads are supported as of now. Once the patient signs on the signature pad then signature is automatically populated on the screen.
+
+Also, if the user has touch enabled monitors or supported devices then signature can be obtained directly on the canvas using mouse or stylus. Just sign on the white area under patient signature and click on save. If configured, the obtained signature is printed on the bill print.
+
+To add patient signature in bill prints you can make use of code snippet similar to one provided below in bill print template
+
+```
+<img src="${bill.bill_signature}" style="width:150px;height:auto;"/>
+```
+
+![](media/image120404_10.png)
+
+Please Note:
+
+-   Before taking the new signature, ensure the "Clear" button is clicked first so that any existing signature is cleared.
+
+-   If the bill is re-opened or cancelled then signature is cleared.
+
+-   If configured in the bill templates, the print would show the patient signature.
+
+-   If the signature is saved then bill also would save
+
+-   Bill must be in Finalized status.
+
+### Clinical [GET]
+
+#### Introduction of additional access controls
+
+*OP/IP Prescription section:* For the system section 'Prescriptions' the view/edit rights are enabled, such that roles for authorized access can be specifically assigned.
+
+![](media/image120404_11.png)
+
+If the logged in user is not associated with authorized access, the option to add or edit items are disabled.
+
+![](media/image120404_12.png)
+
+*Note: By default all roles on migration have access to Management section and physician order section, the roles which are not applicable for prescribing for those roles the ACL can be revoked.*
+
+*MAR Setup:* A new action right has been introduced such that the user can be authorized for MAR setup which also applies to Stop Medications in MAR.
+
+![](media/image120404_14.png)
+
+If the Allow MAR setup actions right is set to No for a Role, in the MAR section the option to setup the medication administration schedule and stop medication would be disabled for the user.
+
+![](media/image120404_8.png)
+
+### Patient Administration [GET]
+
+#### Enhancements to Lab Report ready notifications
+
+The test report report notifications (SMS/Email) are now enhanced with additional tokens (doctor_name, government_id, government_id_label, message_attachment_name, report_value, result_name, reference_range, units, severity_status, signed_off_date, test_name) such that the administrator can configure a message format in the body as "Dear Patient ABC, Govt ID: EID123XXX, MR456XXX, Your COVID-19 PCR test (Test Name) released on 1-Feb-2021 (Signed off date) is Not Detected (Negative) (Result Labels Key Value Pair)", for example.
+
+-   Additional functionality includes attaching the lab reports in the email notification, configuring messages to not be auto-shared for panic values or say a positive covid-19 test result in which case a custom message can be sent such as 'Please contact the center at xxx to receive an update on your test report result".
+
+-   Messages are shared only on sign-off and incase of a revert of sign-off / amendment of reports the messages are triggered again on sign-off.
+
+#### Lab Reports over email
+
+The Lab Reports can also be manually triggered from the Signed off Reports screen. There is now a 'send email' option in the menu toolbar which prepopulates the patient's email ID. Incase of an update on email ID it gets auto-applied against the patient.
+
+![](media/image120404_3.png)
+
+### Security [GET]
+
+#### OWASP-ASVS 2.1.12 / CWE 521 - Support to allow temporary unmasking of password in Login and Credential Management Screens
+
+A minor enhancement to allow temporarily viewing password in plain text has been implemented on Login Screen, Change Password Screen and Add/Edit User Screen. The feature can be accessed by clicking on the eye icon in the Password, Old Password, New Password, Confirm Password fields.
+
+![](media/image120404_9.png)
+
+Below is the behaviour based on icon
+
+Icon|Behaviour
+----|---------
+![](media/image120404_6.png)|Password is masked. clicking on the icon will unmask the password.
+![](media/image120404_5.png)|Password is visible as plain text. Clicking on icon will mask the password.
+
+#### OWASP ASVS 2.1.1 / CWE 521 - Enforce passwords to be at least 12 characters long
+
+The default password rule has been changed to have minimum password length at 12 characters instead of 4 characters. For existing installations the rule is not modified, but it is highly recommended to have it set to 12 characters.
+
+#### OWASP ASVS 2.1.8 / CWE 521 - Password strength meter in Credential Management Screens
+
+Password Strength meter is added in Add/Edit User Screen and Change Password screen to assist the user in setting a stronger password. The strength of password is determined based on password composition rules defined in Password Preferences Screen.
+
+![](media/image120404_2.png)
+
+![](media/image120404_1.png)
+
+#### OWASP ASVS 2.2.1 / CWE 307 - Enforce locking of user account on 50 failed attempts to provide valid login credentials
+
+The default password rule has been changed to lock the user account on 50 failed login attempts instead of 99 for new installations. For existing installations the rule is not modified, but it is highly recommended to have it set to a number between 5-50, to protect application against automated/scripted brute force attacks.
+
+### Bugs/Minor Enhancements fixed in v12.4.4 [GET]
+
+Issue Type|Module|JIRA ID|Summary
+----------|------|-------|-------
+Enhancement|Patient Administration|HMS-36586|Govt ID token for SMS
+Bug|Billing|IES-2480|Issue creating zero bill against the Hospital Bill
+Bug|Patient Administration|HMS-37827|Doctor name is not getting populated on the message body of view message log inspite of adding token in the message type of message body.
+
+## Features in 12.4.5 [/cig-release-120405]
+
+### Insurance [GET]
+
+#### Prior Auth enhancements - UAE
+
+##### Introduction of resubmission options to revise the quantity for closed approvals
+
+Once any request is marked for resubmission the quantity is editable to allow modifications of the quantity.
+
+The 'Send for prior auth' status can also be unchecked for any items to hold it from further submissions.
+
+![](media/image120405_1.png)
+
+##### Option to download prior auth response files to local machines.
+
+Users can now download prior approval files from the Shafafiya post office to user machines directly to verify files manually without using any third party software.
+
+The 'Download All Prior Auth Response XML Files' link is given in the prior auth prescription screen that downloads all the response files pertaining to a prior auth request.
+
+> ![](media/image120405_5.png)
+
+##### Option to override online prior auth status by authorized users
+
+We have introduced a prior auth status override option for online prior auth transactions by authorized users with action right 'Override Online Prior Auth Status' which allows users to change the prior auth status defaulted. Below are scenarios where users should override prior auth status
+
+1.  Denial of services that do not require approvals through prior authorization. In such cases the user can manually remove prior auth details of such denied items and revert 'send for prior auth' status, which does not block the downstream workflow of ordering and billing.
+
+2.  Cases where the entire prior request gets denied although there are approved items and approval is provided in the response file. Here Insta considers the request as approved as partial quantity approvals workflow applies. Users can modify such requests to denied status to apply for resubmissions.
+
+### Clinical [GET]
+
+#### EMR: Diagnosis section changes
+
+In the Diagnosis section a new feature is introduced , while adding a diagnosis the same can be added to the problem list also by marking "Add to Problem" option.
+
+> ![](media/image120405_6.png)
+
+An option to add Diagnosis from existing problem list also introduced, The users would be allowed to select multiple Diagnosis by selecting multiple problems in a single go.
+
+![](media/image120405_3.png)
+
+### Patient Administration [GET]
+
+#### Introduction of Visit Registration APIs
+
+Four new APIs are developed so that external applications like Kiosk, Mobile App can create Visit in Insta using these APIs. Also, by passing appointment_id, the external applications can mark the appointment as arrived, and automatically add consultation charges, registration charges into the bill based on the Insta configuration settings. Please refer to the API document for the request and response details.
+
+The external applications can make use of following APIs:
+
+1.  Referral Master - to get the referral doctors from Insta.
+
+2.  Insurance Plan - to get Insurance Plan details from Insta
+
+3.  Rate Plan - to get Rate Plan details from Insta
+
+4.  Create Visit - to create Visit in Insta.
+
+#### Patient Due based alerts on appointment booking.
+
+There is a new generic preference added called: "Patient outstanding controls for new doctor appointment" which can be set to Warn/Block basis which the user is notified with a blue information toast / blocked with a red toast while booking a doctor appointment that the patient has bill dues from previous visit(s) x amount from y bills.
+
+#### ACL to allow an authorized user to overbook appointments
+
+There is an ACL added such that only an authorized user can overbook appointments for any schedulable resource (doctor, service, test, theater) from any of the calendar view, availability view or appointment activity screens. The user is displayed a red toast if the ACL is disabled which says: "Please contact the administrator as you are not authorized for overbooking appointments."
+
+#### Registration Preference to set diagnosis mandatory for outside patient registration.
+
+There is a registration preference basis which the diagnosis can be set to optional / mandatory. This change also disassociates the behaviour of this section from the forms settings where the diagnosis if set to mandatory applies on Outside Patient Registration.
+
+### Inventory [GET]
+
+#### Minor Enhancements
+
+##### Supplier Rate Contracts List Master:
+
+**Add Supplier Item Rates**: Package Size field is added as information to the pop-up and the grid after Item Name.
+
+**Edit Supplier Item Rates**: Package Size field is added as information in the grid.
+
+**Supplier Rate Contracts List** and **Add Supplier Item Rates** hyperlink is provided in the Edit Supplier Item Rates screen.
+
+Add/Edit items to have a link to navigate to **Supplier Rate Contracts List** screen.
+
+> ![](media/image120405_2.png)
+
+Stock Entry/PO screens display the discount % on the grid and in the previous purchase details popup.
+
+##### Stock Transfers:
+
+-   The Stock transfers screen now has an option to search by GRN number, which auto-populates the items on the grid for quick transfers across centers.
+
+-   Stock transfer: item rate is added in the add item dialog as information.
+
+> ![](media/image120405_4.png)
+
+### Bugs/Minor Enhancements fixed in v12.4.5 [GET]
+
+Issue Type|Module|JIRA ID|Summary
+----------|------|-------|-------
+Enhancement|Patient Administration|HMS-38134|Appointment Cancellation SMS/Email: addition of 'Service Name' token.
+Enhancement|Patient Administration|HMS-38080|[Reports] Addition of Name in Local Language Field in Report Builders.
+Enhancement|Billing|HMS-7363|Dialysis Consolidated Billing screen: avoids duplication of items covered by different sponsors. and if any item is completely patient payable, then no sponsor is displayed in that row.
+
+## Features in 12.4.6 [/cig-release-120406]
+
+### Clinical [GET]
+
+#### NABIDH HIE Integration support (add on module)
+
+v12.4.6 allows Insta customers to be connected with Dubai's Health Information Exchange the NABIDH portal. The following HL7 messages can now be shared with the NABIDH portal via the HTTPS protocol which contain the following information:
+
+**HL7-ADT messages**
+
+-   Patient demographics
+
+-   Encounters/Visit information
+
+-   Insurance information
+
+-   Allergies
+
+-   Vitals
+
+-   Diagnosis
+
+-   Procedures (Surgical and Non-Surgical)
+
+-   Admissions, Discharges and Transfers
+
+-   Patient consent
+
+**HL7-ORU messages**
+
+-   Laboratory Results
+
+-   Radiology Results without images
+
+**HL7-MDM messages**
+
+-   Clinical Documents (Discharge summary, Operative notes, etc.)
+
+**HL7-OMP messages**
+
+-   Medication Orders
+
+**HL7-VXU messages**
+
+-   Vaccination details (including lot numbers and adverse events)
+
+#### Allergy section
+
+In order to have standardized data sets for allergy information and for sharing the same with HIE systems, the allergy field is now driven by a dedicated allergy master.
+
+Below are details of how the allergy field is modified on the basis of the allergy type selection:
+
+_Allergy Type_ = No Known Allergies: will not allow any entry as was existing behaviour.
+
+_Allergy Type = Medicine_: fetches the data from Generic Names master only and does not allow any free text entry.
+
+_Allergy Type = Food and Others_: fetches the data from the new allergy master but basis the new clinical preference "Allow Free Text entry in Allergies" will also allow the user to key in the allergy on the fly which gets added to the Allergy master.
+
+![](media/image120406_5.png)
+
+![](media/image120406_7.png)
+
+**NOTE**__l__l the existing a**lergy values are migrated to the allergy master with existing allergy type association it__h data clean u**__ctions like removal of blank spaces, special characters etc. All the other values remain as unique values in the allergy master.
+
+Since the medicine allergy restricts free text entry, it is mandatory to have information updated in the Generic Names master.
+
+As of this version, the allergy section is recommended to be removed from all Generic forms and to be done only from the new UI. There are no changes done to the allergy section in the old UI based forms in screens like Generic Forms, Service Forms etc.
+
+#### Patient Vaccination
+
+The Vaccination Master now has an option to define vaccination categories.
+
+![](media/image120406_12.png)
+
+Patient Vaccinations Screen allows association with the patient's specific visit. Editing of vaccination at any point of time will not change the first visit association.
+
+![](media/image12040_11.pn__g)
+
+**he__creen also allows recording of all the necessary vaccination details from the item master if administered inhouse and free text if administered outside.
+
+![](media/image12040_14.pn__g)
+
+**[]__edia/image120406_10.png)
+
+Addition fields are added to capture vaccination information such as: Route, Site, Dosage__, Doage Units, B__tch and Expiry Date.
+
+##### Additional Informaio__n for HIE s**aring__NABIDH/MALAFFI)
+
+-   Only vaccinations administered inhouse is shared.
+
+-   Old Vaccination messages are not shared.
+
+##### Record Adverse Reaction events
+
+After the vaccination is administered, the edit action for capturing the adverse reaction is enabled.
+
+> ![](media/image120406_13.png)
+
+Details such as Reason for Monitoring reactions, Onset of Event, Event Correlation with Vaccination administration, Time of reaction and symptoms are recorded
+
+Symptoms are recorded it__h details of n**__f times it occurs and reaction type.
+
+The details can be freely modified at a later time.
+
+#### HIE Consent Upload 
+
+As part of the NABIDH HIE integration there is a need to share the "Patient's Consent" along with details of the patient willingness to Opt in or Opt out of the program. To meet these needs a new document category "HIE Document" and a new document type "HIE Consent" are introduced.
+
+![](media/image120406_9.png)
+
+As of now the consent is collected in paper form along with the patient's signature and uploaded as a patient level document. The 'HIE Consent' action which is enabled in all the registration screens and 'Edit Visit details' allows the user to capture the patient's preferencean____upload the d**cument. The captured Patient Preferences such as Facility Opt-in, Facility Opt-out or Global Opt-Out are recorded and shared with NABIDH HIE through HL7 and this information is not stored in Insta.
+
+![](media/image120406_8.png)
+
+![](media/image120406_15.png)
+
+#### IP-Physician Order changes__ __  Use Units i** renamed as Dosage Unit.
+- __  Auto Co__truction o** remarks/instructions have been implemented like OP prescription and is mandatory to be captured.
+
+### Patient Administration [GET]
+
+#### Document Type configurability to allow sharing with Insta's Patient Portal or via external APIs
+
+Until this change the Insta Patient Portal only allowed the sharing of specific diagnostics reports only (lab and radiology) and the external APIs required hardcoding of the doc type in the API configurations to allow sharing of specific documents.
+
+This change now allows a documentation type level configuration which can define whether the respective document can be shared externally.
+
+![](media/image120406_4.png)
+
+#### TRAI DLT Changes for sending SMS communications (applicable for India customers only)
+
+##### What is DLT? Why DLT is Mandatory?
+
+Distribted Ledge__r Technology(D**T)__s a Blockchain-based registration system. This Ledger keeps track of all the records of transactions made by network participants. Where telemarketers have to be registered with operators and users & resellers with operators but through Telemarketer.
+
+TRAI has taken this step to prevent customers from Unsolicited Commercial Communication which were annoying customers as fraud calls & SMS. So, according to TRAI's regulation, DLT registration is mandatory to continue further telecom services.
+
+##### How does this impact Insta's India customers?
+
+Insta customers use two SMS providers for bulk messaging patients
+
+-   Practo SMS
+
+-   their own custom SMS gateway solutions such as SMS Country or Zest Wings.
+
+With effect from 1 April 2021 all unregistered SMSs will be blocked from going out to the patients. The below changes are to unblock the SMS notification messages.
+
+##### For customers using Practo SMS Module
+
+Message templates for all Practo SMS enabled customers have been standardized and registered via SMS Provider with TRAI. We mak use of emplate names that internally translate to TRAI DLT Template IDs. Template names are picked from message subject.
+
+Template editing is disallowed to ensure template names as mentioned in subject and template body are inline with DLT registered templates.
+
+![](media/image120406_6.png)
+
+##### For customers using their own SMS providers
+
+The HTTP API support for SMS Message Dispatcher Configuration has been enhanced to support new token _\{\{message\_subject\}\}_ in URL, Header and Body fields. This token takes its value from the Subject field in Message Types Master. The DLT Template IDs can be configured in this field and the token placed in configuration to allow sending of DLT Template ID as part of API calls. 
+
+**_Reconfigure Message Dispatcher Configuration__**
+
+To reconfigure message dispatcher configuration for SMS and using HTTP Protocol following details are required:
+
+API details of SMS provider
+
+related credential or API tokens from customer
+
+Following tokens are available for using as placeholders in dispatcher configuration:
+
+Token|Description
+-----|-----------
+_\{\{mobile\_no\}\}_|Mobile number of recipient
+_\{\{message\_body\}\}_|Message content processed from template
+_\{\{message\_subject\}\}_|Message subject to be used as DLT template ID
+
+There are additional validations added in this enhancement to fail sending of messages if the token is used but value is empty. The error looks like the screenshot below in message logs:
+
+![](media/image120406_1.png)
+
+An example configuration using HTTP protocol is as below:
+
+![](media/image120406_2.png__)
+In the a__ove case, the operator has shared API `POST http://127.0.0.1:10101/comm/generictransactionalsms/send`. When a message job in Insta HMS is triggered to send message `some message content` to mobile number `+919845098450` and using registered DLT templateI__D `12345`, **he__ctual API call made by message dispatcher is as below
+
+`POST http://127.0.0.1:10101/comm/generictransactionalsms/send` with body
+
+`mobile_no=%2B919845098450&message_subject=12345&message_body=some+message+content`
+
+**_Reconfigure Message Templates_**
+
+To get started, a list of registered templates and corresponding DLT Template IDs which needs to be obtained from the SMS Provider. Once this information is available 
+
+-   map all templates to respective message types in Insta HMS
+
+-   Disable all the unmapped message types as the request will fail
+
+-   Correct the message type body for respective messages inline with the registered template.
+
+-   Update the subject field of message type with DLT template ID. There are possibilities that a single message type master template may generate multiple variations of SMS content. The subject field supports FTL expressions similar to message body. Use a similar expression to provide the right DLT template ID as the resultant subject. Below is one such example:
+
+Message Type: _Patient Discharge(SMS)_
+
+We generate two different message through the template
+
+```html
+[#if discharge_status = 'I']
+Dear ${patient_name}, ${discharge_state} has been initiated. You are going to be discharged on ${expected_discharge_date} at ${expected_discharge_time}.
+[#elseif discharge_status = 'F']
+Dear ${patient_name}, ${discharge_state} has been initiated. Your Due Amount is ${patient_due}. Your discharge date and time is ${financial_discharge_date!} at ${financial_discharge_time!} [/#if]
+- Practo
+```
+the resultant messages are
+
+_Message on initiating discharge_
+
+```html
+Dear Girish, Initiate Discharge has been initiated. You are going to be discharged on 10-04-2021 at 12:00.
+- Practo
+```
+
+_Message on financial discharge_
+
+```html
+Dear Girish, Financial Discharge has been initiated. Your Due Amount is 0.00. Your discharge date and time is 10-04-2021 at 09:35
+- Practo
+```
+
+let's assume further that _Message on initiating discharge_ has DLT template ID : _12345_ and _Message on financial discharge_ has DLT template ID : _23456_
+
+then the resultant subject expression will be
+
+```html
+[#if discharge_status = 'I']12345[#elseif discharge_status = 'F']23456[/#if]
+```
+
+![](media/image120406_3.png)
+
+**_Customer responsibilities_**
+
+Customer using their own SMS providers need to ensure:
+- they register any template changes with their provider and obtain relevent DLT template ID, update same in subject field in message types.
+
+-   There are possibilities that a single message type master template may generate multiple variations of SMS content similar to the example given above. All such variations are to be registered and DLT Template ID need to be obtained.
+
+### Bugs/Minor Enhancements fixed in v12.4.6 [GET]
+
+Issue Type|Module|JIRA ID|Summary
+----------|------|-------|-------
+Enhancement|Inventory|HMS-36422|Entry of duplicate supply invoice numbers is allowed across the financial years in the stock entry screen.
+Enhancement|Patient Administration|HMS-38080|[Reports] Addition of Name in Local Language Field in Report Builders
+Enhancement|Patient Administration|HMS-37669|Name in Local Language is available as a token for ODT/PDF form documents.
+Enhancement|Patient Administration|HMS-37077|Out Patient List: Display full name of the doctor and Department on hovering
+Bug|Billing|HMS-38402|Duplicate items are posted to the IP Bill.
+Bug|Common|HMS-38316|Session attributes missing such as `login_handle`.
+
+## Features in 12.4.7 [/cig-release-120407]
+
+### Insurance [GET]
+
+#### Remittance Reconciliation-New UX (add on module) - Beta Release 
+
+A new add-on module that enables the insurance and finance teams to manage bulk sponsor reconciliations against insurance bills processed primarily in the non-electronic format i.e. paper / xl.
+
+This solves the problems of managing bulk sponsor reconciliations and also providing a means of tracking this activity from within Insta as against the Financial Accounting application.
+
+![](media/image120407_4.png)
+
+##### Remittance Reconciliation
+
+The landing page allows the user to add a new sponsor receipt or update an existing receipt for its reconciliation details.
+
+![](media/image120407_6.png)
+
+##### Add New Sponsor Receipts
+
+The Center is defaulted based on logged in center access and for multi-center/corporate center users will be mandated to select a center.
+
+User access to the hospital billing counter is mandatory to create any new receipts. Click on 'Add new sponsor receipts' will validate for billing counter access to single/multi-center users against the selected billing counter.
+
+Sponsor/TPA, Payment Mode, Payment Received date, Payment Amount and Payment Reference are mandatory fields.
+
+Optional fields are TDS, Other Deductions if any.
+
+The total of Payment Amount + TDS + Other Deductions will be available for allocations at bill and items
+
+![](media/image120407_17.png)
+
+##### Update Existing Remittance
+
+Hitting this action will take the user to the next page which allows the user to select the respective receipt details for reconciliation by selecting from the available filters.
+
+![](media/image120407_14.png)
+
+##### The Receipts Summary Header section:
+
+This section displays the following information:
+
+-   Receipt Amount
+
+-   Allocated amount
+
+-   Unallocated amount
+
+-   TDS amount
+
+-   Other deductions Amt (if any)
+
+-   Draft Amt - This field displays the amount if saved in draft.
+
+##### Reconcile Bills By multiple search options
+
+Such as Insurance batch details, finalized date range or custom add option for searching and adding by Claim ID(s), MR No(s) or Bill No(s).
+
+![](media/image120407_18.png)
+
+![](media/image120407_5.png)
+
+##### List of Bills for Reconciliation
+
+The listed bills by search criteria can then be reconciled by entering the remittance amount, write off and/or capturing denial remarks.
+
+![](media/image120407_12.png)
+
+-   The remittance amount is allocated on the basis of FIFO across fetched bills, which can be overridden manually.
+
+-   For a bill the remittance amount will also be allocated to individual items on the FIFO basis which can be overridden manually.
+
+-   Past paid amount column displays the total remittance received so far from other sponsor receipts.
+
+-   Denial remarks can be tracked against denied bills
+
+##### Sponsor write offs
+
+-   There is a checkbox to write off the sponsor due amount.
+
+-   This option is enabled only for those users who have the action right for sponsor due write offs enabled.
+
+-   If any bill is a multi sponsor bill, then the write off checkbox is enabled only if the sponsor amount from the other sponsor is settled completely.
+
+##### Item level receipt allocation
+
+-   The action 'allocate' against each bill allows the user to view and override item level allocations if required.
+
+-   Item level remarks can also be tracked.
+
+![](media/image120407_7.png)
+
+##### Bill level CSV upload
+
+-   Bills and their respective remittance amount values can be uploaded to the page via the CSV option.
+
+-   There are three mandatory columns to upload any CSV such as bill no, paid amount and remarks
+
+-   The user can then map the columns from CSV to the Insta columns and upload the files.
+
+-   Imported bill numbers must match with system data to be uploaded successfully.
+
+-   Warning/Validations errors if any can be downloaded by clicking on the link as part of the toast and reviewed by the user to identify details.
+
+![](media/image120407_11.png)
+
+##### Item level CSV upload
+
+-   Bills and their respective item level remittance amount information can also be uploaded to the page via the CSV option.
+
+-   There are four mandatory columns to upload any CSV such as bill no, activityid, paid amount, remarks
+
+-   The user can then map the columns from CSV to the Insta columns and upload the files.
+
+-   Imported bill and activity numbers must match with system data to be uploaded successfully.
+
+-   Warning/Validations errors if any can be downloaded by clicking on the link as part of the toast and reviewed by the user to identify details.
+
+![](media/image120407_16.png)
+
+##### Save as Draft
+
+-   This feature enables the user to save the captured details in draft mode and review/verify the changes before applying the action to all bills.
+
+-   The bills and allocations can be modified freely in the draft stage.
+
+##### Save & Update bills
+
+-   The final terminal action will not allow any further corrections.
+
+-   The Sponsor receipts will be moved to 'Reconciled' status
+
+-   There is a filter made available to display only reconciled bills.
+
+##### Financial Accounting Integration
+
+Please note that in this Beta release of the Remittance Reconciliation feature, we do not have any financial accounting entries available. This is planned in subsequent releases.
+
+### Clinical [GET]
+
+#### Minor NABIDH-HIE HL7 integration changes (Only for UAE-Dubai customers)
+
+Based on some recent updates to the scope the following changes have been introduced:
+
+-   HL7-ADT Messages
+
+    -   To share patient clinical vitals and VIP status.
+
+    -   For Drug Allergy sharing, the generic medicines master was compiled with new values as is available from the DDC (MoH, Dubai Drug List) and mapped with applicable NABIDH code sets.
+
+    -   For Allergy details to be shared the allergen master has been introduced and mapped with applicable NABIDH code sets.
+
+-   HL7-OMP Messages to share patient medication frequency, duration, instructions and refill details (if any).
+
+-   HL7-MDM Messages to share performing organisation details
+
+#### Allergies section modifications applicable to only the old UI screens such as generic forms.
+
+In order to have standardized data sets for allergy information and for sharing the same with HIE systems, the allergy field is now driven by a dedicated allergy master. The old allergy sections is also enhanced to support the selection of data from master list along with existing free key-in option
+
+![](media/image120407_19.png)
+
+Below are details of how the allergy field is modified on the basis of the allergy type selection:
+
+-   Allergy Type = No Known Allergies, will not allow any entry as was existing behaviour.
+
+-   Allergy Type = Medicine, fetches the data from Generic Names master only and does not allow any free text entry.
+
+-   Allergy Type = Food and Others, fetches the data from the new allergy master but basis the new clinical preference "Allow Free Text entry in Allergies" will also allow the user to key in the allergy on the fly which gets added to the Allergy master.
+
+#### Minor IP-EMR Form Model improvements
+
+As part of a phased model change there are some backend and user action updates introduced in this release to solve for the data model lacunae and support for concurrent usage scenarios.
+
+-   The terminal Save action has now been removed as data captured for each section is automatically saved on scroll or movement of focus and the user can also explicitly 'Save' the clinical data captured at the section level.
+
+-   Support for section level locks and user notifications in case of concurrent usage.
+
+-   As part of this release we have temporarily removed the customize sections feature.
+
+-   ERx Submission and receiving response has been moved to section level
+
+### Integrations [GET]
+
+#### Integration with Salucro Digital Payments solutions (applicable to India, UAE and KSA regions) (add on integration and module)
+
+Salucro is a healthcare technology company exclusively focused on patient payments. From online bill pay solutions to provider-facing payment integrations, the Salucro platform brings cohesive payment experiences to healthcare providers, patients and third-party collection agencies. As a PCI DSS Level 1 Service Provider, Salucro belongs to an elite group of organizations worldwide that have earned HITRUST CSF Certified status, proving Salucro's continued commitment to managing risk and improving payment security and compliance. Salurco can integrate with more than 15+ different payment aggregation providers like digital wallets, EDC Machines, etc. If hospitals or clinics have the tie up with Salucro then the supported third party payments can be integrated with Insta.
+
+##### Salucro Integration Configurations: 
+
+-   Add on module - 'mod_salucro'
+
+-   Salucro Configuration API details are stored in the "insta_integration" table.
+
+    -   There are five integrations entities (integration_name) namely salucro-information, salucro-payment, salucro-refund, salucro-report, salucro-transaction
+
+    -   Configure the appropriate URL provided by Salucro
+
+-   Configure Salurco API details for every center in "center_integration_details" table
+
+    -   One must configure the details for every Salucro integration entities (configured in "insta_integration" table) for every center
+
+    -   Need to configure "http_header" (Salucro will provide these information) [you can dump the entire header info in json format]
+
+    -   Configure "http_body" as `{ "user": {"username":"", "role": "", "roles": [], "location_ids": [], "location_names":[] }, "transaction_id":"","payment_id" : 0, "line_item_id" :0 }`
+
+    -   http_request_type as "application/json" (without quotes)
+
+-   Role and Location configuration
+
+    -   Salucro will define their own Location(s) and Role(s) to access the transactional APIs
+
+    -   The Salucro Location and Role must be configured under Settings > Integration Master.
+
+![](media/image120407_3.png)
+
+-   Salucro Role Configuration
+
+    -   Click on "Create New Role Mapping" on Salucro Role Configuration
+
+    -   Select the center, userid (it is Insta UserID) and Salucro Role
+
+__Note:__ The user must have the Billing / Pharmacy Counter access for the selected center, otherwise you cannot select the user.
+
+-   You can go on add multiple Roles for the same user by continue mapping
+
+-   Click on Save
+
+![](media/image120407_10.png)
+
+-   Salucro Location Configuration
+
+    -   Click on "Create New Location Mapping" on Salucro Role Configuration
+
+    -   Select the center, counter and Salucro Location
+
+    -   You can map one counter to one Salucro location
+
+    -   Click on Save
+
+![](media/image120407_2.png)
+
+##### Payment through Salucro
+
+Go to the payment section on the billing screen and select, Salucro as payment mode and click on Process Payment button
+
+If all the configuration is set properly then you will get Salucro Payment Screen opened as a popup.
+
+Based on the payments enabled for the organization and role, the left pane of the Salucro payment screen will list the available payment options and users can select the appropriate payment option and enter necessary details and click on Save button.
+
+![](media/image120407_8.png)
+
+Based on the payments enabled for the organization and role, the left pane of the Salucro payment screen will list the available payment options and users can select the appropriate payment option and enter necessary details and click on Pay button.
+
+If all the data is correctly entered then Salucro will process the payment and the success screen is shown.
+
+The user must close this popup or click on the 'close' action to return to the Insta payments screen.
+
+The user can save the bill and receipt.
+
+![](media/image120407_13.png)
+
+##### View Salucro Report
+
+The Salucro transaction details can be viewed by using the Salucro Report page which is accessible from the Hamburger menu.
+
+The user can print or view the details of the transaction from this screen.
+
+![](media/image120407_9.png)
+
+##### View Salucro Transactions
+
+Cancelling a transaction can be done by using this "Salucro Transactions" page which is accessible from the Hamburger menu as well.
+
+One can directly enter the Salucro Transaction number or search for the transactions between the given date range.
+
+Click on the "show" link to open the 'Salucro Payments' popup for the transaction details.
+
+You can cancel the transaction based on the role rights action.
+
+You can also initiate a refund from here. But do note that this transaction will not be created in Insta.
+
+The refund can be done only from Insta's billing screen using the refund option, but the original payment must have happened through Salucro payment mode.
+
+__Note:__ To activate the refund it requires 24 hours as per the bank policy. One must wait for 24 hours before initiating the refund. If the refund to be done within that period, one can cancel the Salucro transaction and collection and payment again.
+
+![](media/image120407_1.png)
+
+![](media/image120407_15.png)
+
+Reports: The "External Payment Mode" and "External Transaction Reference" fields are made available in the Day Book Report Builder and Collection Report builder.
+
+### Bugs/Minor Enhancements fixed in v12.4.7 [GET]
+
+Issue Type|Module|JIRA ID|Summary
+----------|------|-------|-------
+Enhancement|Patient Administration|HMS-38916|Child Birth Registration screen: The mothers middle and last names are concatenated and stored as babies last name.
+Enhancement|Billing|HMS-38918|Deposit collection/refund screen changes: Deposit collection is restricted only for open packages and refund is allowed to all open/closed/discontinued packages if any deposit balance available for any such packages. Also added additional information such as total deposit collected, balance amount and package status along with package name.
+Bug|Patient Administration|HMS-38835|Patient Issue Returns: Null Pointer exception.
+Bug|Patient Administration|HMS-38748|OP Registration screen doesn't fetch appointment details available against the patient.
+Bug|Patient Administration|HMS-34035|Patient List not loading while use register with existing MR No
+Bug|Inventory|HMS-38823|Stock Entry screen: doesn't fetch the Supplier Name.
+Bug|Inventory|HMS-38749|IP/OSP Registration failure issue.
+
+
+## Features in 12.4.8 [/cig-release-120408]
+
+### Clinical [GET]
+
+#### NABIDH-HIE HL7 integration changes (Only for Dubai customers)
+
+To enable seamless message sharing for NABIDH HIE below changes are handled in new HL7 framework:
+
+-   Escape sequence handled in string fields of segments for sharing messages to NABIDH
+
+-   For few fields like allergy and medication if the available codesets are not available default codes with 0 format is shared
+
+-   Filtering out of OSP messages
+
+#### Malaffi-HIE Enhancements (Only for Abu Dhabi customers)
+
+This release upgrades the Malaffi HIE integration to an upgraded internal proprietary framework which shared the data such as a) Patient Demographic & Visit b) Patient Allergy, c) Patient Diagnostic, d) Patient Surgery, e) Patient Problems, f) Report for Lab and Radiology test
+
+*Note:* The inclusion/exclusion criteria definitions which was a single definition for all centers in v12.3.x has been migrated to the center level in v12.4.8. For upgrades this needs to be done manually.
+
+#### Updates to Prescriptions and MAR
+
+Few changes made across prescription and MAR are the following:
+
+-   In prescription sections dosage,dosage unit are made mandatory
+
+-   The duplicate medication alert message is enhanced to display dosage,frequency and duration details
+
+-   In Physician order editing of prescription details till the first administration of medication is allowed for frequency based medication and repeat at interval medicine items
+
+-   In MAR the auto-setup recommendations consider the late serving period and allow late administration.
+
+### Bugs/Minor Enhancements fixed in v12.4.8 [GET]
+
+Issue Type|Module|JIRA ID|Summary
+----------|------|-------|-------
+Platform|Common|HMS-37502|Remove all references to use of Google Analytics.
+
+
+## Previous Releases [/prev-release]
+
+### 12.x [GET]
+
+[12.3](release_1203.html)
+
+[12.2](release_1202.html)
+
+[12.1](release_1201.html)
+
+[12.0](release_1200.html)
+
+### 11.x [GET]
+
+[11.0 - 11.13.0](release_notes_11xx.pdf)

@@ -1,0 +1,11 @@
+# Ignore all files in this directory (except for this one)
+# The ui files will be automatically generated during builds
+#
+# To obtain these files locally,
+# 1. git submodule init
+# 2. git config submodule.insta-ui.url "git@github.com:practo/insta-ui.git"
+# 3. git submodule update
+# 4. cd insta-ui
+# 5. ./prod.sh
+*
+!.gitignore

@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="InsurancePatientDetails" pageWidth="595" pageHeight="842" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="mrno" class="java.lang.String"/>
+	<parameter name="insuranceID" class="java.lang.Integer" isForPrompting="false"/>
+	<parameter name="visitId" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="billNo" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="admitDoctor" class="java.lang.String"/>
+	<parameter name="refDoctor" class="java.lang.String"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false"/>
+	<queryString>
+		<![CDATA[select pr.patient_id, b.bill_no,
+get_patient_name(pd.salutation, pd.patient_name, pd.middle_name, pd.last_name) as patient_name,
+get_patient_age(pd.dateofbirth, pd.expected_dob) as patient_age,
+get_patient_age_in(pd.dateofbirth, pd.expected_dob) as patient_age_in,
+ pr.dept_name as dept_id, dep.dept_name as dept_name, ic.mr_no, ic.insurance_id,ic.insurance_no ,
+ CASE WHEN ic.estimate_amount is null THEN 0.00 ELSE   ic.estimate_amount end,
+ CASE WHEN ic.approved_limit is null THEN 0.00 ELSE   ic.approved_limit end,
+ CASE WHEN ic.claim_amount is null THEN 0.00 ELSE   ic.claim_amount end
+ from patient_registration pr
+ join bill b on  ( b.visit_id = pr.patient_id )
+ left join insurance_case ic on (pr.mr_no = ic.mr_no)
+ JOIN patient_details pd on (pr.mr_no = pd.mr_no)
+ left join department dep ON (pr.dept_name = dep.dept_id)
+ where ic.insurance_id = '$P!{insuranceID}' and
+  pr.insurance_id = '$P!{insuranceID}' and pr.patient_id = '$P!{visitId}'
+and b.bill_type = 'C']]>
+	</queryString>
+	<field name="patient_id" class="java.lang.String"/>
+	<field name="bill_no" class="java.lang.String"/>
+	<field name="patient_name" class="java.lang.String"/>
+	<field name="dept_name" class="java.lang.String"/>
+	<field name="mr_no" class="java.lang.String"/>
+	<field name="insurance_id" class="java.lang.Integer"/>
+	<field name="insurance_no" class="java.lang.String"/>
+	<field name="estimate_amount" class="java.math.BigDecimal"/>
+	<field name="approved_limit" class="java.math.BigDecimal"/>
+	<field name="claim_amount" class="java.math.BigDecimal"/>
+	<field name="patient_age" class="java.lang.String"/>
+	<background>
+		<band/>
+	</background>
+	<title>
+		<band/>
+	</title>
+	<pageHeader>
+		<band height="106">
+			<subreport>
+				<reportElement x="3" y="20" width="589" height="86"/>
+				<subreportParameter name="SUBREPORT_DIR">
+					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="label_1"/>
+				<subreportParameter name="label_2"/>
+				<subreportParameter name="value_1"/>
+				<subreportParameter name="value_2"/>
+				<subreportParameter name="patientid">
+					<subreportParameterExpression><![CDATA[$P{visitId}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="insuranceId"/>
+				<subreportParameter name="packname"/>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "/GeneralPatientDetails.jasper"]]></subreportExpression>
+			</subreport>
+			<staticText>
+				<reportElement key="staticText-17" x="4" y="5" width="206" height="15"/>
+				<textElement>
+					<font isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Patient Details:]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="73">
+			<staticText>
+				<reportElement key="staticText-7" x="5" y="52" width="84" height="15"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Estimate:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-11" x="5" y="35" width="84" height="15"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Insurance No:]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField-8" x="103" y="52" width="106" height="15"/>
+				<textElement/>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{estimate_amount}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField-9" x="103" y="35" width="106" height="15"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{insurance_no}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText-12" x="343" y="52" width="84" height="15"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Claim Amount:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-15" x="343" y="35" width="84" height="15"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Approval Limit:]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" pattern="0.00" isBlankWhenNull="true">
+				<reportElement key="textField-13" x="433" y="35" width="106" height="15"/>
+				<textElement textAlignment="Justified"/>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{approved_limit}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField-14" x="433" y="52" width="106" height="15"/>
+				<textElement textAlignment="Justified"/>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{claim_amount}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText-16" x="5" y="18" width="204" height="15"/>
+				<textElement>
+					<font isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Insurance Details:]]></text>
+			</staticText>
+			<line>
+				<reportElement key="line-3" x="4" y="72" width="480" height="1" forecolor="#808080"/>
+			</line>
+			<line>
+				<reportElement x="4" y="11" width="480" height="1" forecolor="#808080"/>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band/>
+	</detail>
+	<columnFooter>
+		<band/>
+	</columnFooter>
+	<pageFooter>
+		<band/>
+	</pageFooter>
+	<summary>
+		<band/>
+	</summary>
+</jasperReport>

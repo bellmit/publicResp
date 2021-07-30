@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<archetype-catalog>
+  <archetypes>
+    <archetype>
+      <groupId>com.digitalpersona.uareu</groupId>
+      <artifactId>dpuareu</artifactId>
+      <version>1.0</version>
+      <description>Digital Personal UareU Fingerprint SDK for Java</description>
+    </archetype>
+    <archetype>
+      <groupId>com.insta.hms</groupId>
+      <artifactId>event-logger</artifactId>
+      <version>1.0</version>
+      <description>Insta HMS Event Logger</description>
+    </archetype>
+    <archetype>
+      <groupId>com.paytm.pg</groupId>
+      <artifactId>pg-checksum</artifactId>
+      <version>1.0</version>
+      <description>PayTM SDK for Java</description>
+    </archetype>
+    <archetype>
+      <groupId>com.practo</groupId>
+      <artifactId>practo-sdk</artifactId>
+      <version>1.0.4</version>
+      <description>Practo Book SDK for Java</description>
+    </archetype>
+    <archetype>
+      <groupId>com.sun.plugin</groupId>
+      <artifactId>java_plugin</artifactId>
+      <version>1.6.0_07</version>
+      <description>Sun Java 1.6 Plugin</description>
+    </archetype>
+    <archetype>
+      <groupId>org.apache.commons.javaflow</groupId>
+      <artifactId>commons-javaflow</artifactId>
+      <version>20060411</version>
+      <description>Apache Commons Javaflow</description>
+    </archetype>
+    <archetype>
+      <groupId>org.xhtmlrenderer</groupId>
+      <artifactId>core-renderer</artifactId>
+      <version>r5pre1</version>
+      <description>Core Render</description>
+    </archetype>
+    <archetype>
+      <groupId>com.mims.cds</groupId>
+      <artifactId>libMimsCDS</artifactId>
+      <version>1.0</version>
+      <description>CIMS/MIMS SDK For Java</description>
+    </archetype>
+  </archetypes>
+</archetype-catalog>

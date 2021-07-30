@@ -1,0 +1,46 @@
+FORMAT: 1A
+HOST: http://polls.apiblueprint.org/
+
+# Orders12.2
+
+API changes for Orders 12.2
+
+## Get Orders collection [/patients/orders/opflow/getOrders.json?visit_id={visitId}]
+
+### List All Orders for the given visit [GET]
+
++ Response 200 (application/json)
+
+            {
+                "dietPrescriptions":[],
+                "servicePrescriptions":[],
+                "allOrders":[
+                    {"patient_id":"OP121834","sub_type_name":"BIOCHEMISTRY","cond_doctor_name":null,"tooth_number":null,"bill_no":"AB18000080","order_id":42932,"sub_type":"DDept0001","prior_auth_mode_id":null,"package_ref":null,"bill_type":"P","finalization_status":"U","reference_pres":null,"pres_doctor_id":"","quantity":1,"to_timestamp":null,"operation_ref":null,"outsource_dest_prescribed_id":null,"multi_visit_package":false,"dialysis_status":"","from_timestamp":null,"bill_status":"A","first_of_category":true,"insurance_category_id":-1,"prior_auth_id":null,"is_tpa":true,"urgent":"R","item_code":"477","sample_collected":"N","package_id":null,"labno":"LAB013415","pres_date":"28-11-2018","sponsor_tax_amt":0.00,"item_id":"DGC0984","pres_doctor_name":null,"isdialysis":"","pat_package_id":null,"remarks":"","org_id":"ORG0001","canclebill":true,"activity_code":"DIA","reference_common_order_id":null,"posted_date":"28-11-2018 11:01:00","pres_timestamp":"28-11-2018 11:01:00","status":"N","details":"","amount":100.00,"mandate_additional_info":"O","item_name":"Test11","type":"Laboratory","additional_info_reqts":"req","charge_id":"CH259985","insurance_claim_amount":100.00,"completion_status":"","tax_amt":0.00,"common_order_id":150566,"clinical_notes":"indiTestNotes","cond_doctor_id":null,
+                        "documents":[
+                            {"doc_id": 37977, "doc_name": "trial.js", "deleted": false},
+                            {"doc_id": 37978, "doc_name": "trial.js", "deleted": false}
+                        ]
+                    },
+                    {"patient_id":"OP121834","cond_doctor_name":"","tooth_number":null,"bill_no":"AB18000080","amount":0.00,"item_code":null,"order_id":1249,"prior_auth_mode_id":null,"sub_type":"o","package_ref":null,"item_id":"84","bill_type":"P","finalization_status":"U","type":"Package","pres_doctor_id":null,"to_timestamp":null,"operation_ref":null,"outsource_dest_prescribed_id":null,"first_of_category":false,"multi_visit_package":false,"qty":1,"dialysis_status":"","from_timestamp":null,"bill_status":"A","additional_info_reqts":"","insurance_category_id":-1,"prior_auth_id":"","pres_date":"29-11-2018","is_tpa":true,"sample_collected":"N","pres_timestamp":"29-11-2018 12:05:00","sponsor_tax_amt":0.00,"pres_doctor_name":null,"isdialysis":"","remarks":null,"org_id":"ORG0001","canclebill":true,"labno":null,"posted_date":"29-11-2018 12:05:28","status":"N","details":"","mandate_additional_info":"N","item_name":"Package BRS","insurance_claim_amount":0.00,"urgent":"","activity_code":"PKG","charge_id":"CH259987","completion_status":"","tax_amt":0.00,"common_order_id":150568,"sub_type_name":"","cond_doctor_id":null,
+                        "packComponentDetails":[
+                            {"operation_id":"","consultation_type":null,"activity_qty":1,"chargehead_name":"Lab Tests","package_id":84,"consultation_type_duration":null,"serv_dept_id":null,"doctor_id":"","remarks":"","activity_description":"24HR URINE - CREATININE","pack_ob_id":"322","activity_charge":2.33,"dept_id":"","activity_units":"","mandate_additional_info":"O","description":"","package_category_id":-1,"service_sub_group_id":84,"item_type":"Laboratory","operation_name":null,"item_name":"24HR URINE - CREATININE","consultation_type_id":null,"multi_visit_package":false,"activity_id":"DGC0651","display_order":1,"conducting_doc_mandatory":true,"additional_info_reqts":"mandateME","parent_pack_ob_id":"","service_duration":null,"insurance_category_id":-1,"charge_head":"LTDIA","package_name":"Package BRS","type":"P","pack_item_id":"DGC0651",
+                                "clinical_notes": "myClinicalNotes",
+                                "documents":[ 
+                                    {"doc_id": 37975, "doc_name": "trial.js", "deleted": false},
+                                    {"doc_id": 37976, "doc_name": "trial.js", "deleted": false}
+                                ]
+                            },
+                            {"activity_description":"24 HR URINE UREA","operation_id":"","consultation_type":null,"activity_qty":1,"chargehead_name":"Lab Tests","package_id":84,"consultation_type_duration":null,"serv_dept_id":null,"doctor_id":"","remarks":"","pack_item_id":"DGC0919","pack_ob_id":"323","dept_id":"","activity_units":"","mandate_additional_info":"N","description":"","activity_charge":0.00,"activity_id":"DGC0919","package_category_id":-1,"service_sub_group_id":84,"item_type":"Laboratory","operation_name":null,"item_name":"24 HR URINE UREA","consultation_type_id":null,"multi_visit_package":false,"conducting_doc_mandatory":true,"additional_info_reqts":"","parent_pack_ob_id":"","display_order":2,"service_duration":null,"insurance_category_id":-1,"charge_head":"LTDIA","package_name":"Package BRS","type":"P",
+                                "clinical_notes": null,
+                                "documents":[ {"doc_id": 37975, "doc_name": "trial.js", "deleted": false} ]
+                            }
+                        ],
+                        "multVisitPackComponentQtyDetails":[]}
+                    ],
+                "adv_ot_anaesthesia_type_orders_map":{},
+                "operationsPrescriptions":[],
+                "consultationPrescriptions":[],
+                "operation_orders_map":{},
+                "operation_anaesthesia_type_orders_map":{},
+                "testPrescriptions":[]
+                }

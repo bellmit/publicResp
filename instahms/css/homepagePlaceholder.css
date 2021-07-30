@@ -1,0 +1,59 @@
+/*
+* This stylesheet is defines css rules for placeholder which is being shown on
+* Home page.
+*/
+
+.slider-bullets {
+    position: absolute;
+    bottom: 16px;
+    right: 16px;
+}
+
+.slider-bullets div, .slider-bullets div:hover, .slider-bullets .av {
+    position: absolute;
+    background: url(../images/homepage/placeholder/bullets-for-slider.png) no-repeat;
+    overflow: hidden;
+    cursor: pointer;
+    width: 18px;
+    height: 16px; //width and height define size of bullets.
+}
+.slider-bullets div { 
+	background-position: -7px; 
+}
+
+.slider-bullets div:hover, .slider-bullets .av:hover { 
+	background-position: -37px -7px; 
+}
+
+.slider-bullets .av { 
+	background-position: -67px -7px; 
+}
+
+.slider-bullets .dn, .slider-bullets .dn:hover { 
+	background-position: -97px -7px; 
+}
+
+#homepage-placeholder {
+	margin: 4px 0px 0px 0px;
+    visibility: hidden;
+    position: relative;
+    width: 954px;
+    height: 578px;
+    overflow: hidden;
+    border-radius: 4px;
+    border : 1px solid #aec0d4;
+    z-index : 1;
+}
+
+#homepage-placeholder-slides {
+	cursor: move;
+	position: absolute;
+	display: block;
+	left: 0px; 
+	top: 0px;
+	width: 954px;
+	height: 583px;
+	border-radius: 4px;
+	overflow: hidden;
+	z-index: 1;
+}

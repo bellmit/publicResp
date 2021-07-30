@@ -1,0 +1,3 @@
+ddept_id,ddept_name,status,designation,category,display_order
+'DDept0013','Ultrasonography','A','Consultant -Radiologist','DEP_RAD',4
+'DDept0001','BIOCHEMISTRY','A','Doctor Signature','DEP_LAB',1

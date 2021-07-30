@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PatientDemography" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="782" leftMargin="30" rightMargin="30" topMargin="40" bottomMargin="40" isIgnorePagination="true">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="fromdate" class="java.util.Date" isForPrompting="false"/>
+	<parameter name="todate" class="java.util.Date" isForPrompting="false"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false"/>
+	<queryString>
+		<![CDATA[SELECT  count(pr.patient_id) as no,pr.patient_id ,case when extract(year from age(coalesce(dateofbirth,expected_dob)))<1 then '0-1  year' 
+		when  extract(year from age(coalesce(dateofbirth,expected_dob))) between 1 and 12  then '1-12 years' 
+		when  extract(year from age(coalesce(dateofbirth,expected_dob))) between 12 and 40 then '12-40 years'   
+		when  extract(year from age(coalesce(dateofbirth,expected_dob))) between 40 and 60 then  '40-60  years'
+		else '>60 years' end as  agegroup,case when pd.patient_gender like 'M' then 'Male' when pd.patient_gender like 'F' then 'Female' end as gender  
+FROM patient_registration pr 
+left JOIN patient_details pd on pd.mr_no=pr.mr_no  
+WHERE date_trunc('day',pr.reg_date) >= '$P!{fromdate}' and date_trunc('day',pr.reg_date) <= '$P!{todate}'  
+group by pr.visit_type,dateofbirth,expected_dob,patient_gender,pr.patient_id  
+
+union all
+
+Select count(isr.incoming_visit_id) as no,isr.incoming_visit_id as patient_id,case when isr.patient_age <1 then '0-1 year'
+when isr.patient_age between 1 and 12 then '1-12 years' when isr.patient_age between 12 and 40 then '12-40 years'
+when isr.patient_age between 40 and 60 then '40-60 years' else '>60 years' end as agegroup,
+case when isr.patient_gender like 'M' then 'Male' when isr.patient_gender like 'F' then 'Female' end as gender
+from incoming_sample_registration  isr
+join bill b on b.bill_no = isr.billno
+WHERE date_trunc('day',isr.date) >='$P!{fromdate}' and date_trunc('day',isr.date) <= '$P!{todate}'
+group by b.visit_type,isr.patient_age,isr.patient_gender,isr.incoming_visit_id
+order by agegroup]]>
+	</queryString>
+	<field name="no" class="java.lang.Long"/>
+	<field name="patient_id" class="java.lang.String"/>
+	<field name="agegroup" class="java.lang.String"/>
+	<field name="gender" class="java.lang.String"/>
+	<background>
+		<band/>
+	</background>
+	<title>
+		<band height="45">
+			<staticText>
+				<reportElement key="staticText-1" x="0" y="0" width="782" height="25"/>
+				<box>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Dash board of Patient Demography]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="337" y="25" width="65" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9" pdfFontName="Helvetica"/>	
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[$P{fromdate}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="402" y="25" width="50" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9" pdfFontName="Helvetica"/>	
+				</textElement>
+				<text><![CDATA[To Date:]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="452" y="25" width="65" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9" pdfFontName="Helvetica"/>	
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[$P{todate}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="277" y="25" width="60" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9" pdfFontName="Helvetica"/>	
+				</textElement>
+				<text><![CDATA[From Date:]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band/>
+	</pageHeader>
+	<columnHeader>
+		<band/>
+	</columnHeader>
+	<detail>
+		<band/>
+	</detail>
+	<columnFooter>
+		<band/>
+	</columnFooter>
+	<pageFooter>
+		<band/>
+	</pageFooter>
+	<summary>
+		<band height="265">
+			<crosstab>
+				<reportElement key="crosstab-1" x="13" y="30" width="241" height="78"/>
+				<crosstabHeaderCell>
+					<cellContents mode="Transparent">
+						<box>
+							<pen lineWidth="0.25"/>
+							<topPen lineWidth="0.25"/>
+							<leftPen lineWidth="0.25"/>
+							<bottomPen lineWidth="0.25"/>
+							<rightPen lineWidth="0.25"/>
+						</box>
+						<staticText>
+							<reportElement key="staticText-1" x="0" y="0" width="100" height="25"/>
+							<textElement textAlignment="Center" verticalAlignment="Middle">
+								<font size="9" pdfFontName="Helvetica"/>	
+							</textElement>
+							<text><![CDATA[Age Group]]></text>
+						</staticText>
+					</cellContents>
+				</crosstabHeaderCell>
+				<rowGroup name="agegroup" width="100" totalPosition="End">
+					<bucket>
+						<bucketExpression class="java.lang.String"><![CDATA[$F{agegroup}]]></bucketExpression>
+					</bucket>
+					<crosstabRowHeader>
+						<cellContents mode="Transparent">
+							<textField isBlankWhenNull="false">
+								<reportElement key="textField" x="0" y="0" width="100" height="30"/>
+								<box>
+									<pen lineWidth="0.25"/>
+									<topPen lineWidth="0.25"/>
+									<leftPen lineWidth="0.25"/>
+									<bottomPen lineWidth="0.25"/>
+									<rightPen lineWidth="0.25"/>
+								</box>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="9" pdfFontName="Helvetica"/>	
+								</textElement>
+								<textFieldExpression class="java.lang.String"><![CDATA[$V{agegroup}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabRowHeader>
+					<crosstabTotalRowHeader>
+						<cellContents mode="Transparent">
+							<textField isBlankWhenNull="false">
+								<reportElement key="textField" x="0" y="0" width="100" height="30"/>
+								<box>
+									<pen lineWidth="0.25"/>
+									<topPen lineWidth="0.25"/>
+									<leftPen lineWidth="0.25"/>
+									<bottomPen lineWidth="0.25"/>
+									<rightPen lineWidth="0.25"/>
+								</box>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="9" pdfFontName="Helvetica"/>	
+								</textElement>
+								<textFieldExpression class="java.lang.String"><![CDATA["Total"]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabTotalRowHeader>
+				</rowGroup>
+				<columnGroup name="gender" height="25" totalPosition="End" headerPosition="Center">
+					<bucket>
+						<bucketExpression class="java.lang.String"><![CDATA[$F{gender}]]></bucketExpression>
+					</bucket>
+					<crosstabColumnHeader>
+						<cellContents mode="Transparent">
+							<textField isBlankWhenNull="false">
+								<reportElement key="textField" x="0" y="0" width="40" height="25"/>
+								<box>
+									<pen lineWidth="0.25"/>
+									<topPen lineWidth="0.25"/>
+									<leftPen lineWidth="0.25"/>
+									<bottomPen lineWidth="0.25"/>
+									<rightPen lineWidth="0.25"/>
+								</box>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="9" pdfFontName="Helvetica"/>	
+								</textElement>
+								<textFieldExpression class="java.lang.String"><![CDATA[$V{gender}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabColumnHeader>
+					<crosstabTotalColumnHeader>
+						<cellContents/>
+					</crosstabTotalColumnHeader>
+				</columnGroup>
+				<measure name="no_Sum" class="java.lang.Long" calculation="Sum">
+					<measureExpression><![CDATA[$F{no}]]></measureExpression>
+				</measure>
+				<crosstabCell width="40" height="30">
+					<cellContents mode="Transparent">
+						<textField isBlankWhenNull="false">
+							<reportElement key="textField" x="0" y="0" width="40" height="30"/>
+							<box>
+								<pen lineWidth="0.25"/>
+								<topPen lineWidth="0.25"/>
+								<leftPen lineWidth="0.25"/>
+								<bottomPen lineWidth="0.25"/>
+								<rightPen lineWidth="0.25"/>
+							</box>
+							<textElement textAlignment="Center" verticalAlignment="Middle">
+								<font size="9" pdfFontName="Helvetica"/>	
+							</textElement>
+							<textFieldExpression class="java.lang.Long"><![CDATA[$V{no_Sum}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell width="0" height="30" columnTotalGroup="gender">
+					<cellContents mode="Transparent"/>
+				</crosstabCell>
+				<crosstabCell width="40" height="30" rowTotalGroup="agegroup">
+					<cellContents mode="Transparent">
+						<textField isBlankWhenNull="false">
+							<reportElement key="textField" x="0" y="0" width="40" height="30"/>
+							<box>
+								<pen lineWidth="0.25"/>
+								<topPen lineWidth="0.25"/>
+								<leftPen lineWidth="0.25"/>
+								<bottomPen lineWidth="0.25"/>
+								<rightPen lineWidth="0.25"/>
+							</box>
+							<textElement textAlignment="Center" verticalAlignment="Middle">
+								<font size="9" pdfFontName="Helvetica"/>	
+							</textElement>
+							<textFieldExpression class="java.lang.Long"><![CDATA[$V{no_Sum}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell width="0" height="30" rowTotalGroup="agegroup" columnTotalGroup="gender">
+					<cellContents mode="Transparent"/>
+				</crosstabCell>
+				<whenNoDataCell>
+					<cellContents mode="Transparent"/>
+				</whenNoDataCell>
+			</crosstab>
+			<subreport isUsingCache="true">
+				<reportElement key="subreport-2" x="13" y="202" width="717" height="62"/>
+				<subreportParameter name="fromdate">
+					<subreportParameterExpression><![CDATA[$P{fromdate}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="todate">
+					<subreportParameterExpression><![CDATA[$P{todate}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR}+"/SubReportPatientDemo.jasper"]]></subreportExpression>
+			</subreport>
+			<staticText>
+				<reportElement key="staticText-3" x="0" y="1" width="771" height="19"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true" isUnderline="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Note : Pharmacy Retail Customers  are  Excluded ]]></text>
+			</staticText>
+		</band>
+	</summary>
+	<noData>
+		<band height="50">
+			<staticText>
+				<reportElement x="0" y="0" width="782" height="50"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[No data found for given dates]]></text>
+			</staticText>
+		</band>
+	</noData>
+</jasperReport>

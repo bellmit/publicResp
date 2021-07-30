@@ -1,0 +1,817 @@
+{
+    "title": "Insurance Claim Batch Report",
+    "description": "This report shows one row per insurance claim, with other details of the claim.",
+    "reportGroup": "Insurance Reports",
+    "allowNoDate": true,
+    "dateFields": [
+        "first_created_date",
+        "first_submission_date",
+        "visit_date",
+        "last_submission_date"
+    ],
+    "defaultOrder": "claim_id",
+    "queryUnits": [
+        {
+            "mainTableName": "insurance_claim",
+            "mainTableAlias": "icl",
+            "joinTables": [
+                {
+                    "type": "JOIN",
+                    "name": "patient_registration",
+                    "alias": "pr",
+                    "dependsOn": "icl",
+                    "expression": "ON (pr.patient_id = icl.patient_id)"
+                },
+                {
+                    "type": "JOIN",
+                    "name": "hospital_center_master",
+                    "alias": "hcm",
+                    "dependsOn": "pr",
+                    "expression": "ON (hcm.center_id = pr.center_id)"
+                },
+                {
+                    "type": "JOIN",
+                    "name": "patient_details",
+                    "alias": "pd",
+                    "dependsOn": "pr",
+                    "expression": "ON (pd.mr_no = pr.mr_no)"
+                },
+                {
+                    "name": "salutation_master",
+                    "alias": "sm",
+                    "dependsOn": "pd",
+                    "expression": "ON pd.salutation= sm.salutation_id"
+                },
+                {
+                    "name": "organization_details",
+                    "alias": "od",
+                    "dependsOn": "pr",
+                    "expression": "ON (pr.org_id = od.org_id)"
+                },
+                {
+                    "type": "JOIN",
+                    "name": "patient_insurance_plans",
+                    "alias": "pip",
+                    "dependsOn": "icl",
+                    "expression": "ON (pip.patient_id = icl.patient_id AND pip.plan_id = icl.plan_id)"
+                },
+                {
+                    "type": "JOIN",
+                    "name": "patient_policy_details",
+                    "alias": "ppd",
+                    "dependsOn": "icl,pip",
+                    "expression": "ON (ppd.visit_id = icl.patient_id AND pip.patient_policy_id = pip.patient_policy_id)"
+                },
+                {
+                    "name": "op_type_names",
+                    "alias": "otn",
+                    "dependsOn": "pr",
+                    "expression": "ON (otn.op_type = pr.op_type)"
+                },
+                {
+                    "name": "visit_type_names",
+                    "alias": "vn",
+                    "dependsOn": "pr",
+                    "expression": "ON (vn.visit_type = pr.visit_type)"
+                },
+                {
+                    "name": "country_master",
+                    "alias": "nc",
+                    "dependsOn": "pd",
+                    "expression": " ON (pd.nationality_id = nc.country_id)"
+                },
+                {
+                    "name": "doctors",
+                    "alias": "rdoc",
+                    "dependsOn": "pr",
+                    "expression": "ON (pr.reference_docto_id = rdoc.doctor_id)"
+                },
+                {
+                    "name": "referral",
+                    "alias": "ref",
+                    "dependsOn": "pr",
+                    "expression": "ON (pr.reference_docto_id = ref.referal_no)"
+                },
+                {
+                    "name": "department",
+                    "alias": "admdep",
+                    "dependsOn": "pr",
+                    "expression": "ON (pr.admitted_dept = admdep.dept_id)"
+                },
+                {
+                    "name": "department",
+                    "alias": "dep",
+                    "dependsOn": "pr",
+                    "expression": "ON (pr.dept_name = dep.dept_id)"
+                },
+                {
+                    "name": "doctors",
+                    "alias": "dr",
+                    "dependsOn": "pr",
+                    "expression": "ON (dr.doctor_id = pr.doctor)"
+                },
+                {
+                    "name": "insurance_company_master",
+                    "alias": "icm",
+                    "dependsOn": "pip",
+                    "expression": "ON (icm.insurance_co_id = pip.insurance_co)"
+                },
+                {
+                    "name": "tpa_master",
+                    "alias": "tpa",
+                    "dependsOn": "pip",
+                    "expression": "ON (pip.sponsor_id = tpa.tpa_id)"
+                },
+                {
+                    "name": "insurance_plan_main",
+                    "alias": "ipm",
+                    "dependsOn": "pip",
+                    "expression": "ON (pip.plan_id = ipm.plan_id)"
+                },
+                {
+                    "name": "insurance_category_master",
+                    "alias": "icam",
+                    "dependsOn": "pip",
+                    "expression": "ON (icam.category_id = pip.plan_type_id)"
+                },
+                {
+                    "name": "sponsor_type",
+                    "alias": "pst",
+                    "dependsOn": "tpa",
+                    "expression": "ON (tpa.sponsor_type_id = pst.sponsor_type_id)"
+                },
+                {
+                    "name": "account_group_master",
+                    "alias": "cagm",
+                    "dependsOn": "icl",
+                    "expression": "ON (cagm.account_group_id = icl.account_group)"
+                },
+                {
+                    "name": "insurance_submission_batch",
+                    "alias": "firstsub",
+                    "dependsOn": "icl",
+                    "expression": "ON (firstsub.submission_batch_id = icl.last_submission_batch_id AND firstsub.is_resubmission = 'N')"
+                },
+                {
+                    "name": "mrd_diagnosis",
+                    "alias": "pdiag",
+                    "dependsOn": "pr",
+                    "expression": "ON (pdiag.visit_id = pr.patient_id AND pdiag.diag_type = 'P')"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "tpa_master",
+                    "alias": "tp",
+                    "dependsOn": "firstsub",
+                    "expression": "ON (tp.tpa_id = firstsub.tpa_id)"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "claim_submissions",
+                    "alias": "scs",
+                    "dependsOn": "icl",
+                    "expression": "ON (scs.claim_id = icl.claim_id AND icl.last_submission_batch_id = scs.submission_batch_id)"
+                },
+                {
+                    "type": "JOINLATERAL",
+                    "name": "(SELECT bcl.claim_id, bcl.plan_id, sum(b.total_amount) as total_amt, sum(b.total_tax) as total_tax, sum(b.total_receipts) as total_receipts, sum(coalesce(b.primary_total_sponsor_receipts,0)) as pri_sponsor_receipt, sum(coalesce(b.secondary_total_sponsor_receipts,0)) as sec_sponsor_receipt, sum(coalesce(deposit_set_off,0)) as deposit_set_off FROM bill b JOIN bill_claim bcl ON(b.bill_no = bcl.bill_no AND bcl.claim_id = icl.claim_id) GROUP BY bcl.claim_id, bcl.plan_id)",
+                    "alias": "bcl",
+                    "dependsOn": "icl",
+                    "expression": "ON (bcl.claim_id = icl.claim_id AND bcl.plan_id = icl.plan_id)"
+                },
+                {
+                    "type": "JOINLATERAL",
+                    "name": "(SELECT bcc.claim_id, sum(bcc.insurance_claim_amt) as tot_claim_amt, sum(tax_amt) as tot_claim_tax, sum(bcc.claim_recd_total) as tot_claim_recd_amt FROM bill_charge_claim bcc WHERE bcc.claim_id = icl.claim_id GROUP BY bcc.claim_id)",
+                    "alias": "bcc",
+                    "dependsOn": "icl",
+                    "expression": "ON (bcc.claim_id = icl.claim_id)"
+                },
+                {
+                    "type": "LEFTLATERAL",
+                    "name": "(SELECT cs.claim_id, max(cs.submission_batch_id) as submission_batch_id FROM claim_submissions cs WHERE cs.claim_id = icl.claim_id GROUP by claim_id)",
+                    "alias": "cs",
+                    "dependsOn": "icl",
+                    "expression": "ON (cs.claim_id = icl.claim_id)"
+                },
+                {
+                    "name": "insurance_submission_batch",
+                    "alias": "resub",
+                    "dependsOn": "cs",
+                    "expression": "ON (resub.submission_batch_id = cs.submission_batch_id AND resub.is_resubmission = 'Y') "
+                },
+                {
+                    "type": "LEFTLATERAL",
+                    "name": "(SELECT count(cs.submission_batch_id) AS resubmission_count, cs.claim_id FROM claim_submissions cs JOIN insurance_submission_batch isb ON (cs.submission_batch_id = isb.submission_batch_id) WHERE icl.claim_id = cs.claim_id AND isb.is_resubmission = 'Y' GROUP BY cs.claim_id)",
+                    "alias": "csx",
+                    "dependsOn": "icl",
+                    "expression": "ON (icl.claim_id = csx.claim_id)"
+                }
+            ]
+        }
+    ],
+    "fields": {
+        "claim_id": {
+            "table": "icl",
+            "displayName": "Claim Id.",
+            "width": 65,
+            "groupable": true,
+            "filterable": true
+        },
+        "patient_id": {
+            "table": "icl",
+            "displayName": "Patient Id",
+            "width": 100,
+            "filterable": true,
+            "groupable": true
+        },
+        "mr_no": {
+            "table": "pd",
+            "displayName": "MR No.",
+            "width": 100,
+            "filterable": true,
+            "groupable": true
+        },
+        "full_name_wo_title": {
+            "table": "pd",
+            "displayName": "Patient Name W/O Title",
+            "width": 150,
+            "expressionLines": [
+                "pd.patient_name || ",
+                "CASE WHEN coalesce(pd.middle_name, '') = '' THEN '' ELSE (' ' || pd.middle_name) END ",
+                " || CASE WHEN coalesce(pd.last_name, '') = '' THEN '' ELSE (' ' || pd.last_name) END "
+            ]
+        },
+        "name_local_language": {
+            "table": "pd",
+            "displayName": "Name In Local Language",
+            "width": 150,
+            "expression": "pd.name_local_language"
+         },
+        "full_name": {
+            "table": "pd,sm",
+            "displayName": "Patient Name",
+            "width": 150,
+            "expressionLines": [
+                "sm.salutation || ' ' || pd.patient_name || ",
+                "CASE WHEN coalesce(pd.middle_name, '') = '' THEN '' ELSE (' ' || pd.middle_name) END ",
+                " || CASE WHEN coalesce(pd.last_name, '') = '' THEN '' ELSE (' ' || pd.last_name) END "
+            ]
+        },
+        "nationality_name": {
+            "expression": "nc.country_name",
+            "displayName": "Nationality",
+            "table": "nc",
+            "filterable": true,
+            "allowedValuesQuery": "SELECT country_name FROM country_master ORDER BY country_name"
+        },
+        "reg_date": {
+            "table": "pr",
+            "displayName": "Adm/Reg. Date",
+            "width": 60,
+            "dataType": "date",
+            "groupable": true
+        },
+        "rate_plan": {
+            "table": "od",
+            "displayName": "Rate Plan",
+            "width": 70,
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT org_name FROM organization_details ORDER BY org_name",
+            "expression": "od.org_name "
+        },
+        "admitted_dept_name": {
+            "table": "admdep",
+            "displayName": "Admitting Department",
+            "width": 120,
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT dept_name FROM department ORDER BY dept_name",
+            "expression": "admdep.dept_name "
+        },
+        "dept_name": {
+            "table": "dep",
+            "displayName": "Department",
+            "width": 120,
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT dept_name FROM department ORDER BY dept_name"
+        },
+        "discharge_date": {
+            "table": "pr",
+            "displayName": "Date Of Discharge",
+            "width": 60,
+            "dataType": "date",
+            "groupable": true
+        },
+        "op_type_name": {
+            "table": "otn",
+            "displayName": "OP Type",
+            "width": 80,
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT op_type_name FROM op_type_names"
+        },
+        "patient_type_name": {
+            "table": "vn",
+            "displayName": "Patient Type",
+            "width": 40,
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValues": [
+                "IP",
+                "OP"
+            ],
+            "expression": "vn.visit_type_name "
+        },
+        "doctor_name": {
+            "table": "dr",
+            "displayName": "Admitting Doctor",
+            "width": 120,
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT doctor_name FROM doctors ORDER BY doctor_name"
+        },
+        "tpa_name": {
+            "table": "tpa",
+            "displayName": "Sponsor",
+            "width": 120,
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT tpa_name FROM tpa_master ORDER BY tpa_name",
+            "expression": "tpa.tpa_name"
+        },
+        "plan_name": {
+            "table": "ipm",
+            "displayName": "Plan Name",
+            "width": 100,
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT plan_name FROM insurance_plan_main ORDER BY plan_name",
+            "expression": "ipm.plan_name "
+        },
+        "plan_type": {
+            "table": "icam",
+            "displayName": "Plan Type",
+            "width": 80,
+            "allowedValuesQuery": "SELECT category_name FROM insurance_category_master ORDER BY category_name",
+            "allowNull": true,
+            "expression": "icam.category_name ",
+            "filterable": true,
+            "groupable": true
+        },
+        "sponsor_type": {
+            "displayName": "Sponsor Type",
+            "width": "100",
+            "dataType": "string",
+            "expression": "(pst.sponsor_type_name)",
+            "table": "pst",
+            "groupable": true,
+            "filterable": true
+        },
+        "insurance_co_name": {
+            "table": "icm",
+            "displayName": "Insurance Company",
+            "width": 100,
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT insurance_co_name FROM insurance_company_master ORDER BY insurance_co_name",
+            "expression": "icm.insurance_co_name"
+        },
+        "member_id": {
+            "table": "ppd",
+            "displayName": "Member ID",
+            "width": 65,
+            "filterable": true,
+            "expression": "ppd.member_id"
+        },
+        "tpa_tin_number": {
+            "table": "tpa",
+            "displayName": "TPA/Sponsor Tin No.",
+            "width": 120,
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT tin_number FROM tpa_master ORDER BY tpa_name",
+            "expression": "tpa.tin_number"
+        },
+        "use_drg": {
+            "table": "pr",
+            "displayName": "Use DRG",
+            "width": 70,
+            "filterable": true,
+            "groupable": true,
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "expression": "CASE WHEN pr.use_drg IS NOT NULL AND pr.use_drg = 'Y' THEN 'Yes' ELSE 'No' END "
+        },
+        "codification_remarks": {
+            "table": "pr",
+            "displayName": "Codification Remarks",
+            "width": 70,
+            "filterable": true,
+            "expression": "(pr.codification_remarks)"
+        },
+        "payers_reference_no": {
+            "table": "icl",
+            "displayName": "Payers Reference No.",
+            "width": 90,
+            "groupable": true,
+            "filterable": true
+        },
+        "codification_status": {
+            "table": "pr",
+            "displayName": "Codification Status",
+            "width": 65,
+            "filterable": true,
+            "groupable": true,
+            "allowedValues": [
+                "In-progress",
+                "Completed",
+                "Completed-Needs Verification",
+                "Verified and Closed"
+            ],
+            "expression": " CASE WHEN pr.codification_status='P' THEN 'In-progress'        WHEN pr.codification_status='C' then 'Completed'        WHEN pr.codification_status='R' then 'Completed-Needs Verification'        WHEN pr.codification_status='V' THEN 'Verified and Closed' END       "
+        },
+        "codified_by": {
+            "table": "pr",
+            "displayName": "Codified By",
+            "width": 100
+        },
+        "resubmission_count": {
+            "table": "csx",
+            "displayName": "Resubmission Count",
+            "width": 40,
+            "description": "Resubmission Count",
+            "dataType": "integer",
+            "groupable": true,
+            "filterable": true,
+            "expression": "csx.resubmission_count"
+        },
+        "action_remarks": {
+            "table": "icl",
+            "displayName": "Claim Action Remarks",
+            "width": 150
+        },
+        "resubmission_type": {
+            "table": "icl",
+            "displayName": "Claim Resubmission Type",
+            "width": 60,
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValues": [
+                "correction",
+                "internal complaint",
+                "legacy"
+            ]
+        },
+        "claim_account_group": {
+            "table": "cagm",
+            "displayName": "Claim Account Group",
+            "width": 100,
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT account_group_name FROM account_group_master ORDER by account_group_name",
+            "expression": "cagm.account_group_name"
+        },
+        "claim_service_reg_no": {
+            "table": "cagm",
+            "displayName": "Claim Acc. Group Service Reg. No.",
+            "width": 65,
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "expression": "cagm.account_group_service_reg_no"
+        },
+        "center_service_reg_no": {
+            "table": "hcm",
+            "displayName": "Center Service Reg. No.",
+            "width": 65,
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "expression": "hcm.hospital_center_service_reg_no"
+        },
+        "insurance_claim_status": {
+            "table": "icl,scs",
+            "displayName": "Claim Status",
+            "width": 60,
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValues": [
+                "Open",
+                "Batched",
+                "ForResubmission",
+                "Closed",
+                "Sent"
+            ],
+            "expressionLines": [
+                " CASE WHEN icl.status='O' THEN 'Open' ",
+                " WHEN icl.status='B' AND scs.status = 'O' THEN 'Batched' ",
+                " WHEN icl.status = 'B' AND scs.status = 'S' THEN 'Sent' ",
+                " WHEN icl.status='B' AND scs.status = 'D' THEN 'Denied' ",
+                " WHEN icl.status='M' THEN 'ForResubmission' ",
+                " WHEN icl.status='C' AND scs.status = 'D' THEN 'Closed' ",
+                " WHEN icl.status='C' AND scs.status = 'R' THEN 'Closed' ",
+                " ELSE null END"
+            ]
+        },
+        "closure_type": {
+            "table": "icl",
+            "displayName": "Claim Closure",
+            "width": 80,
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValues": [
+                "FullyReceived",
+                "DenialAccepted",
+                "WrittenOff"
+            ],
+            "expressionLines": [
+                " CASE WHEN icl.closure_type='F' THEN 'FullyReceived' ",
+                " WHEN icl.closure_type='D' THEN 'DenialAccepted' ",
+                " WHEN icl.closure_type='W' THEN 'WrittenOff' ",
+                " ELSE null END "
+            ]
+        },
+        "visit_date": {
+            "table": "pr",
+            "displayName": "Visit Date",
+            "width": 60,
+            "dataType": "date",
+            "groupable": true,
+            "expression": "pr.reg_date"
+        },
+        "first_submission_batch_id": {
+            "table": "firstsub",
+            "displayName": "Submission ID",
+            "width": 65,
+            "groupable": true,
+            "filterable": true,
+            "expression": "firstsub.submission_batch_id"
+        },
+        "last_submission_batch_id": {
+            "table": "resub",
+            "displayName": "Re-Submission ID",
+            "width": 65,
+            "groupable": true,
+            "filterable": true,
+            "expression": "resub.submission_batch_id"
+        },
+        "first_submission_batch_username": {
+            "table": "firstsub",
+            "displayName": "Submission Batch created by user",
+            "width": 65,
+            "description": "Submission Batch Username",
+            "groupable": true,
+            "filterable": true,
+            "expression": "firstsub.username"
+        },
+        "first_submission_batch_file_name": {
+            "table": "firstsub",
+            "displayName": "Submission Batch File Name",
+            "width": 200,
+            "description": "Submission Batch File Name",
+            "groupable": true,
+            "filterable": true,
+            "expression": "firstsub.file_name"
+        },
+        "first_submission_batch_patient_type": {
+            "table": "firstsub",
+            "displayName": "Submission Batch Patient Type",
+            "width": 60,
+            "description": "Submission Batch Patient Type",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": false,
+            "allowedValues": [
+                "IP PATIENTS",
+                "OP PATIENTS",
+                "ALL PATIENTS"
+            ],
+            "expressionLines": [
+                " CASE WHEN firstsub.patient_type ='i' THEN 'IP PATIENTS' ",
+                " WHEN firstsub.patient_type ='o' THEN 'OP PATIENTS' ",
+                " WHEN firstsub.patient_type ='*' THEN 'ALL PATIENTS' ",
+                " ELSE null END"
+            ]
+        },
+        "first_submission_date": {
+            "table": "firstsub",
+            "displayName": "Submission Date",
+            "width": 60,
+            "dataType": "date",
+            "groupable": true,
+            "expression": "(firstsub.submission_date)::date "
+        },
+        "last_submission_date": {
+            "table": "resub",
+            "displayName": "Re-Submission Date",
+            "width": 60,
+            "dataType": "date",
+            "groupable": true,
+            "expression": "(resub.submission_date)::date"
+        },
+        "first_created_date": {
+            "table": "firstsub",
+            "displayName": "Submission Batch Created Date",
+            "dataType": "date",
+            "width": 60,
+            "groupable": true,
+            "expression": "(firstsub.created_date)::date "
+        },
+        "first_submission_status": {
+            "table": "firstsub",
+            "displayName": "Submission Status",
+            "width": 60,
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValues": [
+                "Open",
+                "Sent",
+                "Rejected"
+            ],
+            "expressionLines": [
+                " CASE WHEN firstsub.status ='O' THEN 'Open' ",
+                " WHEN firstsub.status ='S' THEN 'Sent' ",
+                " WHEN firstsub.status ='X' THEN 'Rejected' ",
+                " ELSE null END"
+            ]
+        },
+        "last_submission_status": {
+            "table": "resub",
+            "displayName": "Re-Submission Status",
+            "width": 60,
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValues": [
+                "Open",
+                "Sent",
+                "Rejected"
+            ],
+            "expressionLines": [
+                " CASE WHEN resub.status ='O' THEN 'Open' ",
+                " WHEN resub.status ='S' THEN 'Sent' ",
+                " WHEN resub.status ='X' THEN 'Rejected' ",
+                " ELSE null END"
+            ]
+        },
+        "first_re_submission_status": {
+            "table": "firstsub",
+            "displayName": "Submission Batch No.",
+            "width": 50,
+            "description": "Submission Batch",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "expression": "CASE WHEN firstsub.is_resubmission ='Y' THEN 'No' ELSE 'Yes' END"
+        },
+        "last_re_submission_status": {
+            "table": "resub",
+            "displayName": "Re-submission Batch",
+            "width": 50,
+            "description": "Resubmission Batch",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "expression": "CASE WHEN resub.is_resubmission ='Y' THEN 'Yes' ELSE 'No' END"
+        },
+        "primary_diagnosis": {
+            "table": "pdiag",
+            "displayName": "Primary Diagnosis",
+            "width": 150,
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "expression": "pdiag.description"
+        },
+        "primary_diag_icd_code": {
+            "table": "pdiag",
+            "displayName": "Pri. Code",
+            "width": 40,
+            "description": "Primary Diagnosis Code",
+            "allowNull": true,
+            "expression": "pdiag.icd_code"
+        },
+        "referer": {
+            "table": "rdoc,ref",
+            "displayName": "Referral Doctor",
+            "width": 120,
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT referal_name as referer FROM referral UNION ALL SELECT doctor_name as referer FROM doctors ORDER BY referer",
+            "expression": "COALESCE(rdoc.doctor_name, ref.referal_name) "
+        },
+        "bills_claim_recd_amount": {
+            "table": "bcl,bcc",
+            "displayName": "Total Sponsor Paid Amt",
+            "width": 60,
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "expression": "COALESCE(tot_claim_recd_amt,0)+COALESCE(pri_sponsor_receipt,0)+COALESCE(sec_sponsor_receipt,0)",
+            "aggFunction": "sum",
+            "filterable": true
+        },
+        "bills_total_amount": {
+            "table": "bcl",
+            "displayName": "Net Amt",
+            "width": 60,
+            "expression": "COALESCE(total_amt,0)+COALESCE(total_tax,0)",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "filterable": true
+        },
+        "bills_amount": {
+            "table": "bcl",
+            "displayName": "Bill Amount w/o Taxes",
+            "width": 60,
+            "expression": "COALESCE(total_amt,0)",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "filterable": true
+        },
+        "bills_total_receipts": {
+            "table": "bcl",
+            "displayName": "Paid Amt",
+            "width": 60,
+            "expression": "COALESCE(total_receipts,0)",
+            "decimalType": "amount",
+            "aggFunction": "sum",
+            "filterable": true
+        },
+        "bills_insurance_claim": {
+            "table": "bcc",
+            "displayName": "Total Sponsor Amt",
+            "width": 60,
+            "expression": "COALESCE(tot_claim_amt,0)+COALESCE(tot_claim_tax,0)",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "aggFunction": "sum",
+            "filterable": true
+        },
+        "bills_due_amount": {
+            "table": "bcl,bcc",
+            "displayName": "Patient Due Amt",
+            "width": 60,
+            "expression": "(COALESCE(total_amt,0) + COALESCE(total_tax,0) - COALESCE(total_receipts,0) - COALESCE(tot_claim_amt,0) - COALESCE(tot_claim_tax,0) - COALESCE(deposit_set_off,0))",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "filterable": true
+        },
+        "sponsor_name": {
+            "table": "tp",
+            "displayName": "Sponsor Name",
+            "width": "100",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT tpa_name FROM tpa_master ORDER by tpa_name",
+            "expression": "tp.tpa_name"
+        },
+        "dateofbirth": {
+            "table": "pd",
+            "displayName": "Date of Birth",
+            "dataType": "date",
+            "filterable": true,
+            "groupable": true,
+            "width": "80",
+            "name": "dateofbirth"
+        }
+    },
+    "defaultShowFields": [
+        "claim_id",
+        "patient_id",
+        "full_name",
+        "tpa_name",
+        "insurance_claim_status",
+        "first_submission_batch_id",
+        "first_submission_status",
+        "bills_insurance_claim",
+        "bills_claim_recd_amount"
+    ]
+}

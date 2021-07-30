@@ -1,0 +1,20 @@
+<digester-rules>
+	<pattern value="action-config">
+		<object-create-rule classname="com.insta.hms.common.ActionConfigMain" />
+		<set-properties-rule />
+	</pattern>
+	<pattern value="action-config/action-hook-config">
+		<object-create-rule classname="com.insta.hms.common.ActionHookConfig" />
+		<set-properties-rule />	
+		<set-next-rule methodname="addActionHookConfig"/>
+	</pattern>
+
+	<pattern value="action-config/action-hook-config/action-plugin">
+		<object-create-rule classname="com.insta.hms.common.ActionPluginConfig" />
+		<set-properties-rule />
+	    <set-next-rule methodname="addPlugins"/>	
+	</pattern>
+</digester-rules>
+
+
+

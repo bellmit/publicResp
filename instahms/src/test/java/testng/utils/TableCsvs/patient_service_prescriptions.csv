@@ -1,0 +1,3 @@
+service_remarks,mod_time,activity_due_date,service_id,username,tooth_unv_number,tooth_fdi_number,qty,preauth_required,op_service_pres_id,admin_strength,priority
+'','2019-07-25 15:06:04',,'SERV0089','vinay','','',1,'N',2298,'','N'
+'','2019-07-25 15:06:04',,'SERV0183','vinay','','',1,'Y',2299,'','N'

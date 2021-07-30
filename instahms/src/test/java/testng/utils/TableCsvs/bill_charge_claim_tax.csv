@@ -1,0 +1,4 @@
+charge_id,claim_id,tax_sub_group_id,tax_rate,sponsor_tax_amount,charge_tax_id,charge_claim_tax_id,adj_amt,sponsor_id
+'CH259687','CLD000579','19','5.00','2.98','401','129','N','TPAID0102'
+'CH259687','CLD000579','20','5.00','2.98','402','130','N','TPAID0102'
+'CH259818','CLD000579','21','10.00','1.72','506','198','N','TPAID0102'

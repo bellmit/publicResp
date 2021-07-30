@@ -1,0 +1,3 @@
+sale_item_id,claim_id,item_subgroup_id,tax_rate,tax_amt,adj_amt
+'54913','CLD000579','2','2.50','1.47','N'
+'54913','CLD000579','8','2.50','1.47','N'

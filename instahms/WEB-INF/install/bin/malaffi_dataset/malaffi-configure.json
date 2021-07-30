@@ -1,0 +1,8 @@
+{
+    "IP_ADDRESS" : "127.0.0.1",
+    "PORT_NUMBER" : "8003",
+    "SENDING_FACILITY" : "sending facility",
+    "SENDING_APPICATION" : "sending application",
+    "RECEIVING_FACILITY" : "receiving facility",
+    "RECEIVING_APPICATION" : "receiving application"
+}

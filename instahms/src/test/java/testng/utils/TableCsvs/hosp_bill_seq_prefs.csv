@@ -1,0 +1,7 @@
+priority,bill_type,visit_type,pattern_id,restriction_type,center_id,is_tpa,is_credit_note,bill_seq_id
+10,'P','*','BILL_PHARMACY','P',0,'*','f',1
+11,'P','*','BILL_PHARMACY_RETURN','P',0,'*','f',2
+20,'*','t','BILL_INCOMING','*',0,'*','f',3
+30,'P','*','BILL_ALTERNATE','*',0,'*','f',4
+100,'*','*','BILL_DEFAULT','*',0,'*','f',5
+101,'*','*','BILL_DEFAULT_CREDITNOTE','*',0,'*','t',6

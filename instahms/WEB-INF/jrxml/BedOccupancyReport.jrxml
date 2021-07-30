@@ -1,0 +1,459 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="BedOccupancyReport" pageWidth="860" pageHeight="595" columnWidth="820" leftMargin="20" rightMargin="20" topMargin="40" bottomMargin="40">
+	<parameter name="wardId" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="occupancy" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="whereCodition" class="java.lang.String"/>
+	<parameter name="orderby" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select bsr.mr_no,b.visit_id as patient_id, bsr.patient_name,bsr.status,bsr.occupancy,bsr.bed_id,
+bsr.age || '/' || bsr.patient_gender as patient_age,bsr.doctor_name AS doctor_name,bsr.bed_type,
+coalesce(bsr.bed_name,'Not Allocated') as
+bed_name, bsr.ward_name as ward_name,to_char(bsr.reg_date,'dd-mm-yyyy') || ' ' ||
+to_char(bsr.reg_time,'HH:MI AM') as DOA,  sum(b.total_receipts) as deposit,
+sum(b.approval_amount) as approval_amount,bsr.refdoctorname
+AS REFERAL_DOCTOR,bsr.tpa_name,
+bsr.mlc_status,to_char(bsr.discharge_date,'dd-mm-yyyy') || ' ' ||
+to_char(bsr.discharge_time,'HH:MI AM') as DOD,
+(case when bsr.status = 'R' then 'Retained' when bsr.status = 'C' then 'Current' when bsr.status = 'A' then 'Current'
+  WHEN bsr.status = 'B' then 'Blocked' else 'Vaccant'end) as ocuupied_status,
+case when bsr.occupancy = 'N' then 1 else 0  end as vacant,
+case when bsr.occupancy = 'Y' then 1 else 0 end as occupied,
+case when bsr.status = 'R' then 1 else 0 end as retained,
+case when bsr.status = 'B' then 1 else 0 end as blocked
+from bed_status_report bsr
+LEFT JOIN BILL B ON (B.VISIT_ID = bsr.PATIENT_ID AND B.restriction_type = 'N')
+ $P!{whereCodition}
+ group by bsr.mr_no,b.visit_id, bsr.patient_name,  bsr.patient_gender,bsr.doctor_name ,
+ bsr.bed_type, bsr.bed_name, bsr.ward_name,bsr.reg_date,bsr.reg_time,bsr.age,bsr.TPA_NAME,
+ bsr.refdoctorname,bsr.mlc_status,bsr.discharge_date,bsr.discharge_time
+ ,bsr.status,bsr.occupancy,bsr.bed_id  order by ward_name$P!{orderby}]]>
+	</queryString>
+	<field name="patient_id" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="mr_no" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="bed_type" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="bed_name" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="ocuupied_status" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="ward_name" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="patient_name" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="doctor_name" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="bed_id" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="status" class="java.lang.Object">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="vacant" class="java.lang.Long">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="occupied" class="java.lang.Long">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="retained" class="java.lang.Long">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="blocked" class="java.lang.Long">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="patient_age" class="java.lang.String"/>
+	<field name="mlc_status" class="java.lang.String"/>
+	<field name="deposit" class="java.lang.String"/>
+	<field name="referal_doctor" class="java.lang.String"/>
+	<field name="DOA" class="java.lang.String"/>
+	<field name="DOD" class="java.lang.String"/>
+	<field name="tpa_name" class="java.lang.String"/>
+	<field name="approval_amount" class="java.lang.String"/>
+	<variable name="vacantcount" class="java.lang.Long" calculation="Sum">
+		<variableExpression><![CDATA[$F{vacant}]]></variableExpression>
+	</variable>
+	<variable name="occupiedcount" class="java.lang.Long" calculation="Sum">
+		<variableExpression><![CDATA[$F{occupied}]]></variableExpression>
+	</variable>
+	<variable name="retaincount" class="java.lang.Long" calculation="Sum">
+		<variableExpression><![CDATA[$F{retained}]]></variableExpression>
+	</variable>
+	<variable name="blockedcount" class="java.lang.Long" calculation="Sum">
+		<variableExpression><![CDATA[$F{blocked}]]></variableExpression>
+	</variable>
+	<group name="count">
+		<groupHeader>
+			<band/>
+		</groupHeader>
+		<groupFooter>
+			<band height="60">
+				<staticText>
+					<reportElement x="643" y="9" width="118" height="17">
+						<printWhenExpression><![CDATA[$V{vacantcount}.intValue() == 0?Boolean.FALSE:Boolean.TRUE]]></printWhenExpression>
+					</reportElement>
+					<textElement>
+						<font isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[No. Of Vacant Bed     :]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="643" y="26" width="118" height="17">
+						<printWhenExpression><![CDATA[$V{occupiedcount}.intValue() == 0?Boolean.FALSE:Boolean.TRUE]]></printWhenExpression>
+					</reportElement>
+					<textElement>
+						<font isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[No. Of Occupied Bed :]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="761" y="9" width="55" height="17">
+						<printWhenExpression><![CDATA[$V{vacantcount}.intValue() == 0?Boolean.FALSE:Boolean.TRUE]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression class="java.lang.Long"><![CDATA[$V{vacantcount}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="761" y="26" width="55" height="17">
+						<printWhenExpression><![CDATA[$V{occupiedcount}.intValue() == 0?Boolean.FALSE:Boolean.TRUE]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression class="java.lang.Integer"><![CDATA[new Integer($V{occupiedcount}.intValue() - $V{retaincount}.intValue())]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="0" y="0" width="800" height="1"/>
+				</line>
+				<line>
+					<reportElement x="0" y="58" width="800" height="1"/>
+				</line>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="761" y="41" width="55" height="17">
+						<printWhenExpression><![CDATA[$V{retaincount}.intValue() == 0?Boolean.FALSE:Boolean.TRUE]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression class="java.lang.Long"><![CDATA[$V{retaincount}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="643" y="41" width="118" height="17">
+						<printWhenExpression><![CDATA[$V{retaincount}.intValue() == 0?Boolean.FALSE:Boolean.TRUE]]></printWhenExpression>
+					</reportElement>
+					<textElement>
+						<font isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[No. Of Retained Bed  :]]></text>
+				</staticText>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="ward_name">
+		<groupExpression><![CDATA[$F{ward_name}]]></groupExpression>
+		<groupHeader>
+			<band height="16">
+				<staticText>
+					<reportElement mode="Opaque" x="0" y="1" width="105" height="15"/>
+					<textElement>
+						<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[              Ward Name :]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement mode="Opaque" x="105" y="1" width="236" height="15"/>
+					<textElement>
+						<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{ward_name}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="1" y="0" width="800" height="1"/>
+				</line>
+				<line>
+					<reportElement x="1" y="15" width="800" height="1"/>
+				</line>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<background>
+		<band/>
+	</background>
+	<title>
+		<band/>
+	</title>
+	<pageHeader>
+		<band height="17">
+			<line>
+				<reportElement x="0" y="-6" width="800" height="6"/>
+			</line>
+			<line>
+				<reportElement x="0" y="15" width="800" height="1"/>
+			</line>
+			<staticText>
+				<reportElement x="0" y="-1" width="839" height="17"/>
+				<textElement textAlignment="Center">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Bed Status Report]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="19">
+			<staticText>
+				<reportElement mode="Opaque" x="328" y="1" width="71" height="12"/>
+				<textElement>
+					<font size="9" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Doctor Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="93" y="0" width="59" height="12"/>
+				<textElement>
+					<font size="9" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Patient Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="761" y="2" width="55" height="12"/>
+				<textElement>
+					<font size="9" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Occupancy]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="29" y="1" width="65" height="12"/>
+				<textElement>
+					<font size="9" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Bed Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="264" y="1" width="60" height="12"/>
+				<textElement>
+					<font size="9" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Patient Id]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="1" y="0" width="28" height="12"/>
+				<textElement>
+					<font size="9" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Sl No]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="209" y="1" width="52" height="12"/>
+				<textElement>
+					<font size="9" isBold="false"/>
+				</textElement>
+				<text><![CDATA[MR No]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="163" y="1" width="47" height="12"/>
+				<textElement>
+					<font size="9" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Age/Gender]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="407" y="1" width="71" height="12"/>
+				<textElement>
+					<font size="9" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Referral Doctor]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="487" y="1" width="60" height="12"/>
+				<textElement>
+					<font size="9" isBold="false"/>
+				</textElement>
+				<text><![CDATA[DOA & Time]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="581" y="1" width="41" height="12"/>
+				<textElement>
+					<font size="9" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Gen/Ins]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="626" y="1" width="56" height="12"/>
+				<textElement>
+					<font size="9" isBold="false"/>
+				</textElement>
+				<text><![CDATA[MLC status]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="678" y="1" width="45" height="13"/>
+				<textElement>
+					<font size="9" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Advance]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="718" y="1" width="43" height="13"/>
+				<textElement>
+					<font size="9" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Apd limit]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="23" y="1" width="70" height="18" isPrintInFirstWholeBand="true" isPrintWhenDetailOverflows="true"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="9" pdfFontName="Helvetica"/>	
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{bed_name}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="775" y="0" width="45" height="18" isPrintInFirstWholeBand="true"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9" pdfFontName="Helvetica"/>	
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{ocuupied_status}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="261" y="1" width="60" height="18"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9" pdfFontName="Helvetica"/>	
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{patient_id}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="94" y="1" width="69" height="18"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9" pdfFontName="Helvetica"/>	
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{patient_name}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="323" y="2" width="84" height="18" isPrintInFirstWholeBand="true"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9" pdfFontName="Helvetica"/>	
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{doctor_name}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1" y="0" width="28" height="18"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="9" pdfFontName="Helvetica"/>	
+				</textElement>
+				<textFieldExpression class="java.lang.Integer"><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="203" y="0" width="70" height="18"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9" pdfFontName="Helvetica"/>	
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{mr_no}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="409" y="1" width="78" height="18" isPrintInFirstWholeBand="true"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9" pdfFontName="Helvetica"/>	
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{referal_doctor}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="489" y="2" width="89" height="18" isPrintInFirstWholeBand="true"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9" pdfFontName="Helvetica"/>	
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{DOA}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="581" y="-1" width="60" height="18" isPrintInFirstWholeBand="true"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9" pdfFontName="Helvetica"/>	
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{tpa_name}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="718" y="0" width="51" height="18" isRemoveLineWhenBlank="true"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9" pdfFontName="Helvetica"/>	
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{approval_amount}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="162" y="1" width="41" height="18" isPrintInFirstWholeBand="true"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="9" pdfFontName="Helvetica"/>	
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{patient_age}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="678" y="0" width="37" height="18" isRemoveLineWhenBlank="true"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9" pdfFontName="Helvetica"/>	
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{deposit}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="641" y="0" width="37" height="18" isRemoveLineWhenBlank="true"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9" pdfFontName="Helvetica"/>	
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{mlc_status}.equalsIgnoreCase( "Y" ) ? "MLC" : ""]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band/>
+	</columnFooter>
+	<pageFooter>
+		<band height="22">
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="40" y="2" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.util.Date"><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="267" y="1" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.Integer"><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="0" width="800" height="1"/>
+			</line>
+		</band>
+	</pageFooter>
+	<lastPageFooter>
+		<band height="21">
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="40" y="1" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.util.Date"><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="267" y="1" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.Integer"><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="0" width="800" height="1"/>
+			</line>
+		</band>
+	</lastPageFooter>
+	<summary>
+		<band/>
+	</summary>
+</jasperReport>

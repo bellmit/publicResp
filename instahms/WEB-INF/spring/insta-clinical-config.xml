@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+		xmlns:p="http://www.springframework.org/schema/p"
+		xmlns:context="http://www.springframework.org/schema/context"
+		xmlns:mvc="http://www.springframework.org/schema/mvc" 
+		xmlns:tx="http://www.springframework.org/schema/tx"
+		xmlns:jpa="http://www.springframework.org/schema/data/jpa" xmlns:aop="http://www.springframework.org/schema/aop"
+		xsi:schemaLocation="http://www.springframework.org/schema/beans  
+		http://www.springframework.org/schema/beans/spring-beans.xsd  
+		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/mvc
+		http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/tx
+	    http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+	<!-- For Clinical Module related configuration -->
+
+	<!-- OPFlow Consultation -->
+	<bean id="consultationFormController"
+		class="com.insta.hms.core.clinical.consultation.ConsultationFormController">
+		<property name="actionId" value="new_cons" />
+	</bean>
+	<bean id="orderOPController" class="com.insta.hms.core.clinical.order.master.OrderOPController">
+		<property name = "actionId" value = "new_op_order"/>
+	</bean>
+	<bean id="orderIPController" class="com.insta.hms.core.clinical.order.master.OrderIPController">
+		<property name = "actionId" value = "new_ip_order"/>
+	</bean>
+	<bean id="followUpConsultationFormController"
+		class="com.insta.hms.core.clinical.consultation.FollowUpConsultationFormController">
+		<property name="actionId" value="new_followup_cons"/>
+	</bean>
+
+	<bean id="instaSectionImageController" class="com.insta.hms.core.clinical.forms.InstaSectionImageController">
+		<property name="authMode" value="passthru" />
+	</bean>
+
+	<bean id="orderOrderableItemController" class="com.insta.hms.core.clinical.order.master.OrderOrderableItemController">
+		<property name="authMode" value="passthru" />
+	</bean>
+
+	<bean id="triageFormController" class="com.insta.hms.core.clinical.triage.TriageFormController">
+		<property name="actionId" value="new_triage" />
+	</bean>
+	<!-- IP EMR -->
+	<bean id="ipEmrFormController" class="com.insta.hms.core.clinical.ipemr.IpEmrFormController">
+		<property name="actionId" value="new_ipemr" />
+	</bean>
+	
+	<bean id="initialAssessmentFormController" class="com.insta.hms.core.clinical.initialassessment.InitialAssessmentFormController">
+		<property name="actionId" value="new_initial_assessment" />
+	</bean>
+	
+	<bean id="pendingPrescriptionsController" class="com.insta.hms.core.clinical.consultation.prescriptions.PendingPrescriptionsController">
+		<property name="actionId" value="patient_pending_prescription" />
+	</bean>
+	
+	<!-- Patient Vaccination -->
+	<!-- Since there is a actionId vaccination_info present in Struts giving access as passthru -->
+	<bean id="vaccinationsInfoController" class="com.insta.hms.core.clinical.vaccinationsinfo.VaccinationsInfoController">
+		<property name="authMode" value="passthru" />
+	</bean>
+</beans>

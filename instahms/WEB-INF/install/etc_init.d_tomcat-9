@@ -1,0 +1,98 @@
+#!/bin/bash
+
+export CATALINA_PID="/var/run/tomcat-9.pid"
+function set_java_home() {
+    if [[ $# -ne 1 ]]
+    then
+        REQUIRED_VERSION="8"
+    else
+        REQUIRED_VERSION=$1
+    fi
+
+    OS=`uname -s`
+    OP=""
+    if [[ $OS == 'Darwin' ]]
+    then 
+        OP=$(/usr/libexec/java_home -v $REQUIRED_VERSION -f)
+    else
+        JAVAC_INSTALLS=`sudo update-alternatives --list javac`
+        for JAVAC in $JAVAC_INSTALLS; do
+            THIS_JAVA=${JAVAC/'javac'/'java'}
+            THIS_VERSION=$($THIS_JAVA -version 2>&1 | grep -i version | cut -d'"' -f2 | sed 's/^1\.//g' | sed 's/\_/\./g' | cut -d'.' -f1)
+            THIS_FLAVOUR=$($THIS_JAVA -version 2>&1 | grep -i "runtime environment" | cut -d' ' -f1)
+            if [[ ${THIS_VERSION} == $REQUIRED_VERSION && $THIS_FLAVOUR == "OpenJDK" ]]
+            then
+                OP=${JAVAC/'/bin/javac'/''}
+            fi
+        done
+    fi
+    if [[ $OP == "" ]]
+    then
+        echo "OpenJDK $REQUIRED_VERSION not detected on this machine"
+        export JAVA_HOME=""
+    else
+        echo "Detected OpenJDK $REQUIRED_VERSION at $OP"
+        export JAVA_HOME=$OP
+    fi
+}
+
+set_java_home 8
+
+[ -f /etc/hms/options ] && source /etc/hms/options
+
+if [ -z "$TOMCAT_HOME" ] ; then
+    TOMCAT_HOME="/usr/local/tomcat-9"
+fi
+
+function start() {
+	# disable if we are a standby: no need of tomcat here
+	[ "$HA_IS_STANDBY" == "Y" ] && echo "Standby mode: not starting tomcat" && return 0
+
+    # we seem to create temp files in CWD, ensure this is a temp dir
+    cd $TOMCAT_HOME/temp
+    # start up tomcat
+    $TOMCAT_HOME/bin/startup.sh
+}
+
+function stop() {
+	[ ! -f $CATALINA_PID ] && return
+
+    pid=`sudo cat $CATALINA_PID`
+    if [ ! -z "$pid" ] ; then
+        $TOMCAT_HOME/bin/shutdown.sh
+        for ((i=0;$i<15;i++)) ; do
+            [ ! -e /proc/$pid ] && break
+            sleep 1
+        done
+        if [ -e /proc/$pid ] ; then
+            echo "Could not stop tomcat; force killing"
+            sudo kill $pid
+            sleep 1
+            sudo kill -9 $pid 2>/dev/null
+        fi
+    fi
+	sudo rm -f $TOMCAT_PID
+	sudo rm -rf $TOMCAT_HOME/work/* $TOMCAT_HOME/temp/*
+}
+
+case "$1" in
+
+  start)
+    start
+    ;;
+
+  stop)
+    stop
+    ;;
+
+  restart)
+    stop
+    start
+    ;;
+
+  *)
+    echo "Usage: $0 {start|stop|restart}"
+    ;;
+    
+esac
+

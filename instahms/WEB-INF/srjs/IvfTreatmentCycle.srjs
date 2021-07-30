@@ -1,0 +1,618 @@
+{
+    "title": "IVF Treatment Cycle Report",
+    "allowNoDate": true,
+    "reportGroup": "IVF Reports",
+    "dateFields": [
+        "start_date"
+    ],
+    "description": "This report shows the IVF treatment cycle details.",
+    "defaultShowFields": [
+        "mr_no",
+        "patient_id",
+        "patient_name",
+        "start_date",
+        "cycle_status",
+        "cycle_treatment_outcome"
+    ],
+    "fields": {
+        "mr_no": {
+            "displayName": "MR No.",
+            "width": 65,
+            "filterable": true,
+            "groupable": true,
+            "expression": "ivf.mr_no"
+        },
+        "patient_id": {
+            "displayName": "Patient Id",
+            "width": 65,
+            "filterable": true,
+            "groupable": true,
+            "expression": "ivf.patient_id"
+        },
+        "start_date": {
+            "displayName": "Cycle Start Date",
+            "width": 80,
+            "dataType": "date",
+            "filterable": true
+        },
+        "cycle_status": {
+            "displayName": "Cycle Status",
+            "width": 100,
+            "filterable": true,
+            "groupable": true,
+            "allowedValues": [
+                "Ordered",
+                "PreCycle Completed",
+                "Daily Treatment Completed",
+                "Cycle Completed"
+            ],
+            "expressionLines": [
+                " CASE WHEN cycle_status = 'O' THEN 'Ordered' ",
+                " WHEN cycle_status='P' THEN 'PreCycle Completed' ",
+                " WHEN cycle_status='D' THEN 'Daily Treatment Completed' ",
+                " WHEN cycle_status='C' THEN 'Cycle Completed'  END "
+            ],
+            "dataType": "string"
+        },
+        "cycle_number": {
+            "displayName": "Cycle No",
+            "width": 40
+        },
+        "lmp": {
+            "displayName": "Last Menstrual period",
+            "width": 80,
+            "dataType": "date"
+        },
+        "height": {
+            "displayName": "Height",
+            "width": 40
+        },
+        "weight": {
+            "displayName": "Weight",
+            "width": 40
+        },
+        "bmi": {
+            "displayName": "BMI",
+            "width": 40
+        },
+        "fsh": {
+            "displayName": "FSH",
+            "width": 40
+        },
+        "lh": {
+            "displayName": "LH",
+            "width": 40
+        },
+        "tsh": {
+            "displayName": "TSH",
+            "width": 40
+        },
+        "married_life_yrs": {
+            "displayName": "Married Life yrs",
+            "width": 60
+        },
+        "married_life_months": {
+            "displayName": "Married Life months",
+            "width": 60
+        },
+        "prl": {
+            "displayName": "PRL",
+            "width": 40
+        },
+        "previous_obh": {
+            "displayName": "Previous BOH",
+            "width": 100
+        },
+        "amh": {
+            "displayName": "AMH",
+            "width": 40
+        },
+        "hiv_status": {
+            "displayName": "HIV Status",
+            "width": 60,
+            "filterable": true,
+            "groupable": true,
+            "allowedValues": [
+                "Negative",
+                "Positive"
+            ],
+            "expression": " CASE WHEN hiv_status='N' THEN 'Negative' WHEN hiv_status='P' THEN 'Positive' END"
+        },
+        "hbsag_status": {
+            "displayName": "Hbsag Status",
+            "width": 60,
+            "filterable": true,
+            "groupable": true,
+            "allowedValues": [
+                "Negative",
+                "Positive"
+            ],
+            "expression": " CASE WHEN hbsag_status='N' THEN 'Negative' WHEN hbsag_status='P' THEN 'Positive' END"
+        },
+        "hcv_status": {
+            "displayName": "HCV Status",
+            "width": 60,
+            "filterable": true,
+            "groupable": true,
+            "allowedValues": [
+                "Negative",
+                "Positive"
+            ],
+            "expression": " CASE WHEN hcv_status='N' THEN 'Negative' WHEN hcv_status='P' THEN 'Positive' END"
+        },
+        "pre_treatment_cycle": {
+            "displayName": "Pre Treatment Cycle",
+            "width": 60,
+            "filterable": true,
+            "groupable": true,
+            "allowedValues": [
+                "IVF",
+                "IUI"
+            ],
+            "expression": " CASE WHEN pre_treatment_cycle='V' THEN 'IVF' WHEN  pre_treatment_cycle='U' THEN 'IUI' END"
+        },
+        "medical_condition": {
+            "displayName": "Medical Condition",
+            "width": 80
+        },
+        "final_treatment_cycle": {
+            "displayName": "Final Treatment Cycle",
+            "width": 60,
+            "filterable": true,
+            "groupable": true,
+            "allowedValues": [
+                "IVF",
+                "IUI",
+                "IVF-ICSI",
+                "IVF-IMSI"
+            ],
+            "expressionLines": [
+                " CASE WHEN final_treatment_cycle = 'IU' THEN 'IUI' ",
+                " WHEN final_treatment_cycle='IV' THEN 'IVF' ",
+                " WHEN final_treatment_cycle='VC' THEN 'IVF-ICSI' ",
+                " WHEN final_treatment_cycle='VN' THEN 'IVF-IMSI'  END "
+            ]
+        },
+        "protocol": {
+            "displayName": "Protocol",
+            "width": 60,
+            "filterable": true,
+            "groupable": true,
+            "allowedValues": [
+                "Ibg",
+                "Antag",
+                "MF",
+                "UL",
+                "SBG"
+            ],
+            "expressionLines": [
+                " CASE WHEN protocol = 'I' THEN 'Ibg' ",
+                " WHEN protocol='A' THEN 'Antag' ",
+                " WHEN protocol='M' THEN 'MF' ",
+                " WHEN protocol='U' THEN 'UL' ",
+                " WHEN protocol='S' THEN 'SBG'  END "
+            ]
+        },
+        "iui_technique": {
+            "displayName": "IUI Technique",
+            "width": 60,
+            "filterable": true,
+            "groupable": true,
+            "allowedvalues": [
+                "Easy",
+                "Difficult",
+                "Blood Stained"
+            ],
+            "expressionLines": [
+                " CASE WHEN iui_technique = 'E' THEN 'Easy' ",
+                " WHEN iui_technique='D' THEN 'Difficult' ",
+                " WHEN iui_technique='B' THEN 'Blood Stained'  END "
+            ]
+        },
+        "rhcg_uhcg_date": {
+            "displayName": "Rhcg Uhcg Date",
+            "width": 60,
+            "dataType": "date"
+        },
+        "gndtropin_dose": {
+            "displayName": "Gndtropin Dose",
+            "width": 60
+        },
+        "opu_date": {
+            "displayName": "Opu Date",
+            "width": 60,
+            "dataType": "date",
+            "expression": "ivf.opu_start_time::date"
+        },
+        "opu_anesthesia_type": {
+            "displayName": "Opu Anesthesia Type",
+            "width": 60,
+            "filterable": true,
+            "allowedvalues": [
+                "GA",
+                "IVS"
+            ],
+            "expressionLines": [
+                " CASE WHEN opu_anesthesia_type = 'G' THEN 'GA' ",
+                " WHEN opu_anesthesia_type='I' THEN 'IVS'  END "
+            ]
+        },
+        "opu_duration": {
+            "displayName": "Opu Duration",
+            "width": 40
+        },
+        "opu_needle_used": {
+            "displayName": "OPU Needle Used",
+            "width": 50,
+            "expression": " CASE WHEN opu_needle_used='S' THEN 'Single Lumen' WHEN  opu_needle_used='D' THEN 'Double Lumen' END"
+        },
+        "opu_rt_ovary_follicles": {
+            "displayName": "Opu Rt Ovary Follicles",
+            "width": 40
+        },
+        "opu_lt_ovary_follicles": {
+            "displayName": "Opu Lt Ovary Follicles",
+            "width": 40
+        },
+        "opu_rt_ovary_oocytes": {
+            "displayName": "Opu Rt Ovary Oocytes",
+            "width": 40
+        },
+        "opu_lt_ovary_oocytes": {
+            "displayName": "Opu Lt Ovary Oocytes",
+            "width": 40
+        },
+        "opu_remarks": {
+            "displayName": "Opu Remarks",
+            "width": 100
+        },
+        "fertilization_rate_number": {
+            "displayName": "Fertilization Rate",
+            "width": 40
+        },
+        "fertilization_rate_perc": {
+            "displayName": "Fertilization Percentage",
+            "width": 40
+        },
+        "cleavage_rate_number": {
+            "displayName": "Cleavage Rate",
+            "width": 40
+        },
+        "cleavage_rate_perc": {
+            "displayName": "Cleavage Percentage",
+            "width": 40
+        },
+        "embryo_transfer_date": {
+            "displayName": "Embryo Transfer Date",
+            "width": 60,
+            "dataType": "date"
+        },
+        "embryo_frozen_date": {
+            "displayName": "Embryo Frozen Date",
+            "width": 60,
+            "dataType": "date"
+        },
+        "cycle_treatment_outcome": {
+            "displayName": "Cycle Treatment Outcome",
+            "width": 80,
+            "filterable": true,
+            "groupable": true,
+            "allowedvalues": [
+                "Cancelled",
+                "Failed to Conceive",
+                "Chemical Pregnancy",
+                "Clinical Pregnancy",
+                "Heterotropic Pregnancy",
+                "Molar Pregnancy"
+            ],
+            "expressionLines": [
+                " CASE WHEN cycle_treatment_outcome = 'X' THEN 'Cancelled' ",
+                " WHEN cycle_treatment_outcome='F' THEN 'Failed to Conceive'  ",
+                " WHEN cycle_treatment_outcome='CM' THEN 'Chemical Pregnancy' ",
+                " WHEN cycle_treatment_outcome='CL' THEN 'Clinical Pregnancy' ",
+                " WHEN cycle_treatment_outcome='H' THEN 'Heterotropic Pregnancy' ",
+                " WHEN cycle_treatment_outcome='MP' THEN 'Molar Pregnancy' END "
+            ]
+        },
+        "completion_remarks": {
+            "displayName": "Completion Remarks",
+            "width": 100
+        },
+        "hsg_uterus": {
+            "displayName": "Hsg Uterus",
+            "width": 60,
+            "filterable": true,
+            "allowedvalues": [
+                "Normal",
+                "Abnormal"
+            ],
+            "expressionLines": [
+                " CASE WHEN hsg_uterus='N' THEN 'Normal'  ",
+                " WHEN hsg_uterus='A' THEN 'Abnormal' END "
+            ]
+        },
+        "hsg_lt_tube": {
+            "displayName": "Hsg Lt Tube",
+            "width": 60,
+            "filterable": true,
+            "allowedvalues": [
+                "Patent",
+                "Blocked"
+            ],
+            "expressionLines": [
+                " CASE WHEN hsg_lt_tube='P' THEN 'Patent' ",
+                " WHEN hsg_lt_tube='B' THEN 'Blocked' END "
+            ]
+        },
+        "hsg_rt_tube": {
+            "displayName": "Hsg Rt Tube",
+            "width": 60,
+            "filterable": true,
+            "allowedvalues": [
+                "Patent",
+                "Blocked"
+            ],
+            "expressionLines": [
+                " CASE WHEN hsg_rt_tube='P' THEN 'Patent' ",
+                " WHEN hsg_rt_tube='B' THEN 'Blocked' END "
+            ]
+        },
+        "diaglap_uterus": {
+            "displayName": "Diaglap Uterus",
+            "width": 60,
+            "filterable": true,
+            "allowedvalues": [
+                "Normal",
+                "Abnormal"
+            ],
+            "expressionLines": [
+                " CASE WHEN diaglap_uterus='N' THEN 'Normal' ",
+                " WHEN diaglap_uterus='A' THEN 'Abnormal'  END "
+            ]
+        },
+        "diaglap_lt_tube": {
+            "displayName": "Diaglap Lt Tube",
+            "width": 60,
+            "filterable": true,
+            "allowedvalues": [
+                "Patent",
+                "Blocked"
+            ],
+            "expressionLines": [
+                " CASE WHEN diaglap_lt_tube='P' THEN 'Patent' ",
+                " WHEN diaglap_lt_tube = 'B' THEN  'Blocked' END "
+            ]
+        },
+        "diaglap_rt_tube": {
+            "displayName": "Diaglap Rt Tube",
+            "width": 60,
+            "filterable": true,
+            "allowedvalues": [
+                "Patent",
+                "Blocked"
+            ],
+            "expressionLines": [
+                " CASE WHEN diaglap_rt_tube='P' THEN 'Patent' ",
+                " WHEN diaglap_rt_tube='B' THEN 'Blocked' END "
+            ]
+        },
+        "diaghyst_cavity": {
+            "displayName": "Diaghyst Cavity",
+            "width": 60,
+            "filterable": true,
+            "allowedvalues": [
+                "Normal",
+                "Abnormal"
+            ],
+            "expressionLines": [
+                " CASE WHEN diaghyst_cavity='N' THEN 'Normal' ",
+                " WHEN diaghyst_cavity='A' THEN 'Abnormal' END "
+            ]
+        },
+        "diaghyst_lt_ostea": {
+            "displayName": "Diaghyst Lt Ostea",
+            "width": 60,
+            "filterable": true,
+            "allowedvalues": [
+                "Normal",
+                "Abnormal"
+            ],
+            "expressionLines": [
+                " CASE WHEN diaghyst_lt_ostea='N' THEN 'Normal' ",
+                " WHEN diaghyst_lt_ostea='A' THEN 'Abnormal' END "
+            ]
+        },
+        "diaghyst_rt_ostea": {
+            "displayName": "Diaghyst Rt Ostea",
+            "width": 60,
+            "filterable": true,
+            "allowedvalues": [
+                "Normal",
+                "Abnormal"
+            ],
+            "expressionLines": [
+                " CASE WHEN diaghyst_rt_ostea='N' THEN 'Normal' ",
+                " WHEN  diaghyst_rt_ostea='A' THEN 'Abnormal'  END "
+            ]
+        },
+        "sa_count": {
+            "displayName": "SA Count",
+            "width": 40
+        },
+        "sa_total_mobility": {
+            "displayName": "SA Total Mobility",
+            "width": 40
+        },
+        "sa_rapid": {
+            "displayName": "SA Rapid",
+            "width": 40
+        },
+        "sa_normal": {
+            "displayName": "SA Normal",
+            "width": 40
+        },
+        "precyle_remarks": {
+            "displayName": "PreCycle Remarks",
+            "width": 100
+        },
+        "username": {
+            "displayName": "UserName",
+            "width": 100
+        },
+        "em_transf_assistant_name": {
+            "displayName": "Emtransf Assistant Name",
+            "width": 100
+        },
+        "em_transf_type": {
+            "displayName": "Emtransf Type",
+            "width": 60,
+            "filterable": true,
+            "allowedValues": [
+                "Difficult",
+                "Easy"
+            ],
+            "expression": " CASE WHEN em_transf_type='D' THEN 'Difficult' WHEN em_transf_type='E' THEN 'Easy' END "
+        },
+        "blood_stain": {
+            "displayName": "Blood Stain",
+            "width": 60,
+            "filterable": true,
+            "allowedValues": [
+                "Present",
+                "Absent"
+            ],
+            "expression": " CASE WHEN blood_stain='P' THEN 'Present' WHEN blood_stain='A' THEN 'Absent' END "
+        },
+        "retained_emb": {
+            "displayName": "Retained Embryo",
+            "width": 60,
+            "filterable": true,
+            "allowedValues": [
+                "Present",
+                "Absent"
+            ],
+            "expression": " CASE WHEN retained_emb='P' THEN 'Present' WHEN retained_emb='A' THEN 'Absent' END "
+        },
+        "retrans_em": {
+            "displayName": "Retransfer Embryo",
+            "width": 60,
+            "filterable": true,
+            "allowedValues": [
+                "Done",
+                "Not Done"
+            ],
+            "expression": " CASE WHEN retrans_em='D' THEN 'Done' WHEN retrans_em='N' THEN 'Not Done' END "
+        },
+        "cell_two": {
+            "displayName": "Cell Two",
+            "width": 40
+        },
+        "cell_four": {
+            "displayName": "Cell Four",
+            "width": 40
+        },
+        "blastocyst": {
+            "displayName": "Blastocyst",
+            "width": 40
+        },
+        "em_transf_endome_thickness": {
+            "displayName": "Endome Thickness",
+            "width": 40
+        },
+        "freeze_straws": {
+            "displayName": "No of Straws",
+            "width": 40
+        },
+        "freeze_can_num": {
+            "displayName": "Cannister",
+            "width": 60
+        },
+        "opu_surgeon_id": {
+            "displayName": "OPU Surgeon",
+            "width": 100,
+            "expression": "d_opu_surgeon.doctor_name",
+            "table": "d_opu_surgeon"
+        },
+        "opu_anesthesiologist_id": {
+            "displayName": "OPU Anesthesiologist",
+            "width": 100,
+            "expression": "d_opu_anesthes.doctor_name",
+            "table": "d_opu_anesthes"
+        },
+        "em_transf_surgeon_id": {
+            "displayName": "Embryo Transfer Surgeon",
+            "width": 100,
+            "expression": "d_emb_surgeon.doctor_name",
+            "table": "d_emb_surgeon"
+        },
+        "em_transf_anesthesiologist_id": {
+            "displayName": "Embryo Transfer Anesthesiologist",
+            "width": 100,
+            "expression": "d_emb_anesthes.doctor_name",
+            "table": "d_emb_anesthes"
+        },
+        "patient_name": {
+            "displayName": "Patient Name",
+            "width": 120,
+            "expression": "sm.salutation||' '||pd.patient_name || ' '||pd.middle_name||' '||pd.last_name",
+            "table": "sm,pd"
+        },
+  "name_local_language": {
+            "table": "pd",
+            "displayName": "Name In Local Language",
+            "width": 150,
+            "expression": "pd.name_local_language"
+  }
+    },
+    "queryUnits": [
+        {
+            "mainTableAlias": "ivf",
+            "mainTableName": "ivf_cycle",
+            "groupBy": false,
+            "joinTables": [
+                {
+                    "name": "doctors",
+                    "alias": "d_opu_surgeon",
+                    "type": "LEFT",
+                    "expression": "ON (d_opu_surgeon.doctor_id = ivf.opu_surgeon_id)",
+                    "dependsOn": "ivf"
+                },
+                {
+                    "name": "doctors",
+                    "alias": "d_opu_anesthes",
+                    "type": "LEFT",
+                    "expression": "ON (d_opu_anesthes.doctor_id = ivf.opu_anesthesiologist_id)",
+                    "dependsOn": "ivf"
+                },
+                {
+                    "name": "doctors",
+                    "alias": "d_emb_surgeon",
+                    "type": "LEFT",
+                    "expression": "ON (d_emb_surgeon.doctor_id = ivf.em_transf_surgeon_id)",
+                    "dependsOn": "ivf"
+                },
+                {
+                    "name": "doctors",
+                    "alias": "d_emb_anesthes",
+                    "type": "LEFT",
+                    "expression": "ON (d_emb_anesthes.doctor_id = ivf.em_transf_anesthesiologist_id)",
+                    "dependsOn": "ivf"
+                },
+                {
+                    "name": "patient_details",
+                    "alias": "pd",
+                    "type": "LEFT",
+                    "expression": "ON (pd.mr_no = ivf.mr_no)",
+                    "dependsOn": "ivf"
+                },
+                {
+                    "name": "salutation_master",
+                    "alias": "sm",
+                    "type": "LEFT",
+                    "expression": "ON (sm.salutation_id = pd.salutation)",
+                    "dependsOn": "pd"
+                }
+            ]
+        }
+    ]
+}

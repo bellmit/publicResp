@@ -1,0 +1,506 @@
+{
+    "fields": {
+        "dyna_package_name": {
+            "displayName": "Dyna Package",
+            "width": 100,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT dyna_package_name from dyna_packages",
+            "filterable": true,
+            "groupable": true,
+            "table": "dy"
+        },
+        "dyna_package_charge": {
+            "displayName": "Dyna Package Charge",
+            "width": "70",
+            "dataType": "numeric",
+            "aggFunction": "sum",
+            "decimalType": "amount",
+            "filterable": true,
+            "table": "b"
+        },
+        "bill_remarks": {
+            "dataType": "string",
+            "displayName": "Bill Remarks",
+            "expression": "b.remarks ",
+            "filterable": false,
+            "groupable": false,
+            "table": "b",
+            "width": 150
+        },
+        "closed_date": {
+            "dataType": "date",
+            "displayName": "Bill Closed Date",
+            "expression": "date(b.closed_date) ",
+            "filterable": true,
+            "groupable": true,
+            "table": "b",
+            "width": 60
+        },
+        "open_date": {
+            "dataType": "date",
+            "displayName": "Bill Open Date",
+            "expression": " date(open_date) ",
+            "filterable": true,
+            "groupable": true,
+            "table": "b",
+            "width": 60
+        },
+        "finalized_by": {
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT emp_username FROM u_user JOIN u_role USING(role_id)\n    WHERE portal_id='N' ORDER BY emp_username",
+            "dataType": "string",
+            "displayName": "Finalized by",
+            "filterable": true,
+            "groupable": true,
+            "table": "b",
+            "width": 100
+        },
+        "payment_status": {
+            "allowedValues": [
+                "Paid",
+                "Unpaid"
+            ],
+            "dataType": "string",
+            "displayName": "Patient Payment Status",
+            "expression": " CASE WHEN b.payment_status = 'P' THEN 'Paid' ELSE 'Unpaid' END ",
+            "filterable": true,
+            "groupable": true,
+            "table": "b",
+            "width": 70
+        },
+        "primary_bill": {
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "dataType": "string",
+            "displayName": "Primary Bill",
+            "expression": "CASE WHEN b.is_primary_bill='Y' THEN 'Yes' ELSE 'No' END",
+            "filterable": true,
+            "groupable": true,
+            "table": "b",
+            "width": 60
+        },
+        "visit_type_name": {
+            "allowedValues": [
+                "IP",
+                "OP",
+                "Retail",
+                "Test"
+            ],
+            "dataType": "string",
+            "displayName": "Visit Type",
+            "filterable": true,
+            "groupable": true,
+            "table": "bvn",
+            "width": 40
+        },
+        "center_name": {
+            "table": "bhcm",
+            "displayName": "Center Name",
+            "width": 100,
+            "allowedValuesQuery": "SELECT center_name FROM hospital_center_master WHERE center_id!=0",
+            "expression": "bhcm.center_name",
+            "filterable": true,
+            "groupable": true
+        },
+        "center_tin": {
+            "table": "bhcm",
+            "displayName": "Center Tin No.",
+            "width": 70,
+            "allowedValuesQuery": "SELECT tin_number FROM hospital_center_master WHERE center_id!=0",
+            "expression": "bhcm.tin_number",
+            "filterable": true,
+            "groupable": true
+        },
+        "center_city": {
+            "table": "city",
+            "displayName": "Center City",
+            "width": 70,
+            "allowedValuesQuery": "SELECT distinct city_name  FROM city c JOIN hospital_center_master hcm1 ON hcm1.city_id = c.city_id ORDER BY city_name",
+            "expression": "city.city_name",
+            "filterable": true,
+            "groupable": true
+        },
+        "center_state": {
+            "table": "state",
+            "displayName": "Center State",
+            "width": 70,
+            "allowedValuesQuery": "SELECT distinct state_name FROM state_master st JOIN hospital_center_master hcm1 ON hcm1.state_id = st.state_id ORDER BY state_name",
+            "expression": "state.state_name",
+            "filterable": true,
+            "groupable": true
+        },
+        "center_country": {
+            "table": "country",
+            "displayName": "Center Country",
+            "width": 70,
+            "allowedValuesQuery": "SELECT distinct country_name  FROM country_master c JOIN hospital_center_master hcm1 ON hcm1.country_id = c.country_id ORDER BY country_name",
+            "expression": "country.country_name",
+            "filterable": true,
+            "groupable": true
+        },
+        "center_region": {
+            "table": "region",
+            "displayName": "Center Region",
+            "width": 70,
+            "allowedValuesQuery": "SELECT distinct region_name  FROM region_master rm JOIN hospital_center_master hcm1 ON hcm1.region_id = rm.region_id ORDER BY region_name",
+            "expression": "region.region_name",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true
+        },
+        "bill_no": {
+            "dataType": "string",
+            "displayName": "Bill No.",
+            "filterable": true,
+            "groupable": true,
+            "table": "b",
+            "width": 65
+        },
+        "insurance_bill": {
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "dataType": "string",
+            "description": "Is the bill an insurance bill (Yes/No)",
+            "displayName": "Ins. Bill",
+            "expression": "CASE WHEN b.is_tpa THEN 'Yes' ELSE 'No' END ",
+            "filterable": true,
+            "groupable": true,
+            "table": "b",
+            "width": 45
+        },
+        "bill_status": {
+            "allowedValues": [
+                "Open",
+                "Finalized",
+                "Closed"
+            ],
+            "dataType": "string",
+            "displayName": "Bill Status",
+            "expression": "CASE WHEN b.status = 'A' THEN 'Open'        WHEN b.status = 'F' THEN 'Finalized'        WHEN b.status = 'C' THEN 'Closed'        ELSE 'Cancelled' END ",
+            "filterable": true,
+            "groupable": true,
+            "table": "b",
+            "width": 50
+        },
+        "bill_usage_type": {
+            "allowedValues": [
+                "Hospital",
+                "Pharmacy",
+                "Test"
+            ],
+            "dataType": "string",
+            "displayName": "Usage Type",
+            "expression": "CASE WHEN b.restriction_type = 'T' THEN 'Test'       WHEN b.restriction_type = 'P' THEN 'Pharmacy'       ELSE 'Hospital'      END ",
+            "filterable": true,
+            "groupable": true,
+            "table": "b",
+            "width": 50
+        },
+        "closed_by": {
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT emp_username FROM u_user JOIN u_role USING(role_id)\n    WHERE portal_id='N' ORDER BY emp_username",
+            "dataType": "string",
+            "displayName": "Closed by",
+            "filterable": true,
+            "groupable": true,
+            "table": "b",
+            "width": 100
+        },
+        "bill_type": {
+            "allowedValues": [
+                "Bill Now",
+                "Bill Later"
+            ],
+            "dataType": "string",
+            "displayName": "Bill Type",
+            "expression": "CASE WHEN b.bill_type='P' THEN 'Bill Now' ELSE 'Bill Later' END ",
+            "filterable": true,
+            "groupable": true,
+            "table": "b",
+            "width": 50
+        },
+        "cust_id": {
+            "dataType": "string",
+            "description": "Patient MR No, or retail customer ID",
+            "displayName": "Cust. Id",
+            "expression": "COALESCE (pr.mr_no, prc.customer_id, isr.incoming_visit_id) ",
+            "filterable": false,
+            "groupable": false,
+            "table": "pr,prc,isr",
+            "width": 100
+        },
+        "disc_auth_name": {
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT disc_auth_name FROM discount_authorizer ORDER by disc_auth_name",
+            "dataType": "string",
+            "displayName": "Discount Authorizer",
+            "filterable": true,
+            "groupable": true,
+            "table": "bda",
+            "width": 150
+        },
+        "discount_plan_name": {
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT discount_plan_name FROM discount_plan_main ORDER by discount_plan_name",
+            "dataType": "string",
+            "displayName": "Discount Plan Name",
+            "filterable": true,
+            "groupable": true,
+            "table": "bdc",
+            "width": 150
+        },
+        "account_group_name": {
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT account_group_name FROM account_group_master ORDER by account_group_name",
+            "dataType": "string",
+            "displayName": "Account Group",
+            "filterable": true,
+            "groupable": true,
+            "table": "agm",
+            "width": 100
+        },
+        "opened_by": {
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT emp_username FROM u_user JOIN u_role USING(role_id)\n    WHERE portal_id='N' ORDER BY emp_username",
+            "dataType": "string",
+            "displayName": "Opened by",
+            "filterable": true,
+            "groupable": true,
+            "table": "b",
+            "width": 100
+        },
+        "visit_id": {
+            "dataType": "string",
+            "displayName": "Visit Id",
+            "filterable": false,
+            "groupable": false,
+            "table": "b",
+            "width": 100
+        },
+        "procedure_name": {
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT coalesce(spl.procedure_code || ' '|| spl.procedure_name) FROM sponsor_procedure_limit spl ORDER BY procedure_name",
+            "dataType": "string",
+            "displayName": "Procedure",
+            "expression": " coalesce(spl.procedure_code ||' '|| spl.procedure_name)",
+            "filterable": true,
+            "groupable": true,
+            "table": "spl",
+            "width": 120
+        },
+        "finalized_date": {
+            "dataType": "date",
+            "displayName": "Bill Finalized Date",
+            "expression": " date(b.finalized_date) ",
+            "filterable": true,
+            "groupable": true,
+            "table": "b",
+            "width": 60
+        },
+        "payment_mode": {
+            "allowedValuesQuery": "SELECT '(None)' UNION ALL SELECT 'Deposit' UNION ALL SELECT payment_mode FROM (SELECT payment_mode FROM payment_mode_master ORDER BY payment_mode) as f UNION ALL SELECT '(Multiple)'",
+            "dataType": "string",
+            "displayName": "Payment Mode",
+            "expressionLines": [
+                "CASE WHEN (b.no_of_receipts+b.primary_no_of_sponsor_receipts+b.secondary_no_of_sponsor=0) ",
+                "  THEN CASE WHEN b.deposit_set_off > 0 THEN 'Deposit' ELSE '(None)' END ",
+                " WHEN (b.no_of_receipts+b.primary_no_of_sponsor_receipts+b.secondary_no_of_sponsor > 1) ",
+                "  THEN '(Multiple)' ",
+                " ELSE CASE WHEN b.deposit_set_off > 0 THEN '(Multiple)' ELSE br.payment_mode END ",
+                "END"
+            ],
+            "filterable": true,
+            "groupable": true,
+            "table": "br,b",
+            "width": 50
+        },
+        "bill_primary_tpa": {
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT tpa_name FROM tpa_master ORDER BY tpa_name",
+            "dataType": "string",
+            "description": "The Sponsor associated with the bill",
+            "displayName": "Primary Bill Sponsor",
+            "expression": "CASE WHEN b.is_tpa THEN ptpa.tpa_name ELSE NULL END",
+            "filterable": true,
+            "groupable": true,
+            "table": "b,ptpa",
+            "width": 120
+        },
+        "bill_secondary_tpa": {
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT tpa_name FROM tpa_master ORDER BY tpa_name",
+            "dataType": "string",
+            "description": "The Sponsor associated with the bill",
+            "displayName": "Secondary Bill Sponsor",
+            "expression": "CASE WHEN b.is_tpa THEN stpa.tpa_name ELSE NULL END",
+            "filterable": true,
+            "groupable": true,
+            "table": "b,stpa",
+            "width": 120
+        },
+        "cancel_reason": {
+            "dataType": "string",
+            "displayName": "Cancel Reason",
+            "expression": " b.cancel_reason ",
+            "filterable": true,
+            "groupable": false,
+            "table": "b",
+            "width": 60
+        },
+        "reopen_reason": {
+            "dataType": "string",
+            "displayName": "Reopen Reason",
+            "expression": " b.reopen_reason ",
+            "filterable": true,
+            "groupable": false,
+            "table": "b",
+            "width": 60
+        },
+        "audit_control_number": {
+            "dataType": "string",
+            "displayName": "Audit Control No.",
+            "expression": "b.audit_control_number",
+            "filterable": true,
+            "groupable": false,
+            "table": "b",
+            "width": 65
+        },
+        "revisit": {
+            "table": "pr",
+            "displayName": "New/Revisit Patient",
+            "width": 70,
+            "groupable": true,
+            "filterable": true,
+            "allowedValues": [
+                "Revisit",
+                "New"
+            ],
+            "expression": "CASE WHEN pr.revisit='Y' THEN 'Revisit' ELSE 'New' END "
+        }
+    },
+    "queryUnits": [
+        {
+            "joinTables": [
+                {
+                    "alias": "bvn",
+                    "dependsOn": "b",
+                    "expression": "ON (bvn.visit_type = b.visit_type)",
+                    "name": "visit_type_names",
+                    "type": "JOIN"
+                },
+                {
+                    "alias": "agm",
+                    "dependsOn": "b",
+                    "expression": "ON (agm.account_group_id = b.account_group)",
+                    "name": "account_group_master",
+                    "type": "LEFT"
+                },
+                {
+                    "alias": "bda",
+                    "dependsOn": "b",
+                    "expression": "ON (bda.disc_auth_id = b.discount_auth)",
+                    "name": "discount_authorizer",
+                    "type": "LEFT"
+                },
+                {
+                    "alias": "bdc",
+                    "dependsOn": "b",
+                    "expression": "ON(bdc.discount_plan_id = b.discount_category_id) ",
+                    "name": "discount_plan_main",
+                    "type": "LEFT"
+                },
+                {
+                    "alias": "spl",
+                    "dependsOn": "b",
+                    "expression": "ON (b.procedure_no = spl.procedure_no)",
+                    "name": "sponsor_procedure_limit",
+                    "type": "LEFT"
+                },
+                {
+                    "alias": "br",
+                    "dependsOn": "b",
+                    "expression": "ON (b.no_of_receipts+b.primary_no_of_sponsor_receipts+b.secondary_no_of_sponsor = 1 AND br.bill_no = b.bill_no)",
+                    "name": "(SELECT br.bill_no,pmn.payment_mode FROM receipts r JOIN bill_receipts br ON br.receipt_no=r.receipt_id JOIN payment_mode_master pmn ON (pmn.mode_id = r.payment_mode_id) WHERE r.receipt_type != 'W' AND r.payment_mode_id NOT IN(-9,-5) AND NOT r.is_deposit)",
+                    "type": "LEFTLATERAL"
+                },
+                {
+                    "alias": "pr",
+                    "dependsOn": "b",
+                    "expression": "ON (pr.patient_id = b.visit_id)",
+                    "name": "patient_registration",
+                    "type": "LEFT"
+                },
+                {
+                    "alias": "prc",
+                    "dependsOn": "b",
+                    "expression": "ON (prc.customer_id = b.visit_id)",
+                    "name": "store_retail_customers",
+                    "type": "LEFT"
+                },
+                {
+                    "alias": "isr",
+                    "dependsOn": "b",
+                    "expression": "ON (isr.incoming_visit_id = b.visit_id)",
+                    "name": "incoming_sample_registration",
+                    "type": "LEFT"
+                },
+                {
+                    "alias": "bhcm",
+                    "dependsOn": "pr,isr,prc",
+                    "expression": "ON (pr.center_id=bhcm.center_id or isr.center_id=bhcm.center_id or prc.center_id=bhcm.center_id)",
+                    "name": "hospital_center_master",
+                    "type": "LEFT"
+                },
+                {
+                    "alias": "pd",
+                    "dependsOn": "pr",
+                    "expression": "ON (pd.mr_no = pr.mr_no)",
+                    "name": "patient_details",
+                    "type": "LEFT"
+                },
+                {
+                    "alias": "smb",
+                    "dependsOn": "pd",
+                    "expression": "ON (smb.salutation_id = pd.salutation)",
+                    "name": "salutation_master",
+                    "type": "LEFT"
+                },
+                {
+                    "alias": "dy",
+                    "dependsOn": "b",
+                    "expression": "ON (dy.dyna_package_id = b.dyna_package_id)",
+                    "name": "dyna_packages",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "city",
+                    "alias": "city",
+                    "dependsOn": "bhcm",
+                    "expression": " ON bhcm.city_id = city.city_id"
+                },
+                {
+                    "name": "state_master",
+                    "alias": "state",
+                    "dependsOn": "bhcm",
+                    "expression": " ON bhcm.state_id = state.state_id"
+                },
+                {
+                    "name": "country_master",
+                    "alias": "country",
+                    "dependsOn": "bhcm",
+                    "expression": " ON bhcm.country_id = country.country_id"
+                },
+                {
+                    "name": "region_master",
+                    "alias": "region",
+                    "dependsOn": "bhcm",
+                    "expression": " ON bhcm.region_id = region.region_id"
+                }
+            ]
+        }
+    ]
+}

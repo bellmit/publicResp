@@ -1,0 +1,2 @@
+priority,bill_type,visit_type,pattern_id,restriction_type,center_id,bill_audit_number_seq_id,is_tpa,is_credit_note
+100,'*','*','BILL_ACN_DEFAULT','*',0,1,'*','*'

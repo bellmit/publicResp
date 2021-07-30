@@ -1,0 +1,30 @@
+# For each from version (major), what is the minumum required in the from version
+min_upgrade_ver_1203=12.3.0
+min_upgrade_ver_1202=12.2.0
+min_upgrade_ver_1201=12.1.0
+min_upgrade_ver_1200=12.0.0
+min_upgrade_ver_1113=11.13.0
+min_upgrade_ver_1112=11.12.2
+min_upgrade_ver_1111=11.11.8
+min_upgrade_ver_1110=11.10.6
+min_upgrade_ver_1109=11.9.2
+min_upgrade_ver_1108=11.8.3
+min_upgrade_ver_1107=11.7.5
+min_upgrade_ver_1106=11.6.22
+min_upgrade_ver_1105=11.5.2
+min_upgrade_ver_1104=11.4.10
+min_upgrade_ver_1103=11.3.9
+min_upgrade_ver_1102=11.2.3
+min_upgrade_ver_1101=11.1.14
+# for each from version, what are the scripts to be run
+scripts_1111="db_changes_1111_1112.sql"
+scripts_1110="db_changes_1110_1111.sql $scripts_1111"
+scripts_1109="db_changes_1109_1110.sql $scripts_1110"
+scripts_1108="db_changes_118_119.sql $scripts_1109"
+scripts_1107="db_changes_117_118.sql $scripts_1108"
+scripts_1106="db_changes_116_117.sql $scripts_1107"
+scripts_1105="db_changes_115_116.sql $scripts_1106" 
+scripts_1104="db_changes_114_115.sql $scripts_1105"
+scripts_1103="db_changes_113_114.sql $scripts_1104"
+scripts_1102="db_changes_112_113.sql $scripts_1103"
+scripts_1101="db_changes_111_112.sql $scripts_1102"

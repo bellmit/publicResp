@@ -1,0 +1,111 @@
+@font-face { font-family: CamphorWeb-Bold; src: url("../fonts/Camphor-web-bold.ttf"); }
+@font-face { font-family: CamphorWeb-Regular; src: url("../fonts/Camphor-web-regular.ttf"); }
+
+.cancel-button-spec {
+    float: right;
+    font-family: CamphorWeb-Regular;
+    font-size: 11px;
+}
+
+.remind-button-spec {
+    float: right;
+    font-family: CamphorWeb-Regular;
+    font-size: 11px;
+    color: #AEAEAE;
+}
+
+.save-new-pass-remind-button-spec {
+    float: right;
+    margin-left: 8px;
+    font-size: 11px;
+}
+
+.changePassword-spec {
+    float: right;
+    margin-left: 11px;
+    font-size: 11px;
+}
+
+.save-new-pass-button-spec {
+    float: right;
+    margin-left: 11px;
+}
+
+.button-spec {
+    float: right;
+    margin-bottom: 32px;
+}
+
+.button-spec-td {
+    float: right;
+    padding-bottom: 32px;
+}
+
+.button-remind-spec {
+    float: right;
+    padding-bottom: 32px;
+}
+
+.cancel-button, .remind-button {
+    background-color: #F6F6F9;
+    padding-top: 7px;
+    cursor: pointer;
+    font-size: 12px;
+    border: 1px solid #787887;
+    color: #787887;
+}
+
+.save-new-pass-button, .changePassword-button {
+    background-color: #FFA000;
+    border-radius: 2px;
+    color: #FFFFFF;
+    font-size: 11px;
+    float: left;
+    cursor: pointer;
+}
+
+.change-pass-button {
+    background-color: #536478;
+    border-radius: 2px;
+    color: #FFFFFF;
+    font-size: 11px;
+    cursor: pointer;
+    margin: 40px 0px 0px 0px;
+}
+
+.login-button {
+    background-color: #FFA000;
+    border-radius: 2px;
+    color: #FFFFFF;
+    font-size: 11px;
+    width: 80px;
+}
+
+button:focus {
+    outline: none;
+}
+
+.btn-spec {
+    padding: 6px 12px;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    cursor: pointer;
+    border: 1px solid transparent;
+    border-radius: 2px;
+    font-family: CamphorWeb-Bold;
+    font-size: 12px;
+    letter-spacing: 0;
+}
+
+.btn-spec-secondary {
+    padding: 6px 12px;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    cursor: pointer;
+    border-radius: 2px;
+    font-family: CamphorWeb-Bold;
+    font-size: 12px;
+    letter-spacing: 0;
+}

@@ -1,0 +1,77 @@
+{
+    "fields": {
+        "tax_amount": {
+            "table": "bct",
+            "expression": "bct.tax_amount ",
+            "displayName": "Tax Amount",
+            "width": 80,
+            "filterable": true,
+            "groupable": true
+        },
+        "tax_rate": {
+            "table": "bct",
+            "expression": "bct.tax_rate ",
+            "displayName": "Tax %",
+            "width": 80,
+            "filterable": true,
+            "groupable": true
+        },
+        "tax_groups": {
+            "table": "ig",
+            "expression": "ig.item_group_name ",
+            "displayName": "Tax Groups",
+            "width": 80,
+            "filterable": true,
+            "groupable": true
+        },
+        "tax_sub_groups": {
+            "table": "isg",
+            "expression": "isg.item_subgroup_name ",
+            "displayName": "Tax Sub-Groups",
+            "width": 80,
+            "filterable": true,
+            "groupable": true
+        }
+    },
+    "queryUnits": [
+        {
+            "joinTables": [
+                {
+                    "alias": "bc",
+                    "dependsOn": "b",
+                    "expression": "ON (bc.bill_no = b.bill_no) ",
+                    "name": "bill_charge",
+                    "type": "LEFT"
+                },
+                {
+                    "alias": "bct",
+                    "dependsOn": "bc",
+                    "expression": "ON (bc.charge_id = bct.charge_id) ",
+                    "name": "bill_charge_tax",
+                    "type": "LEFT"
+                },
+                {
+                    "alias": "isg",
+                    "dependsOn": "bct",
+                    "expression": "ON (bct.tax_sub_group_id = isg.item_subgroup_id) ",
+                    "name": "item_sub_groups",
+                    "type": "LEFT"
+                },
+                {
+                    "alias": "ig",
+                    "dependsOn": "isg",
+                    "expression": "ON (isg.item_group_id = ig.item_group_id) ",
+                    "name": "item_groups",
+                    "type": "LEFT"
+                },
+                {
+                    "alias": "igt",
+                    "dependsOn": "ig",
+                    "expression": "ON (ig.item_group_type_id = igt.item_group_type_id) ",
+                    "name": "item_group_type",
+                    "type": "LEFT"
+                }
+            ]
+        }
+    ]
+}

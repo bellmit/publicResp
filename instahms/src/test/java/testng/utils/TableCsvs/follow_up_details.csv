@@ -1,0 +1,3 @@
+followup_id,patient_id,followup_date,followup_doctor_id,followup_remarks
+'FUD0058','OP121922','2019-07-26','DOC0115','test'
+'FUD0059','OP121922','2019-07-31','DOC0115','test 123'

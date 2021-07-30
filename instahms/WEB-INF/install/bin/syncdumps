@@ -1,0 +1,75 @@
+#!/bin/bash
+
+#
+# Script to periodically sync the db-backups directory from apps.
+# A little optimization is added to re-use an existing copy as the
+# base for new files that may be coming down. (this is used only on staging server)
+#
+source `dirname $0`/functions
+LOG=/var/log/syncdump.log
+APPSDIR=apps.instahealthsolutions.com:/root/db-backups
+LOCALDIR=$HMS_WORK_HOME/apps-backups
+
+#
+# Keep a lock so multiple syncs don't interfere
+#
+if [ -f /var/run/syncdump.pid ] ; then
+	echo "Sync in progress: `sudo cat /var/run/syncdump.pid`" >> $LOG && exit
+fi
+echo $$ > /var/run/syncdump.pid
+
+cd $LOCALDIR
+echo "---- Start `date` ----" >> $LOG
+
+#
+# Do a dry run to see which files we are missing in the local directory.
+# Put an XX indicator in the output so we can recognize files, anything ending with
+# a / is a directory, remove that too.
+#
+newfiles=`sudo rsync -av --dry-run --ignore-existing --out-format 'XX %n' $APPSDIR/ . \
+	| grep XX | grep -v '/$' | sed -e 's/^XX //'`
+# TODO: this log is not coming proper
+echo ".. newfiles: " $newfiles >>$LOG
+
+#
+# If the remote location keeps a latest link, we use that. Else, we find out
+# using the find command which is the latest file in terms of time.
+#
+if [ -f latest ] ; then
+	latestfile=latest
+	newfile=`readlink latest`
+	echo ".. latest file (using latest link): $newfile" >> $LOG
+else
+	latestfile=`find . -type f -printf '%T@ %p\n' | sort | tail -1 | awk '{print $2}'`
+	echo ".. latest file (using find): $latestfile" >> $LOG
+fi
+
+#
+# Now, copy our 'latest' file into each of the new files that we have a base
+# for the sync optimization
+#
+for file in $newfiles ; do
+	[ "$file" == "latest" ] && continue
+	echo ".. copying latest ($latestfile) to missing $file" >>$LOG
+	sudo cp $latestfile $file
+done
+
+#
+# Sync over the entire directory contents, deleting unnecessary files
+# as we go along.
+#
+echo ".. syncing directory" >>$LOG
+sudo rsync --partial -az --stats --delete $APPSDIR/ . >>$LOG 2>&1
+
+# Special sync for the demo snapshots
+#
+echo ".. syncing demo dumps" >>$LOG
+sudo rsync --partial -az apps.instahealthsolutions.com:/root/demo-backups/ $HMS_WORK_HOME/demo-backups/
+
+#
+# Remove lock and exit
+#
+sudo rm /var/run/syncdump.pid
+echo "----- Done `date` ----" >>$LOG
+echo >>$LOG
+

@@ -1,0 +1,2296 @@
+<menu_config>
+
+	<menu_group id="grp_hms_new_modules" name="js.topnav.menu.opflow">
+		<menu_item actionId="new_op_appointment" name="js.topnav.menu.newui.op.appointment"
+				   hashFragment="/filter"/>
+		<menu_item actionId="new_op_registration" name="js.topnav.menu.newui.op.registration" 
+				hashFragment="/filter" module="registration"/>
+		<menu_item actionId="new_op_bill" name="js.topnav.menu.newui.op.bill"
+				   hashFragment="/filter" module="billing"/>
+		<menu_item actionId="new_triage" name="js.topnav.menu.new.triage" 
+				hashFragment="/filter" module="triage"/>
+		<menu_item actionId="new_initial_assessment" name="js.topnav.menu.new.initialassessment" 
+				hashFragment="/filter" module="initialassessment"/>
+		<menu_item actionId="new_cons" name="js.topnav.menu.new.consultation" 
+				hashFragment="/filter" module="consultation"/>
+		<menu_item actionId="new_op_order" name="js.topnav.menu.billing.newui.order.op"
+			hashFragment="/filter"/>
+	</menu_group>
+
+	<menu_group id="grp_hms_new_ip_modules" name="js.topnav.menu.ipflow">
+		<menu_item actionId="new_ip_bill" name="js.topnav.menu.newui.op.bill"
+			hashFragment="/filter"/>
+		<menu_item actionId="new_ipemr" name="js.topnav.menu.new.ipemr"
+		hashFragment="/filter" module="ipemr"/>
+		<menu_item actionId="new_ip_order" name="js.topnav.menu.billing.newui.order.op"
+			hashFragment="/filter"/>
+		<menu_item actionId="new_discharge_summary" name="js.topnav.menu.newui.discharge.summary" 
+			hashFragment="/filter" module="dischargesummary"/>
+	</menu_group>
+	
+	<menu_group id="grp_dashboard" name="js.topnav.menu.dashboard">
+		<menu_item actionId="patient_pending_prescription"
+			name="js.topnav.menu.general.pending.prescriptions.dashboard.new"
+			 hashFragment="/pendingPrescription"  isNew="true"/>
+	</menu_group>
+
+	<menu_group id="grp_patient_search" name="js.topnav.menu.search">
+		<menu_item actionId="visit_details_search" name="js.topnav.menu.search.active.patients"
+			urlParams="_method=list&amp;status=A&amp;sortOrder=visit_reg_date&amp;sortReverse=true" type="WorkList" />
+		<menu_item actionId="patient_details_search" name="js.topnav.menu.search.patients.search"
+			urlParams="_method=show" type="WorkList"/>
+		<menu_item actionId="visit_details_search" name="js.topnav.menu.search.visits.search"
+			urlParams="_method=show" type="WorkList"/>
+		<menu_item actionId="patient_diag_status_search" name="js.topnav.menu.search.patient.test.status"
+			urlParams="_method=search&amp;date_range=month" type="WorkList"/>
+		<menu_item actionId="UHID_search" name="js.topnav.menu.search.uhid.search" urlParams="_method=getUHID&amp;systemType=a" />
+	</menu_group>
+	
+	<menu_group id="grp_registration" name="js.topnav.menu.registration">
+		<menu_item actionId="ip_registration"
+			name="js.topnav.menu.registration.ip.registration"
+			urlParams="_method=getdetails" />
+		<menu_item actionId="out_pat_reg"
+			name="js.topnav.menu.registration.outside.patient.registration"
+			urlParams="_method=getdetails" />
+		<menu_item actionId="reg_general"
+			name="js.topnav.menu.registration.preregistration"
+			urlParams="_method=show" />
+		<menu_item actionId="reg_upload"
+			name="js.topnav.menu.registration.bulk.registration"
+			urlParams="method=add" />
+
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="reg_re_admit"
+			name="js.topnav.menu.registration.readmit.patient" urlParams="_method=getReadmitScreen" />
+		<menu_item actionId="reg_admission_request"
+			name="js.topnav.menu.registration.admission.request" urlParams="_method=getAdmissionRequestList&amp;admission_date=today&amp;admission_date@op=ge&amp;request_date=today&amp;request_date@type=date&amp;request_date@cast=y&amp;sortOrder=request_date&amp;sortReverse=true&amp;par.status=P"/>
+		<menu_item actionId="adt" name="js.topnav.menu.registration.adt"
+			urlParams="_method=getADTScreen&amp;sortOrder=admit_date&amp;sortReverse=true" type="WorkList"/>
+		<menu_item actionId="pat_discharge" name="js.topnav.menu.registration.discharge"
+			urlParams="_method=getDischargeDetails&amp;ps_status=active" />
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="edit_visit_details"
+			name="js.topnav.menu.registration.edit.patient.visit" urlParams="_method=getEditVisitScreen&amp;ps_status=active"/>
+		<menu_item actionId="folowup_details"
+			name="js.topnav.menu.registration.follow.up.details"
+			urlParams="_method=getDashBoardSearchDetails&amp;fud.followup_date=today&amp;fud.followup_date=tomorrow&amp;pr.reg_date=&amp;pr.reg_date=" type="WorkList"/>
+		<menu_item actionId="reg_quick_estimate"
+			name="js.topnav.menu.registration.quick.estimate" urlParams="_method=getQuickEstimateScreen" />
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="reg_export_data"
+			name="js.topnav.menu.registration.export.encounter.details"
+			urlParams="_method=show" />
+		<menu_item actionId="registration_audit_log"
+			name="js.topnav.menu.registration.search.audit.log"
+			urlParams="_method=getSearchScreen" />
+	</menu_group>
+
+	<menu_group id="grp_billing" name="js.topnav.menu.billing">
+		<menu_item actionId="search_bills" name="js.topnav.menu.billing.open.bills"
+			urlParams="_method=getBills&amp;status=A&amp;visit_type=i&amp;visit_type=o&amp;creditnote=N&amp;title=Open+Bills&amp;sortOrder=open_date&amp;sortReverse=true&amp;date_range=week" type="WorkList"/>
+		<menu_item actionId="search_bills" name="js.topnav.menu.billing.search.bills"
+			urlParams="_method=getScreen" type="WorkList"/>
+		<menu_item actionId="receipts" name="js.topnav.menu.billing.receipts"
+			urlParams="_method=getScreen" type="WorkList"/>
+
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="credit_bill_collection" name="js.topnav.menu.billing.view.or.edit.bill"
+			urlParams="_method=getCreditBillingCollectScreen" />
+		<menu_item actionId="new_prepaid_bills" name="js.topnav.menu.billing.new.bill"
+			urlParams="_method=getNewPrepaidBillScreen" />
+		<menu_item actionId="dialysis_order" name="js.topnav.menu.billing.dialysis.order"
+			urlParams="_method=showDialysisOrder" />
+		<menu_item actionId="patient_expensive_statement" name="js.topnav.menu.billing.patient.statement"
+			urlParams="_method=getScreen" />
+		<menu_item actionId="change_visit_org"
+			name="js.topnav.menu.billing.edit.rate.plan.or.bed.type"
+			urlParams="_method=updateRatePlan" />
+
+		<menu_item actionId="patient_writeoff_approval"
+			name="js.topnav.menu.billing.patient.due.writeoff"
+			urlParams="_method=getBillsWriteOffList&amp;patient_writeoff=M" type="WorkList"/>
+		<menu_item actionId="sponsor_writeoff_approval"
+			name="js.topnav.menu.billing.sponsor.due.writeoff"
+			urlParams="_method=getBillsSpnrWriteOffList" type="WorkList"/>
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="reward_points" name="js.topnav.menu.billing.reward.points"
+			urlParams="_method=getRewardPointsScreen&amp;statusAll=on&amp;typeAll=on" type="WorkList"/>
+
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="patient_deposits" name="js.topnav.menu.billing.deposits"
+			urlParams="_method=getDepositsScreen&amp;statusAll=on&amp;typeAll=on" type="WorkList"/>
+		<menu_item actionId="patient_deposits_collection" name="js.topnav.menu.billing.deposits.collection"
+			urlParams="_method=collectOrRefundDeposits&amp;depositType=R" />
+		<menu_item actionId="deposits_realization"
+			name="js.topnav.menu.billing.deposits.realization"
+			urlParams="_method=getDepositRealizationScreen&amp;date_range=month" type="WorkList"/>
+		<menu_item actionId="deposit_receipts" name="js.topnav.menu.billing.deposit.receipts"
+			urlParams="_method=getDepositReceiptsScreen" type="WorkList"/>
+
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="transaction_approval"
+			name="js.topnav.menu.billing.transaction.approval"
+			urlParams="_method=getScreen" />
+		<menu_item actionId="billing_daybook" name="js.topnav.menu.billing.day.book"
+			urlParams="_method=getDaybook&amp;status=daybook" />
+		<menu_item actionId="bills_backup" name="js.topnav.menu.billing.bills.backup"
+			urlParams="_method=getBillsBackupScreen" />
+
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="bill_audit_log" name="js.topnav.menu.billing.search.audit.log"
+			urlParams="_method=getSearchScreen" type="WorkList"/>
+	</menu_group>
+	<menu_group id ="grp_accounting" name="js.topnav.menu.accounting">
+		<menu_item actionId="billing_tally_export" name="js.topnav.menu.billing.export.data.for.tally"
+			urlParams="_method=getScreen" />
+		<menu_item actionId="account_xml_import_export_log" name="js.topnav.menu.billing.scheduled.export.log"
+			urlParams="_method=list&amp;status=Pending&amp;status=Error&amp;sortOrder=exported_date_time&amp;sortReverse=true"/>
+		<menu_item actionId="billing_zoho_export" name="js.topnav.menu.billing.export.data.for.zoho"
+			urlParams="" />
+	</menu_group>
+	<menu_group id="grp_ins_ext" name="js.topnav.menu.billing">
+		<menu_item actionId="patient_sponsors_approval" name="js.topnav.menu.billing.patient.approvals"
+			urlParams="_method=list&amp;sortOrder=sponsor_approval_id&amp;sortReverse=true&amp;status=A&amp;status=P" type="WorkList"/>
+		<menu_item actionId="dialysis_order" name="js.topnav.menu.billing.dialysis.order"
+			urlParams="_method=showDialysisOrder" />
+		<menu_item actionId="consolidated_sponsor_receipts" name="js.topnav.menu.billing.sponsor.receipts"
+			urlParams="_method=list&amp;sortOrder=bill_no&amp;sortReverse=false&amp;status=A" type="WorkList"/>
+		<menu_item actionId="collection_approval_receipts" name="js.topnav.menu.billing.collection.approval"
+			urlParams="_method=list&amp;status=P" type="WorkList"/>
+		<menu_item actionId="consolidated_bill" name="js.topnav.menu.billing.consolidated.bill.list"
+			urlParams="_method=list&amp;status=A&amp;is_consolidated_credit_note=false&amp;is_consolidated_credit_note%40cast=y" type="WorkList"/>
+		<menu_item actionId="dialysis_receipts" name="js.topnav.menu.billing.receipts"
+			urlParams="_method=getScreen" type="WorkList"/>
+	<!-- <menu_item actionId="dialysis_search_bills" name="js.topnav.menu.billing.dialysis.search.bills"
+			urlParams="_method=getScreen" type="WorkList"/>  -->
+	</menu_group>
+
+	<menu_group id="grp_payments" name="js.topnav.menu.payments">
+		<menu_item actionId="pay_dashboard" name="js.topnav.menu.payments.payments.due"
+			urlParams="_method=getPaymentDues" type="WorkList"/>
+		<menu_item actionId="pay_paymentscreen" name="js.topnav.menu.payments.paid.payments"
+			urlParams="_method=getPaymentDues" type="WorkList"/>
+
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="pay_doctor" name="js.topnav.menu.payments.conducting.doctor.payments"
+			urlParams="_method=paymentDues&amp;doctor_amount=0" type="WorkList"/>
+		<menu_item actionId="pay_prescribe_doctor" name="js.topnav.menu.payments.prescribing.doctor.payments"
+			urlParams="_method=getPaymentDues&amp;prescribing_dr_amount=0" type="WorkList"/>
+		<menu_item actionId="pay_ref_doctor" name="js.topnav.menu.payments.referral.doctor.payments"
+			urlParams="_method=getReferralDoctorPaymentScreen&amp;referal_amount=0" type="WorkList"/>
+		<menu_item actionId="outhouse_payment" name="js.topnav.menu.payments.outsource.payments"
+			urlParams="_method=getOutHousePaymentScreen" type="WorkList"/>
+		<menu_item actionId="pay_supplier" name="js.topnav.menu.payments.supplier.payments"
+			urlParams="_method=getSupplierPaymentScreen" type="WorkList"/>
+		<menu_item actionId="pay_miscellaneous" name="js.topnav.menu.payments.miscellaneous.payments"
+			urlParams="_method=getMiscPaymentScreen" />
+
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="pay_reversal" name="js.topnav.menu.payments.payment.reversal"
+			urlParams="_method=getPaymentReversalScreen" />
+		<menu_item actionId="autopost_payments" name="js.topnav.menu.payments.auto.post.payments"
+			urlParams="_method=getAutoPaymentScreen"/>
+
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="payment_audit_log" name="js.topnav.menu.payments.audit.log"
+			urlParams="_method=getSearchScreen" type="WorkList"/>
+	</menu_group>
+
+	<menu_group id="grp_diagnostics" name="js.topnav.menu.laboratory">
+		<menu_item actionId="lab_schedules_list" name="js.topnav.menu.laboratory.laboratory.reports"
+			urlParams="_method=getScheduleList&amp;date_range=week" type="WorkList"/>
+		<menu_item actionId="lab_schedules_search" name="js.topnav.menu.laboratory.laboratory.reports.search"
+			urlParams="_method=searchScreen&amp;date_range=week" />
+
+		<menu_item actionId="lab_unfinished_tests" name="js.topnav.menu.laboratory.laboratory.pending.tests"
+			urlParams="_method=unfinishedTestsList&amp;conducted=N&amp;conducted=P&amp;conducted=NRN&amp;date_range=week&amp;sortOrder=pres_date" type="WorkList"/>
+		<menu_item actionId="lab_unfinished_tests_search" name="js.topnav.menu.laboratory.laboratory.pending.tests.search"
+			urlParams="_method=searchUnfinishedTestsList&amp;date_range=week&amp;sortOrder=pres_date" />	
+		
+		<menu_item actionId="lab_pending_samples" name="js.topnav.menu.laboratory.laboratory.pending.samples"
+			urlParams="_method=pendingSamplesList&amp;sortOrder=pres_date&amp;sample_status=0&amp;date_range=week" type="WorkList"/>
+		<menu_item actionId="lab_pending_samples_search" name="js.topnav.menu.laboratory.laboratory.pending.samples.search"
+			urlParams="_method=searchPendingSamplesList&amp;sortOrder=pres_date&amp;date_range=week" />
+		
+		<menu_item actionId="lab_pending_sample_assertions" name="js.topnav.menu.laboratory.laboratory.pending.sample.assertions"
+			urlParams="_method=searchScreen&amp;sortOrder=sample_date&amp;sample_status=C&amp;date_range=week" />
+
+		<menu_item actionId="lab_transfer_sample_barcode" name="js.topnav.menu.laboratory.laboratory.transfer.samples.barcode"
+			urlParams="_method=searchBySample" />
+
+		<menu_item actionId="lab_transfer_sample_manual" name="js.topnav.menu.laboratory.laboratory.transfer.samples.manual"
+			urlParams="_method=searchScreen&amp;sortOrder=sample_date&amp;date_range=week&amp;sample_transfer_status=P" />
+
+		<menu_item actionId="lab_receive_split_sample" name="js.topnav.menu.laboratory.laboratory.receive.or.split.samples"
+			urlParams="_method=searchScreen&amp;date_range=week&amp;sample_receive_status=P" />
+
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="lab_signedoff_report_list" name="js.topnav.menu.laboratory.signedoff.reports"
+			urlParams="_method=getReportListScreen&amp;filterClosed=false&amp;handed_over=N&amp;testAll=on&amp;date_range=week" type="WorkList"/>
+
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="diag_incoming_sample_reg" name="js.topnav.menu.laboratory.incoming.sample.registration"
+			urlParams="_method=getSampleRegistrationForm" />
+		<menu_item actionId="lab_incoming_bill_list" name="js.topnav.menu.laboratory.incoming.sample.pending.bills"
+			urlParams="_method=getIncomingSamplePendingBillsList&amp;statusOpen=true&amp;filterClosed=true&amp;sortOrder=billno&amp;sortReverse=true" type="WorkList"/>
+
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="lab_prescribe_test" name="js.topnav.menu.laboratory.order.tests"
+			urlParams="_method=getOrders&amp;prescribeTests=true" />
+		<menu_item actionId="lab_test_reconduction"
+			name="js.topnav.menu.laboratory.reconduction.tests"
+			urlParams="_method=getReconductTestListScreen&amp;" />
+		<menu_item actionId="lab_incoming_test_reconduction"
+			name="js.topnav.menu.laboratory.reconduction.incoming.tests"
+			urlParams="_method=getReconductTestListScreen&amp;" />
+		<!--  <menu_item actionId="pending_lab_prescriptions" name="Pending Lab Prescriptions"
+			urlParams="_method=list&amp;sortOrder=mr_no&amp;exclude_in_qb_presc_status=P"/> -->
+
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="lab_test_audit_list" name="js.topnav.menu.laboratory.test.audit.log"
+			urlParams="_method=getTestListScreen&amp;filterClosed=false" type="WorkList"/>
+		<menu_item actionId="laboratory_audit_log" name="js.topnav.menu.laboratory.search.audit.log"
+			urlParams="_method=getSearchScreen" />
+
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="lab_equipment_qa" name="js.topnav.menu.laboratory.equipment.quality.test"
+			urlParams="_method=list" type="WorkList"/>
+	</menu_group>
+
+	<menu_group id="grp_radiology" name="js.topnav.menu.radiology">
+		<menu_item actionId="radiology_arrivals"
+			name="js.topnav.menu.radiology.radiology.arrivals"
+			urlParams="_method=getRadiologyArrivalScreen&amp;sortOrder=pres_date&amp;date_range=week" type="WorkList"/>
+
+		<menu_item actionId="rad_schedules_list" name="js.topnav.menu.radiology.radiology.reports"
+			urlParams="_method=getScheduleList&amp;date_range=week" type="WorkList"/>
+		<menu_item actionId="rad_schedules_search" name="js.topnav.menu.radiology.radiology.reports.search"
+			urlParams="_method=searchScreen&amp;date_range=week" />
+
+		<menu_item actionId="rad_unfinished_tests"
+			name="js.topnav.menu.radiology.radiology.pending.tests"
+			urlParams="_method=unfinishedTestsList&amp;conducted=N&amp;conducted=P&amp;conducted=NRN&amp;date_range=week&amp;sortOrder=pres_date" type="WorkList"/>
+
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="rad_signedoff_report_list"
+			name="js.topnav.menu.radiology.signedoff.reports.list"
+			urlParams="_method=getReportListScreen&amp;filterClosed=false&amp;handed_over=N&amp;testAll=on&amp;date_range=week" type="WorkList"/>
+
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="radio_prescribe_test"
+			name="js.topnav.menu.radiology.order.tests" urlParams="_method=getOrders&amp;prescribeTests=true" />
+		<menu_item actionId="radiology_test_reconduction"
+			name="js.topnav.menu.radiology.reconduction.tests"
+			urlParams="_method=getReconductTestListScreen&amp;" />
+		<menu_item actionId="radiology_incoming_test_reconduction"
+			name="js.topnav.menu.radiology.reconduction.incoming.tests"
+			urlParams="_method=getReconductTestListScreen&amp;" />
+
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="rad_incoming_sample_reg"
+			name="js.topnav.menu.radiology.incoming.radiology.tests"
+			urlParams="_method=getSampleRegistrationForm" />
+		<menu_item actionId="rad_incoming_bill_list"
+			name="js.topnav.menu.radiology.incoming.pending.bills"
+			urlParams="_method=getIncomingSamplePendingBillsList&amp;statusOpen=true&amp;filterClosed=true&amp;sortOrder=billno&amp;sortReverse=true" type="WorkList"/>
+		<!--  <menu_item actionId="pending_radiology_prescriptions" name="Pending Radiology Prescriptions"
+			urlParams="_method=list&amp;sortOrder=mr_no&amp;exclude_in_qb_presc_status=P"/> -->
+
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="rad_test_audit_list"
+			name="js.topnav.menu.radiology.test.audit.list"
+			urlParams="_method=getTestListScreen&amp;filterClosed=false" type="WorkList"/>
+		<menu_item actionId="radiology_audit_log"
+			name="js.topnav.menu.radiology.audit.log"
+			urlParams="_method=getSearchScreen" />
+
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="rad_equipment_qa" name="js.topnav.menu.radiology.equipment.quality.test"
+			urlParams="_method=list" type="WorkList"/>
+	</menu_group>
+
+	<menu_group id="grp_patient" name="js.topnav.menu.patient">
+
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="ip_ipservices" name="js.topnav.menu.patient.in.patient.list" type="WorkList"
+			urlParams="_method=getIPDashBoard&amp;sortOrder=mr_no&amp;status=A&amp;sortReverse=true" />
+		<menu_item actionId="bed_view" name="js.topnav.menu.patient.bed.view" type="WorkList"
+			urlParams="_method=getBedView&amp;sortOrder=bed_id&amp;sortReverse=false" />
+		<menu_item actionId="discharge_medication" name="js.topnav.menu.patient.discharge.medication" 
+			urlParams="_method=getDischargeMedicationScreen"/>
+
+		<menu_item isSeparator="true"/>
+		<!-- <menu_item  actionId="patient_summary" name="js.topnav.menu.patient.ip.case.sheet"
+			urlParams="_method=list"/>  -->
+		<menu_item actionId="ward_activities" name="js.topnav.menu.patient.ip.clinical.management" type="WorkList"
+			urlParams="_method=list"/>
+		<menu_item actionId="nurse_ward_assignment" name="js.topnav.menu.patient.in.warduser.list" type="WorkList"
+			urlParams="sortOrder=role_name&amp;sortOrder=emp_username"/>
+
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="op_out_patient" name="js.topnav.menu.patient.out.patient.list" type="WorkList"
+			urlParams="_method=list&amp;sortReverse=false&amp;status=A&amp;status=P&amp;visit_status=A&amp;date_range=week" />
+		<menu_item actionId="consult_token_display_prefs" name="js.topnav.menu.patient.consultation.display"
+			urlParams="_method=prefs"/>
+		<menu_item actionId="patient_progress" name="js.topnav.menu.patient.patient.progress.notes"
+			urlParams="_method=show"/>
+		<menu_item actionId="dental_consultations" name="js.topnav.menu.patient.dental.consultations"
+			urlParams="_method=show&amp;emptyScreen=true&amp;ps_status=active&amp;madd_disable=false"/>
+		<!-- <menu_item actionId="patient_pending_prescriptions" name="Patient Pending Prescriptions"
+			urlParams="_method=list&amp;sortOrder=mr_no&amp;exclude_in_qb_presc_status=P"/> -->
+		<!-- <menu_item actionId="pending_consultation_prescriptions" name="Pending Consultation Prescriptions"
+			urlParams="_method=list&amp;sortOrder=mr_no&amp;exclude_in_qb_presc_status=P"/> -->
+
+		<menu_item isSeparator="true" />
+		<menu_item actionId="erx_presc_list" name="js.topnav.menu.patient.erx.prescriptions.list" type="WorkList"
+			urlParams="_method=getList" />
+
+		<menu_item isSeparator="true" />
+		<menu_item actionId="vaccination_info" name="js.topnav.menu.patient.vaccinations"
+			urlParams="_method=vaccinationsList" />
+			
+		<menu_item isSeparator="true" />
+		<menu_item actionId="mas_break_the_glass" name="js.topnav.menu.patient.break.the.glass" />
+		
+	</menu_group>
+
+	<menu_group id="grp_services" name="js.topnav.menu.services">
+		<menu_item actionId="pending_services" name="js.topnav.menu.services.pending.services.list" type="WorkList"
+			urlParams="_method=pendingList&amp;date_range=week" />
+		<menu_item actionId="conducted_services" name="js.topnav.menu.services.conducted.services.list" type="WorkList"
+			urlParams="_method=conductedList&amp;sortReverse=true&amp;signed_off=&amp;signed_off%40type=boolean&amp;signed_off%40cast=y&amp;date_range=week" />
+		<menu_item actionId="service_order" name="js.topnav.menu.services.order.services"
+			urlParams="_method=getOrders" />
+		<!--  <menu_item actionId="pending_service_prescriptions" name="Pending Service Prescriptions"
+			urlParams="_method=list&amp;sortOrder=mr_no&amp;exclude_in_qb_presc_status=P"/> -->
+	</menu_group>
+
+	<menu_group id="grp_operations" name="js.topnav.menu.surgeries">
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="ot_bookings" name="js.topnav.menu.surgeries.ot.bookings" type="WorkList"
+			urlParams="_method=getTodaysPatientAppointments&amp;startTime=today&amp;resFilter=OPE&amp;appoint_status=Booked&amp;appoint_status=Confirmed" />
+		<menu_item actionId="get_planned_operations_list" name="js.topnav.menu.surgeries.planned.operations" type="WorkList"
+			urlParams="_method=getPlannedOperationsList&amp;sortOrder=mr_no&amp;operation_status=P"/>
+		<menu_item actionId="operations_pending_list" name="js.topnav.menu.surgeries.pending.operations" type="WorkList"
+			urlParams="_method=pendingList&amp;sortOrder=mr_no"/>
+		<menu_item actionId="operations_conducted_list" name="js.topnav.menu.surgeries.conducted.operations" type="WorkList"
+			urlParams="_method=conductedList&amp;sortOrder=mr_no&amp;sortReverse=true"/>
+		<menu_item actionId="ot_service_report" name="js.topnav.menu.surgeries.duplicate.ot.report"
+			urlParams="method=getPrintList&amp;patientAll=on&amp;filterClosed=true&amp;signedOff=on" />
+		<!-- <menu_item actionId="pending_operation_prescriptions" name="Pending Operation Prescriptions"
+			urlParams="_method=list&amp;sortOrder=mr_no&amp;exclude_in_qb_presc_status=P"/> -->
+	</menu_group>
+
+	<menu_group id="grp_dialysis" name="js.topnav.menu.dialysis" >
+		<menu_item actionId="dialysis_prescriptions" name="js.topnav.menu.dialysis.dialysis.prescriptions" type="WorkList"
+			urlParams="_method=search"/>
+		<menu_item actionId="dialysis_current_sessions" name="js.topnav.menu.dialysis.current.dialysis.sessions" type="WorkList"
+			urlParams="_method=list&amp;date_range=week"/>
+		<menu_item actionId="dialysis_sessions_summary" name="js.topnav.menu.dialysis.dialysis.sessions.summary"
+			urlParams="_method=search"/>
+		<menu_item actionId="dialysis_machine_status" name="js.topnav.menu.dialysis.dialysis.machine.status" type="WorkList"
+			urlParams="method=list&amp;sortOrder=machine_name"/>
+	</menu_group>
+
+	<menu_group id="grp_ivf" name="js.topnav.menu.ivf" >
+		<menu_item actionId="ivf_sessions" name="js.topnav.menu.ivf.ivf.sessions" type="WorkList"
+			urlParams="_method=list&amp;cycle_status=O&amp;cycle_status=P&amp;cycle_status=D"/>
+		<menu_item actionId="ivf_history" name="js.topnav.menu.ivf.ivf.history"
+			urlParams="_method=list" type="WorkList"/>
+		<menu_item actionId="donor_registry" name="js.topnav.menu.ivf.donor.registry" type="WorkList"
+			urlParams="_method=list"/>
+	</menu_group>
+
+	<menu_group id="grp_clinical_data" name="js.topnav.menu.clinical.data" >
+		<menu_item actionId="clinical_data_lab_results" name="js.topnav.menu.clinical.data.clinical.analysis.data" type="WorkList"
+			urlParams="_method=list&amp;sortOrder=resultlabel_short"/>
+		<menu_item actionId="clinical_hospitalization_information" name="js.topnav.menu.clinical.data.hospitalization.information" type="WorkList"
+			urlParams="_method=list"/>
+		<menu_item actionId="vaccinations" name="js.topnav.menu.clinical.data.vaccinations" type="WorkList"
+			urlParams="_method=list"/>
+		<menu_item actionId="dialysis_adequacy" name="js.topnav.menu.clinical.data.dialysis.adequacy"
+			urlParams="_method=list"/>
+		<menu_item actionId="infections_data" name="js.topnav.menu.clinical.data.infections.data" type="WorkList"
+			urlParams="_method=list"/>
+		<menu_item actionId="blood_transfusions" name="js.topnav.menu.clinical.data.blood.transfusion" type="WorkList"
+			urlParams="_method=list"/>
+		<menu_item actionId="score_card_list" name="js.topnav.menu.clinical.data.score.card"
+			urlParams="_method=list"/>
+	</menu_group>
+
+	<menu_group id="grp_opthalmology" name="js.topnav.menu.ophthalmology" >
+		<menu_item actionId="optometrist_screen" name="js.topnav.menu.ophthalmology.ophthalmology.dashboard" type="WorkList"
+			urlParams="_method=list&amp;status=" />
+	</menu_group>
+
+	<menu_group id="grp_medical_records" name="js.topnav.menu.medical.records">
+		<menu_item actionId="update_mrd" name="js.topnav.menu.medical.records.codification"
+			urlParams="_method=getMRDUpdateScreen" />
+		<menu_item actionId="icd_report" name="js.topnav.menu.medical.records.codes.search"
+			urlParams="_method=getScreen&amp;codification_status=C&amp;codification_status=R&amp;codification_status=V" type="WorkList"/>
+		<menu_item actionId="coder_claim_reviews" name="js.topnav.menu.medical.records.coder.review" 
+			urlParams="_mysearch=nosearch&amp;status=open&amp;status=inprogress&amp;_search_name=&amp;_actionId=coder_claim_reviews&amp;sortOrder=assigned_to_role_name&amp;date_range=month" type="WorkList"/>
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="mrd_file_search" name="js.topnav.menu.medical.records.case.file.search"
+			urlParams="_method=searchCasefiles&amp;_visit_type=o&amp;_visit_status=A&amp;date_range=week" type="WorkList"/>
+		<menu_item actionId="mrd_file_indent" name="js.topnav.menu.medical.records.raise.case.file.indent"
+		  urlParams="_method=raiseMRDIndentScreen"/>
+		<menu_item actionId="mrd_file_issue" name="js.topnav.menu.medical.records.issue.case.file"
+			urlParams="_method=issueMRDCasefileScreen"/>
+		<menu_item actionId="mrd_file_return" name="js.topnav.menu.medical.records.return.case.file"
+			urlParams="_method=returnMRDCasefileScreen" />
+		<menu_item actionId="mrd_indent_close" name="js.topnav.menu.medical.records.close.case.file.indent"
+		  urlParams="_method=closeIndentCasefileScreen"/>
+
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="emr_screen" name="js.topnav.menu.medical.records.patient.emr.search"
+			urlParams="_method=list" />
+		<menu_item actionId="visit_emr_screen" name="js.topnav.menu.medical.records.visit.emr.search"
+			urlParams="_method=list" />
+		<menu_item actionId="generic_documents_list" name="js.topnav.menu.medical.records.generic.documents.list"
+			urlParams="_method=searchPatientGeneralDocuments&amp;defaultScreen=true" />
+		<menu_item actionId="generic_documents_list" name="js.topnav.menu.medical.records.add.generic.documents"
+			urlParams="_method=addPatientDocument&amp;defaultScreen=true" />
+		<menu_item actionId="patient_generic_form_list" name="js.topnav.menu.medical.records.patient.generic.forms.list"
+			urlParams="_method=list&amp;defaultScreen=true"/>
+		<menu_item actionId="patient_generic_form_list" name="js.topnav.menu.medical.records.add.patient.generic.form"
+			urlParams="_method=getChooseGenericFormScreen&amp;defaultScreen=true"/>
+	</menu_group>
+
+	<menu_group id="grp_stores_sales_issues" name="js.topnav.menu.sales.or.issues">
+		<menu_item actionId="pharma_sales" name="js.topnav.menu.salesorissues.sales"
+			urlParams="method=getSalesScreen&amp;phStore=0&amp;ps_status=active" />
+		<menu_item actionId="pharma_returns" name="js.topnav.menu.salesorissues.sales.return"
+			urlParams="method=getSalesScreen&amp;phStore=0&amp;ps_status=active" />
+		<menu_item actionId="pharma_presc_list" name="js.topnav.menu.salesorissues.prescription.list" 
+			urlParams="_method=getList&amp;visit_type=o&amp;patstatus=A&amp;status=N&amp;status=P&amp;type_of_prescription=P&amp;date_range=week" type="WorkList"/>
+		<menu_item actionId="pharma_sale_duplicate_bill" name="js.topnav.menu.salesorissues.duplicate.sales.bills"
+			urlParams="_method=getScreen&amp;sortOrder=sale_id&amp;sortReverse=true" type="WorkList" />
+		<menu_item actionId="ph_receipts" name="js.topnav.menu.salesorissues.pharmacy.receipts"
+			urlParams="_method=getScreen" type="WorkList"/>
+
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="stores_patient_indent_add" name="js.topnav.menu.salesorissues.add.patient.indent"
+			urlParams="_method=addshow" />
+		<menu_item actionId="stores_patient_indent_add_return" name="js.topnav.menu.salesorissues.add.patient.return.indent"
+			urlParams="_method=addshow" />
+		<menu_item actionId="stores_patient_indent_list" name="js.topnav.menu.salesorissues.patient.indents.list"
+			urlParams="_method=list&amp;dispense_status=O&amp;dispense_status=P&amp;date_range=week" type="WorkList"/>
+
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="pharma_sale_pending_bills" name="js.topnav.menu.salesorissues.pending.bill.now.bills"
+			urlParams="_method=getPendingSaleBillsList&amp;sortOrder=sale_id&amp;sortReverse=true" type="WorkList"/>
+		<menu_item actionId="pharma_item_credit_bill" name="js.topnav.menu.salesorissues.pending.bill.later.bills"
+			urlParams="_method=getCreditBillsList&amp;sortOrder=bill_no&amp;sortReverse=true&amp;status=A" type="WorkList"/>
+		<menu_item actionId="pharma_retail_sale_pending_bills" name="js.topnav.menu.salesorissues.retail.credit.bills"
+			urlParams="_method=getRetailPendingSaleBillsList&amp;sortOrder=bill_no&amp;sortReverse=true" type="WorkList"/>
+
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="pharma_estimate" name="js.topnav.menu.salesorissues.estimate"
+			urlParams="method=getSalesScreen&amp;phStore=0&amp;ps_status=active" />
+		<menu_item actionId="pharma_estimate_list" name="js.topnav.menu.salesorissues.estimates.list"
+			urlParams="_method=getScreen" type="WorkList"/>
+
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="patient_inventory_issue" name="js.topnav.menu.salesorissues.issue.to.patient"
+			urlParams="store_id=0" />
+		<menu_item actionId="patient_inventory_return" name="js.topnav.menu.salesorissues.returns.from.patient"
+			urlParams="_method=show&amp;type=patient&amp;store=0" />
+		<menu_item actionId="stores_view_patient_issues" name="js.topnav.menu.salesorissues.view.patient.issues"
+			urlParams="_method=getStkIssForPatScreen" type="WorkList"/>
+		<menu_item actionId="stores_view_patient_returns" name="js.topnav.menu.salesorissues.view.patient.returns"
+			urlParams="_method=getPatientStkRetScreen" type="WorkList"/>
+
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="stock_inventory_issue" name="js.topnav.menu.salesorissues.issue.to.user.or.department.or.ward"
+			urlParams="_method=getStockIssueScreen&amp;store=0" />
+		<menu_item actionId="user_inventory_return" name="js.topnav.menu.salesorissues.returns.from.user.or.department.or.ward"
+			urlParams="_method=show&amp;type=hospital&amp;store=0" />
+		<menu_item actionId="stores_view_stock_issues" name="js.topnav.menu.salesorissues.view.user.or.department.or.ward.issues"
+			urlParams="_method=getStkIss&amp;sortOrder=user_issue_no&amp;sortReverse=true" type="WorkList"/>
+		<menu_item actionId="stores_view_user_returns" name="js.topnav.menu.salesorissues.view.user.or.department.or.ward.returns"
+			urlParams="_method=getStkRet&amp;sortOrder=user_issue_no&amp;sortReverse=true" type="WorkList"/>
+	</menu_group>
+
+	<menu_group id="grp_stores_procurement" name="js.topnav.menu.procurement">
+		<menu_item actionId="pharma_direct_stock_entry" name="js.topnav.menu.procurement.stock.entry"
+			urlParams="_method=getScreen" />
+		<menu_item actionId="pharma_view_grns" name="js.topnav.menu.procurement.view.grn"
+			urlParams="_method=getGrns&amp;sortOrder=grn_date&amp;sortReverse=true&amp;status=O&amp;status=F" type="WorkList"/>
+
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="stores_reorder" name="js.topnav.menu.procurement.stock.reorder"
+			urlParams="method=stockReorder" />
+		<!--  
+		<menu_item actionId="stores_batch_po" name="js.topnav.menu.procurement.create.batch.po"
+			urlParams="_method=getScreen" />
+		-->
+		<menu_item actionId="stores_po" name="js.topnav.menu.procurement.purchase.order"
+			urlParams="_method=getPOScreen" />
+		<menu_item actionId="stores_view_po" name="js.topnav.menu.procurement.view.po"
+			urlParams="_method=getPOs&amp;sortOrder=po_date&amp;sortReverse=true&amp;status=A&amp;status=O&amp;status=AO&amp;status=AA" type="WorkList"/>
+		<menu_item actionId="stores_po_approval" name="js.topnav.menu.procurement.approve.po"
+			urlParams="_method=list&amp;sortOrder=po_no&amp;status=O&amp;status=V&amp;status=AO&amp;status=AV&amp;sortReverse=true" type="WorkList"/>
+
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="pharma_view_supp_returns" name="js.topnav.menu.procurement.supplier.returns.or.replacements"
+			urlParams="_method=getSupplierReturns&amp;sortOrder=return_no&amp;sortReverse=true" type="WorkList"/>
+		<menu_item actionId="pharma_view_supp_returns" name="js.topnav.menu.procurement.supplier.returns.with.debit.notes.in.brackets"
+			urlParams="_method=getSupplierReturnDebits&amp;sortOrder=debit_note_no&amp;sortReverse=true" type="WorkList"/>
+
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="stores_view_pur_det" name="js.topnav.menu.procurement.purchase.details"
+			urlParams="_method=getPhPurchaseDetailsScreen&amp;sortReverse=false" type="WorkList"/>
+	</menu_group>
+
+	<menu_group id="grp_stores_management" name="js.topnav.menu.store.mgmt">
+		<menu_item actionId="stores_indent" name="js.topnav.menu.store.mgmt.view.indents"
+			urlParams="_method=list&amp;status=O&amp;sortOrder=indent_no&amp;sortReverse=true" type="WorkList"/>
+		<menu_item actionId="stores_user_indent" name="js.topnav.menu.store.mgmt.raise.user.indent"
+			urlParams="_method=add"/>
+		<menu_item actionId="stores_transfer_indent" name="js.topnav.menu.store.mgmt.raise.transfer.indent"
+			urlParams="_method=add"/>
+		<menu_item actionId="stores_indent_approval" name="js.topnav.menu.store.mgmt.approve.transfer.indent"
+			urlParams="_method=list&amp;status=O&amp;sortOrder=indent_no&amp;sortReverse=true&amp;indent_type=S" type="WorkList"/>
+		<menu_item actionId="stores_user_indent_approval" name="js.topnav.menu.store.mgmt.approve.user.indent"
+			urlParams="_method=list&amp;status=O&amp;sortOrder=indent_no&amp;sortReverse=true" type="WorkList"/>
+		<menu_item actionId="stores_process_indent" name="js.topnav.menu.store.mgmt.process.indent"
+			urlParams="_method=list&amp;status=A&amp;sortOrder=indent_no&amp;sortReverse=true" type="WorkList"/>
+
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="pharma_stock_transfer" name="js.topnav.menu.store.mgmt.stock.transfer"
+			urlParams="_method=show&amp;store=0" />
+		<menu_item actionId="pharma_view_stock_trans" name="js.topnav.menu.store.mgmt.view.stock.transfers"
+			urlParams="_method=getStkTransfer&amp;sortOrder=transfer_no&amp;sortReverse=true" type="WorkList"/>
+		<menu_item actionId="stores_indent_receive" name="js.topnav.menu.store.mgmt.receive.indent"
+			urlParams="_method=list" type="WorkList"/>
+		<menu_item actionId="stores_indent_reject" name="js.topnav.menu.store.mgmt.reject.indent"
+			urlParams="_method=listReject" type="WorkList"/>
+
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="stores_stock_adjust" name="js.topnav.menu.store.mgmt.stock.qty.adjustment"
+			urlParams="_method=add&amp;store_id=0" />
+		<menu_item actionId="pharma_view_stock_adj" name="js.topnav.menu.store.mgmt.view.stock.adjustments"
+			urlParams="_method=getStkAdj&amp;sortOrder=adj_no&amp;sortReverse=true" type="WorkList"/>
+
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="store_stock_consumption_list" name="js.topnav.menu.store.mgmt.stock.consumption.list"
+			urlParams="_method=getStoreStockConsumptionListSearchScreen&amp;grum.status=O&amp;sortOrder=grum.consumption_id&amp;sortReverse=true" type="WorkList"/>
+		<menu_item actionId="store_stock_consumption_new" name="js.topnav.menu.store.mgmt.add.new.stock.consumptions"
+			urlParams="_method=getStoreStockConsumptionSearchScreen&amp;sortOrder=medicine_name&amp;sortReverse=false" />
+    <menu_item actionId="store_stock_take_list" name="js.topnav.menu.store.mgmt.stock.take" 
+      hashFragment="/stockmanagement" isNew="true"/> 
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="stores_asset_approval" name="js.topnav.menu.store.mgmt.asset.approval"
+			urlParams="_method=list&amp;sortOrder=medicine_name&amp;sortReverse=false" type="WorkList"/>
+
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="pharmacy_stock_point" name="js.topnav.menu.store.mgmt.stock.checkpoint"
+			urlParams="_method=viewCheckpoints" type="WorkList"/>
+		<menu_item actionId="stores_stock_ledger" name="js.topnav.menu.store.mgmt.stock.ledger"
+			urlParams="_method=getScreen" />
+		<menu_item actionId="pharma_view_store_item_batch_list" name="js.topnav.menu.store.mgmt.store.item.batches.list"
+			urlParams="_method=list&amp;sortOrder=medicine_name&amp;sortReverse=false" type="WorkList"/>
+
+		<menu_item actionId="pharma_view_items_stock_level_list" name="js.topnav.menu.store.mgmt.items.stock.level.list"
+			urlParams="_method=list&amp;sortOrder=medicine_name&amp;sortReverse=false" type="WorkList"/>
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="stores_audit_log" name="js.topnav.menu.store.mgmt.audit.log"
+			urlParams="_method=getSearchScreen" />
+	</menu_group>
+
+	<menu_group id="grp_insurance" name="js.topnav.menu.insurance">
+		<menu_item actionId="insurance_claim_submission" name="js.topnav.menu.insurance.claim.submissions"
+			urlParams="_method=list&amp;sortOrder=created_date&amp;sortReverse=true&amp;status=O" type="WorkList"/>
+		<menu_item actionId="insurance_claim_change_logs" name="js.topnav.menu.insurance.change.logs.upload"
+			urlParams="sortReverse=false"/>
+		<menu_item actionId="ins_remittance" name="js.topnav.menu.insurance.remittance.advice.download"
+			urlParams="status=new&amp;sortReverse=true" />
+		<menu_item actionId="ins_selfpay" name="js.topnav.menu.insurance.claim.selfpay.submission"
+			urlParams="status=O&amp;sortReverse=true&amp;sortOrder=created_at&amp;submissionType=SP" />
+		<menu_item actionId="ins_remittance_xl" name="js.topnav.menu.insurance.remittance.advice.xl.upload"
+           	urlParams="_method=add" />
+        <menu_item actionId="insurance_claim_reconciliation" name="js.topnav.menu.insurance.claim.reconciliation"
+        	urlParams="_method=list&amp;claim_status=Denied&amp;claim_status=ForResub.&amp;sortOrder=claim_id&amp;sortReverse=true&amp;date_range=month" type="WorkList"/>
+		<menu_item actionId="remittance_reconciliation" name="js.topnav.menu.remittance.reconciliation"
+			hashFragment="/remittanceReconciliation" module="remittanceReconciliation" isNew="true" isBeta="true"/>
+		<menu_item actionId="insurance_claim_receipts" name="js.topnav.menu.insurance.claim.receipts"
+			urlParams="_method=getScreen&amp;sortOrder=receipt_no&amp;sortReverse=true" type="WorkList"/>
+		<menu_item actionId="edit_claim" name="js.topnav.menu.insurance.edit.claim"
+			urlParams="_method=getClaims&amp;status=A&amp;sortOrder=claim_id&amp;sortReverse=true&amp;ps_status=active"/>
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="ins_newcase" name="js.topnav.menu.insurance.patients.pending.case.connection"
+			urlParams="_method=connectcase" />
+		<menu_item actionId="ins_dashboard" name="js.topnav.menu.insurance.case.list"
+			urlParams="_method=list&amp;filterClosed=true&amp;status=A&amp;status=P&amp;status=F&amp;sortOrder=insurance_id&amp;sortReverse=true&amp;visit_type=" type="WorkList"/>
+		<menu_item actionId="ins_newcase" name="js.topnav.menu.insurance.add.new.case"
+			urlParams="_method=show" />
+	</menu_group>
+
+	<menu_group id="grp_eclaim_pbm" name="js.topnav.menu.pbm.authorization">
+		<menu_item actionId="pbm_presc_list" name="js.topnav.menu.pbm.authorization.pbm.prescriptions.list"
+			urlParams="_method=getList&amp;pbm_finalized=N" type="WorkList"/>
+		<menu_item actionId="pbm_requests" name="js.topnav.menu.pbm.authorization.pbm.requests"
+			urlParams="_method=getRequests&amp;pbm_finalized=Y&amp;pbm_presc_status=O&amp;pbm_presc_status=R" type="WorkList"/>
+		<menu_item actionId="pbm_approvals" name="js.topnav.menu.pbm.authorization.pbm.approvals"
+			urlParams="_method=getApprovals&amp;pbm_finalized=Y&amp;pbm_presc_status=S&amp;pbm_presc_status=D&amp;pbm_presc_status=C" type="WorkList"/>
+	</menu_group>
+
+	<menu_group id="grp_eclaim_preauth" name="js.topnav.menu.prior.authorization">
+		<menu_item actionId="preauth_presc_list" name="js.topnav.menu.prior.authorization.prior.auth.prescriptions.list"
+			urlParams="_method=getList&amp;date_range=week" type="WorkList"/>
+		<menu_item actionId="preauth_approvals" name="js.topnav.menu.prior.authorization.prior.auth.approvals"
+			urlParams="_method=getApprovals" type="WorkList"/>
+	</menu_group>
+
+	<menu_group id="grp_scheduler" name="js.topnav.menu.scheduler">
+		<menu_item actionId="doc_scheduler_available_slots" name="js.topnav.menu.scheduler.doctor.scheduler.new"
+				urlParams="res_sch_category=DOC" hashFragment="/filter" />
+		<menu_item actionId="doc_scheduler_calender_view" name="js.topnav.menu.scheduler.doctor.scheduler.calendar.view"
+				urlParams="res_sch_category=DOC" hashFragment="/filter" />
+
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="ope_scheduler" name="js.topnav.menu.scheduler.surgery.scheduler"
+			urlParams="method=getScheduleDetails" />
+		<menu_item actionId="ope_week_scheduler" name="js.topnav.menu.scheduler.surgery.scheduler.week.view"
+			urlParams="method=getWeekView" />
+
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="snp_scheduler" name="js.topnav.menu.scheduler.services.scheduler"
+			urlParams="method=getScheduleDetails" />
+		<menu_item actionId="dia_scheduler" name="js.topnav.menu.scheduler.tests.scheduler"
+			urlParams="method=getScheduleDetails" />
+
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="today_resource_scheduler" name="js.topnav.menu.scheduler.todays.appointments" type="WorkList"
+			urlParams="_method=getTodaysPatientAppointments&amp;startTime=today&amp;resFilter=ALL&amp;appoint_status=Booked&amp;appoint_status=Confirmed" />
+		<menu_item actionId="search_resource_scheduler" name="js.topnav.menu.scheduler.search.appointments" type="WorkList"
+			urlParams="_method=getSearchScreen"/>
+
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="cat_resource_scheduler" name="js.topnav.menu.scheduler.resource.default.availability"
+			urlParams="method=list&amp;status=A" />
+		<menu_item actionId="res_availability" name="js.topnav.menu.scheduler.resource.availability.overrides"
+			urlParams="method=list&amp;res_sch_type=No" />
+		<!--
+		<menu_item actionId="downtime_resource_scheduler" name="Resource Downtime"
+			urlParams="_method=getResDowntimeDashboard&amp;status=A&amp;sortReverse=false&amp;sortOrder=resource_name&amp;resource_type=" />
+		<menu_item actionId="resource_scheduler" name="Doctor Timings"
+			urlParams="method=getDoctorTimingDashboard" />
+		-->
+
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="message_send" name="js.topnav.menu.scheduler.send.message"
+			urlParams="_method=selectMessageType" />
+
+		<menu_item actionId="scheduler_audit_log"
+			name="js.topnav.menu.scheduler.audit.log"
+			urlParams="_method=getSearchScreen" />
+
+	</menu_group>
+
+	<menu_group id="grp_fixed_asset_mgmt" name="js.topnav.menu.maint.contracts">
+		<menu_item actionId="mas_fixed_assets" name="js.topnav.menu.maint.contracts.fixed.assets"
+			urlParams="method=list" type="WorkList"/>
+		<menu_item actionId="maintenance_schedule"
+			name="js.topnav.menu.maint.contracts.maintenance.schedule.master"
+			urlParams="method=list" type="WorkList"/>
+		<menu_item actionId="show_maint_activity"
+			name="js.topnav.menu.maint.contracts.maintenance.activity"
+			urlParams="method=show" type="WorkList"/>
+		<menu_item actionId="asset_complaints" name="js.topnav.menu.maint.contracts.complaints"
+			urlParams="method=list" type="WorkList"/>
+		<menu_item actionId="contracts" name="js.topnav.menu.maint.contracts.contracts"
+			urlParams="method=list" type="WorkList"/>
+		<menu_item actionId="license" name="js.topnav.menu.maint.contracts.licenses"
+			urlParams="method=list" type="WorkList"/>
+		<menu_item actionId="work_order" name="js.topnav.menu.maint.contracts.work.order"
+			urlParams="_method=getWOScreen" />
+		<menu_item actionId="view_work_order" name="js.topnav.menu.maint.contracts.view.work.order"
+			urlParams="_method=getWOs&amp;status=A&amp;status=O&amp;sortOrder=wo_no&amp;sortReverse=false" type="WorkList"/>
+	</menu_group>
+
+	<menu_group id="grp_dietary" name="js.topnav.menu.dietary">
+		<menu_item actionId="grp_canteen" name="js.topnav.menu.dietary.canteen" type="WorkList"
+			urlParams="_method=getMealsToBeDelivered&amp;dp.status=N" />
+	</menu_group>
+
+	<menu_group id="grp_patient_feedback" name="js.topnav.menu.patient.feedback">
+		<menu_item actionId="survey_question_category" name="js.topnav.menu.patient.feedback.survey.question.category.master"
+			urlParams="_method=getCategoryList&amp;status=A&amp;sortOrder=category&amp;sortReverse=false" />
+		<menu_item actionId="survey_rating_mas" name="js.topnav.menu.patient.feedback.survey.rating.master"
+			urlParams="_method=getRatingList&amp;status=A&amp;sortOrder=rating_type&amp;sortReverse=false" />
+		<menu_item actionId="survey_feedback_forms_mas" name="js.topnav.menu.patient.feedback.feedback.forms"
+			urlParams="_method=getFeedbackFormsList&amp;form_status=A&amp;sortOrder=form_name&amp;sortReverse=false" />
+		<menu_item actionId="survey_patient_responses" name="js.topnav.menu.patient.feedback.patient.responses"
+			urlParams="_method=getAllPatientResponses&amp;sortReverse=false" type="WorkList"/>
+	</menu_group>
+
+	<menu_group id="grp_cssd" name="js.topnav.menu.cssd">
+		<menu_item actionId="cssd_surgery_kit_avbl" name="js.topnav.menu.cssd.surgery.kit.availability"
+			urlParams="_method=list&amp;appointment_date=today&amp;appointment_date=today&amp;sortOrder=appointment_date&amp;sortReverse=false&amp;issue_status=N" />
+		<menu_item actionId="cssd_ot_stock_consumption" name="js.topnav.menu.cssd.ot.stock.consumption"
+			urlParams="_method=list&amp;date=today" />
+		<menu_item actionId="cssd_sterile_stock_transfer" name="js.topnav.menu.cssd.sterile.stock.transfer"
+			urlParams="_method=show&amp;store=0&amp;is_sterile_store=N" />
+	</menu_group>
+
+	<menu_group id="grp_adv_packages" name="js.topnav.menu.advanced.packages">
+		<menu_item actionId="adv_pkg_patient_packages_list" name="js.topnav.menu.advanced.packages.patient.packages"
+			urlParams="_method=list&amp;presc_date=today&amp;presc_date=today&amp;sortOrder=presc_date&amp;sortReverse=false&amp;presc_date@op=ge,le&amp;presc_date@cast=y" />
+		<menu_item actionId="adv_pkg_handedover_patient_packages_list" name="js.topnav.menu.advanced.packages.conducted.packages"
+			urlParams="_method=list&amp;completion_date=today&amp;completion_date=today&amp;sortOrder=completion_date&amp;sortReverse=false&amp;completion_date@op=ge,le&amp;completion_date@cast=y" />
+	</menu_group>
+
+	<menu_group id="grp_insta_subscriptions" name="js.topnav.menu.insta.subscriptions">
+			<menu_item actionId="insta_subscriptions" name="js.topnav.menu.insta.subscriptions"
+			urlParams="_method=getCustomerPaymentDetails" />
+	</menu_group>
+	
+	<menu_group id="grp_financial_reports" name="js.topnav.menu.financial.reports">
+		<menu_item actionId="fin_fav_rpt_dashbd" name="js.topnav.menu.financial.reports.financial.report.favourites"
+			urlParams="_method=getReport&amp;report_group=Financial+Reports&amp;report_group%40op=eq&amp;sortOrder=report_title" />
+		<menu_item name="js.topnav.menu.financial.reports.consolidated.financial.dashboard" type="WorkList"
+			actionId="rep_rev_dashboard"
+			urlParams="method=dashboardBuilder" />
+		<!--  <menu_item actionId="rep_revenueaccrual"
+			name="js.topnav.menu.financial.reports.hospital.revenue.accrual.report"
+			urlParams="_method=getScreen" /> -->
+		<!--  <menu_item name="js.topnav.menu.financial.reports.revenue.report.builder"
+			actionId="rep_revenue_builder"
+			urlParams="method=getScreen" /> -->
+		<!--  <menu_item name="js.topnav.menu.financial.reports.revenue.accrual.report.builder"
+			actionId="revenue_accrual_report_builder"
+			urlParams="method=getScreen" /> -->
+		<menu_item name="js.topnav.menu.financial.reports.collections.report.builder"
+			actionId="rep_collection_detailed_builder"
+			urlParams="method=getScreen" />
+		<menu_item name="js.topnav.menu.financial.reports.collection.allocation.builder"
+			actionId="rep_collection_allocation_builder"
+			urlParams="method=getScreen" />
+		<menu_item name="js.topnav.menu.financial.reports.payment.details.report.builder"
+			actionId="payment_details_builder"
+			urlParams="method=getScreen" />
+		<menu_item name="js.topnav.menu.financial.reports.payments.paid.report.builder"
+			actionId="payments_paid_builder"
+			urlParams="method=getScreen" />
+		<menu_item actionId="rep_accounting"
+			name="js.topnav.menu.financial.reports.accounting.report.builder"
+			urlParams="method=getScreen"/>
+		<menu_item actionId="rep_payment_consolidated_builder"
+			name="js.topnav.menu.financial.reports.payments.consolidated.report.builder"
+			urlParams="method=getScreen" />
+		<menu_item actionId="ip_outstand_report"
+			name="js.topnav.menu.financial.reports.ip.outstanding.detailed.report"
+			urlParams="method=getScreen"/>
+		<menu_item actionId="rep_revenue_doctor"
+			name="js.topnav.menu.financial.reports.doctor.wise.revenue.report.builder"
+			urlParams="method=getScreen"/>
+	</menu_group>
+
+	<menu_group id="grp_billing_reports" name="js.topnav.menu.billing.reports" >
+		<menu_item actionId="bill_fav_rpt_dashbd" name="js.topnav.menu.billing.reports.billing.report.favourites" type="WorkList"
+			urlParams="_method=getReport&amp;report_group=Billing+Reports&amp;report_group%40op=eq&amp;sortOrder=report_title" />
+
+		<menu_item actionId="rep_bill_builder" name="js.topnav.menu.billing.reports.bills.report.builder"
+			urlParams="method=getScreen" />
+<!--    <menu_item actionId="rep_bill_adj_builder" name="js.topnav.menu.billing.reports.bills.adjustment.report.builder"
+			urlParams="method=getScreen" />  -->
+		<menu_item actionId="rep_bill_charge_builder" name="js.topnav.menu.billing.reports.bill.charge.report.builder"
+			urlParams="method=getScreen" />
+		<menu_item actionId="rep_bill_charge_tax_builder" name="js.topnav.menu.billing.reports.bill.charge.tax.report.builder"
+			urlParams="method=getScreen" />
+		<menu_item actionId="rep_bill_charge_adj_builder" name="js.topnav.menu.billing.reports.bill.charge.adjustment.report.builder"
+			urlParams="method=getScreen" />
+		<menu_item actionId="rep_patient_dues_builder" name="js.topnav.menu.billing.reports.patient.dues.report.builder"
+			urlParams="method=getScreen" />
+		<menu_item actionId="billing_daybook" name="js.topnav.menu.billing.reports.day.book"
+			urlParams="_method=getDaybook&amp;status=daybook"/>
+		<menu_item actionId="daybook_builder" name="js.topnav.menu.billing.reports.day.book.builder"
+			urlParams="method=getScreen"/>
+		<menu_item actionId="deposit_builder" name="js.topnav.menu.billing.reports.deposits.builder"
+			urlParams="method=getScreen"/>
+		<menu_item actionId="deposit_receipts_builder" name="js.topnav.menu.billing.reports.deposit.receipts.builder"
+			urlParams="method=getScreen"/>
+<!-- 	<menu_item actionId="rep_payment_insurance" name="js.topnav.menu.billing.reports.payment.for.insurance"
+			urlParams="method=getScreen" />  -->
+		<menu_item actionId="rep_trans_rev" name="js.topnav.menu.billing.reports.internal.transfer.revenue.report"
+			urlParams="method=getScreen" />
+<!-- 	<menu_item actionId="rep_rate_variation" name="js.topnav.menu.billing.reports.rate.variation.report"
+			urlParams="method=getScreen" />  -->
+		<menu_item actionId="rep_bill_status_change" name="js.topnav.menu.billing.reports.bill.status.change.report"
+			urlParams="method=getScreen" />
+		<menu_item actionId="rep_reward_points" name="js.topnav.menu.billing.reports.reward.points.builder"
+			urlParams="method=getScreen" />
+	</menu_group>
+
+	<menu_group id="grp_store_sales_reports" name="js.topnav.menu.salesorissues.reports">
+		<menu_item actionId="sale_fav_rpt_dashbd" name="js.topnav.menu.salesorissues.reports.salesorissues.report.favourites" type="WorkList"
+			urlParams="_method=getReport&amp;report_group=Sales%2FIssues+Reports&amp;report_group%40op=eq&amp;sortOrder=report_title" />
+		<menu_item actionId="ph_sale_bill_reports" name="js.topnav.menu.salesorissues.reports.sales.bills.builder"
+			urlParams="method=getScreen" />
+		<menu_item actionId="ph_sale_item_rep_builder" name="js.topnav.menu.salesorissues.reports.sale.items.builder"
+			urlParams="method=getScreen" />
+		<menu_item actionId="rep_pharmacy_pharmacy_dues_report" name="js.topnav.menu.salesorissues.reports.dues.report"
+			urlParams="method=getScreen"/>
+		<menu_item actionId="pharmacy_doc_wise_sales_report"
+			name="js.topnav.menu.salesorissues.reports.doctor.wise.prescribed.vs.sold.report" urlParams="method=getScreen"/>
+		<menu_item actionId="st_hdrug_sales" name="js.topnav.menu.salesorissues.reports.controlled.drug.sales.report"
+			urlParams="method=getScreen" />
+		<menu_item actionId="rep_store_sales_vat_report" name="js.topnav.menu.salesorissues.reports.sale.items.vat.report"
+			urlParams="method=getScreen"/>
+		<menu_item actionId="pres_lead_time_builder" name="js.topnav.menu.salesorissues.reports.prescription.lead.time.builder"
+			urlParams="method=getScreen" />
+		<menu_item actionId="rep_markup_rates_report" name="js.topnav.menu.salesorissues.reports.markup.rates.report"
+			urlParams="method=getScreen"/>
+	<menu_item actionId="stock_consumption_rep_builder"
+			name="js.topnav.menu.salesorissues.reports.stock.consumption.report.builder" urlParams="method=getScreen"/>
+	<menu_item actionId="st_in_out_reg_blder"
+			name="js.topnav.menu.salesorissues.reports.stock.issues.builder"
+			urlParams="method=getScreen" />
+	<menu_item actionId="sales_abc_blder"
+			name="js.topnav.menu.salesorissues.reports.salesorissues.abc.analysis.report.builder"
+			urlParams="method=getScreen" />
+	<menu_item actionId="patient_indent_item_rep_builder"
+			name="js.topnav.menu.salesorissues.reports.patient.indent.items.builder"
+			urlParams="method=getScreen" />
+	<menu_item actionId="rep_karnataka_sales_tax"
+			name="js.topnav.menu.salesorissues.reports.karnataka.sales.tax.report"
+			urlParams="method=getScreen" />
+	</menu_group>
+
+	<menu_group id="grp_store_procure_reports" name="js.topnav.menu.procurement.reports">
+		<menu_item actionId="proc_fav_rpt_dashbd" name="js.topnav.menu.procurement.reports.procurement.report.favourites" type="WorkList"
+			urlParams="_method=getReport&amp;report_group=Procurement+Reports&amp;report_group%40op=eq&amp;sortOrder=report_title" />
+		<menu_item actionId="ph_invoice_rep_builder" name="js.topnav.menu.procurement.reports.purchase.invoices.builder"
+			urlParams="method=getScreen" />
+		<menu_item actionId="ph_purchase_rep_builder" name="js.topnav.menu.procurement.reports.purchase.items.builder"
+			urlParams="method=getScreen" />
+		<menu_item actionId="rep_pharmacy_purchase_vat_report" name="js.topnav.menu.procurement.reports.purchase.invoice.tax.report"
+			urlParams="method=getScreen"/>
+		<menu_item actionId="rep_pharmacy_purchase_items_vat_report" name="js.topnav.menu.procurement.reports.purchase.items.tax.report"
+			urlParams="method=getScreen"/>
+		<menu_item actionId="rep_pharmacy_purchase_vat_abated_report"
+			name="js.topnav.menu.procurement.reports.purchase.tax.report.abated.mrp" urlParams="method=getScreen" />
+		<menu_item actionId="stores_supp_ret_builder" name="js.topnav.menu.procurement.reports.supplier.returns.builder"
+			urlParams="method=getScreen" />
+		<menu_item actionId="ph_pend_rep_report"
+			name="js.topnav.menu.procurement.reports.pending.replacement" urlParams="method=getScreen"/>
+		<menu_item actionId="ph_supplier_payments" name="js.topnav.menu.procurement.reports.supplier.payments.report"
+			urlParams="method=getScreen" />
+		<menu_item actionId="rep_pharmacy_bonus_items" name="js.topnav.menu.procurement.reports.bonus.items.report"
+			urlParams="method=getScreen" />
+		<menu_item actionId="po_items_builder" name="js.topnav.menu.procurement.reports.po.hyphen.items.builder"
+			urlParams="method=getScreen" />
+		<menu_item actionId="po_pending_item_builder" name="js.topnav.menu.procurement.reports.po.pending.items.builder"
+			urlParams="method=getScreen" />
+		<menu_item actionId="po_builder" name="js.topnav.menu.procurement.reports.purchase.order.builder"
+			urlParams="method=getScreen" />
+		<menu_item actionId="rep_store_purchasesummary" name="js.topnav.menu.procurement.reports.purchase.summary.report"
+			urlParams="method=getScreen" />
+		<menu_item actionId="rep_store_purchase_details" name="js.topnav.menu.procurement.reports.purchase.details.report"
+			urlParams="method=getScreen" />
+	</menu_group>
+
+	<menu_group id="grp_store_mgmt_reports" name="js.topnav.menu.store.mgmt.reports">
+	<menu_item actionId="store_mg_fav_rpt_dashbd" name="js.topnav.menu.store.mgmt.reports.stores.report.favourites" type="WorkList"
+			urlParams="_method=getReport&amp;report_group=Store+Mgmt+Reports&amp;report_group%40op=eq&amp;sortOrder=report_title" />
+	<menu_item actionId="store_item_master_builder" name="js.topnav.menu.store.mgmt.reports.item.master.builder"
+			urlParams="method=getScreen" />
+	<menu_item actionId="ph_indvl_stock_builder" name="js.topnav.menu.store.mgmt.reports.detailed.stock.builder"
+			urlParams="method=getScreen"/>
+	<menu_item actionId="ph_itemwise_stock_builder" name="js.topnav.menu.store.mgmt.reports.itemwise.stock.builder"
+			urlParams="method=getScreen"/>
+	<menu_item actionId="indent_flow_builder" name="js.topnav.menu.store.mgmt.reports.indent.flow.builder"
+			urlParams="method=getScreen" />
+	<menu_item actionId="indent_item_builder" name="js.topnav.menu.store.mgmt.reports.indent.items.detail.builder"
+			urlParams="method=getScreen"/>
+	<menu_item actionId="ph_stocktransfer_rep_builder" name="js.topnav.menu.store.mgmt.reports.stock.transfers.builder"
+			urlParams="method=getScreen"/>
+	<menu_item actionId="ph_stock_adj_rep_builder"
+			name="js.topnav.menu.store.mgmt.reports.stock.adjustment.builder" urlParams="method=getScreen"/>
+  <menu_item actionId="stock_take_report_builder"
+      name="js.topnav.menu.store.mgmt.reports.stock.take.report.builder" urlParams="method=getScreen"/>
+	<menu_item actionId="ph_stock_movement"
+			name="js.topnav.menu.store.mgmt.reports.stock.movement.report" urlParams="method=getScreen"/>
+	<menu_item actionId="rep_pharmacy_stock_chk_point"
+			name="js.topnav.menu.store.mgmt.reports.item.wise.stock.quantity.checkpoint" urlParams="method=getScreen"/>
+	<menu_item actionId="rep_pharmacy_stock_catg_chk_point"
+			name="js.topnav.menu.store.mgmt.reports.item.category.wise.stock.value.checkpoint" urlParams="method=getScreen"/>
+	<menu_item actionId="rep_pharmacy_surplus_stock"
+			name="js.topnav.menu.store.mgmt.reports.surplus.stock.report" urlParams="method=getScreen"/>
+	<menu_item actionId="rep_stock_ledger"
+			name="js.topnav.menu.store.mgmt.reports.stock.ledger"
+			urlParams="_method=getScreen" />
+	<menu_item actionId="rep_pharmacy_chkpoint_difference"
+			name="js.topnav.menu.store.mgmt.reports.checkpoint.difference" urlParams="method=getScreen"/>
+	<menu_item actionId="rep_pharmacy_tax"
+			name="js.topnav.menu.store.mgmt.reports.tn.tax.report" urlParams="method=getScreen"/>
+	<menu_item actionId="reagent_consumables_builder"
+			name="js.topnav.menu.store.mgmt.reports.reagentorconsumable.report.builder"
+			urlParams="method=getScreen" />
+	</menu_group>
+
+	<menu_group id="grp_laboratory_reports" name="js.topnav.menu.diagnostics.reports">
+		<menu_item actionId="diag_fav_rpt_dashbd" name="js.topnav.menu.diagnostics.reports.diagnostics.report.favourites" type="WorkList"
+			urlParams="_method=getReport&amp;report_group=Diagnostics+Reports&amp;report_group%40op=eq&amp;sortOrder=report_title" />
+		<menu_item actionId="diag_builder"
+			name="js.topnav.menu.diagnostics.reports.diagnostics.report.builder"
+			urlParams="method=getScreen" />
+		<menu_item actionId="diag_rev_builder"
+			name="js.topnav.menu.diagnostics.reports.diagnostics.revenue.report.builder"
+			urlParams="method=getScreen" />
+		<menu_item actionId="rep_incoming_test_details"
+			name="js.topnav.menu.diagnostics.reports.in.coming.test.details.hospital.wise"
+			urlParams="method=getScreen" />
+		<menu_item actionId="rep_outgoing_test_details"
+			name="js.topnav.menu.diagnostics.reports.out.going.test.details.hospital.wise"
+			urlParams="method=getScreen" />
+		<menu_item actionId="rep_progressive_test_details"
+			name="js.topnav.menu.diagnostics.reports.diagnostic.progressive.report"
+			urlParams="method=getScreen" />
+		<menu_item actionId="tests_presc_ordered_report"
+			name="js.topnav.menu.diagnostics.reports.tests.prescription.ordered.report" urlParams="method=getScreen"/>
+		<menu_item actionId="rep_test_equipment_details_builder"
+			name="js.topnav.menu.diagnostics.reports.equipment.test.report.builder" urlParams="method=getScreen"/>
+		<menu_item actionId="sample_rejections_builder"
+			name="js.topnav.menu.diagnostics.reports.sample.rejections.report.builder" urlParams="method=getScreen"/>
+		<menu_item actionId="diag_internal_lab_builder"
+			name="js.topnav.menu.diagnostics.reports.diag.internal.lab.report.builder" urlParams="method=getScreen"/>
+	</menu_group>
+
+	<menu_group id="grp_patient_package_reports" name="js.topnav.menu.patient.package.reports">
+		<menu_item actionId="rep_patient_packages_builder" name="js.topnav.menu.patient.package.reports.patient.packages" urlParams="method=getScreen"/>
+	</menu_group>
+
+	<menu_group id="grp_dialysis_reports" name="js.topnav.menu.dialysis.reports">
+		<menu_item actionId="dial_fav_rpt_dashbd" name="js.topnav.menu.dialysis.reports.dialysis.session.report.favourites"
+			urlParams="_method=getReport&amp;report_group=Dialysis+Reports&amp;report_group%40op=eq&amp;sortOrder=report_title" />
+		<menu_item actionId="dialysis_builder"
+			name="js.topnav.menu.dialysis.reports.dialysis.session.report.builder"
+			urlParams="method=getScreen" />
+		<menu_item actionId="rep_dialysis_frequency"
+			name="js.topnav.menu.dialysis.reports.dialysis.frequency.report.builder"
+			urlParams="method=getScreen" />
+		<menu_item actionId="rep_clinical_outcome"
+			name="js.topnav.menu.dialysis.reports.clinical.outcomes.report"
+			urlParams="_method=getScreen" />
+		<menu_item actionId="intra_dialysis_builder"
+			name="js.topnav.menu.dialysis.reports.intra.dialysis.parameters.report.builder"
+			urlParams="method=getScreen" />
+	</menu_group>
+
+	<menu_group id="grp_clinical_reports" name="js.topnav.menu.clinical.data.reports">
+		<menu_item actionId="clini_fav_rpt_dashbd" name="js.topnav.menu.clinical.data.reports.clinical.data.report.favourites"
+			urlParams="_method=getReport&amp;report_group=Clinical+Data&amp;report_group%40op=eq&amp;sortOrder=report_title" />
+		<menu_item actionId="lab_test_result_builder"
+			name="js.topnav.menu.clinical.data.reports.lab.test.results.report.builder"
+			urlParams="method=getScreen" />
+		<menu_item actionId="rep_clinical_lab"
+			name="js.topnav.menu.clinical.data.reports.clinical.lab.test.results.report.builder"
+			urlParams="method=getScreen" />
+		<menu_item actionId="rep_icd_codification"
+			name="js.topnav.menu.clinical.data.reports.diagnosis.codes.report.builder"
+			urlParams="method=getScreen" />
+		<menu_item actionId="rep_codes"
+			name="js.topnav.menu.clinical.data.reports.procedure.codes.report.builder"
+			urlParams="method=getScreen" />
+		<menu_item actionId="rep_coder_claim_reveiws"
+			name="js.topnav.menu.clinical.data.reports.coder.claim.reviews.report.builder"
+			urlParams="method=getScreen" />
+	</menu_group>
+
+	<menu_group id="grp_ivf_reports" name="js.topnav.menu.ivf.reports">
+		<menu_item actionId="donor_details_builder"
+			name="js.topnav.menu.ivf.reports.donor.details.report.builder"
+			urlParams="method=getScreen" />
+		<menu_item actionId="ivf_treatment_cycle_builder"
+			name="js.topnav.menu.ivf.reports.ivf.treatment.cycle.report.builder"
+			urlParams="method=getScreen" />
+	</menu_group>
+
+	<menu_group id="grp_service_reports" name="js.topnav.menu.service.reports" >
+		<menu_item actionId="serv_fav_rpt_dashbd" name="js.topnav.menu.service.reports.service.report.favourites"
+			urlParams="_method=getReport&amp;report_group=Services+Reports&amp;report_group%40op=eq&amp;sortOrder=report_title" />
+		<menu_item actionId="service_builder"
+			name="js.topnav.menu.service.reports.services.report.builder"
+			urlParams="method=getScreen" />
+		<menu_item actionId="services_presc_ordered_report"
+			name="js.topnav.menu.service.reports.services.prescription.ordered.report" urlParams="method=getScreen"/>
+	</menu_group>
+	
+	<menu_group id="grp_consultation_reports" name="js.topnav.menu.consultation.reports" >
+		<menu_item actionId="consul_fav_rpt_dashbd" name="js.topnav.menu.consultation.reports.consultation.report.favourites"
+			urlParams="_method=getReport&amp;report_group=Consultation+Reports&amp;report_group%40op=eq&amp;sortOrder=report_title" />
+		<menu_item actionId="rep_doc_consul_builder"
+			name="js.topnav.menu.consultation.reports.doctor.consultation.report.builder"
+			urlParams="method=getScreen" />
+		<menu_item actionId="rep_presc_det_builder"
+			name="js.topnav.menu.consultation.reports.prescribing.order.details.report.builder"
+			urlParams="method=getScreen" />
+		<menu_item actionId="pending_prescription_report"
+			name="js.topnav.menu.pending.prescription.report.builder"
+			urlParams="method=getScreen" />
+	</menu_group>
+	
+	<menu_group id="grp_scheduler_reports" name="js.topnav.menu.scheduler.reports" >
+		<menu_item actionId="sch_fav_rpt_dashbd" name="js.topnav.menu.scheduler.reports.scheduled.appointment.report.favourites"
+			urlParams="_method=getReport&amp;report_group=Scheduler+Reports&amp;report_group%40op=eq&amp;sortOrder=report_title" />
+		<menu_item actionId="Scheduler_Doctors_Appointment" name="js.topnav.menu.scheduler.reports.doctor.appointments.report.builder" urlParams="method=getScreen" />
+		<menu_item actionId="Scheduler_Tests_Appointment" name="js.topnav.menu.scheduler.reports.tests.scheduled.report.builder" urlParams="method=getScreen" />
+		<menu_item actionId="Scheduler_Services_Appointment" name="js.topnav.menu.scheduler.reports.services.scheduled.report.builder" urlParams="method=getScreen" />
+		<menu_item actionId="Scheduler_Surgery_Appointment" name="js.topnav.menu.scheduler.reports.surgery.appointments.report.builder" urlParams="method=getScreen" />
+		<menu_item actionId="Doctor_Appointment" name="js.topnav.menu.scheduler.reports.consolidated.appointments.report" urlParams="method=getScreen" />
+		<menu_item actionId="SMS_Response" name="js.topnav.menu.scheduler.reports.sms.response.report.builder" urlParams="method=getScreen" />
+	</menu_group>
+
+ 	<menu_group id="grp_patientfeedback_reports" name="js.topnav.menu.patient.feedback.reports" >
+		<menu_item actionId="patientfeedback_rep" name="js.topnav.menu.patient.feedback.reports.patient.survey.response.details.report.builder"
+			urlParams="method=getScreen"/>
+	</menu_group>
+	
+	<menu_group id="grp_ot_reports" name="js.topnav.menu.ot.reports" >
+		<menu_item actionId="ot_fav_rpt_dashbd" name="js.topnav.menu.ot.reports.ot.report.favourites"
+			urlParams="_method=getReport&amp;report_group=OT+Reports&amp;report_group%40op=eq&amp;sortOrder=report_title" />
+		<menu_item actionId="ot_schedule_rep_builder"
+			name="js.topnav.menu.ot.reports.ot.schedule.report.builder"
+			urlParams="method=getScreen" />
+	</menu_group>
+	
+	<menu_group id="grp_bed_reports" name="js.topnav.menu.bed.util.reports" >
+		<menu_item actionId="bedu_fav_rpt_dashbd" name="js.topnav.menu.bed.util.reports.bed.util.report.favourites"
+			urlParams="_method=getReport&amp;report_group=Bed+Util+Reports&amp;report_group%40op=eq&amp;sortOrder=report_title" />
+		<menu_item actionId="bed_occu_rep_builder"
+			name="js.topnav.menu.bed.util.reports.current.bed.occupancy.report.builder"
+			urlParams="method=getScreen" />
+		<menu_item actionId="bed_ward_wise_occu_rep_builder"
+			name="js.topnav.menu.bed.util.reports.detailed.bed.occupancy.report.builder"
+			urlParams="method=getScreen" />
+		<menu_item actionId="patient_bed_occ_builder"
+			name="js.topnav.menu.bed.util.reports.patient.bed.occupancy.report.builder"
+			urlParams="method=getScreen" />
+		<menu_item actionId="ip_bed_utilization"
+			name="js.topnav.menu.bed.util.reports.bed.utilization.report"
+			urlParams="method=getBedUtilizationScreen" />
+		<menu_item actionId="luxury_tax_rep_builder"
+			name="js.topnav.menu.bed.util.reports.luxury.tax.report.builder"
+			urlParams="method=getScreen" />
+	</menu_group>
+
+	<menu_group id="grp_dental_reports" name="js.topnav.menu.dental.reports">
+		<menu_item actionId="dental_trtment_report_builder" name="js.topnav.menu.dental.reports.dental.treatment.details.report.builder"
+			urlParams="method=getScreen"/>
+		<menu_item actionId="dental_supplies_report_builder" name="js.topnav.menu.dental.reports.dental.supplies.report.builder"
+			urlParams="method=getScreen"/>
+		<menu_item actionId="service_subtask_builder"
+			name="js.topnav.menu.dental.reports.services.sub.tasks.report.builder" urlParams="method=getScreen" />
+	</menu_group>
+
+	<menu_group id="grp_ward_activities_reports" name="js.topnav.menu.ward.activities.reports">
+		<menu_item actionId="patient_activities_report_builder" name="js.topnav.menu.ward.activities.reports.patient.activities.report.builder"
+			urlParams="method=getScreen"/>
+		<menu_item actionId="doctor_order_report_builder" name="js.topnav.menu.ward.activities.reports.doctor.order.report.builder"
+			urlParams="method=getScreen"/>
+	</menu_group>
+
+	<menu_group id="grp_master_reports" name="js.topnav.menu.master.reports">
+		<menu_item actionId="mas_fav_rpt_dashbd" name="js.topnav.menu.master.reports.master.report.favourites"
+			urlParams="_method=getReport&amp;report_group=Master+Reports&amp;report_group%40op=eq&amp;sortOrder=report_title" />
+		<menu_item actionId="rep_rate_master_print"
+			name="js.topnav.menu.master.reports.rate.master.report.builder"
+			urlParams="method=getScreen" />
+	</menu_group>
+
+	<menu_group id="grp_custom_reports" name="js.topnav.menu.custom.reports" >
+		<menu_item actionId="custom_rpt_list" name="js.topnav.menu.custom.reports.report.list" type="WorkList"
+			urlParams="method=list" />
+		<menu_item actionId="custom_rpt_add" name="js.topnav.menu.custom.reports.add.report" urlParams="method=add" />
+	</menu_group>
+
+	<menu_group id="grp_fav_reports" name="js.topnav.menu.favourite.reports" >
+		<menu_item actionId="fav_rpt_dashbd" name="js.topnav.menu.favourite.reports.favourite.reports" type="WorkList"
+			urlParams="_method=getReport&amp;frequently_viewed=Y&amp;sortOrder=report_title" />
+	</menu_group>
+
+	<menu_group id="grp_patient_demography_reports"	name="js.topnav.menu.patient.reports">
+		<menu_item actionId="pat_fav_rpt_dashbd" name="js.topnav.menu.patient.stats.reports.patient.stats.report.favourites" type="WorkList"
+			urlParams="_method=getReport&amp;report_group=Patient+Stats+Reports&amp;report_group%40op=eq&amp;sortOrder=report_title" />
+		<menu_item
+			actionId="patient_details_builder"
+			name="js.topnav.menu.patient.stats.reports.patient.details.builder"
+			urlParams="method=getScreen" />
+		<menu_item actionId="rep_visit_details_builder"
+			name="js.topnav.menu.patient.stats.reports.visit.details.report.builder"
+			urlParams="method=getScreen" />
+		<menu_item actionId="rep_vital_measurement_builder"
+			name="js.topnav.menu.patient.stats.reports.patient.vitals.report.builder"
+			urlParams="method=getScreen"/>
+		<menu_item actionId="rep_patientstats_table_builder"
+			name="js.topnav.menu.patient.stats.reports.patient.stats.tabular.report.builder"
+			urlParams="method=getReportBuilder" />
+		<menu_item actionId="rep_patientstats_trend_builder"
+			name="js.topnav.menu.patient.stats.reports.patient.stats.trend.report.builder"
+			urlParams="method=getReportBuilder" />
+		<menu_item
+			actionId="rep_patientvisitstats_trend_builder"
+			name="js.topnav.menu.patient.stats.reports.patient.visit.stats.trend.report.builder"
+			urlParams="method=getReportBuilder" />
+		<menu_item
+			actionId="rep_patient_admitdischarge_trend_builder"
+			name="js.topnav.menu.patient.stats.reports.patient.admit.discharge.trend.report.builder"
+			urlParams="method=getReportBuilder" />
+		<menu_item actionId="rep_ip_list_print"
+			name="js.topnav.menu.patient.stats.reports.in.patient.report.builder"
+			urlParams="method=getScreen" />
+		<menu_item actionId="rep_ipstats"
+			name="js.topnav.menu.patient.stats.reports.ip.statistics.report"
+			urlParams="method=getScreen" />
+		<menu_item actionId="rep_ipopstats"
+			name="js.topnav.menu.patient.stats.reports.iporop.statistics.report"
+			urlParams="method=getScreen" />
+		<menu_item actionId="birth_details"
+			name="js.topnav.menu.patient.stats.reports.birth.details.report.builder"
+			urlParams="method=getScreen" />
+		<menu_item actionId="bed_dur_occu_rep_builder"
+			name="js.topnav.menu.patient.stats.reports.ip.stats.or.bed.occupancy.report.builder"
+			urlParams="method=getScreen" />
+		<menu_item actionId="patient_duplicate_report"
+			name="js.topnav.menu.patient.stats.reports.patient.duplicates.report.builder"
+			urlParams="method=getScreen" />
+		<menu_item actionId="followup_details"
+			name="js.topnav.menu.patient.stats.reports.patient.followup.report.builder"
+			urlParams="method=getScreen" />
+		<menu_item actionId="break_the_glass_report" 
+		    name="js.topnav.menu.break.the.glass.report.builder"
+			urlParams="method=getScreen" />
+	    <menu_item actionId="emr_view_access_report" 
+	        name="js.topnav.menu.emr.view.access.report.builder"
+			urlParams="method=getScreen" />
+	</menu_group>
+
+	<menu_group id="grp_resource_mgmt_reports" name="js.topnav.menu.maint..contracts.reports">
+		<menu_item actionId="maint_schedule_rep_builder"
+			name="js.topnav.menu.maint..contracts.reports.maintenance.schedule.report.builder"
+			urlParams="method=getScreen" />
+		<menu_item actionId="maint_activity_rep_builder"
+			name="js.topnav.menu.maint..contracts.reports.maintenance.activity.report.builder"
+			urlParams="method=getScreen" />
+		<menu_item actionId="complaints_rep_builder"
+			name="js.topnav.menu.maint..contracts.reports.complaints.report.builder"
+			urlParams="method=getScreen" />
+		<menu_item name="js.topnav.menu.maint..contracts.reports.contract.report.builder" actionId="contract_report_builder"
+			urlParams="method=getScreen" />
+		<menu_item name="js.topnav.menu.maint..contracts.reports.license.report.builder" actionId="license_report_builder"
+			urlParams="method=getScreen" />
+	</menu_group>
+
+	<menu_group id="grp_insurance_reports" name="js.topnav.menu.insurance.reports">
+		<menu_item actionId="ins_fav_rpt_dashbd" name="js.topnav.menu.insurance.reports.insurance.report.favourites"
+			urlParams="_method=getReport&amp;report_group=Insurance+Reports&amp;report_group%40op=eq&amp;sortOrder=report_title" />
+		<menu_item actionId="rep_insurance_claim_builder"
+			name="js.topnav.menu.insurance.reports.insurance.claims.report.builder"
+			urlParams="method=getScreen" />
+		<menu_item actionId="rep_insurance_claim_det_builder"
+			name="js.topnav.menu.insurance.reports.insurance.claim.details.report.builder"
+			urlParams="method=getScreen" />
+		<menu_item actionId="rep_insurance_claim_batch_builder"
+			name="js.topnav.menu.insurance.reports.insurance.claim.batch.report.builder"
+			urlParams="method=getScreen" />
+		<menu_item actionId="rep_claim_history_builder"
+			name="js.topnav.menu.insurance.reports.insurance.claim.history.report.builder"
+			urlParams="method=getScreen" />
+	</menu_group>
+	
+	<menu_group id="grp_pbm_reports" name="js.topnav.menu.pbm.reports">
+		<menu_item actionId="pbm_prescription_builder"
+			name="js.topnav.menu.pbm.prescription.report.builder"
+			urlParams="method=getScreen" />
+		<menu_item actionId="pbm_prescription_item_builder"
+			name="js.topnav.menu.pbm.prescription.item.report.builder"
+			urlParams="method=getScreen" />
+	</menu_group>
+
+	<menu_group id="grp_dietary_reports" name="js.topnav.menu.dietary.reports" >
+		<menu_item actionId="diet_fav_rpt_dashbd" name="js.topnav.menu.dietary.reports.dietary.report.favourites"
+			urlParams="_method=getReport&amp;report_group=Dietary+Reports&amp;report_group%40op=eq&amp;sortOrder=report_title" />
+		<menu_item actionId="dietary_daily_meals_report"
+			name="js.topnav.menu.dietary.reports.to.be.delivered.meals.report"
+			urlParams="method=getReportScreen" />
+	</menu_group>
+
+	<menu_group id="grp_mrd_reports" name="js.topnav.menu.mrd.reports.mrd.report" >
+		<menu_item actionId="mrd_fav_rpt_dashbd" name="js.topnav.menu.mrd.reports.mrd.report.favourites"
+			urlParams="_method=getReport&amp;report_group=MRD+Reports&amp;report_group%40op=eq&amp;sortOrder=report_title" />
+		<menu_item actionId="case_file_details_builder"
+			name="js.topnav.menu.mrd.reports.case.file.report.builder"
+			urlParams="method=getScreen" />
+	</menu_group>
+
+	<menu_group id="grp_dashboard_statistics_reports" name="js.topnav.menu.dashboard.statistics.report" >
+		<menu_item actionId="statistics" name="js.topnav.menu.hospital.preferences.statistics"
+			urlParams="_method=getStatistics"  type="WorkList"/>
+		<menu_item actionId="report_job_status" name="js.topnav.menu.report.job.status"/>
+	</menu_group>
+	
+	<menu_group id="grp_regulatory_reports" name="js.topnav.menu.regulatory.reports">
+		<menu_item actionId="rep_gstr3_report" 
+		name="js.topnav.menu.regulatory.reports.india.gstr3.report" urlParams="_method=getScreen" />
+		<menu_item actionId="rep_ph_mmhr_report" 
+		name="js.topnav.menu.regulatory.reports.philhealth.mmhr.report" urlParams="_method=getScreen" />
+		<menu_item actionId="rep_ph_ohsrs_report" 
+		name="js.topnav.menu.regulatory.reports.philippines.ohsrs.report" urlParams="" />
+	</menu_group>
+	
+	<menu_group id="grp_hospital_prefs" name="js.topnav.menu.hospital.preferences" >
+		<menu_item actionId="mas_gen_pref"
+			name="js.topnav.menu.hospital.preferences.generic.preferences"
+			hashFragment="/genericPreference" module="genericpreferences" />
+		<menu_item actionId="mas_health_authority_pref"
+			name="js.topnav.menu.hospital.preferences.health.authority.preferences"
+			urlParams="sortOrder=health_authority" />
+		<menu_item actionId="mas_reg_prefs"
+			name="js.topnav.menu.hospital.preferences.registration.preferences"
+			urlParams="method=show" />
+		<menu_item actionId="mas_center_prefs"
+			name="js.topnav.menu.hospital.preferences.center.preferences"
+			urlParams="" />
+		<menu_item actionId="mas_pass_prefs"
+			name="js.topnav.menu.hospital.preferences.password.preferences"
+			urlParams="method=show" />
+    	<menu_item actionId="mas_pat_header_prefs"
+			name="js.topnav.menu.hospital.preferences.patient.header.preferences"
+			urlParams="method=getPatientHeaderPref" />
+		<menu_item actionId="ip_preferences"
+			name="js.topnav.menu.hospital.preferences.ip.preferences"
+			urlParams="method=getIpPreferenceScreen" />
+		<menu_item actionId="mas_clinical_preferences"
+			name="ui.label.clinical.preference" hashFragment="/clinical-preference" />
+
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="mas_printer_definition"
+			name="js.topnav.menu.hospital.preferences.printer.settings.master"
+			urlParams="method=list" />
+		<menu_item actionId="hl7_configuration"
+			name="js.topnav.menu.hospital.preferences.hl7.configuration"
+			urlParams="_method=list&amp;sortOrder=interface_name&amp;sortReverse=false&amp;status=A" />
+		<menu_item actionId="mas_print"
+			name="js.topnav.menu.hospital.preferences.print.configurations"
+			urlParams="method=list" />
+		<menu_item actionId="mas_system_preferences"
+			name="js.topnav.menu.hospital.preferences.system.preferences" />
+		<menu_item actionId="mas_scheduler_cron" name="js.topnav.menu.hospital.preferences.cronjob" 
+	/>
+	</menu_group>
+
+	<menu_group id="grp_billing_prefs" name="js.topnav.menu.billing.preferences" >
+		<menu_item actionId="charge_head"
+			name="js.topnav.menu.billing.preferences.charge.heads"
+			urlParams="sortOrder=display_order" />
+		<menu_item actionId="acc_voucher_types"
+			name="js.topnav.menu.billing.preferences.voucher.types"
+			urlParams="method=show"/>
+		<menu_item actionId="sales_purchases_acc_prefixes"
+			name="js.topnav.menu.billing.preferences.sales.or.purchases.account.prefixes"
+			urlParams="_method=list"/>
+		<menu_item actionId="account_head"
+			name="js.topnav.menu.billing.preferences.accounting.heads"
+			urlParams="sortOrder=display_order&amp;status=A" />
+		<menu_item actionId="accounting_group_master"
+			name="js.topnav.menu.billing.preferences.accounting.group.master"
+			urlParams="sortReverse=false" />
+		<menu_item actionId="mas_scheduled_export_prefs" name="js.topnav.menu.billing.preferences.scheduled.export.preferences"
+			urlParams="_method=list" />
+
+		<menu_item actionId="mas_bill_ac_vc_templates" name="js.topnav.menu.billing.preferences.accounting.voucher.templates"
+			urlParams="_method=list" />
+
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="service_group"
+			name="js.topnav.menu.billing.preferences.service.groups"
+			urlParams="_method=list" />
+		<menu_item actionId="service_sub_group"
+			name="js.topnav.menu.billing.preferences.service.sub.groups"
+			urlParams="_method=list" />
+			
+		<menu_item actionId="master_tax_groups"
+			name="js.topnav.menu.billing.preferences.tax.groups"
+			urlParams="status=A&amp;item_group_type_id=TAX" />
+
+		 <menu_item actionId="master_tax_sub_groups"
+			name="js.topnav.menu.billing.preferences.tax.sub.groups"
+			urlParams="status=A" />
+		
+		<menu_item actionId="master_tax_upload_download"
+			name="js.topnav.menu.billing.preferences.tax.sub.upload.download"/>	
+
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="mas_insurance_item_cat"
+			name="js.topnav.menu.billing.preferences.insurance.item.categories"
+			urlParams="_method=list&amp;system_category=N" />
+		<menu_item actionId="mas_payment_category"
+			name="js.topnav.menu.billing.preferences.payment.category"
+			urlParams="_method=list&amp;status=A&amp;sortOrder=cat_name&amp;sortReverse=false" />
+
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="mas_payment_mode"
+			name="js.topnav.menu.billing.preferences.payment.modes"
+			urlParams="sortReverse=false" />
+		<menu_item actionId="mas_edc_machine" name="js.topnav.menu.billing.preferences.edc.machine"
+ 			hashFragment="/edcmachine" />
+ 		<menu_item actionId="mas_billing_group" name="js.topnav.menu.billing.preferences.billing.group"
+ 			hashFragment="/billinggroups" />	
+		<menu_item actionId="mas_bank"
+			name="js.topnav.menu.billing.preferences.bank.master"
+			urlParams="_method=list" />
+		<menu_item actionId="mas_card_type"
+			name="js.topnav.menu.billing.preferences.card.types"
+			urlParams="sortReverse=false" />
+		<menu_item isSeparator="true"/>
+
+		<menu_item actionId="mas_bill_label"
+			name="js.topnav.menu.billing.preferences.bill.labels.master"
+			urlParams="sortOrder=bill_label_name&amp;sortReverse=false&amp;status=A" />
+	</menu_group>
+	
+		<menu_group id="grp_integrations_configurations" name="js.topnav.menu.integrations" >
+	<menu_item actionId="mas_salucro_role"
+			name="js.topnav.menu.salucro.role" hashFragment="/salucrorole" />
+	<menu_item actionId="mas_salucro_location"
+			name="js.topnav.menu.salucro.location" hashFragment="/salucrolocation" />
+	</menu_group>
+
+	<menu_group id="grp_salucro" name="js.topnav.menu.salucro">
+		<menu_item actionId="salucro_transactions" name="js.topnav.menu.salucro.transactions"
+				   hashFragment="/salucrotransactions" />
+		<menu_item actionId="salucro_reports" name="js.topnav.menu.salucro.reports"
+				   hashFragment="/salucroreports" />				   
+	</menu_group>
+
+	<menu_group id="grp_print_templates" name="js.topnav.menu.print.templates" >
+		<!-- todo: expand the Print Template List into individual menus -->
+		<menu_item actionId="mas_print_templates"
+			name="js.topnav.menu.print.templates.print.template.list" urlParams="method=list" />
+
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="mas_bill_template"
+			name="js.topnav.menu.print.templates.print.template.hyphen.bills" urlParams="method=list" />
+		<menu_item actionId="mas_ph_template"
+			name="js.topnav.menu.print.templates.print.template.hyphen.pharmacy" urlParams="method=list" />
+		<menu_item actionId="mas_grn_template"
+			name="js.topnav.menu.print.templates.print.template.hyphen.grn"
+			urlParams="sortOrder=template_name&amp;sortReverse=false" />
+		<menu_item actionId="mas_ph_po_template"
+			name="js.topnav.menu.print.templates.print.template.hyphen.po" urlParams="method=list" />
+		<menu_item actionId="mas_receipt_refund_template"
+			name="js.topnav.menu.print.templates.print.template.hyphen.receiptsorrefunds" instaAdminOnly="true"
+			urlParams="method=list" />
+		<menu_item actionId="mas_deposit_templates"
+			name="js.topnav.menu.print.templates.print.template.hyphen.deposit.receiptsorrefunds.in.brackets" instaAdminOnly="true"
+			urlParams="_method=list" />
+		<menu_item actionId="mas_diag_template"
+			name="js.topnav.menu.print.templates.print.template.hyphen.diagnostics.outhouse.in.brackets" instaAdminOnly="true"
+			urlParams="method=list" />
+	<!-- <menu_item actionId="mas_barcode_template"
+			name="Print Template - Bar Codes" instaAdminOnly="true"
+			urlParams="method=list" /> -->
+		<menu_item actionId="mas_hvf_template"
+			name="js.topnav.menu.print.templates.print.template.hyphen.hvf" urlParams="method=list" />
+		<menu_item actionId="mas_sample_barcode_template"
+			name="js.topnav.menu.print.templates.print.template.hyphen.samples.bar.codes" instaAdminOnly="true"
+			urlParams="method=list" />
+		<menu_item actionId="mas_prescription_template"
+			name="js.topnav.menu.print.templates.print.template.hyphen.consultation" urlParams="method=list" />
+		<menu_item actionId="mas_prescription_label_template"
+			name="js.topnav.menu.print.templates.print.template.hyphen.prescription.label" urlParams="method=list" />
+        <menu_item actionId="mas_pat_visit_bills_template"
+			name="js.topnav.menu.print.templates.print.template.hyphen.patient.visit.bills" urlParams="method=list" />
+		<menu_item actionId="mas_common_print_templates"
+			name="js.topnav.menu.print.templates.print.templates.hyphen.html.or.text" urlParams="_method=list"/>
+	</menu_group>
+
+	<menu_group id="grp_hospital_templates" name="js.topnav.menu.document.templates">
+		<menu_item actionId="mas_patient_header_templates"
+			name="js.topnav.menu.document.templates.patient.header"
+			urlParams="_method=list&amp;sortOrder=template_name&amp;sortReverse=false&amp;status=A" />
+		<menu_item actionId="mas_generic_doc_template"
+			name="js.topnav.menu.document.templates.patient.documents"
+			urlParams="_method=list&amp;sortOrder=template_name&amp;sortReverse=false&amp;status=A" />
+		<menu_item actionId="mas_generic_images"
+			name="js.topnav.menu.document.templates.generic.images"
+			urlParams="_method=list" />
+		<menu_item actionId="mas_emailTemplates"
+			name="js.topnav.menu.document.templates.email.templates"
+			urlParams="method=list" />
+
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="mas_diag_templates"
+			name="js.topnav.menu.document.templates.diagnostic.reports"
+			urlParams="_method=list&amp;sortOrder=format_name&amp;sortReverse=false" />
+		<menu_item actionId="mas_service_templates"
+			name="js.topnav.menu.document.templates.service.reports"
+			urlParams="_method=list&amp;sortOrder=template_name&amp;sortReverse=false&amp;status=A" />
+		<menu_item actionId="mas_ot_templates"
+			name="js.topnav.menu.document.templates.ot.reports"
+			urlParams="_method=list&amp;sortOrder=template_name&amp;sortReverse=false&amp;status=A"/>
+		<menu_item actionId="dis_metadata"
+			name="js.topnav.menu.document.templates.discharge.summary"
+			urlParams="_method=list&amp;sortOrder=caption&amp;sortReverse=false&amp;status=A" />
+		<menu_item actionId="op_case_form_template"
+			name="js.topnav.menu.document.templates.op.case.forms"
+			urlParams="_method=list&amp;sortOrder=template_name&amp;sortReverse=false&amp;status=A" />
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="mas_reg_templates"
+			name="js.topnav.menu.document.templates.registration.documents"
+			urlParams="_method=list&amp;sortOrder=template_name&amp;sortReverse=false&amp;status=A" />
+		<menu_item actionId="mas_reg_cards" name="js.topnav.menu.document.templates.registration.cards"
+			urlParams="_method=list&amp;status=A" />
+
+		<menu_item actionId="mas_mlc_templates" name="js.topnav.menu.document.templates.mlc.forms"
+			urlParams="_method=list&amp;sortOrder=template_name&amp;sortReverse=false&amp;status=A" />
+
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="mas_claim_template" name="js.topnav.menu.document.templates.insurance.claims"
+			urlParams="method=list&amp;status=A" />
+		<menu_item actionId="ins_templates" name="js.topnav.menu.document.templates.insurance.documents"
+			urlParams="_method=list&amp;sortOrder=template_name&amp;sortReverse=false&amp;status=A" />
+		<menu_item actionId="tpapreauth_templates" name="js.topnav.menu.document.templates.tpa.preauth.forms"
+			urlParams="_method=list&amp;sortOrder=template_name&amp;sortReverse=false&amp;status=A" />
+	</menu_group>
+
+	<menu_group id="grp_general_masters" name="js.topnav.menu.general.masters" >
+	    <menu_item actionId ="mas_confidentiality_groups" name = "js.topnav.menu.general.masters.confidentialitygroup"
+	        hashFragment="/confidentialitygroups" module = "master" />
+		<menu_item actionId="mas_region" name="js.topnav.menu.general.masters.region"
+			hashFragment="/regions/list" module="master" />
+		<menu_item actionId="mas_areas" name="js.topnav.menu.general.masters.area"
+			urlParams="status=A&amp;sortOrder=area_name&amp;sortReverse=false" />
+		<menu_item actionId="mas_cities" name="js.topnav.menu.general.masters.cities"
+			urlParams="citystatus=A&amp;sortOrder=city_name&amp;sortReverse=false" />
+		<menu_item actionId="mas_districts" name="js.topnav.menu.general.masters.district"
+			urlParams="districtstatus=A&amp;sortOrder=district_name&amp;sortReverse=false" />
+		<menu_item actionId="mas_states" name="js.topnav.menu.general.masters.states"
+			urlParams="_method=list&amp;status=A&amp;sortOrder=state_name&amp;sortReverse=false" />
+		<menu_item actionId="mas_countries" name="js.topnav.menu.general.masters.countries"
+			urlParams="status=A&amp;sortOrder=country_name&amp;sortReverse=false&amp;nationality=f" />
+
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="mas_salutation" name="js.topnav.menu.general.masters.salutations"
+			urlParams="_method=list&amp;status=A&amp;sortOrder=salutation&amp;sortReverse=false" />
+
+	<!--	<menu_item actionId="mas_occupations" name="Occupations"
+			urlParams="_method=list&amp;status=A&amp;sortOrder=occupation&amp;sortReverse=false"/>
+		<menu_item actionId="mas_religions" name="Religions"
+			urlParams="_method=list&amp;status=A&amp;sortOrder=religion_name&amp;sortReverse=false" /> -->
+
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="mas_custom_list1" name="js.topnav.menu.general.masters.patient.custom.list.1.master"
+			urlParams="_method=list&amp;status=A&amp;sortOrder=custom_value&amp;sortReverse=false" />
+		<menu_item actionId="mas_custom_list2" name="js.topnav.menu.general.masters.patient.custom.list.2.master"
+			urlParams="_method=list&amp;status=A&amp;sortOrder=custom_value&amp;sortReverse=false" />
+		<menu_item actionId="mas_custom_list3" name="js.topnav.menu.general.masters.patient.custom.list.3.master"
+			urlParams="_method=list&amp;status=A&amp;sortOrder=custom_value&amp;sortReverse=false" />
+		<menu_item actionId="mas_custom_list4" name="js.topnav.menu.general.masters.patient.custom.list.4.master"
+			urlParams="_method=list&amp;status=A&amp;sortOrder=custom_value&amp;sortReverse=false" />
+		<menu_item actionId="mas_custom_list5" name="js.topnav.menu.general.masters.patient.custom.list.5.master"
+			urlParams="_method=list&amp;status=A&amp;sortOrder=custom_value&amp;sortReverse=false" />
+		<menu_item actionId="mas_custom_list6" name="js.topnav.menu.general.masters.patient.custom.list.6.master"
+			urlParams="_method=list&amp;status=A&amp;sortOrder=custom_value&amp;sortReverse=false" />
+		<menu_item actionId="mas_custom_list7" name="js.topnav.menu.general.masters.patient.custom.list.7.master"
+		urlParams="_method=list&amp;status=A&amp;sortOrder=custom_value&amp;sortReverse=false" />
+		<menu_item actionId="mas_custom_list8" name="js.topnav.menu.general.masters.patient.custom.list.8.master"
+		urlParams="_method=list&amp;status=A&amp;sortOrder=custom_value&amp;sortReverse=false" />
+		<menu_item actionId="mas_custom_list9" name="js.topnav.menu.general.masters.patient.custom.list.9.master"
+		urlParams="_method=list&amp;status=A&amp;sortOrder=custom_value&amp;sortReverse=false" />
+
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="mas_visit_custom_list1" name="js.topnav.menu.general.masters.visit.custom.list.1.master"
+			urlParams="_method=list&amp;status=A&amp;sortOrder=custom_value&amp;sortReverse=false" />
+		<menu_item actionId="mas_visit_custom_list2" name="js.topnav.menu.general.masters.visit.custom.list.2.master"
+			urlParams="_method=list&amp;status=A&amp;sortOrder=custom_value&amp;sortReverse=false" />
+
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="mas_govt_type_id" name="js.topnav.menu.general.masters.govt.id.master"
+			urlParams="status=A&amp;sortOrder=identifier_type&amp;sortReverse=false" />
+		<menu_item actionId="mas_other_type_id" name="js.topnav.menu.general.masters.other.id.master"
+			urlParams="status=A&amp;sortOrder=other_identification_doc_name&amp;sortReverse=false" />
+		<menu_item actionId="mas_encounter_type" name="js.topnav.menu.general.masters.encounter.type.master"
+			urlParams="status=A&amp;sortOrder=encounter_type_desc&amp;sortReverse=false" />
+		<menu_item actionId="mas_transfer_hospitals"
+			name="js.topnav.menu.general.masters.transfer.hospitals"
+			urlParams="sortOrder=transfer_hospital_name&amp;sortReverse=false&amp;status=A" />
+		<menu_item actionId="contracts_list" name="js.topnav.menu.general.masters.contract.types"
+			urlParams="_method=list&amp;sortOrder=&amp;sortReverse=false&amp;status=A" />
+		<menu_item actionId="license_type" name="js.topnav.menu.general.masters.license.types"
+			urlParams="_method=list&amp;status=A&amp;sortOrder=license_type&amp;sortReverse=false" />
+		<menu_item actionId="mas_scan_doc_types"
+			name="js.topnav.menu.general.masters.document.types"
+			urlParams="status=A&amp;sortOrder=system_type&amp;sortReverse=false" />
+		<menu_item actionId="mas_recurrence_daily_master"
+			name="js.topnav.menu.general.masters.recurrence.daily.master"
+			urlParams="sortOrder=display_name&amp;sortReverse=false&amp;status=A" />
+		<menu_item actionId="medicine_route"
+			name="js.topnav.menu.general.masters.route.of.administration"
+			urlParams="_method=list&amp;sortOrder=route_name&amp;sortReverse=false" />
+		<menu_item actionId="mas_strength_unit" name="js.topnav.menu.general.masters.strength.unit"
+			urlParams="sortOrder=unit_id&amp;sortReverse=false&amp;status=A" />
+		<menu_item actionId="channeling_source" name="js.topnav.menu.general.masters.appointment.channeling.source"
+			urlParams="_method=list&amp;status=A&amp;sortOrder=appointment_source_name&amp;sortReverse=false"/>
+
+		<menu_item actionId="diag_sample_type_master"
+			name="js.topnav.menu.general.masters.sample.type"
+			urlParams="_method=list&amp;sortOrder=sample_type&amp;sortReverse=false&amp;status=A" />
+        <menu_item actionId="label_master" name="js.topnav.menu.general.masters.label.master"
+            urlParams="_method=list&amp;status=A&amp;sortOrder=label_short&amp;sortReverse=false" />
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="reg_expression" name="js.topnav.menu.general.masters.regular.expression"
+		    urlParams="_method=list&amp;status=A&amp;sortOrder=pattern_name&amp;sortReverse=false" />
+		<menu_item actionId="mas_supported_codes"
+			name="js.topnav.menu.general.masters.supported.codes" />
+		<menu_item actionId="mas_icd_codes"
+			name="js.topnav.menu.general.masters.codes.master"
+			urlParams="status=A" />
+		<menu_item actionId="mas_drg_codes" name="js.topnav.menu.general.masters.drg.codes.master"
+			urlParams="_method=list" />
+		<menu_item actionId="per_diem_codes" name="js.topnav.menu.general.masters.per.diem.codes"
+			urlParams="_method=list&amp;sortReverse=false&amp;status=A" />
+		<menu_item actionId="mas_pbm_observations"
+			name="js.topnav.menu.general.masters.pbm.observations"
+			urlParams="_method=list&amp;sortOrder=observation_name&amp;sortReverse=false&amp;status=A" />
+		<menu_item actionId="mas_dialyzer_types" name="js.topnav.menu.general.masters.dialyzer.types"
+			urlParams="status=A&amp;sortOrder=dialyzer_type_name&amp;sortReverse=false" />
+		<menu_item actionId="mas_dial_access_types" name="js.topnav.menu.general.masters.dialysis.access.types"
+			urlParams="sortOrder=access_type&amp;sortReverse=false&amp;status=A" />
+		<menu_item actionId="mas_dial_access_sites" name="js.topnav.menu.general.masters.dialysis.access.sites"
+			urlParams="_method=list&amp;sortOrder=access_site&amp;sortReverse=false&amp;status=A" />
+		<menu_item actionId="mas_dial_ratings" name="js.topnav.menu.general.masters.dialyzer.ratings"
+			urlParams="sortOrder=dialyzer_rating&amp;sortReverse=false&amp;status=A" />
+		<menu_item actionId="mas_dial_machine" name="js.topnav.menu.general.masters.dialysis.machine.master"
+			urlParams="_method=list&amp;sortOrder=machine_name&amp;sortReverse=false&amp;status=A" />
+		<menu_item actionId="mas_dialysate_type" name="js.topnav.menu.general.masters.dialysate.type"
+			urlParams="_method=list&amp;sortOrder=dialysate_type_name&amp;sortReverse=false&amp;status=A" />
+		<menu_item actionId="mas_dialysis_prep" name="js.topnav.menu.general.masters.dialysis.prep.master"
+			urlParams="_method=list&amp;sortOrder=prep_param&amp;sortReverse=false&amp;status=A" />
+		<menu_item actionId="mas_center_outhouses"
+			name="js.topnav.menu.general.masters.outsource.center.master"
+			urlParams="_method=list"/>
+		<menu_item actionId="mas_out_houses_list"
+			name="js.topnav.menu.general.masters.outsource.master"
+			urlParams="_method=getOutHouseList&amp;sortOrder=outsource_name&amp;sortReverse=false&amp;status=A" />
+		<menu_item actionId="mas_code_sets"
+			name="js.topnav.menu.general.masters.code.sets"
+			urlParams="code_system_category_id=&amp;code_systems_id=&amp;sortOrder=entity_id&amp;sortReverse=false"/>
+	</menu_group>
+
+	<menu_group id="grp_hospital_admin_masters" name="js.topnav.menu.hospital.admin.masters">
+		<menu_item actionId="mas_dept"
+			name="js.topnav.menu.hospital.admin.masters.departments"
+			urlParams="sortOrder=dept_name&amp;sortReverse=false&amp;status=A" />
+		<menu_item actionId="mas_discharge_type"
+			name="js.topnav.menu.hospital.admin.masters.discharge.types"
+			urlParams="_method=list&amp;sortOrder=discharge_type&amp;sortReverse=false&amp;status=A" />
+		<menu_item actionId="mas_dept_units"
+			name="js.topnav.menu.hospital.admin.masters.department.units"
+			urlParams="_method=list&amp;sortOrder=unit_name&amp;sortReverse=false&amp;status=A" />
+		<menu_item actionId="mas_diag_depts"
+			name="js.topnav.menu.hospital.admin.masters.diagnostic.departments"
+			urlParams="_method=list&amp;sortOrder=display_order&amp;status=A" />
+		<menu_item actionId="mas_hosp_roles"
+			name="js.topnav.menu.hospital.admin.masters.hospital.roles.master"
+			hashFragment="/hospitalroles" />
+		<menu_item actionId="mas_indication_for_caesarean_section"
+			name="ui.label.indication.for.caesarean.section"
+			hashFragment="/indicationforcaesareansection" />
+		<menu_item actionId="mas_reason_for_referral"
+			name="ui.label.reason.for.referral"
+			hashFragment="/reasonforreferral" />
+		<menu_item actionId="insurance_aggregator" name="js.topnav.menu.hospital.admin.masters.hospital.insurance.aggregator"
+			hashFragment="/insuranceagg" module="mod_develop"/>
+		<menu_item actionId="mas_location"
+			name="js.topnav.menu.hospital.admin.masters.location.master"
+			urlParams="_method=list&amp;sortOrder=location_name&amp;sortReverse=false&amp;lm.status=A" />
+		<menu_item actionId="mas_serv_dept"
+			name="js.topnav.menu.hospital.admin.masters.services.departments"
+			urlParams="_method=list&amp;sortOrder=department&amp;dep.status=A" />
+		<menu_item actionId="serv_res_master"
+			name="js.topnav.menu.hospital.admin.masters.service.resources"
+			urlParams="_method=list&amp;srm.status=A&amp;sortOrder=serv_resource_name&amp;sortReverse=false" />
+		<menu_item actionId="scheduler_generic_resource_type_master"
+			name="js.topnav.menu.hospital.admin.masters.generic.resource.type"
+			urlParams="_method=list&amp;status=A&amp;sortOrder=resource_type_desc&amp;sortReverse=false" />
+		<menu_item actionId="scheduler_generic_resource_master"
+			name="js.topnav.menu.hospital.admin.masters.generic.resource.master"
+			urlParams="_method=list&amp;grm.status=A&amp;sortOrder=generic_resource_name&amp;sortReverse=false" />
+		<menu_item actionId="test_equipment_master"
+			name="js.topnav.menu.hospital.admin.masters.test.equipments"
+			urlParams="tm.status=A&amp;sortOrder=equipment_name&amp;sortReverse=false" />
+		<menu_item actionId="mas_patient_cat"
+			name="js.topnav.menu.hospital.admin.masters.patient.category.master"
+			urlParams="_method=list&amp;sortOrder=category_name&amp;sortReverse=false&amp;status=A" />
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="mas_wards_beds"
+			name="js.topnav.menu.hospital.admin.masters.ward.bed.details"
+			urlParams="method=getWardandBedMaster" />
+		<menu_item actionId="mas_counters" name="js.topnav.menu.hospital.admin.masters.counters"
+			urlParams="sortOrder=counter_no&amp;sortReverse=false&amp;status=A" />
+		<menu_item actionId="mas_discount_authorizer"
+			name="js.topnav.menu.hospital.admin.masters.discount.authorizers"
+			urlParams="_method=list&amp;sortOrder=disc_auth_name&amp;sortReverse=false&amp;status=A" />
+		<menu_item actionId="mas_pending_presc_declined_reasons"
+			name="js.topnav.menu.hospital.admin.masters.declined.reasons"
+			hashFragment="/patientdeclinereason" module="master" />
+			
+<!--
+		<menu_item actionId="mas_discount_category"
+			name="Discount Categories"
+			urlParams="_method=list&amp;sortOrder=discount_cat_name&amp;sortReverse=false&amp;status=A" />
+ -->
+		<menu_item actionId="mas_discount_plan"
+			name="js.topnav.menu.hospital.admin.masters.discount.plans"
+			urlParams="_method=list&amp;sortOrder=discount_plan_name&amp;sortReverse=false&amp;status=A" />
+		<menu_item actionId="mas_op_visit_type_rules"
+			name="js.topnav.menu.hospital.admin.masters.advanced.followup.rules"
+			urlParams="_method=list&amp;status=A" />
+		<menu_item actionId="mas_mrd_casefile_users"
+			name="js.topnav.menu.hospital.admin.masters.mrd.case.file.users"
+			urlParams="_method=list&amp;sortOrder=file_user_name&amp;sortReverse=false&amp;status=A" />
+		<menu_item actionId="mas_diagnosis_status"
+			name="js.topnav.menu.hospital.admin.masters.diagnosis.status.master"
+			urlParams="_method=list&amp;sortOrder=diagnosis_status_name&amp;sortReverse=false&amp;status=A" />
+		<menu_item actionId="mas_ref_doctors"
+			name="js.topnav.menu.hospital.admin.masters.referral.doctors"
+			urlParams="_method=list&amp;sortOrder=referal_name&amp;sortReverse=false&amp;status=A" />
+
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="mas_ph_ret_doc"
+			name="js.topnav.menu.hospital.admin.masters.pharmacy.retail.doctors"
+			urlParams="_method=list&amp;sortOrder=doctor_name&amp;sortReverse=false&amp;status=A" />
+		<menu_item actionId="mas_ph_ret_spon"
+			name="js.topnav.menu.hospital.admin.masters.pharmacy.retail.sponsors"
+			urlParams="_method=list&amp;sortOrder=sponsor_name&amp;sortReverse=false&amp;status=A" />
+		<menu_item actionId="mas_medicines_prescribed"
+			name="js.topnav.menu.hospital.admin.masters.prescribed.medicines"
+			urlParams="_method=list&amp;&amp;sortOrder=medicine_name&amp;sortReverse=false" />
+		<menu_item actionId="mas_medicine_dosage"
+			name="js.topnav.menu.hospital.admin.masters.op.medicine.frequency"
+			urlParams="_method=list&amp;sortOrder=dosage_name&amp;sortReverse=false" />
+
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="mas_ins_sponsor"
+			name="js.topnav.menu.hospital.admin.masters.sponsor.type.master" urlParams="_method=list&amp;sortOrder=sponsor_type_name&amp;sortReverse=false&amp;status=A" />
+		<menu_item actionId="mas_ins_tpas"
+			name="js.topnav.menu.hospital.admin.masters.tpa.or.sponsor.master"
+			urlParams="_method=list&amp;sortOrder=tpa_name&amp;sortReverse=false&amp;status=A" />
+		<menu_item actionId="mas_insurance_comp"
+			name="js.topnav.menu.hospital.admin.masters.insurance.companies"
+			urlParams="_method=list&amp;sortOrder=insurance_co_name&amp;sortReverse=false&amp;ic.status=A" />
+		<menu_item actionId="mas_insurance_cat"
+			name="js.topnav.menu.hospital.admin.masters.insurance.plan.types"
+			urlParams="_method=list" />
+		<menu_item actionId="mas_plan"
+			name="js.topnav.menu.hospital.admin.masters.insurance.plans"
+			urlParams="_method=list" />
+		<menu_item actionId="mas_denial_codes" name="js.topnav.menu.hospital.admin.masters.insurance.denial.codes"
+			urlParams="_method=list" />
+		<menu_item actionId="mas_insurance_company_tpa" name="js.topnav.menu.hospital.admin.masters.insurance.company.tpa.or.sponsor.list"
+			urlParams="_method=list&amp;sortOrder=insurance_co_name&amp;sortReverse=false" />
+		<menu_item actionId="mas_rejection_reason" name="js.topnav.menu.hospital.admin.masters.rejection.reason.categories"
+			urlParams="status=A" />
+
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="mas_incoming_samples"
+			name="js.topnav.menu.hospital.admin.masters.in.coming.hospitals"
+			urlParams="sortOrder=hospital_name&amp;sortReverse=false&amp;status=A" />
+		<menu_item actionId="diag_reagent_master"
+			name="js.topnav.menu.hospital.admin.masters.diagnostics.reagents"
+			urlParams="_method=list&amp;sortOrder=test_name&amp;sortReverse=false&amp;status=A" />
+		<menu_item actionId="mas_sam_collection" name="js.topnav.menu.hospital.admin.masters.sample.collection.centers"
+			urlParams="_method=list&amp;sortOrder=collection_center&amp;sortReverse=false&amp;status=A" />
+		<menu_item actionId="mas_sam_sources" name="js.topnav.menu.hospital.admin.masters.sample.sources"
+			urlParams="sortOrder=source_name&amp;sortReverse=false&amp;status=A" />
+		<menu_item actionId="serv_cons_master"
+			name="js.topnav.menu.hospital.admin.masters.service.consumables"
+			urlParams="_method=list&amp;sortOrder=service_name&amp;sortReverse=false&amp;status=A" />
+		<menu_item actionId="ot_cons_master"
+			name="js.topnav.menu.hospital.admin.masters.ot.consumables"
+			urlParams="_method=list&amp;sortOrder=operation_name&amp;sortReverse=false&amp;status=A" />
+
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="mas_phrase_suggestions_category_master"
+			name="js.topnav.menu.hospital.admin.masters.phrase.suggestions.category"
+			urlParams="sortOrder=phrase_suggestions_category_id&amp;sortReverse=false&amp;status=A" />
+		<menu_item actionId="mas_phrase_suggestions_master"
+			name="js.topnav.menu.hospital.admin.masters.phrase.suggestions.master"
+			urlParams="_method=list&amp;sortOrder=phrase_suggestions_id&amp;sortReverse=false&amp;phrasestatus=A" />
+		<menu_item actionId="mas_prescription_instructions_master"
+			name="js.topnav.menu.hospital.admin.masters.prescription.instructions.master"
+			urlParams="_method=list&amp;sortOrder=instruction_id&amp;sortReverse=false" />
+		<menu_item actionId="mas_system_gen_sections"
+			name="js.topnav.menu.hospital.admin.masters.system.sections"/>
+		<menu_item actionId="mas_image_markers"
+			name="js.topnav.menu.hospital.admin.masters.image.markers"/>
+		<menu_item actionId="mas_sections"
+			name="js.topnav.menu.hospital.admin.masters.insta.sections"
+			urlParams="_method=list&amp;sortOrder=section_title&amp;sortReverse=false&amp;status=A"/>
+		<menu_item actionId="mas_form_components"
+			name="js.topnav.menu.hospital.admin.masters.hospital.forms"/>
+		<menu_item actionId="dietary_templates" name="js.topnav.menu.hospital.admin.masters.diet.charts"
+			urlParams="_method=list&amp;sortOrder=template_name&amp;sortReverse=false&amp;status=A" />
+		<menu_item actionId="mas_vitalparameters" name="js.topnav.menu.hospital.admin.masters.vital.parameter.fields" 
+		    urlParams="sortOrder=param_container&amp;sortReverse=false&amp;param_status=A&amp;param_container=I&amp;param_container=O" />
+		<menu_item actionId="new_mas_vitalparameters" name="js.topnav.menu.hospital.admin.masters.vital.parameter.new"
+			hashFragment="/vitals"/>
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="clinical_data_lab_results_master"
+			name="js.topnav.menu.hospital.admin.masters.clinical.data.lab.results.master"
+			urlParams="_method=list&amp;sortOrder=resultlabel&amp;sortReverse=false&amp;status=A"/>
+		<menu_item actionId="hospitalization_reasons"
+			name="js.topnav.menu.hospital.admin.masters.hospitalization.reason.master"
+			urlParams="_method=list&amp;sortOrder=reason&amp;sortReverse=false&amp;status=A"/>
+		<menu_item actionId="clinical_vaccinations"
+			name="js.topnav.menu.hospital.admin.masters.vaccination.type"
+			urlParams="_method=list&amp;sortOrder=vaccination_type&amp;sortReverse=false&amp;status=A"/>
+		<menu_item actionId="clinical_vaccination_no_reason"
+			name="js.topnav.menu.hospital.admin.masters.vaccination.no.reasons"
+			urlParams="_method=list&amp;sortOrder=reason_name&amp;sortReverse=false&amp;status=A"/>
+		<menu_item actionId="clinical_infection_master"
+			name="js.topnav.menu.hospital.admin.masters.infection.type"
+			urlParams="_method=list&amp;sortOrder=infection_type&amp;sortReverse=false&amp;status=A"/>
+		<menu_item actionId="infection_site_master"
+			name="js.topnav.menu.hospital.admin.masters.infection.site"
+			urlParams="_method=list&amp;sortOrder=infection_site_name&amp;sortReverse=false&amp;status=A"/>
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="mas_centers" name="js.topnav.menu.hospital.admin.masters.centers"
+			urlParams="sortOrder=center_name&amp;sortReverse=false&amp;status=A" />
+		<menu_item actionId="mas_center_group"
+			name="js.topnav.menu.hospital.admin.masters.center.group"
+			urlParams="sortOrder=center_group_name&amp;sortReverse=false&amp;status=A"/>
+		<menu_item actionId="mas_death_reason"
+			name="js.topnav.menu.hospital.admin.masters.death.reasons"
+			urlParams="status=A"/>
+
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="mas_allergy" name="js.topnav.menu.hospital.admin.masters.allergy.master"
+			urlParams="_method=list&amp;sortOrder=allergy_name&amp;sortReverse=false&amp;status=A" />
+
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="tooth_surface_material_master" name="js.topnav.menu.hospital.admin.masters.tooth.surface.material"
+			urlParams="_method=list&amp;sortOrder=material_name&amp;sortReverse=false&amp;status=A" />
+		<menu_item actionId="crown_status_master" name="js.topnav.menu.hospital.admin.masters.crown.status"
+			urlParams="_method=list&amp;sortReverse=false&amp;status=A" />
+		<menu_item actionId="root_status_master" name="js.topnav.menu.hospital.admin.masters.root.status"
+			urlParams="_method=list&amp;sortReverse=false&amp;status=A" />
+		<menu_item actionId="tooth_surface_option_master" name="js.topnav.menu.hospital.admin.masters.tooth.surface.option"
+			urlParams="_method=list&amp;sortOrder=option_name&amp;sortReverse=false&amp;status=A" />
+		<menu_item actionId="tooth_surface_status_master" name="js.topnav.menu.hospital.admin.masters.tooth.surface.status"
+			urlParams="_method=list&amp;sortOrder=surface_status_name&amp;sortReverse=false&amp;status=A" />
+
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="master_vaccine"
+			name="js.topnav.menu.hospital.admin.masters.vaccine.master"
+			urlParams="_method=list&amp;sortOrder=display_order&amp;sortReverse=false&amp;status=A" />
+
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="mas_review_types" name="js.topnav.menu.hospital.billing.masters.review.type"
+ 			hashFragment="/reviewtypes" module = "master" />
+		<menu_item actionId="mas_review_category" name="js.topnav.menu.hospital.billing.masters.review.category"
+ 			hashFragment="/reviewcategory" module = "master" />
+
+			
+		<menu_item actionId="mas_practitioner_types" name="ui.label.practitioner.types"
+ 			hashFragment="/practitionerconsultationmapping" />
+			
+	</menu_group>
+
+	<menu_group id="grp_clinical_master" name="js.topnav.menu.clinical.masters">
+		<menu_item actionId="mas_note_types"
+			name="js.topnav.menu.clinical.master.note.types" hashFragment="/notetypes" />
+	</menu_group>
+	
+	<menu_group id="grp_interface_master" name="js.topnav.menu.interface.masters">
+		<menu_item actionId="mas_data_backload"
+			name="js.topnav.menu.interface.master.data.backload" hashFragment="/databackload" />
+	</menu_group>
+
+	<menu_group id="grp_hospital_billing_masters" name="js.topnav.menu.hospital.billing.masters">
+		<menu_item actionId="mas_organizations" name="js.topnav.menu.hospital.billing.masters.rate.sheets"
+			urlParams="_method=getOrganizationDetails&amp;sortOrder=org_name&amp;sortReverse=false&amp;status=A" />
+		<menu_item actionId="mas_rate_plan" name="js.topnav.menu.hospital.billing.masters.rate.plans"
+			urlParams="_method=getRatePlanDetails&amp;sortOrder=org_name&amp;sortReverse=false&amp;status=A" />
+		<menu_item actionId="mas_bedmaster"
+			name="js.topnav.menu.hospital.billing.masters.bed.types"
+			urlParams="method=getdetails&amp;status=A&amp;sortReverse=false" />
+
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="mas_reg_charges"
+			name="js.topnav.menu.hospital.billing.masters.registration.charges"
+			urlParams="method=show" />
+		<menu_item actionId="consult_charge"
+			name="js.topnav.menu.hospital.billing.masters.consultation.types"
+			urlParams="_method=list" />
+		<menu_item actionId="mas_doctors"
+			name="js.topnav.menu.hospital.billing.masters.doctors"
+			urlParams="_method=list&amp;status=A&amp;org_id=ORG0001&amp;sortOrder=doctor_name&amp;sortReverse=false" />
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="mas_diag_test_list"
+			name="js.topnav.menu.hospital.billing.masters.diagnostic.tests"
+			urlParams="_method=listTests&amp;status=A&amp;sortOrder=test_name&amp;sortReverse=false" />
+		<menu_item actionId="diag_methodology_master_id"
+				name="js.topnav.menu.hospital.billing.masters.diagnostic.methodology"
+				urlParams="status=A&amp;sortOrder=method_name&amp;sortReverse=false"/>
+		<menu_item actionId="mas_services"
+			name="js.topnav.menu.hospital.billing.masters.services"
+			urlParams="_method=list&amp;status=A&amp;sortOrder=service_name&amp;sortReverse=false" />
+		<menu_item actionId="mas_equipment"
+			name="js.topnav.menu.hospital.billing.masters.equipments"
+			urlParams="_method=list&amp;status=A&amp;org_id=ORG0001&amp;sortReverse=false&amp;sortOrder=equipment_name" />
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="mas_operations"
+			name="js.topnav.menu.hospital.billing.masters.operations"
+			urlParams="_method=list&amp;status=A&amp;sortOrder=operation_name&amp;sortReverse=false" />
+		<menu_item actionId="mas_operation_templates"
+			name="js.topnav.menu.hospital.billing.masters.operation.templates"
+			urlParams="_method=list&amp;sortReverse=false" />
+		<menu_item actionId="mas_ot"
+			name="js.topnav.menu.hospital.billing.masters.operation.theatres"
+			urlParams="_method=getTheatMast&amp;status=A&amp;sortReverse=false" />
+		<menu_item actionId="mas_anaesthesia"
+			name="js.topnav.menu.hospital.billing.masters.anaesthesia.types"
+			urlParams="_method=list&amp;status=A&amp;sortReverse=false&amp;sortOrder=anesthesia_type_name" />
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="mas_common_charges"
+			name="js.topnav.menu.hospital.billing.masters.other.charges"
+			urlParams="_method=list&amp;status=A&amp;sortReverse=false" />
+		<menu_item actionId="dietary_master"
+			name="js.topnav.menu.hospital.billing.masters.dietary.master"
+			urlParams="_method=list&amp;searchStatus=A" />
+
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="mas_package_category_master"
+			name="js.topnav.menu.hospital.billing.masters.package.category"
+			urlParams="_method=list&amp;sortOrder=package_category_id&amp;sortReverse=false&amp;status=A" />
+		<menu_item actionId="mas_order_sets" name="js.topnav.menu.hospital.billing.masters.order.sets"
+ 			hashFragment="/ordersets" />
+		<menu_item actionId="mas_packages" name="js.topnav.menu.hospital.billing.masters.new.packages"
+				   hashFragment="/packages" />
+		<menu_item actionId="dyna_package"
+			name="js.topnav.menu.hospital.billing.masters.dynamic.packages"
+			urlParams="_method=list&amp;sortReverse=false&amp;status=A" />
+		<menu_item actionId="mas_dyna_package_cat"
+			name="js.topnav.menu.hospital.billing.masters.dyna.package.category"
+			urlParams="_method=list" />
+		<menu_item actionId="mas_dyna_package_rule"
+			name="js.topnav.menu.hospital.billing.masters.dyna.package.rules"
+			urlParams="_method=list&amp;sortOrder=priority&amp;sortReverse=false" />
+
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="mas_out_houses" name="js.topnav.menu.hospital.billing.masters.diag.outsource.master"
+			urlParams="_method=getOutHouseMasterDetails&amp;test_status=A" />
+
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="sponsor_procedure_master"
+			name="js.topnav.menu.hospital.billing.masters.sponsor.procedures"
+			urlParams="_method=list&amp;status=A&amp;sortOrder=tpa_name&amp;sortReverse=false" />
+		<menu_item actionId="mas_payment_rule"
+			name="js.topnav.menu.hospital.billing.masters.payment.rules"
+			urlParams="_method=list&amp;sortOrder=precedance&amp;sortReverse=false" />
+
+		<menu_item actionId="rateplan_spread_sheet"
+			name="js.topnav.menu.hospital.billing.masters.rate.plan.spread.sheet"
+			urlParams="_method=show"/>
+
+		<menu_item actionId="mas_case_rate" name="js.topnav.menu.hospital.billing.masters.case.rate"
+ 			hashFragment="/caserate" />
+ 			
+	</menu_group>
+
+	<menu_group id="grp_pharmacy_masters" name="js.topnav.menu.stores.masters">
+		<menu_item actionId="mas_store_type"
+			name="js.topnav.menu.stores.masters.store.types"
+			urlParams="sortOrder=store_type_name&amp;sortReverse=false" />
+		<menu_item actionId="mas_store_dept"
+			name="js.topnav.menu.stores.masters.stores"
+			hashFragment="/stores/list"
+			module="master" />
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="mas_med_cat"
+			name="js.topnav.menu.stores.masters.item.categories"
+			urlParams="_method=list&amp;sortReverse=false&amp;sortOrder=category&amp;status=A" />
+		<menu_item actionId="mas_medicines"
+			name="js.topnav.menu.stores.masters.item.master"
+			urlParams="_method=list&amp;sortOrder=medicine_name&amp;sortReverse=false&amp;status=A" />
+		<menu_item actionId="stores_rate_plan_mas"
+			name="js.topnav.menu.stores.masters.store.tariffs"
+			urlParams="_method=list&amp;sortOrder=store_rate_plan_name&amp;sortReverse=false" />
+		<menu_item actionId="mas_store_item_control_type"
+			name="js.topnav.menu.stores.masters.item.control.types"
+			urlParams="sortOrder=control_type_name&amp;sortReverse=false" />
+		<menu_item actionId="mas_medicines_issue_rates"
+			name="js.topnav.menu.stores.masters.item.issue.rate.master"
+			urlParams="_method=list&amp;sortOrder=medicine_name&amp;sortReverse=false&amp;status=A" />
+		<menu_item actionId="stores_item_rates_mas"
+			name="js.topnav.menu.stores.masters.store.item.rates"
+			urlParams="_method=list&amp;sortOrder=store_rate_plan_name&amp;sortReverse=false" />
+		 <menu_item actionId="mas_supplier_rate_contracts"
+			name="js.topnav.menu.stores.masters.store.supplierratecontract"
+			urlParams="_method=list&amp;status=A" />
+		<menu_item actionId="mas_supplier_contract_item_rates"
+			name="js.topnav.menu.stores.masters.SupplierContract.ItemRates" 
+			urlParams="_method=list&amp;status=A" />
+
+
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="mas_generic_names"
+			name="js.topnav.menu.stores.masters.generic.names"
+			urlParams="_method=getGenericDashBoard&amp;sortOrder=generic_name&amp;sortReverse=false&amp;status=A" />
+		<menu_item actionId="mas_generic_classification_names"
+			name="js.topnav.menu.stores.masters.generic.classification"
+			urlParams="sortOrder=classification_name&amp;sortReverse=false" />
+		<menu_item actionId="mas_sub_classification_names"
+			name="js.topnav.menu.stores.masters.generic.sub.classification"
+			urlParams="sortOrder=sub_classification_name&amp;sortReverse=false" />
+
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="mas_manf"
+			name="js.topnav.menu.stores.masters.manufacturers"
+			urlParams="_method=getManufacturerDetails&amp;sortOrder=manf_name&amp;sortReverse=false&amp;status=A" />
+   	<menu_item actionId="stores_supp_cat_mas"
+			name="js.topnav.menu.stores.masters.supplier.category"
+			urlParams="sortOrder=supp_category_name&amp;sortReverse=false" />
+		<menu_item actionId="mas_suppliers"
+			name="js.topnav.menu.stores.masters.suppliers"
+			urlParams="_method=getSupplierDashBoard&amp;sortOrder=supplier_name&amp;sortReverse=false&amp;status=A" />
+		<menu_item actionId="mas_payment_terms"
+			name="js.topnav.menu.stores.masters.payment.terms"
+			urlParams="sortOrder=template_name&amp;sortReverse=false&amp;status=A" />
+		<menu_item actionId="mas_contractor"
+			name="js.topnav.menu.stores.masters.contractor.master"
+			urlParams="_method=list&amp;sortReverse=false&amp;sortOrder=contractor_name&amp;status=A" />
+
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="mas_misc_settings"
+			name="js.topnav.menu.stores.masters.miscellaneous.settings"
+			urlParams="_method=show" />
+		<!--<menu_item actionId="stock_upload"  name="Stock Upload" urlParams="_method=show" instaAdminOnly="true" />-->
+		<menu_item actionId="mas_pkg_settings"
+			name="js.topnav.menu.stores.masters.package.uom"
+			urlParams="_method=list" />
+		<menu_item actionId="mas_item_form"
+			name="js.topnav.menu.stores.masters.item.form.master"
+			urlParams="sortOrder=item_form_name&amp;sortReverse=false&amp;status=A" />
+		<menu_item actionId="mas_item_kit"
+			name="js.topnav.menu.stores.masters.item.kit.master"
+			urlParams="_method=list&amp;sortOrder=kit_name&amp;sortReverse=false&amp;status=A" />
+		<menu_item actionId="mas_order_kit"
+			name="js.topnav.menu.stores.masters.order.kit.master"
+			urlParams="_method=list&amp;sortOrder=order_kit_name&amp;sortReverse=false&amp;status=A" />
+	    <menu_item actionId="mas_stock_adj_reason"
+			name="js.topnav.menu.stores.masters.stock.adjustment.reasons"
+			urlParams="_method=list&amp;status=A"/>
+		<menu_item actionId="mas_Issue_users"
+			name="js.topnav.menu.stores.masters.issue.users"
+			urlParams="_method=list&amp;sortOrder=hosp_user_name&amp;sortReverse=false&amp;status=A" />
+	     <menu_item actionId="mas_consumption_uom"
+			name="js.topnav.menu.stores.masters.consumptionuom"
+			urlParams="sortOrder=consumption_uom&amp;sortReverse=false&amp;status=A"/>  
+	</menu_group>
+
+	<menu_group id="grp_dental_masters" name="js.topnav.menu.dental.masters">
+		<menu_item actionId="mas_dental_supplier_master" name="js.topnav.menu.dental.masters.dental.supplier.master"
+			urlParams="status=A&amp;sortOrder=supplier_name" />
+
+		<menu_item actionId="mas_dental_supplies_master" name="js.topnav.menu.dental.masters.dental.supplies.master"
+			urlParams="status=A&amp;sortOrder=item_name" />
+
+		<menu_item actionId="mas_dental_supplier_rate_master" name="js.topnav.menu.dental.masters.dental.supplier.rate.master"
+			urlParams="_method=list&amp;item_rate_status=A&amp;sortOrder=item_name" />
+
+		<menu_item actionId="mas_dental_shades_master" name="js.topnav.menu.dental.masters.dental.shades.master"
+			urlParams="_method=list&amp;status=A&amp;sortOrder=shade_name" />
+	</menu_group>
+
+
+	<menu_group id="grp_messaging_masters" name="js.topnav.menu.messaging.masters">
+		<menu_item actionId="mas_message_type" name="js.topnav.menu.messaging.masters.message.types"
+			urlParams="_method=list&amp;status=A&amp;sortOrder=message_type_name" />
+		<menu_item actionId="mas_message_dispatcher_config" name="js.topnav.menu.messaging.masters.message.dispatcher.config"/>		
+	</menu_group>
+
+	<menu_group id="grp_complaints_log" name="js.topnav.menu.administration" >
+		<menu_item actionId="usr_userdashboard" name="js.topnav.menu.administration.roles.and.users"
+			urlParams="_method=list&amp;filterClosed=true&amp;sortOrder=rolename&amp;sortReverse=true&amp;hospital=on&amp;active=on" />
+		<menu_item actionId="mas_foreign_currency"
+			name="js.topnav.menu.administration.foreign.currency"
+			urlParams="_method=list&amp;status=A&amp;sortOrder=currency&amp;sortReverse=false"/>
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="complaints_log" name="js.topnav.menu.administration.complaints.log"
+			urlParams="_method=list&amp;sortOrder=complaint_id&amp;sortReverse=true&amp;complaint_status=Open&amp;complaint_status=Clarify" />
+		<menu_item actionId="complaints_log_report" name="js.topnav.menu.administration.complaints.log.report"
+			urlParams="method=show" />
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="email_report_config" name="js.topnav.menu.administration.scheduled.reports.via.email"
+			urlParams="method=list" />
+		<menu_item actionId="message_log" name="js.topnav.menu.administration.view.message.log"
+			urlParams="_method=list&amp;sortOrder=last_sent_date&amp;date_range=week&amp;sortReverse=true" />
+		<menu_item actionId="mas_system_messages" name="js.topnav.menu.administration.system.messages"
+			urlParams="method=list" />
+		<menu_item isSeparator="true"/>
+		<menu_item actionId="saved_searches" name="js.topnav.menu.administration.saved.searches"
+			urlParams="_method=list&amp;sortOrder=search_name&amp;sortReverse=false"/>
+		<!-- <menu_item actionId="net_sync" name="Network Sync Details"
+			urlParams="_method=showDashboard" /> -->
+		<menu_item actionId="mng_center_practo_profiles" name="js.topnav.menu.administration.manage.centers.practo.profile"
+			urlParams="_method=showDashboard" />
+		<menu_item actionId="mng_doc_practo_profiles" name="js.topnav.menu.administration.manage.doctors.practo.profile"
+			urlParams="_method=showDashboard&amp;sortOrder=doctor_name&amp;sortReverse=false" />
+		<menu_item actionId="mas_fileUploadDownload" name="js.topnav.menu.administration.bulk.uploadDownload" />
+	</menu_group>
+	
+	<menu_group id="grp_practo_advantage" name="js.topnav.menu.practo.advantage" >
+		<menu_item actionId="mas_practo_advantage_book" name="js.topnav.menu.practo.advantage.book" hashFragment="/book" module="integrations" />	
+	</menu_group>
+	
+	<menu_group id="grp_sequences" name="js.topnav.menu.sequences" >
+		<menu_item actionId="hospital_id_patterns" name="js.topnav.menu.sequences.hospitalidpatterns" />
+		<menu_item actionId="bill_sequence" name="js.topnav.menu.sequences.billsequences" />
+		<menu_item actionId="claim_id_sequence" name="js.topnav.menu.sequences.claimidsequences" />
+		<menu_item actionId="visit_id_sequence" name="js.topnav.menu.sequences.visitidsequences" />
+		<menu_item actionId="pharmacy_bill_id_sequence" name="js.topnav.menu.sequences.pharmacysalesbillidsequences" />
+		<menu_item actionId="bill_audit_number_sequence" name="js.topnav.menu.sequences.billauditnumbersequences" />
+		<menu_item actionId="grn_number_sequence" name="js.topnav.menu.sequences.grnnosequence" />
+		<menu_item actionId="purchase_order_sequence" name="js.topnav.menu.sequences.posequence" />
+		<menu_item actionId="voucher_number_sequence" name="js.topnav.menu.sequences.vouchernumbersequences" />
+		<menu_item actionId="receipt_number_sequence" name="js.topnav.menu.sequences.receiptnosequence" />
+		<menu_item actionId="lab_number_sequence" name="js.topnav.menu.sequences.labnumbersequences" />
+		<menu_item actionId="radiology_number_sequence" name="js.topnav.menu.sequences.radiologynumbersequences" />
+	</menu_group>
+	
+	<menu_group id="grp_master_data_setup" name="js.topnav.menu.masterdatasetup" >
+		<menu_item actionId="mas_stock_upload" name="js.topnav.menu.masterdatasetup.masterdatamigration" />		
+	</menu_group>	
+	
+	<menu_group id="grp_biometric" name="js.topnav.menu.biometric">
+		<menu_item actionId="fp_registration" name="js.topnav.menu.newui.fingerprint.registration" 
+				hashFragment="/filter" module="fingerprintRegistration"/>
+		<menu_item actionId="fp_verification" name="js.topnav.menu.newui.fingerprint.verification" 
+			hashFragment="/filter" module="fingerprintVerification"/>
+	</menu_group>
+	
+	<menu_group id="grp_biometric_masters" name="js.topnav.menu.biometric">
+		<menu_item actionId="mas_purpose_fp_verification"
+			name="js.topnav.menu.general.masters.fpverificatonpurpose.master"
+			urlParams="_method=list&amp;status=A" />
+	</menu_group>
+	
+	<!--  Super groups used in top menu -->
+	<menu_group id="grp_reports" name="js.topnav.menu.reports">
+		<menu_group id="grp_financial_reports"/>
+		<menu_group id="grp_network_financial_reports"/>
+		<menu_group id="grp_billing_reports"/>
+		<menu_group id="grp_patient_demography_reports" />
+		<menu_group id="grp_store_sales_reports"/>
+		<menu_group id="grp_store_procure_reports"/>
+		<menu_group id="grp_store_mgmt_reports"/>
+		<menu_group id="grp_consultation_reports"/>
+		<menu_group id="grp_scheduler_reports"/>
+		<menu_group id="grp_laboratory_reports"/>
+		<menu_group id="grp_dialysis_reports"/>
+		<menu_group id="grp_patient_package_reports"/>
+		<menu_group id="grp_clinical_reports"/>
+		<menu_group id="grp_ivf_reports"/>
+		<menu_group id="grp_service_reports"/>
+		<menu_group id="grp_ot_reports"/>
+		<menu_group id="grp_bed_reports"/>
+		<menu_group id="grp_mrd_reports" />
+		<menu_group id="grp_dashboard_statistics_reports" />
+		<menu_group id="grp_resource_mgmt_reports" />
+		<menu_group id="grp_insurance_reports" />
+		<menu_group id="grp_pbm_reports" />
+		<menu_group id="grp_transportation_reports" />
+		<menu_group id="grp_dietary_reports"/>
+		<menu_group id="grp_dental_reports"/>
+		<menu_group id="grp_ward_activities_reports"/>
+		<menu_group id="grp_custom_reports" />
+		<menu_group id="grp_fav_reports" />
+		<menu_group id="grp_blood_reports" />
+		<menu_group id="grp_pending_prescription_reports" />
+		<menu_group id="grp_regulatory_reports" />
+	</menu_group>
+	
+	<menu_group id="grp_settings" name="js.topnav.menu.settings">
+		<menu_group id="grp_hospital_prefs" />
+		<menu_group id="grp_print_templates" />
+		<menu_group id="grp_hospital_templates" />
+		<menu_group id="grp_general_masters" />
+		<menu_group id="grp_hospital_admin_masters" />
+		<menu_group id="grp_billing_prefs" />
+		<menu_group id="grp_hospital_billing_masters" />
+		<menu_group id="grp_clinical_master" />
+		<menu_group id="grp_interface_master" />
+		<menu_group id="grp_pharmacy_masters" />
+		<menu_group id="grp_inventory_masters" />
+		<menu_group id="grp_dental_masters"/>
+		<menu_group id="grp_store_masters"/>
+		<menu_group id="grp_messaging_masters" />
+		<menu_group id="grp_complaints_log" />
+		<menu_group id="grp_practo_advantage" />
+		<menu_group id="grp_bloodbank_masters" />
+		<menu_group id="grp_sequences" />
+		<menu_group id="grp_biometric_masters" />
+		<menu_group id="grp_master_data_setup" />
+		<menu_group id="grp_integrations_configurations" />
+	</menu_group>
+
+	<!--  Super groups used in Home Page -->
+	<menu_group id="grp_quick_links" name="js.topnav.menu.quick.links">
+		<menu_group id="grp_hms_new_modules"/>
+		<menu_group id="grp_hms_new_ip_modules"/>
+		<menu_group id="grp_dashboard" />
+		<menu_group id="grp_patient_search"/>
+		<menu_group id="grp_new_ui"/>
+		<menu_group id="grp_registration" />
+		<menu_group id="grp_billing" />
+		<menu_group id="grp_accounting"/>
+		<menu_group id="grp_ins_ext" />
+		<menu_group id="grp_payments"/>
+		<menu_group id="grp_patient" />
+		<menu_group id="grp_medical_records"/>
+		<menu_group id="grp_diagnostics" />
+		<menu_group id="grp_radiology" />
+		<menu_group id="grp_services"/>
+		<menu_group id="grp_operations"/>
+		<menu_group id="grp_dialysis"/>
+		<menu_group id="grp_ivf"/>
+		<menu_group id="grp_clinical_data"/>
+		<menu_group id="grp_opthalmology"/>
+		<menu_group id="grp_transportation"/>
+		<menu_group id="grp_stores_sales_issues" />
+		<menu_group id="grp_stores_procurement" />
+		<menu_group id="grp_stores_management" />
+		<menu_group id="grp_insurance" />
+		<menu_group id="grp_eclaim_pbm" />
+		<menu_group id="grp_eclaim_preauth"/>
+		<menu_group id="grp_speciality_treatment" />
+		<menu_group id="grp_scheduler"/>
+		<menu_group id="grp_fixed_asset_mgmt"/>
+		<menu_group id="grp_dietary"/>
+		<menu_group id="grp_patient_feedback"/>
+		<menu_group id="grp_blood_bank"/>
+		<menu_group id="grp_cssd"/>
+		<menu_group id="grp_adv_packages"/>
+		<menu_group id="grp_insta_subscriptions"/>
+		<menu_group id="grp_contract_mgmt"/>
+		<menu_group id="grp_license_mgmt"/>
+		<menu_group id="grp_salucro" />
+	</menu_group>
+	
+	<menu_group id="grp_reports" name="js.topnav.menu.reports">
+		<menu_group id="grp_financial_reports" />
+		<menu_group id="grp_network_financial_reports" />
+		<menu_group id="grp_billing_reports" />
+		<menu_group id="grp_patient_demography_reports" />
+		<menu_group id="grp_patientfeedback_reports"/>
+		<menu_group id="grp_store_sales_reports"/>
+		<menu_group id="grp_store_procure_reports"/>
+		<menu_group id="grp_store_mgmt_reports"/>
+		<menu_group id="grp_consultation_reports"/>
+		<menu_group id="grp_scheduler_reports"/>
+		<menu_group id="grp_laboratory_reports"/>
+		<menu_group id="grp_dialysis_reports"/>
+		<menu_group id="grp_patient_package_reports"/>
+		<menu_group id="grp_clinical_reports"/>
+		<menu_group id="grp_ivf_reports"/>
+		<menu_group id="grp_service_reports"/>
+		<menu_group id="grp_ot_reports"/>
+		<menu_group id="grp_bed_reports"/>
+		<menu_group id="grp_mrd_reports" />
+		<menu_group id="grp_dashboard_statistics_reports" />
+		<menu_group id="grp_resource_mgmt_reports" />
+		<menu_group id="grp_dietary_reports"/>
+		<menu_group id="grp_insurance_reports" />
+		<menu_group id="grp_pbm_reports" />
+		<menu_group id="grp_transportation_reports" />
+		<menu_group id="grp_master_reports" />
+		<menu_group id="grp_dental_reports"/>
+		<menu_group id="grp_ward_activities_reports"/>
+		<menu_group id="grp_custom_reports" />
+		<menu_group id="grp_fav_reports" />
+		<menu_group id="grp_blood_reports" />
+		<menu_group id="grp_pending_prescription_reports" />
+		<menu_group id="grp_regulatory_reports" />
+	</menu_group>
+	
+	<menu_group id="grp_masters" name="js.topnav.menu.settings">
+		<menu_group id="grp_hospital_prefs" />
+		<menu_group id="grp_print_templates" />
+		<menu_group id="grp_hospital_templates" />
+		<menu_group id="grp_general_masters" />
+		<menu_group id="grp_hospital_admin_masters" />
+		<menu_group id="grp_billing_prefs" />
+		<menu_group id="grp_hospital_billing_masters" />
+		<menu_group id="grp_clinical_master" />
+		<menu_group id="grp_interface_master" />
+		<menu_group id="grp_pharmacy_masters" />
+		<menu_group id="grp_inventory_masters" />
+		<menu_group id="grp_dental_masters"/>
+		<menu_group id="grp_store_masters"/>
+		<menu_group id="grp_messaging_masters"/>
+		<menu_group id="grp_complaints_log" />
+		<menu_group id="grp_bloodbank_masters" />
+		<menu_group id="grp_sequences" />
+		<menu_group id="grp_master_data_setup" />
+		<menu_group id="grp_integrations_configurations" />
+	</menu_group>
+	
+	<!-- application top menu structure -->
+	<top_menu>
+		<menu_group id="grp_hms_new_modules"/>
+		<menu_group id="grp_hms_new_ip_modules"/>
+		<menu_group id="grp_dashboard" />
+		<menu_group id="grp_patient_search"/>
+		<menu_group id="grp_new_ui"/>
+		<menu_group id="grp_registration"/>
+		<menu_group id="grp_billing"/>
+		<menu_group id="grp_accounting"/>
+		<menu_group id="grp_ins_ext"/>
+		<menu_group id="grp_payments"/>
+		<menu_group id="grp_new_consultation"/>
+		<menu_group id="grp_patient"/>
+		<menu_group id="grp_medical_records"/>
+		<menu_group id="grp_diagnostics"/>
+		<menu_group id="grp_radiology"/>
+		<menu_group id="grp_services"/>
+		<menu_group id="grp_operations"/>
+		<menu_group id="grp_dialysis"/>
+		<menu_group id="grp_ivf"/>
+		<menu_group id="grp_clinical_data"/>
+		<menu_group id="grp_opthalmology"/>
+		<menu_group id="grp_transportation"/>
+		<menu_group id="grp_insurance"/>
+		<menu_group id="grp_eclaim_pbm"/>
+		<menu_group id="grp_eclaim_preauth"/>
+		<menu_group id="grp_stores_sales_issues" />
+		<menu_group id="grp_stores_procurement" />
+		<menu_group id="grp_stores_management" />
+		<menu_group id="grp_speciality_treatment" />
+		<menu_group id="grp_scheduler"/>
+		<menu_group id="grp_fixed_asset_mgmt" />
+		<menu_group id="grp_dietary"/>
+		<menu_group id="grp_patient_feedback"/>
+		<menu_group id="grp_cssd"/>
+		<menu_group id="grp_adv_packages"/>
+		<menu_group id="grp_insta_subscriptions"/>
+		<menu_group id="grp_blood_bank"/>
+		<menu_group id="grp_biometric"/>
+		<menu_group id="grp_salucro" />
+		<menu_group id="grp_reports"/>		<!-- super-group -->
+		<menu_group id="grp_settings"/>		<!-- super-group -->
+	</top_menu>
+
+	<!-- application home page structure: this is different from the top menu -->
+	<home_menu>
+		<menu_group id="grp_quick_links" />
+		<menu_group id="grp_reports" />
+		<menu_group id="grp_masters" />
+	</home_menu>
+</menu_config>

@@ -1,0 +1,112 @@
+{
+    "title": "Procedure Code Wise Statistics",
+    "reportGroup": "MRD Reports",
+    "dateFields": [
+        "posted_date"
+    ],
+    "description": "This report shows the Procedure Names and Codes for all services rendered to all patients.",
+    "defaultShowFields": [
+        "mr_no",
+        "full_name",
+        "act_rate_plan_item_code",
+        "code_desc",
+        "male",
+        "female",
+        "couple",
+        "total"
+    ],
+    "includes": [
+        "PatientDetailFields.srjs"
+    ],
+    "fields": {
+        "code_desc": {
+            "displayName": "Procedure Name",
+            "width": "300",
+            "filterable": true,
+            "groupable": true
+        },
+        "posted_date": {
+            "displayName": "Posted Date",
+            "width": "80",
+            "dataType": "date"
+        },
+        "act_rate_plan_item_code": {
+            "displayName": "Procedure Code",
+            "width": "100",
+            "filterable": true,
+            "groupable": true
+        },
+        "male": {
+            "displayName": "Male",
+            "width": "50",
+            "aggFunction": "sum",
+            "dataType": "numeric"
+        },
+        "female": {
+            "displayName": "Female",
+            "width": "50",
+            "aggFunction": "sum",
+            "dataType": "numeric"
+        },
+        "couple": {
+            "displayName": "Couple",
+            "width": "50",
+            "aggFunction": "sum",
+            "dataType": "numeric"
+        },
+        "total": {
+            "displayName": "Total",
+            "width": "50",
+            "aggFunction": "sum",
+            "dataType": "numeric"
+        },
+        "diag_code": {
+            "displayName": "Diag Code/ICD Code",
+            "width": "100",
+            "groupable": true,
+            "filterable": true
+        },
+        "diag_description": {
+            "displayName": "Diag Description",
+            "width": "80",
+            "groupable": true,
+            "filterable": true
+        },
+        "procedure_code_type": {
+            "displayName": "Procedure Code Type",
+            "width": "100",
+            "allowedValuesQuery": "SELECT code_type FROM mrd_supported_code_types WHERE status ='A' order by code_type",
+            "groupable": true,
+            "filterable": true
+        },
+        "diagnosis_code_type": {
+            "displayName": "Diag Code Type",
+            "width": "100",
+            "allowedValuesQuery": "SELECT code_type FROM mrd_supported_code_types WHERE status ='A' order by code_type",
+            "groupable": true,
+            "filterable": true
+        },
+        "visit_type_name": {
+            "displayName": "Patient Type",
+            "width": "100",
+            "allowedValuesQuery": "SELECT visit_type_name FROM visit_type_names",
+            "groupable": true,
+            "filterable": true
+        },
+        "pat_id": {
+            "displayName": "Visit ID",
+            "width": "100",
+            "filterable": true,
+            "groupable": true
+        }
+
+    },
+    "queryUnits": [
+        {
+            "mainTableAlias": "pd",
+            "mainTableName": "rpt_codification_view",
+            "groupBy": false,
+            "joinTables": []
+        }
+    ]
+}

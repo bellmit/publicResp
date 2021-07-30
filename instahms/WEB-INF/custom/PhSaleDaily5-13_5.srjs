@@ -1,0 +1,142 @@
+{
+	title: "Pharmacy Sales Daily Summary",
+	description: "This report gives the daily summary of sales, split into cash/credit sales, and tax split into tax% of 0,5,13.5 amounts.",
+	reportGroup: "Sales Reports",
+	comment: "Used by srishti",
+
+	defaultOrder: "sale_date",
+	dateFields: ["sale_date","open_date","closed_date","finalized_date"],
+
+	queryLines: [[
+		"SELECT SUM(credit_sales) AS credit_sales, SUM(cash_sales) AS cash_sales, ",
+		" SUM(sales_0) AS sales_0, SUM(sales_5) AS sales_5, SUM(sales_13_5) AS sales_13_5 , ",
+		" SUM(sales_others) AS sales_others, ",
+		" SUM(tax_5) AS tax_5, SUM(tax_13_5) AS tax_13_5 , SUM(tax_others) AS tax_others, ",
+		" SUM(round_off) AS round_off, SUM(discount) AS discount, ",
+		" sale_month,sale_date,open_date,closed_date, finalized_date ",
+		" FROM ( ",
+		"  SELECT to_char(sale_date, 'Mon yyyy') as sale_month, date(sale_date) as sale_date, ",
+		"   date(open_date) as open_date, date(closed_date) as closed_date, ",
+		"   date(finalized_date) as finalized_date, ",
+		"   CASE WHEN b.bill_type = 'C' THEN ",
+		"    total_item_amount - discount + round_off ELSE 0 END AS credit_sales, ",
+		"   CASE WHEN b.bill_type = 'P' THEN ",
+		"    total_item_amount - discount + round_off ELSE 0 END AS cash_sales, ",
+		"   (SELECT sum(amount-tax) FROM store_sales_details WHERE sale_id=sm.sale_id ",
+		"    AND tax_rate=0) AS sales_0, ",
+		"   (SELECT sum(amount-tax) FROM store_sales_details WHERE sale_id=sm.sale_id ",
+		"    AND tax_rate=5) AS sales_5, ",
+		"   (SELECT sum(amount-tax) FROM store_sales_details WHERE sale_id=sm.sale_id ",
+		"    AND tax_rate=13.5) AS sales_13_5, ",
+		"   (SELECT sum(amount-tax) FROM store_sales_details WHERE sale_id=sm.sale_id ",
+		"    AND tax_rate NOT IN (0,5,13.5)) AS sales_others, ",
+		"   (SELECT sum(tax) FROM store_sales_details WHERE sale_id=sm.sale_id ",
+		"    AND tax_rate=5) AS tax_5, ",
+		"   (SELECT sum(tax) FROM store_sales_details WHERE sale_id=sm.sale_id ",
+		"    AND tax_rate=13.5) AS tax_13_5, ",
+		"   (SELECT sum(tax) FROM store_sales_details WHERE sale_id=sm.sale_id ",
+		"    AND tax_rate NOT IN (0,5,13.5)) AS tax_others, ",
+		"   discount, round_off ",
+		"  FROM store_sales_main sm ",
+		"   JOIN stores s ON (s.dept_id = sm.store_id) ",
+		"   LEFT JOIN store_type_master stm ON (stm.store_type_id = s.store_type_id) ",
+		"   JOIN bill b ON (b.bill_no = sm.bill_no) ",
+		"   LEFT JOIN bill_receipts r ON (b.no_of_receipts+b.no_of_sponsor_receipts = 1 ",
+		"    AND r.bill_no = b.bill_no) ",
+		"   LEFT JOIN payment_mode_master pmn ON (pmn.mode_id = r.payment_mode_id) ",
+		"   JOIN visit_type_names vn ON (vn.visit_type = b.visit_type) ",
+		"   LEFT JOIN store_retail_customers src ON (src.customer_id = b.visit_id) ",
+		"   LEFT JOIN patient_registration pr ON (pr.patient_id = b.visit_id) ",
+		"   LEFT JOIN patient_details pd USING (mr_no) ",
+		"   LEFT JOIN salutation_master sal ON (sal.salutation_id = pd.salutation) ",
+		"   LEFT JOIN patient_category_master pcm ON (pcm.category_id = pd.patient_category_id) ",
+		"   LEFT JOIN store_retail_sponsors srs ON (srs.sponsor_id = src.sponsor_name) ",
+		"   LEFT JOIN tpa_master tm ON (tm.tpa_id = pr.tpa_id) ",
+		" ) AS foo ",
+		" GROUP BY sale_month,sale_date,open_date,closed_date,finalized_date"
+	]],
+	fields: {
+		sale_month: {
+			displayName: "Sale Month", width: 65,
+			groupable: true
+		},
+		sale_date: {
+			displayName: "Sale Date", dataType: "date", width: 65,
+			groupable: true
+		},
+		open_date: {
+			displayName: "Open Date", dataType: "date", width: 65,
+			groupable: true
+		},
+		closed_date: {
+			displayName: "Closed Date", dataType: "date", width: 65,
+			groupable: true
+		},
+		finalized_date: {
+			displayName: "Finalized Date", dataType: "date", width: 65,
+			groupable: true
+		},
+		discount: {
+			displayName: "Discount", dataType: "numeric", width: 60,
+			aggFunction: "sum",
+			filterable: true
+		},
+		credit_sales: {
+			displayName: "Credit Sales", dataType: "numeric", width: 60,
+			aggFunction: "sum",
+			filterable: true
+		},
+		cash_sales: {
+			displayName: "Cash Sales", dataType: "numeric", width: 60,
+			aggFunction: "sum",
+			filterable: true
+		},
+		sales_0: {
+			displayName: "Exempted", dataType: "numeric", width: 60,
+			aggFunction: "sum",
+			filterable: true
+		},
+		sales_5: {
+			displayName: "5% Comp.", dataType: "numeric", width: 60,
+			aggFunction: "sum",
+			filterable: true
+		},
+		sales_13_5: {
+			displayName: "13.5% Comp", dataType: "numeric", width: 60,
+			aggFunction: "sum",
+			filterable: true
+		},
+		sales_others: {
+			displayName: "Other Comp", dataType: "numeric", width: 60,
+			aggFunction: "sum",
+			filterable: true
+		},
+		tax_5: {
+			displayName: "Tax 5% Comp.", dataType: "numeric", width: 60,
+			aggFunction: "sum",
+			filterable: true
+		},
+		tax_13_5: {
+			displayName: "Tax 13.5% Comp", dataType: "numeric", width: 60,
+			aggFunction: "sum",
+			filterable: true
+		},
+		tax_others: {
+			displayName: "Tax Other% Comp", dataType: "numeric", width: 60,
+			aggFunction: "sum",
+			filterable: true
+		},
+		round_off: {
+			displayName: "Round Off", dataType: "numeric", width: 60,
+			aggFunction: "sum",
+			filterable: true
+		}
+	},
+	defaultShowFields: [
+		"sale_date",
+		"credit_sales",
+		"cash_sales",
+		"sales_0", "sales_5", "sales_13_5",
+		"tax_5", "tax_13_5", "discount", "round_off"
+	],
+}

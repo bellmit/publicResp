@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="BillDiscountsSub" pageWidth="515" pageHeight="842" whenNoDataType="NoDataSection" columnWidth="515" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="billNo" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["BL000063"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="chargeHead" class="java.lang.String[]" isForPrompting="false"/>
+	<parameter name="detailed" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="chargeGroup" class="java.lang.String" isForPrompting="false"/>
+	<queryString>
+		<![CDATA[
+SELECT bc.posted_date, chc.chargehead_id, chc.chargehead_name, cgc.chargegroup_name, act_description,
+ discount, (amount - insurance_claim_amount) as patient_amount, insurance_claim_amount
+FROM bill_charge bc
+ JOIN bill b USING (bill_no)
+ JOIN chargegroup_constants cgc ON cgc.chargegroup_id=bc.charge_group
+ JOIN chargehead_constants chc ON chc.chargehead_id=bc.charge_head
+WHERE b.bill_no = $P{billNo} AND bc.status!='X' AND 
+(
+ ( ($P{detailed} = 'DET' OR $P{detailed} = 'CHS' OR $P{detailed} = 'SUM')
+   AND discount != 0
+	 AND ($P{chargeGroup} = 'ALL' OR $X{IN, bc.charge_head ,chargeHead})
+ )
+ OR 
+ ($P{detailed} = 'INS'
+   AND bc.charge_head = 'BIDIS' AND bc.insurance_claim_amount != 0
+ )
+ OR
+ ($P{detailed} = 'PAT'
+   AND bc.charge_head = 'BIDIS' AND (bc.amount - bc.insurance_claim_amount) != 0
+ )
+)
+ORDER by b.bill_no, cgc.display_order, chc.display_order, bc.posted_date]]>
+	</queryString>
+	<field name="posted_date" class="java.sql.Timestamp">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="chargehead_name" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="chargegroup_name" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="act_description" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="discount" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="patient_amount" class="java.math.BigDecimal"/>
+	<field name="chargehead_id" class="java.lang.String"/>
+	<field name="insurance_claim_amount" class="java.math.BigDecimal"/>
+	<variable name="discountAmount" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[$P{detailed}.equals("INS") ? $F{insurance_claim_amount}.negate() :
+    $P{detailed}.equals("PAT") ? $F{patient_amount}.negate() :
+        $F{discount}
+        ]]></variableExpression>
+	</variable>
+	<variable name="totalDiscount" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$V{discountAmount}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<group name="totalAmount">
+		<groupHeader>
+			<band/>
+		</groupHeader>
+		<groupFooter>
+			<band height="13">
+				<staticText>
+					<reportElement key="staticText-3" x="361" y="0" width="99" height="13"/>
+					<box>
+						<pen lineWidth="0.0" lineColor="#888888"/>
+						<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#888888"/>
+						<leftPen lineWidth="0.0" lineColor="#888888"/>
+						<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#888888"/>
+						<rightPen lineWidth="0.0" lineColor="#888888"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[Total Discount]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement key="textField-9" x="460" y="0" width="54" height="13"/>
+					<box>
+						<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#888888"/>
+						<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#888888"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{totalDiscount}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band/>
+	</background>
+	<title>
+		<band height="27">
+			<staticText>
+				<reportElement key="staticText-4" x="0" y="13" width="74" height="13"/>
+				<box>
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Discounts]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-5" x="74" y="13" width="100" height="13"/>
+				<box>
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="10" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Head]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-6" x="174" y="13" width="287" height="13"/>
+				<box>
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="10" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Description]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-10" x="461" y="13" width="54" height="13"/>
+				<box>
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="10" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Amount]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="0" width="73" height="13"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Discounts]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band/>
+	</pageHeader>
+	<columnHeader>
+		<band/>
+	</columnHeader>
+	<detail>
+		<band height="14">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField-5" x="460" y="1" width="54" height="13" isRemoveLineWhenBlank="true"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="10" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{discountAmount}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="dd-MM-yyyy" isBlankWhenNull="true">
+				<reportElement key="textField" x="3" y="1" width="70" height="13" isRemoveLineWhenBlank="true"/>
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
+					<font size="10" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[$F{posted_date}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField-2" x="73" y="1" width="100" height="13" isRemoveLineWhenBlank="true"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="10" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{chargehead_name}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField" x="173" y="1" width="287" height="13" isRemoveLineWhenBlank="true"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="10" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{act_description}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band/>
+	</columnFooter>
+	<pageFooter>
+		<band/>
+	</pageFooter>
+	<summary>
+		<band/>
+	</summary>
+</jasperReport>

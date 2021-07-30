@@ -1,0 +1,323 @@
+{
+    "allowNoDate": false,
+    "dateFields": [
+        "finalized_date",
+        "posted_date",
+        "open_date",
+        "closed_date"
+    ],
+    "defaultOrder": "bill_no",
+    "defaultShowFields": [
+        "bill_no",
+        "posted_date",
+        "chargehead_name",
+        "act_description",
+        "gross_amount",
+        "discount",
+        "net_amount"
+    ],
+    "description": "This report shows all Tax charges added to Bills within the given date range\n  (open, finalized, closed or posted date), the value of the charge and various attributes of the charge.\n  This is similar to the Revenue Report, except that ALL charges are considered, including charges\n  posted to bills that are still in open state.",
+    "fields": {
+        "mr_no": {
+            "table": "pd",
+            "displayName": "MR No.",
+            "width": 100,
+            "filterable": true,
+            "groupable": true
+        },
+        "visit_id": {
+            "dataType": "string",
+            "displayName": "Visit Id",
+            "filterable": false,
+            "groupable": false,
+            "table": "b",
+            "width": 100
+        },
+        "bill_no": {
+            "dataType": "string",
+            "displayName": "Bill No.",
+            "filterable": true,
+            "groupable": true,
+            "table": "b",
+            "width": 65
+        },
+        "act_description": {
+            "allowHorizGroup": true,
+            "allowNull": false,
+            "dataType": "string",
+            "displayName": "Item Description",
+            "filterable": true,
+            "groupable": true,
+            "name": "act_description",
+            "table": "bc",
+            "width": 150
+        },
+        "act_remarks": {
+            "allowHorizGroup": true,
+            "allowNull": false,
+            "dataType": "string",
+            "displayName": "Item Details",
+            "filterable": true,
+            "groupable": true,
+            "name": "act_remarks",
+            "table": "bc",
+            "width": 150
+        },
+        "chargegroup_name": {
+            "allowHorizGroup": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT chargegroup_name FROM chargegroup_constants  ORDER BY chargegroup_name",
+            "dataType": "string",
+            "displayName": "Charge Group",
+            "filterable": true,
+            "groupable": true,
+            "name": "chargegroup_name",
+            "table": "cgc",
+            "width": 75
+        },
+        "chargehead_name": {
+            "allowHorizGroup": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT chargehead_name FROM chargehead_constants  ORDER BY chargehead_name",
+            "dataType": "string",
+            "displayName": "Charge Head",
+            "filterable": true,
+            "groupable": true,
+            "name": "chargehead_name",
+            "table": "chc",
+            "width": 100
+        },
+        "charge_id": {
+            "allowHorizGroup": true,
+            "allowNull": false,
+            "dataType": "string",
+            "displayName": "Charge ID",
+            "filterable": false,
+            "groupable": false,
+            "name": "charge_id",
+            "table": "bc",
+            "width": 60
+        },
+        "gross_amount": {
+            "aggFunction": "sum",
+            "allowHorizGroup": true,
+            "allowNull": false,
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "displayName": "Gross Amt",
+            "expression": "bc.amount + bc.discount",
+            "filterable": true,
+            "groupable": false,
+            "name": "gross_amount",
+            "table": "bc",
+            "width": 65
+        },
+        "patient_amount": {
+            "aggFunction": "sum",
+            "allowHorizGroup": true,
+            "allowNull": false,
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "displayName": "Patient Amt (without tax)",
+            "expression": "bc.amount - coalesce(bc.insurance_claim_amount,0) ",
+            "filterable": true,
+            "groupable": false,
+            "name": "patient_amount",
+            "table": "bc",
+            "width": 65
+        },
+        "pri_sponsor_amount": {
+            "aggFunction": "sum",
+            "allowHorizGroup": true,
+            "allowNull": false,
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "displayName": "Pri. Sponsor Amt (Without Tax)",
+            "expression": "coalesce(pbccl.insurance_claim_amt,0)",
+            "filterable": true,
+            "groupable": false,
+            "name": "gross_amount",
+            "table": "pbccl",
+            "width": 65
+        },
+        "sec_sponsor_amount": {
+            "aggFunction": "sum",
+            "allowHorizGroup": true,
+            "allowNull": false,
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "displayName": "Sec. Sponsor Amt (Without Tax)",
+            "expression": "coalesce(sbccl.insurance_claim_amt,0)",
+            "filterable": true,
+            "groupable": false,
+            "name": "sec_sponsor_amount",
+            "table": "sbccl",
+            "width": 65
+        },
+        "discount": {
+            "aggFunction": "sum",
+            "allowHorizGroup": true,
+            "allowNull": false,
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "displayName": "Discount Amt",
+            "filterable": true,
+            "groupable": false,
+            "name": "discount",
+            "table": "bc",
+            "width": 60
+        },
+        "net_amount": {
+            "aggFunction": "sum",
+            "allowHorizGroup": true,
+            "allowNull": false,
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "displayName": "Net Amt",
+            "expression": "bc.amount ",
+            "filterable": true,
+            "groupable": false,
+            "name": "net_amount",
+            "table": "bc",
+            "width": 65
+        },
+        "posted_date": {
+            "allowHorizGroup": true,
+            "allowNull": false,
+            "dataType": "date",
+            "displayName": "Posted Date",
+            "expression": "DATE(bc.posted_date) ",
+            "filterable": true,
+            "groupable": true,
+            "name": "posted_date",
+            "table": "bc",
+            "width": 70
+        },
+        "finalized_date": {
+            "dataType": "date",
+            "displayName": "Bill Finalized Date",
+            "expression": " date(b.finalized_date) ",
+            "filterable": true,
+            "groupable": true,
+            "table": "b",
+            "width": 60
+        },
+        "open_date": {
+            "dataType": "date",
+            "displayName": "Bill Open Date",
+            "expression": " date(open_date) ",
+            "filterable": true,
+            "groupable": true,
+            "table": "b",
+            "width": 60
+        },
+        "closed_date": {
+            "dataType": "date",
+            "displayName": "Bill Closed Date",
+            "expression": "date(b.closed_date) ",
+            "filterable": true,
+            "groupable": true,
+            "table": "b",
+            "width": 60
+        },
+        "center_name": {
+            "table": "hcm",
+            "displayName": "Center Name",
+            "width": 100,
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT center_name FROM hospital_center_master WHERE center_id!=0"
+        },
+        "tax_amt": {
+            "table": "bc",
+            "expression": "bc.tax_amt ",
+            "displayName": "Total Tax Amt",
+            "width": 80,
+            "filterable": true,
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "aggFunction": "sum"
+        }
+    },
+    "queryUnits": [
+        {
+            "joinTables": [
+                {
+                    "alias": "b",
+                    "dependsOn": "bc",
+                    "expression": "ON (bc.bill_no = b.bill_no)",
+                    "name": "bill",
+                    "type": "JOIN"
+                },
+                {
+                    "alias": "pbcl",
+                    "dependsOn": "b",
+                    "expression": "ON (pbcl.bill_no = b.bill_no AND pbcl.priority = 1) ",
+                    "name": "bill_claim",
+                    "type": "LEFT"
+                },
+                {
+                    "alias": "sbcl",
+                    "dependsOn": "b",
+                    "expression": "ON (sbcl.bill_no = b.bill_no AND sbcl.priority = 2) ",
+                    "name": "bill_claim",
+                    "type": "LEFT"
+                },
+                {
+                    "alias": "pbccl",
+                    "dependsOn": "bc,pbcl",
+                    "expression": "ON (bc.charge_id = pbccl.charge_id and pbcl.claim_id = pbccl.claim_id) ",
+                    "name": "bill_charge_claim",
+                    "type": "LEFT"
+                },
+                {
+                    "alias": "sbccl",
+                    "dependsOn": "bc,sbcl",
+                    "expression": "ON(bc.charge_id = sbccl.charge_id and sbcl.claim_id = sbccl.claim_id) ",
+                    "name": "bill_charge_claim",
+                    "type": "LEFT"
+                },
+                {
+                    "alias": "chc",
+                    "dependsOn": "bc",
+                    "expression": "ON (chc.chargehead_id = bc.charge_head)",
+                    "name": "chargehead_constants",
+                    "type": "JOIN"
+                },
+                {
+                    "alias": "cgc",
+                    "dependsOn": "chc",
+                    "expression": "ON (cgc.chargegroup_id = chc.chargegroup_id)",
+                    "name": "chargegroup_constants",
+                    "type": "JOIN"
+                },
+                {
+                    "alias": "pr",
+                    "dependsOn": "b",
+                    "expression": "ON (pr.patient_id = b.visit_id)",
+                    "name": "patient_registration",
+                    "type": "LEFT"
+                },
+                {
+                    "alias": "pd",
+                    "dependsOn": "pr",
+                    "expression": "ON (pd.mr_no = pr.mr_no)",
+                    "name": "patient_details",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "hospital_center_master",
+                    "alias": "hcm",
+                    "dependsOn": "pr",
+                    "expression": "ON (hcm.center_id = pr.center_id)"
+                }
+            ],
+            "mainTableAlias": "bc",
+            "mainTableName": "bill_charge",
+            "whereExpression": "b.status != 'X' AND bc.status != 'X'",
+            "whereTable": "b"
+        }
+    ],
+    "reportGroup": "Billing Reports",
+    "title": "Tax Report"
+}

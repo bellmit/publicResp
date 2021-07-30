@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="BillChargeDetailsSub" pageWidth="515" pageHeight="842" columnWidth="515" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" scriptletClass="com.insta.hms.common.JRCommonScriptlet">
+	<property name="ireport.scriptlethandling" value="2"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="billNo" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["BL000195"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="chargeHead" class="java.lang.String[]" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="detailed" class="java.lang.String"/>
+	<parameter name="chargeGroup" class="java.lang.String">
+		<defaultValueExpression><![CDATA["ALL"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="curSym" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT bc.posted_date, chc.chargehead_name, cgc.chargegroup_name, act_description, act_remarks,
+		act_rate_plan_item_code, charge_id, amount+tax_amt as amount, tax_amt, 
+		CASE WHEN b.is_tpa THEN COALESCE(bc.sponsor_tax_amt, 0) ELSE 0 END AS sponsor_tax_amt, 
+		bc.discount, bc.act_quantity, bc.act_rate, bc.act_unit,
+		CASE WHEN b.is_tpa THEN COALESCE(bc.insurance_claim_amount, 0) ELSE 0 END AS insurance_claim_amount,
+		b.bill_type
+FROM bill_charge bc
+ JOIN bill b USING (bill_no)
+ JOIN chargegroup_constants cgc ON cgc.chargegroup_id=bc.charge_group
+ JOIN chargehead_constants chc ON chc.chargehead_id=bc.charge_head
+WHERE b.bill_no = $P{billNo} AND bc.status!='X' AND bc.charge_head != 'BIDIS'
+ AND ($P{chargeGroup} = 'ALL' OR $X{IN, bc.charge_head ,chargeHead})
+ AND (($P{detailed} = 'DET') OR
+      ($P{detailed} = 'INS' AND bc.insurance_claim_amount != 0) OR
+      ($P{detailed} = 'PAT' AND (bc.amount - bc.insurance_claim_amount) != 0)
+     ) AND (act_rate !=0 OR discount !=0)
+ORDER by b.bill_no, cgc.display_order, chc.display_order, bc.posted_date]]>
+	</queryString>
+	<field name="posted_date" class="java.sql.Timestamp">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="chargehead_name" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="chargegroup_name" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="act_description" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="act_rate_plan_item_code" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="act_remarks" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="charge_id" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="amount" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="tax_amt" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="sponsor_tax_amt" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="discount" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="act_quantity" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="act_rate" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="act_unit" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="insurance_claim_amount" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="bill_type" class="java.lang.String"/>
+	<variable name="chargegroupSubtotal" class="java.math.BigDecimal" resetType="Group" resetGroup="chargegroup" calculation="Sum">
+		<variableExpression><![CDATA[($P{detailed}.equalsIgnoreCase( "INS" )?$F{insurance_claim_amount}:
+ ($P{detailed}.equalsIgnoreCase( "PAT" )?
+     $F{amount}.subtract( $F{insurance_claim_amount} ):
+      $F{amount}.add($F{discount})) )]]></variableExpression>
+	</variable>
+	<variable name="amount" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[($P{detailed}.equalsIgnoreCase("INS")?$F{insurance_claim_amount}:
+ ($P{detailed}.equalsIgnoreCase("PAT")?
+     $F{amount}.subtract( $F{insurance_claim_amount} ):
+      $F{amount}.add($F{discount})) )]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="totalAmount" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$V{amount}]]></variableExpression>
+	</variable>
+	<variable name="totalsponsorTaxAmt" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{sponsor_tax_amt}]]></variableExpression>
+	</variable>
+	<variable name="validateAmount" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[($P{detailed}.equalsIgnoreCase( "INS" )?$F{insurance_claim_amount}:
+ ($P{detailed}.equalsIgnoreCase( "PAT" )?
+     $F{amount}.subtract( $F{insurance_claim_amount} ):
+      $F{amount}.add($F{discount})) )]]></variableExpression>
+	</variable>
+	<variable name="totalClaimAmount" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{bill_type}.equalsIgnoreCase( "C" )?
+$F{insurance_claim_amount}:BigDecimal.ZERO]]></variableExpression>
+	</variable>
+	<group name="totalAmount">
+		<groupExpression><![CDATA[]]></groupExpression>
+		<groupHeader>
+			<band/>
+		</groupHeader>
+		<groupFooter>
+			<band height="19">
+				<printWhenExpression><![CDATA[$V{totalAmount}.compareTo(BigDecimal.ZERO) == 0 ?Boolean.FALSE:Boolean.TRUE]]></printWhenExpression>
+				<staticText>
+					<reportElement key="staticText-3" x="358" y="6" width="91" height="13"/>
+					<box>
+						<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#888888"/>
+						<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#888888"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[Total Bill Amount]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement key="textField-9" x="450" y="6" width="64" height="13"/>
+					<box>
+						<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#888888"/>
+						<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#888888"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{totalAmount}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="chargegroup">
+		<groupExpression><![CDATA[$F{chargegroup_name}]]></groupExpression>
+		<groupHeader>
+			<band height="13">
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement key="textField-8" x="0" y="0" width="330" height="13"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{chargegroup_name}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="13">
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement key="textField-7" x="450" y="0" width="64" height="13"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{chargegroupSubtotal}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement key="staticText-2" x="358" y="0" width="91" height="13"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[Sub total]]></text>
+				</staticText>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band/>
+	</background>
+	<title>
+		<band/>
+	</title>
+	<pageHeader>
+		<band height="13">
+			<staticText>
+				<reportElement key="staticText-5" x="74" y="0" width="100" height="13"/>
+				<box>
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="10" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Head]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-4" x="0" y="0" width="74" height="13"/>
+				<box>
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Charges]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-6" x="175" y="0" width="241" height="13"/>
+				<box>
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="10" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Description]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-10" x="452" y="0" width="63" height="13"/>
+				<box>
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="10" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Amount]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-8" x="381" y="0" width="35" height="13"/>
+				<box>
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="10" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Qty]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-7" x="330" y="0" width="50" height="13">
+					<printWhenExpression><![CDATA[$P{detailed}.equalsIgnoreCase( "INS" )?Boolean.FALSE:
+$P{detailed}.equalsIgnoreCase( "PAT" ) ? Boolean.FALSE:Boolean.TRUE]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="10" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Rate]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-10" x="417" y="0" width="35" height="13"/>
+				<box>
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="10" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Tax]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band/>
+	</columnHeader>
+	<detail>
+		<band height="13">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField-2" x="74" y="0" width="100" height="13"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="10" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{chargehead_name}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="##0.00" isBlankWhenNull="true">
+				<reportElement key="textField-3" x="381" y="0" width="35" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="10" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{act_quantity}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField-5" x="450" y="0" width="64" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="10" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{amount}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField-6" x="330" y="0" width="50" height="13">
+					<printWhenExpression><![CDATA[$P{detailed}.equalsIgnoreCase( "INS" )?Boolean.FALSE:
+$P{detailed}.equalsIgnoreCase( "PAT" ) ? Boolean.FALSE:Boolean.TRUE]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="10" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{act_rate}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="dd-MM-yyyy" isBlankWhenNull="true">
+				<reportElement key="textField" x="7" y="0" width="67" height="13"/>
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
+					<font size="10" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[$F{posted_date}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField" x="175" y="0" width="190" height="13"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="10" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{act_rate_plan_item_code} != null && !$F{act_rate_plan_item_code}.equals("")
+						? $F{act_rate_plan_item_code} + " - " : "") +
+					($F{act_description} != null ? $F{act_description} : "") +
+					(($F{act_remarks} != null) && !$F{act_remarks}.equals("") ? "\n" + $F{act_remarks}: " ")+
+                                         (($F{act_unit} != null) && !$F{act_unit}.equals("")?
+                                          ((($F{act_remarks} == null) || $F{act_remarks}.equals("")) ? "\n" +$F{act_unit} : " /"+$F{act_unit}) : " ")]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField-5" x="417" y="0" width="35" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{tax_amt}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band/>
+	</columnFooter>
+	<pageFooter>
+		<band/>
+	</pageFooter>
+	<summary>
+		<band/>
+	</summary>
+</jasperReport>

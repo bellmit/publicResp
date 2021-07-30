@@ -1,0 +1,6 @@
+test_remarks,mod_time,ispackage,activity_due_date,test_id,username,preauth_required,op_test_pres_id,admin_strength,priority,reorder,clinical_note_for_conduction,clinical_justification_for_item
+'','2019-07-25 17:10:57','f',,'DGC0811','InstaAdmin',' ',3,'','N','N','',''
+'once a week','2019-07-25 13:44:07','f',,'DGC0394','','N',4,'','N','N','',''
+'','2019-07-25 15:06:04','f',,'DGC0999','vinay','N',2296,'','N','N','',''
+'','2019-07-25 15:06:04','f',,'DGC1014','vinay','Y',2297,'','N','N','',''
+'','2019-07-25 15:06:05','f',,'DGC1145','vinay','N',2302,'','N','N','',''

@@ -1,0 +1,3 @@
+claim_id,last_submission_batch_id,payers_reference_no,main_visit_id,status,obsolete_resubmission_count,closure_type,action_remarks,attachment,attachment_content_type,resubmission_type,comments,account_group,patient_id,op_type,submission_id_with_correction,denial_remarks,plan_id,rejection_reason_category_id
+'CLD000412',,,'OP121472','O',0,,,,,,,1,'OP121472','M',,,1,
+'CLD000579',,,'OP121796','O',0,,,,,,,1,'OP121796','M',,,1,

@@ -1,0 +1,1255 @@
+{
+    "title": "Insurance Claims Report",
+    "description": "This report shows all bills which are connected to insurance, within the specified date range.",
+    "reportGroup": "Insurance Reports",
+    "dateFields": [
+        "created_date",
+        "submission_date",
+        "open_date",
+        "finalized_date",
+        "closed_date",
+        "visit_date",
+        "payment_recd_date"
+    ],
+    "allowNoDate": true,
+    "defaultOrder": "bill_no",
+    "includes": [
+        "PatientDetailFields.srjs",
+        "PatientVisitFields.srjs",
+        "BillDetailFields.srjs"
+    ],
+    "queryUnits": [
+        {
+            "mainTableName": "bill",
+            "mainTableAlias": "b",
+            "joinTables": [
+                {
+                    "type": "JOIN",
+                    "name": "bill_claim",
+                    "alias": "bclm",
+                    "dependsOn": "b",
+                    "expression": "ON (bclm.bill_no = b.bill_no)"
+                },
+                {
+                    "type": "JOIN",
+                    "name": "insurance_claim",
+                    "alias": "sub_insclaim",
+                    "dependsOn": "bclm",
+                    "expression": "ON (bclm.claim_id = sub_insclaim.claim_id)"
+                },
+                {
+                    "type": "JOIN",
+                    "name": "insurance_submission_batch",
+                    "alias": "claimsub",
+                    "dependsOn": "sub_insclaim",
+                    "expression": "ON (sub_insclaim.last_submission_batch_id = claimsub.submission_batch_id)"
+                },
+                {
+                    "includeName": "BillDetailFields.srjs"
+                },
+                {
+                    "includeName": "PatientVisitFields.srjs"
+                },
+                {
+                    "includeName": "PatientDetailFields.srjs"
+                },
+                {
+                    "name": "insurance_claim",
+                    "alias": "icl",
+                    "dependsOn": "bclm",
+                    "expression": "ON (icl.claim_id = bclm.claim_id)"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "patient_insurance_plans",
+                    "alias": "pat_ins_plan",
+                    "dependsOn": "icl",
+                    "expression": "ON (icl.patient_id=pat_ins_plan.patient_id AND pat_ins_plan.plan_id = icl.plan_id)"
+                },
+                {
+                    "name": "insurance_remittance_details_view",
+                    "alias": "rv",
+                    "dependsOn": "b",
+                    "expression": "ON (rv.bill_no = b.bill_no)"
+                },
+                {
+                    "name": "bill_total_claim_dues_view",
+                    "alias": "btcdv",
+                    "expression": "ON (b.bill_no = btcdv.bill_no)",
+                    "dependsOn": "b",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "account_group_master",
+                    "alias": "cagm",
+                    "dependsOn": "icl",
+                    "expression": "ON (cagm.account_group_id = icl.account_group)"
+                },
+                {
+                    "name": "insurance_submission_batch",
+                    "alias": "firstsub",
+                    "dependsOn": "icl",
+                    "expression": "ON (firstsub.submission_batch_id = icl.last_submission_batch_id AND firstsub.is_resubmission = 'N')"
+                },
+                {
+                    "name": "account_group_master",
+                    "alias": "sagm",
+                    "dependsOn": "firstsub",
+                    "expression": "ON (sagm.account_group_id = firstsub.account_group)"
+                },
+                {
+                    "type": "LEFTLATERAL",
+                    "name": "(SELECT icl.claim_id, max(submission_batch_id) as submission_batch_id, count(submission_batch_id) as resubmission_count FROM claim_submissions sub_cl_sub WHERE sub_cl_sub.claim_id=icl.claim_id GROUP by icl.claim_id)",
+                    "alias": "cs",
+                    "dependsOn": "icl",
+                    "expression": " ON (true)"
+                },
+                {
+                    "name": "insurance_submission_batch",
+                    "alias": "resub",
+                    "dependsOn": "cs",
+                    "expression": "ON (resub.submission_batch_id = cs.submission_batch_id)"
+                },
+                {
+                    "name": "account_group_master",
+                    "alias": "ragm",
+                    "dependsOn": "resub",
+                    "expression": "ON (ragm.account_group_id = resub.account_group)"
+                },
+                {
+                    "name": "mrd_diagnosis",
+                    "alias": "pdiag",
+                    "dependsOn": "pr",
+                    "expression": "ON (pdiag.visit_id = pr.patient_id AND pdiag.diag_type = 'P')"
+                },
+                {
+                    "name": "mrd_diagnosis",
+                    "alias": "vdiag",
+                    "dependsOn": "pr",
+                    "expression": "ON (vdiag.visit_id = pr.patient_id AND vdiag.diag_type = 'V')"
+                },
+                {
+                    "type": "LEFTLATERAL",
+                    "name": "(SELECT mrd_diagnosis.visit_id, textcat_linecat(description) AS secondary_diagnosis, textcat_linecat(icd_code) AS secondary_diag_icd_code, textcat_linecat(code_type) AS secondary_code_type FROM mrd_diagnosis WHERE diag_type = 'S' AND pr.patient_id=mrd_diagnosis.visit_id GROUP BY mrd_diagnosis.visit_id)",
+                    "alias": "sdiag",
+                    "dependsOn": "pr",
+                    "expression": "ON (true)"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "tpa_master",
+                    "alias": "tp",
+                    "dependsOn": "firstsub",
+                    "expression": "ON (tp.tpa_id = firstsub.tpa_id)"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "tpa_center_master",
+                    "alias": "tcp",
+                    "dependsOn": "firstsub",
+                    "expression": "ON (tcp.tpa_id = firstsub.tpa_id and tcp.center_id = firstsub.center_id )"
+                }
+            ],
+            "whereExpression": "b.is_tpa=true AND b.status!='X'"
+        }
+    ],
+    "fields": {
+        "created_date": {
+            "table": "claimsub",
+            "displayName": "Filtered Claim Created Date",
+            "width": "60",
+            "dataType": "date",
+            "groupable": true,
+            "expression": " claimsub.created_date "
+        },
+        "submission_date": {
+            "table": "claimsub",
+            "displayName": "Filtered Claim Batch Submission Date",
+            "width": "60",
+            "dataType": "date",
+            "groupable": true,
+            "expression": " claimsub.submission_date "
+        },
+        "claim_created_date": {
+            "table": "firstsub,resub",
+            "displayName": "Claim Created Date",
+            "width": "60",
+            "dataType": "date",
+            "groupable": true,
+            "expression": " COALESCE(resub.created_date, firstsub.created_date)::date"
+        },
+        "claim_submission_date": {
+            "table": "firstsub,resub",
+            "displayName": "Claim Batch Submission Date",
+            "width": "60",
+            "dataType": "date",
+            "groupable": true,
+            "expression": "COALESCE(resub.submission_date, firstsub.submission_date)::date"
+        },
+        "claim_format": {
+            "table": "tp,tcp",
+            "displayName": "Claim Format",
+            "width": "65",
+            "groupable": true,
+            "filterable": true,
+            "expression": "COALESCE(tcp.claim_format, tp.claim_format)"
+        },
+        "primary_sponsor_type": {
+            "displayName": "Primary Sponsor Type ",
+            "width": "100",
+            "dataType": "string",
+            "expression": "(pst.sponsor_type_name)",
+            "table": "pst",
+            "groupable": true,
+            "filterable": true
+        },
+        "secondary_sponsor_type": {
+            "displayName": "Secondary Sponsor Type ",
+            "width": "100",
+            "dataType": "string",
+            "expression": "(sst.sponsor_type_name)",
+            "table": "sst",
+            "groupable": true,
+            "filterable": true
+        },
+        "codification_remarks": {
+            "table": "pr",
+            "displayName": "Codification Remarks",
+            "width": 70,
+            "filterable": true,
+            "expression": "(pr.codification_remarks)"
+        },
+        "submission_batch_id": {
+            "table": "resub,firstsub",
+            "displayName": "Submission Id.",
+            "width": "65",
+            "groupable": true,
+            "filterable": true,
+            "expression": "COALESCE(resub.submission_batch_id, firstsub.submission_batch_id)"
+        },
+        "submission_batch_username": {
+            "table": "resub,firstsub",
+            "displayName": "Sub. Batch User Name",
+            "width": "65",
+            "description": "Submission Batch Username",
+            "groupable": true,
+            "filterable": true,
+            "expression": "COALESCE(resub.username, firstsub.username)"
+        },
+        "submission_batch_file_name": {
+            "table": "resub,firstsub",
+            "displayName": "Sub. Batch File Name",
+            "width": "200",
+            "description": "Submission Batch File Name",
+            "groupable": true,
+            "filterable": true,
+            "expression": "COALESCE(resub.file_name, firstsub.file_name)"
+        },
+        "submission_batch_account_group_name": {
+            "table": "sagm,ragm",
+            "displayName": "Sub. Batch Account Group",
+            "width": "100",
+            "description": "Submission Batch Account Group",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT account_group_name FROM account_group_master ORDER by account_group_name",
+            "expression": "COALESCE(ragm.account_group_name, sagm.account_group_name)"
+        },
+        "submission_batch_patient_type": {
+            "table": "resub,firstsub",
+            "displayName": "Sub. Batch Patient Type",
+            "width": "60",
+            "description": "Submission Batch Patient Type",
+            "groupable": true,
+            "filterable": true,
+            "allowedValues": [
+                "IP PATIENTS",
+                "OP PATIENTS",
+                "ALL PATIENTS"
+            ],
+            "expressionLines": [
+                "CASE WHEN COALESCE(resub.patient_type, firstsub.patient_type) ='i' THEN 'IP PATIENTS'",
+                " WHEN COALESCE(resub.patient_type, firstsub.patient_type) ='o' THEN 'OP PATIENTS'",
+                " WHEN COALESCE(resub.patient_type, firstsub.patient_type) ='*' THEN 'ALL PATIENTS'",
+                " ELSE null END"
+            ]
+        },
+        "payment_recd_date": {
+            "table": "rv",
+            "displayName": "Payment Recd. Date",
+            "width": "60",
+            "dataType": "date",
+            "description": "Insurance Payment Received Date",
+            "groupable": true,
+            "filterable": true
+        },
+        "payment_reference": {
+            "table": "rv",
+            "displayName": "Payment Reference",
+            "width": "90",
+            "groupable": true,
+            "filterable": true
+        },
+        "pri_payers_reference_no": {
+            "table": "pat_ins_plan,icl",
+            "displayName": "Pri. Payer Reference No.",
+            "width": "90",
+            "groupable": true,
+            "filterable": true,
+            "expression": "CASE WHEN pat_ins_plan.priority=1 THEN icl.payers_reference_no ELSE NULL END"
+        },
+        "sec_payers_reference_no": {
+            "table": "pat_ins_plan,icl",
+            "displayName": "Sec. Payer Reference No.",
+            "width": "90",
+            "groupable": true,
+            "filterable": true,
+            "expression": "CASE WHEN pat_ins_plan.priority=2 THEN icl.payers_reference_no ELSE NULL END"
+        },
+        "pri_resubmission_count": {
+            "table": "pat_ins_plan,cs",
+            "displayName": "Pri. Resub. Count",
+            "dataType": "integer",
+            "width": "40",
+            "description": "Resubmission Count",
+            "groupable": true,
+            "filterable": true,
+            "expression": "CASE WHEN pat_ins_plan.priority=1 THEN cs.resubmission_count ELSE NULL END"
+        },
+        "sec_resubmission_count": {
+            "table": "pat_ins_plan,cs",
+            "displayName": "Sec. Resub. Count",
+            "dataType": "integer",
+            "width": "40",
+            "description": "Resubmission Count",
+            "groupable": true,
+            "filterable": true,
+            "expression": "CASE WHEN pat_ins_plan.priority=2 THEN cs.resubmission_count ELSE NULL END"
+        },
+        "approval_type": {
+            "table": "b",
+            "displayName": "Approval Type",
+            "width": "100",
+            "groupable": true,
+            "filterable": true,
+            "allowedValues": [
+                "Limited",
+                "Unlimited",
+                "NA"
+            ],
+            "expressionLines": [
+                " CASE WHEN b.approval_amount = 0 THEN 'Unlimited' ",
+                " WHEN b.approval_amount is null THEN 'NA' ",
+                " WHEN b.approval_amount > 0 THEN 'Limited' END"
+            ]
+        },
+        "bill_amount": {
+            "table": "b",
+            "displayName": "Bill Amount w/o Taxes",
+            "width": "60",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "aggFunction": "sum",
+            "filterable": true,
+            "expression": "(b.total_amount + b.total_discount)"
+        },
+        "total_discount": {
+            "table": "b",
+            "displayName": "Discount Amt",
+            "width": "60",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "aggFunction": "sum",
+            "filterable": true
+        },
+        "total_amount": {
+            "table": "b",
+            "displayName": "Net Amt",
+            "width": "60",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "aggFunction": "sum",
+            "expression": "(b.total_amount )",
+            "filterable": true
+        },
+        "total_receipts": {
+            "table": "b",
+            "displayName": "Paid Amt",
+            "width": "60",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "aggFunction": "sum",
+            "filterable": true
+        },
+        "deposit_set_off": {
+            "table": "b",
+            "displayName": "Deposit Set Off",
+            "width": "60",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "aggFunction": "sum",
+            "filterable": true
+        },
+        "dyna_package_charge": {
+            "table": "b",
+            "displayName": "Dyna Package Charge",
+            "width": "70",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "aggFunction": "sum",
+            "filterable": true
+        },
+        "insurance_claim": {
+            "table": "b",
+            "displayName": "Total Sponsor Amt",
+            "width": "60",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "aggFunction": "sum",
+            "filterable": true,
+            "expression": "(b.total_claim + b.total_claim_tax - insurance_deduction)"
+        },
+        "claim_recd_amount": {
+            "table": "b",
+            "displayName": "Total Sponsor Paid Amt",
+            "width": "60",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "aggFunction": "sum",
+            "filterable": true,
+            "expression": "CASE WHEN (COALESCE(b.primary_total_sponsor_receipts,0) + COALESCE(b.secondary_total_sponsor_receipts,0)) = 0 THEN COALESCE(b.claim_recd_amount,0) ELSE (COALESCE(b.primary_total_sponsor_receipts,0)+COALESCE(b.secondary_total_sponsor_receipts,0)) END "
+        },
+        "due_amount": {
+            "table": "b",
+            "displayName": "Patient Due Amt",
+            "width": "60",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "aggFunction": "sum",
+            "filterable": true,
+            "expression": "(b.total_amount + b.total_tax + b.insurance_deduction - b.total_receipts - b.total_claim - b.total_claim_tax - b.deposit_set_off)"
+        },
+        "insurance_deduction": {
+            "table": "b",
+            "displayName": "Deduction",
+            "width": "60",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "aggFunction": "sum",
+            "filterable": true
+        },
+        "claim_recd_unalloc_amount": {
+            "table": "b",
+            "displayName": "Unallocated Sponsor Amt",
+            "width": "60",
+            "description": "Claim Received Unallocated Amount",
+            "dataType": "numeric",
+            "aggFunction": "sum",
+            "decimalType": "amount",
+            "filterable": true
+        },
+        "bill_excess": {
+            "table": "b",
+            "displayName": "Excess Bill Amt over Approval Amt",
+            "width": "60",
+            "dataType": "numeric",
+            "aggFunction": "sum",
+            "decimalType": "amount",
+            "filterable": true,
+            "expression": "(b.total_amount-COALESCE(b.approval_amount,0))"
+        },
+        "claim_excess": {
+            "table": "b",
+            "displayName": "Excess Sponsor Amt over Approval Amt",
+            "width": "60",
+            "dataType": "numeric",
+            "aggFunction": "sum",
+            "decimalType": "amount",
+            "filterable": true,
+            "expression": "(b.total_claim-COALESCE(b.approval_amount,0))"
+        },
+        "o_datetime": {
+            "table": "b",
+            "displayName": "Bill Open Date Time",
+            "dataType": "timestamp",
+            "width": "60",
+            "filterable": true,
+            "expression": "b.open_date"
+        },
+        "visit_date": {
+            "table": "pr",
+            "displayName": "Visit Date",
+            "dataType": "date",
+            "width": "60",
+            "groupable": true,
+            "expression": "pr.reg_date"
+        },
+        "write_off": {
+            "table": "b",
+            "displayName": "Patient Write-Off Amt.",
+            "width": "60",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "aggFunction": "sum",
+            "filterable": true,
+            "expressionLines": [
+                "CASE WHEN b.status = 'C' THEN ",
+                " GREATEST((b.total_amount + b.insurance_deduction - b.total_receipts - b.total_claim ",
+                " -b.deposit_set_off), 0) ELSE 0::NUMERIC END "
+            ]
+        },
+        "tpa_due": {
+            "table": "b",
+            "displayName": "Sponsor Due Amt.",
+            "width": "60",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "aggFunction": "sum",
+            "filterable": true,            
+            "expressionLines": "CASE WHEN (COALESCE(b.primary_total_sponsor_receipts,0) + COALESCE(b.secondary_total_sponsor_receipts,0)) = 0 THEN (b.total_claim + b.total_claim_tax - COALESCE(b.claim_recd_amount,0)) ELSE (b.total_claim + b.total_claim_tax - COALESCE(b.primary_total_sponsor_receipts,0) - COALESCE(b.secondary_total_sponsor_receipts,0)) END "
+        },
+        "tpa_writeoff": {
+            "table": "b,icl",
+            "displayName": "Total Sponsor Write-Off Amt.",
+            "width": "60",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "aggFunction": "sum",
+            "filterable": true,
+            "expressionLines": [
+                " CASE WHEN icl.status ='C' AND (COALESCE(b.primary_total_sponsor_receipts,0) + COALESCE(b.secondary_total_sponsor_receipts,0)) = 0 THEN ",
+                " (COALESCE(b.total_claim + b.total_claim_tax - b.insurance_deduction,0) - COALESCE(b.claim_recd_amount,0)) ",
+                "  WHEN icl.status ='C' AND (COALESCE(b.primary_total_sponsor_receipts,0) + COALESCE(b.secondary_total_sponsor_receipts,0)) > 0 THEN ",
+                " COALESCE(b.total_claim + b.total_claim_tax - b.insurance_deduction,0) - ",
+                " (COALESCE(primary_total_sponsor_receipts,0)+ ",
+                " COALESCE(secondary_total_sponsor_receipts,0)) ELSE 0::NUMERIC END"
+            ]
+        },
+        "tpa_disallowance": {
+            "table": "b",
+            "displayName": "Total Sponsor Disallowance",
+            "width": "60",
+            "description": "This is the amount disallowed by the Sponsor after the claim has been made, (i.e. the difference between the Sponsor claim and Sponsor payment.)",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "aggFunction": "sum",
+            "filterable": true,
+            "expressionLines": [
+                "CASE WHEN b.primary_claim_status = 'R' AND b.approval_amount IS NOT NULL ",
+                "  THEN COALESCE(b.approval_amount,0) ",
+                "  - (COALESCE(claim_recd_amount,0) + COALESCE(primary_total_sponsor_receipts,0) ",
+                "  + COALESCE(secondary_total_sponsor_receipts,0)) ",
+                " ELSE 0::NUMERIC END"
+            ]
+        },
+        "finalization_age": {
+            "table": "b",
+            "displayName": "Bill Ageing (Days)",
+            "decimalType": "integer",
+            "dataType": "numeric",
+            "width": "60",
+            "description": "Number of days from finalized date to today",
+            "groupable": true,
+            "filterable": true,
+            "expressionLines": [
+                " CASE WHEN b.finalized_date IS NOT NULL ",
+                " THEN EXTRACT (DAY FROM (CURRENT_TIMESTAMP - b.finalized_date)) ELSE 0 END"
+            ]
+        },
+        "finalization_age_category": {
+            "table": "b",
+            "displayName": "Sponsor Dues Ageing Group",
+            "width": "100",
+            "description": "how old dues are from finalized date to today",
+            "groupable": true,
+            "filterable": true,
+            "allowedValues": [
+                "0-30 Days",
+                "31-60 Days",
+                "61-90 Days",
+                "91-180 Days",
+                "180+ Days"
+            ],
+            "expressionLines": [
+                " CASE WHEN b.finalized_date IS NOT NULL THEN ",
+                "   CASE WHEN EXTRACT (DAY FROM (CURRENT_TIMESTAMP - b.finalized_date)) between 0 and 30  THEN '0-30 Days' ",
+                "  WHEN EXTRACT (DAY FROM (CURRENT_TIMESTAMP - b.finalized_date)) between 31 and 60  THEN '31-60 Days' ",
+                "  WHEN EXTRACT (DAY FROM (CURRENT_TIMESTAMP - b.finalized_date)) between 61 and 90 THEN '61-90 Days' ",
+                "  WHEN EXTRACT (DAY FROM (CURRENT_TIMESTAMP - b.finalized_date)) between 91 and 180 THEN '91-180 Days' ",
+                "  WHEN EXTRACT (DAY FROM (CURRENT_TIMESTAMP - b.finalized_date)) > 180 THEN '180+ Days' END  ",
+                " ELSE '0-30 Days' END "
+            ]
+        },
+        "claim_account_group": {
+            "table": "cagm",
+            "displayName": "Claim Account Group",
+            "width": "100",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT account_group_name FROM account_group_master ORDER by account_group_name",
+            "expression": "cagm.account_group_name"
+        },
+        "claim_service_reg_no": {
+            "table": "cagm",
+            "displayName": "Claim Acc. Group Service Reg. No.",
+            "width": 65,
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "expression": "cagm.account_group_service_reg_no"
+        },
+        "center_service_reg_no": {
+            "table": "hcm",
+            "displayName": "Center Service Reg. No.",
+            "width": 65,
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "expression": "hcm.hospital_center_service_reg_no"
+        },
+        "pri_claim_created_for": {
+            "table": "icl,pat_ins_plan",
+            "displayName": "Pri. Claim Patient Visit Type",
+            "width": "60",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValues": [
+                "Main",
+                "FollowUp"
+            ],
+            "expression": "CASE WHEN pat_ins_plan.priority=1 THEN CASE WHEN icl.op_type = 'F' THEN 'FollowUp' ELSE 'Main' END ELSE null END"
+        },
+        "sec_claim_created_for": {
+            "table": "icl,pat_ins_plan",
+            "displayName": "Sec. Claim Patient Visit Type",
+            "width": "60",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValues": [
+                "Main",
+                "FollowUp"
+            ],
+            "expression": "CASE WHEN pat_ins_plan.priority=2 THEN CASE WHEN icl.op_type = 'F' THEN 'FollowUp' ELSE 'Main' END ELSE null END"
+        },
+        "pri_insurance_claim_status": {
+            "table": "icl,pat_ins_plan",
+            "displayName": "Pri. Insurance Claim Status",
+            "width": "60",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValues": [
+                "Open",
+                "Sent",
+                "Denied",
+                "ForResubmission",
+                "Closed"
+            ],
+            "expressionLines": [
+                " CASE WHEN pat_ins_plan.priority=1 THEN CASE WHEN icl.status='O' THEN 'Open' ",
+                " WHEN icl.status='S' THEN 'Sent' ",
+                " WHEN icl.status='B' THEN 'Batched' ",
+                " WHEN icl.status='M' THEN 'ForResubmission' ",
+                " WHEN icl.status='C' THEN 'Closed' ",
+                " ELSE null END ELSE null END"
+            ]
+        },
+        "sec_insurance_claim_status": {
+            "table": "icl,pat_ins_plan",
+            "displayName": "Sec. Insurance Claim Status",
+            "width": "60",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValues": [
+                "Open",
+                "Sent",
+                "Denied",
+                "ForResubmission",
+                "Closed"
+            ],
+            "expressionLines": [
+                " CASE WHEN pat_ins_plan.priority=2 THEN CASE WHEN icl.status='O' THEN 'Open' ",
+                " WHEN icl.status='S' THEN 'Sent' ",
+                " WHEN icl.status='B' THEN 'Batched' ",
+                " WHEN icl.status='M' THEN 'ForResubmission' ",
+                " WHEN icl.status='C' THEN 'Closed' ",
+                " ELSE null END ELSE null END "
+            ]
+        },
+        "pri_closure_type": {
+            "table": "icl,pat_ins_plan",
+            "displayName": "Pri. Claim Closure Status",
+            "width": "80",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValues": [
+                "FullyReceived",
+                "DenialAccepted",
+                "WrittenOff"
+            ],
+            "expressionLines": [
+                " CASE WHEN pat_ins_plan.priority=1 THEN CASE WHEN icl.closure_type='F' THEN 'FullyReceived' ",
+                " WHEN icl.closure_type='D' THEN 'DenialAccepted' ",
+                " WHEN icl.closure_type='W' THEN 'WrittenOff' ",
+                " ELSE null END ELSE null END"
+            ]
+        },
+        "sec_closure_type": {
+            "table": "icl,pat_ins_plan",
+            "displayName": "Sec. Claim Closure Status",
+            "width": "80",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValues": [
+                "FullyReceived",
+                "DenialAccepted",
+                "WrittenOff"
+            ],
+            "expressionLines": [
+                " CASE WHEN pat_ins_plan.priority=2 THEN CASE WHEN icl.closure_type='F' THEN 'FullyReceived' ",
+                " WHEN icl.closure_type='D' THEN 'DenialAccepted' ",
+                " WHEN icl.closure_type='W' THEN 'WrittenOff' ",
+                " ELSE null END ELSE null END"
+            ]
+        },
+        "pri_action_remarks": {
+            "table": "icl,pat_ins_plan",
+            "displayName": "Pri. Claim Remarks",
+            "width": "150",
+            "expression": "CASE WHEN pat_ins_plan.priority=1 THEN icl.action_remarks ELSE NULL END"
+        },
+        "sec_action_remarks": {
+            "table": "icl,pat_ins_plan",
+            "displayName": "Sec. Claim Action Remarks",
+            "width": "150",
+            "expression": "CASE WHEN pat_ins_plan.priority=2 THEN icl.action_remarks ELSE NULL END"
+        },
+        "pri_denial_remarks": {
+            "table": "icl,pat_ins_plan",
+            "displayName": "Pri. Claim Denial Remarks",
+            "width": 150,
+            "expression": "CASE WHEN pat_ins_plan.priority=1 THEN icl.denial_remarks ELSE NULL END"
+        },
+        "sec_denial_remarks": {
+            "table": "icl,pat_ins_plan",
+            "displayName": "Sec. Claim Denial Remarks",
+            "width": 150,
+            "expression": "CASE WHEN pat_ins_plan.priority=2 THEN icl.denial_remarks ELSE NULL END"
+        },
+        "pri_resubmission_type": {
+            "table": "icl,pat_ins_plan",
+            "displayName": "Pri. Claim Resubmission Type",
+            "width": "60",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValues": [
+                "correction",
+                "internal complaint",
+                "legacy"
+            ],
+            "expression": "CASE WHEN pat_ins_plan.priority=1 THEN icl.resubmission_type ELSE NULL END"
+        },
+        "sec_resubmission_type": {
+            "table": "icl,pat_ins_plan",
+            "displayName": "Sec. Claim Resubmission Type",
+            "width": "60",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValues": [
+                "correction",
+                "internal complaint",
+                "legacy"
+            ],
+            "expression": "CASE WHEN pat_ins_plan.priority=2 THEN icl.resubmission_type ELSE NULL END"
+        },
+        "pri_comments": {
+            "table": "icl,pat_ins_plan",
+            "displayName": "Pri. Claim Resubmission Comments",
+            "width": "150",
+            "expression": "CASE WHEN pat_ins_plan.priority=1 THEN icl.comments ELSE NULL END"
+        },
+        "sec_comments": {
+            "table": "icl,pat_ins_plan",
+            "displayName": "Sec. Claim Resubmission Comments",
+            "width": "150",
+            "expression": "CASE WHEN pat_ins_plan.priority=2 THEN icl.comments ELSE NULL END"
+        },
+        "pri_attachment_content_type": {
+            "table": "icl,pat_ins_plan",
+            "displayName": "Pri. Claim Resubmission Attachment Type",
+            "width": "150",
+            "expression": "CASE WHEN pat_ins_plan.priority=1 THEN icl.attachment_content_type ELSE NULL END"
+        },
+        "sec_attachment_content_type": {
+            "table": "icl,pat_ins_plan",
+            "displayName": "Sec. Claim Resubmission Attachment Type",
+            "width": "150",
+            "expression": "CASE WHEN pat_ins_plan.priority=2 THEN icl.attachment_content_type ELSE NULL END"
+        },
+        "submission_status": {
+            "table": "firstsub,resub",
+            "displayName": "Submission Status",
+            "width": "60",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValues": [
+                "Open",
+                "Sent",
+                "Rejected"
+            ],
+            "expressionLines": [
+                " CASE WHEN COALESCE(resub.status, firstsub.status) ='O' THEN 'Open'",
+                " WHEN COALESCE(resub.status, firstsub.status) ='S' THEN 'Sent'",
+                " WHEN COALESCE(resub.status, firstsub.status) ='X' THEN 'Rejected'",
+                " ELSE null END"
+            ]
+        },
+        "pri_raise_submission_batch_pending_age": {
+            "table": "b,icl,cs,pat_ins_plan",
+            "displayName": "Pri. Raise Submission Batch Pending Age",
+            "width": "60",
+            "description": "Primary Raise Submission Batch Pending Age- Age in days, of claim bills which are pending to be added to submission batch for processing, (i.e. the bills of finalized and Open claims which have not yet been submitted to the insurance company)",
+            "dataType": "numeric",
+            "decimalType": "integer",
+            "groupable": true,
+            "filterable": true,
+            "expressionLines": [
+                " CASE WHEN pat_ins_plan.priority=1 THEN CASE WHEN ",
+                "   icl.status='O' AND (icl.last_submission_batch_id IS NULL OR cs.resubmission_count > 0) ",
+                "   AND b.status='F'  ",
+                " THEN EXTRACT (DAY FROM (CURRENT_TIMESTAMP - b.finalized_date)) ",
+                " ELSE 0 END ELSE null END"
+            ]
+        },
+        "sec_raise_submission_batch_pending_age": {
+            "table": "b,icl,cs,pat_ins_plan",
+            "displayName": "Sec. Raise Submission Batch Pending Age",
+            "width": "60",
+            "description": "Secondary Raise Submission Batch Pending Age- Age in days, of claim bills which are pending to be added to submission batch for processing, (i.e. the bills of finalized and Open claims which have not yet been submitted to the insurance company)",
+            "dataType": "numeric",
+            "decimalType": "integer",
+            "groupable": true,
+            "filterable": true,
+            "expressionLines": [
+                " CASE WHEN pat_ins_plan.priority=2 THEN CASE WHEN ",
+                "   icl.status='O' AND (icl.last_submission_batch_id IS NULL OR cs.resubmission_count > 0) ",
+                "   AND b.status='F' ",
+                " THEN EXTRACT (DAY FROM (CURRENT_TIMESTAMP - b.finalized_date)) ",
+                " ELSE 0 END ELSE null END"
+            ]
+        },
+        "pri_raise_submission_batch_pending_age_group": {
+            "table": "icl,b,cs,pat_ins_plan",
+            "displayName": "Pri. Raise Submission Batch Pending Age Grp.",
+            "width": "70",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValues": [
+                "Less than 30",
+                "30 - 59",
+                "60 - 179",
+                "Greater than 180",
+                "Not Pending"
+            ],
+            "expressionLines": [
+                " CASE WHEN pat_ins_plan.priority=1 THEN CASE ",
+                " WHEN icl.status='O' AND (icl.last_submission_batch_id IS NULL OR cs.resubmission_count > 0) ",
+                "   AND b.status='F' ",
+                " THEN ",
+                "   CASE WHEN EXTRACT (DAY FROM (CURRENT_TIMESTAMP - b.finalized_date))< 30 ",
+                "     THEN 'Less than 30' ",
+                "   WHEN EXTRACT (DAY FROM (CURRENT_TIMESTAMP - b.finalized_date))>= 30 ",
+                "     AND EXTRACT (DAY FROM (CURRENT_TIMESTAMP - b.finalized_date))<= 59 ",
+                "     THEN '30 - 59' ",
+                "   WHEN EXTRACT (DAY FROM (CURRENT_TIMESTAMP - b.finalized_date))>= 60 ",
+                "     AND EXTRACT (DAY FROM (CURRENT_TIMESTAMP - b.finalized_date))<= 179 ",
+                "     THEN '60 - 179' ",
+                "   ELSE 'Greater than 180' ",
+                "   END ",
+                " ELSE 'Not Pending' END ELSE null END"
+            ]
+        },
+        "sec_raise_submission_batch_pending_age_group": {
+            "table": "icl,b,cs,pat_ins_plan",
+            "displayName": "Pri. Raise Submission Batch Pending Age Grp.",
+            "width": "70",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValues": [
+                "Less than 30",
+                "30 - 59",
+                "60 - 179",
+                "Greater than 180",
+                "Not Pending"
+            ],
+            "expressionLines": [
+                " CASE WHEN pat_ins_plan.priority=2 THEN CASE ",
+                " WHEN icl.status='O' AND (icl.last_submission_batch_id IS NULL OR cs.resubmission_count > 0) ",
+                "   AND b.status='F' ",
+                " THEN ",
+                "   CASE WHEN EXTRACT (DAY FROM (CURRENT_TIMESTAMP - b.finalized_date))< 30 ",
+                "     THEN 'Less than 30' ",
+                "   WHEN EXTRACT (DAY FROM (CURRENT_TIMESTAMP - b.finalized_date))>= 30 ",
+                "     AND EXTRACT (DAY FROM (CURRENT_TIMESTAMP - b.finalized_date))<= 59 ",
+                "     THEN '30 - 59' ",
+                "   WHEN EXTRACT (DAY FROM (CURRENT_TIMESTAMP - b.finalized_date))>= 60 ",
+                "     AND EXTRACT (DAY FROM (CURRENT_TIMESTAMP - b.finalized_date))<= 179 ",
+                "     THEN '60 - 179' ",
+                "   ELSE 'Greater than 180' ",
+                "   END ",
+                " ELSE 'Not Pending' END ELSE null END"
+            ]
+        },
+        "pri_is_raise_submission_batch_pending": {
+            "table": "b,icl,cs,pat_ins_plan",
+            "displayName": "Pri. Claim Pending",
+            "width": "70",
+            "groupable": true,
+            "filterable": true,
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "expressionLines": [
+                " CASE WHEN pat_ins_plan.priority=1 THEN CASE WHEN ",
+                "   icl.status='O' AND (icl.last_submission_batch_id IS NULL OR cs.resubmission_count > 0) ",
+                "     AND b.status='F' ",
+                "   THEN 'Yes' ",
+                "   ELSE 'No' END ELSE null END"
+            ]
+        },
+        "sec_is_raise_submission_batch_pending": {
+            "table": "b,icl,cs,pat_ins_plan",
+            "displayName": "Sec. Claim Pending",
+            "width": "70",
+            "groupable": true,
+            "filterable": true,
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "expressionLines": [
+                " CASE WHEN pat_ins_plan.priority=2 THEN CASE WHEN ",
+                "   icl.status='O' AND (icl.last_submission_batch_id IS NULL OR cs.resubmission_count > 0) ",
+                "     AND b.status='F' ",
+                "   THEN 'Yes' ",
+                "   ELSE 'No' END ELSE null END"
+            ]
+        },
+        "is_resubmission_batch": {
+            "table": "resub,firstsub",
+            "displayName": "Is Resub. Batch",
+            "width": "50",
+            "description": "Is Resubmission Batch",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "expressionLines": [
+                " CASE WHEN COALESCE(resub.is_resubmission, firstsub.is_resubmission) ='Y' THEN 'Yes' ",
+                " WHEN COALESCE(resub.is_resubmission, firstsub.is_resubmission) ='N' THEN 'No' END "
+            ]
+        },
+        "submission_payment_pending_age": {
+            "table": "b,resub,firstsub",
+            "displayName": "Submission Payment Pending Age",
+            "width": "60",
+            "dataType": "numeric",
+            "decimalType": "integer",
+            "description": "Payment Pending Age- Age in days, of pending dues after E-claim submission, by the TPA/Insurance Company",
+            "groupable": true,
+            "filterable": true,
+            "expressionLines": [
+                " CASE WHEN ",
+                "    COALESCE(resub.submission_date, firstsub.submission_date)",
+                "     IS NOT NULL ",
+                "   THEN EXTRACT (DAY FROM (CURRENT_TIMESTAMP -  ",
+                "     COALESCE(resub.submission_date, firstsub.submission_date))) ",
+                " ELSE 0 END"
+            ]
+        },
+        "submission_payment_pending_age_group": {
+            "table": "b,resub,firstsub",
+            "displayName": "Submission Payment Pending Age Grp.",
+            "width": "70",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValues": [
+                "Less than 30",
+                "30 - 59",
+                "60 - 179",
+                "Greater than 180",
+                "Not Pending"
+            ],
+            "expressionLines": [
+                " CASE ",
+                "   WHEN ",
+                "       COALESCE(resub.submission_date, firstsub.submission_date) IS NOT NULL ",
+                "   THEN ",
+                "     CASE ",
+                "       WHEN EXTRACT (DAY FROM (CURRENT_TIMESTAMP ",
+                "         - COALESCE(resub.submission_date, firstsub.submission_date))) < 30 ",
+                "       THEN 'Less than 30' ",
+                "       WHEN EXTRACT (DAY FROM (CURRENT_TIMESTAMP ",
+                "         - COALESCE(resub.submission_date, firstsub.submission_date))) >= 30 ",
+                "         AND EXTRACT (DAY FROM (CURRENT_TIMESTAMP ",
+                "         - COALESCE(resub.submission_date, firstsub.submission_date))) <= 59 ",
+                "       THEN '30 - 59' ",
+                "       WHEN EXTRACT (DAY FROM (CURRENT_TIMESTAMP ",
+                "         - COALESCE(resub.submission_date, firstsub.submission_date))) >=60 ",
+                "         AND EXTRACT (DAY FROM (CURRENT_TIMESTAMP ",
+                "         - COALESCE(resub.submission_date, firstsub.submission_date))) <=179 ",
+                "       THEN '60 -179' ",
+                "       ELSE 'Greater than 180' ",
+                "     END ",
+                "   ELSE 'Not Pending' ",
+                " END "
+            ]
+        },
+        "primary_diagnosis": {
+            "table": "pdiag",
+            "displayName": "Primary Diagnosis Description",
+            "width": "150",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "expression": "pdiag.description"
+        },
+        "primary_diag_icd_code": {
+            "table": "pdiag",
+            "displayName": "Primary Diagnosis Code",
+            "width": "40",
+            "description": "Primary Diagnosis Code",
+            "expression": "pdiag.icd_code"
+        },
+        "primary_code_type": {
+            "table": "pdiag",
+            "displayName": "Primary Diagnosis Code Type",
+            "width": "40",
+            "description": "Primary Diagnosis Code Type",
+            "expression": "pdiag.code_type"
+        },
+        "secondary_diagnosis": {
+            "table": "sdiag",
+            "displayName": "Secondary Diagnosis Description",
+            "width": "150",
+            "allowNull": true,
+            "filterable": true
+        },
+        "secondary_diag_icd_code": {
+            "table": "sdiag",
+            "displayName": "Secondary Diagnosis Codes",
+            "width": "40",
+            "description": "Secondary Diagnosis Codes"
+        },
+        "secondary_code_type": {
+            "table": "sdiag",
+            "displayName": "Secondary Diagnosis Code Type",
+            "width": "40",
+            "description": "Secondary Diagnosis Code Types"
+        },
+        "rvf_diagnosis": {
+            "table": "vdiag",
+            "displayName": "Reason for Visit Diagnosis Description",
+            "width": "150",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "expression": "vdiag.description"
+        },
+        "rvf_diag_icd_code": {
+            "table": "vdiag",
+            "displayName": "Reason for Visit Diagnosis Code",
+            "width": "40",
+            "description": "Reason For Visit Diagnosis Code",
+            "expression": "vdiag.icd_code"
+        },
+        "rvf_code_type": {
+            "table": "vdiag",
+            "displayName": "Reasons for Visit Diagnosis Code Type",
+            "width": "40",
+            "description": "Reason For Visit Diagnosis Code Type",
+            "expression": "vdiag.code_type"
+        },
+        "pri_claim_id": {
+            "table": "bclm,pat_ins_plan",
+            "displayName": "Pri. Claim ID",
+            "width": "60",
+            "expression": "CASE WHEN pat_ins_plan.priority=1 THEN bclm.claim_id ELSE NULL END"
+        },
+        "sec_claim_id": {
+            "table": "bclm,pat_ins_plan",
+            "displayName": "Sec. Claim ID",
+            "width": "60",
+            "expression": "CASE WHEN pat_ins_plan.priority=2 THEN bclm.claim_id ELSE NULL END"
+        },
+        "reference_no": {
+            "table": "rv",
+            "displayName": "Reference No",
+            "width": "100"
+        },
+        "primary_tpa_due": {
+            "displayName": "Pri. Sponsor Due Amt",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "width": "100",
+            "aggFunction": "sum",
+            "filterable": true,
+            "table": "btcdv,c",
+            "expression": "COALESCE(btcdv.pri_claim_amt,0) + COALESCE(btcdv.pri_claim_amt_tax,0) - (COALESCE(btcdv.pri_claim_recd_total,0)+COALESCE(b.primary_total_sponsor_receipts,0))"
+        },
+        "secondary_tpa_due": {
+            "displayName": "Sec. Sponsor Due Amt",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "width": "100",
+            "aggFunction": "sum",
+            "filterable": true,
+            "table": "btcdv,c",
+            "expression": "COALESCE(btcdv.sec_claim_amt,0) + COALESCE(btcdv.sec_claim_amt_tax,0) - (COALESCE(btcdv.sec_claim_recd_total,0)+COALESCE(b.secondary_total_sponsor_receipts,0))"
+        },
+        "total_sponsor_due_amount": {
+            "displayName": "Total Sponsor Due Amt",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "width": "100",
+            "aggFunction": "sum",
+            "expression": "(b.total_claim + b.total_claim_tax - b.claim_recd_amount - b.primary_total_sponsor_receipts - b.secondary_total_sponsor_receipts  )",
+            "filterable": true
+        },
+        "primary_tpa_writeoff": {
+            "displayName": "Pri. Sponsor Write-Off Amt",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "width": "100",
+            "aggFunction": "sum",
+            "filterable": true,
+            "table": "btcdv",
+            "expression": "CASE WHEN b.sponsor_writeoff='A' THEN (COALESCE(btcdv.pri_claim_amt,0) + COALESCE(btcdv.pri_claim_amt_tax,0) - (COALESCE(btcdv.pri_claim_recd_total,0)+COALESCE(b.primary_total_sponsor_receipts,0))) ELSE 0 END"
+        },
+        "secondary_tpa_writeoff": {
+            "displayName": "Sec. Sponsor Write-Off Amt",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "width": "100",
+            "aggFunction": "sum",
+            "filterable": true,
+            "table": "btcdv",
+            "expression": "CASE WHEN b.sponsor_writeoff = 'A' THEN (COALESCE(btcdv.sec_claim_amt,0) + COALESCE(btcdv.sec_claim_amt_tax,0) -(COALESCE(btcdv.sec_claim_recd_total,0)+COALESCE(b.secondary_total_sponsor_receipts,0))) ELSE 0 END"
+        },
+        "bill_amount_tax": {
+            "displayName": "Bill Amt",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "width": "100",
+            "aggFunction": "sum",
+            "expression": "(b.total_amount + b.total_tax )",
+            "filterable": true
+        },
+        "pri_sponsor_paid_amt": {
+            "displayName": "Pri. Sponsor Paid Amt",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "width": "100",
+            "aggFunction": "sum",
+            "table": "b,btcdv",
+            "expression": "(b.primary_total_sponsor_receipts + COALESCE(btcdv.pri_claim_recd_total,0))",
+            "filterable": true
+        },
+        "sec_sponsor_paid_amt": {
+            "displayName": "Sec. Sponsor Paid Amt",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "width": "100",
+            "aggFunction": "sum",
+            "table": "b,btcdv",
+            "expression": "(b.secondary_total_sponsor_receipts  + COALESCE(btcdv.sec_claim_recd_total,0) )",
+            "filterable": true
+        },
+        "pri_sponsor_amt_wo_taxes": {
+            "displayName": "Pri. Sponsor Amt w/o Taxes",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "width": "100",
+            "aggFunction": "sum",
+            "table": "btcdv",
+            "expression": "COALESCE(btcdv.pri_claim_amt,0)",
+            "filterable": true
+        },
+        "pri_sponsor_tax_amt": {
+            "displayName": "Pri. Sponsor Tax Amt",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "width": "100",
+            "aggFunction": "sum",
+            "table": "btcdv",
+            "expression": "COALESCE(btcdv.pri_claim_amt_tax,0)",
+            "filterable": true
+        },
+        "sec_sponsor_amt_wo_taxes": {
+            "displayName": "Sec. Sponsor Amt w/o Taxes",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "width": "100",
+            "aggFunction": "sum",
+            "table": "btcdv",
+            "expression": "COALESCE(btcdv.sec_claim_amt,0)",
+            "filterable": true
+        },
+        "sec_sponsor_tax_amt": {
+            "displayName": "Sec. Sponsor Tax Amt",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "width": "100",
+            "aggFunction": "sum",
+            "table": "btcdv",
+            "expression": "COALESCE(btcdv.sec_claim_amt_tax,0)",
+            "filterable": true
+        },
+        "patient_amt_wo_taxes": {
+            "displayName": "Patient Amt w/o Taxes",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "width": "100",
+            "aggFunction": "sum",
+            "expression": "(b.total_amount - b.total_claim)",
+            "filterable": true
+        },
+        "patient_tax_amt": {
+            "displayName": "Patient Tax Amt",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "width": "100",
+            "aggFunction": "sum",
+            "table": "b",
+            "expression": "( b.total_tax - b.total_claim_tax )",
+            "filterable": true
+        }
+    },
+    "defaultShowFields": [
+        "bill_no",
+        "pri_claim_id",
+        "cust_id",
+        "visit_id",
+        "full_name",
+        "primary_tpa_name",
+        "insurance_claim",
+        "claim_recd_amount"
+    ]
+}

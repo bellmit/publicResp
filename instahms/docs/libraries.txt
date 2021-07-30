@@ -1,0 +1,196 @@
+List of libraries (jar files) and their sources in instahms
+===========================================================
+
+Technology version:
+------------------
+* Java: 1.6, though we don't use any 1.6 specific features. We moved
+  from 1.4 to 1.6 in Sept 2008, version 2.0 used 1.6.
+
+* Tomcat: Moved to 7.0.70, target instahms version 11.3
+
+* Struts: Moved from 1.1 to 1.3.8 on 30 Oct 2008. Target instahms version 2.2 (2.0
+  still uses 1.1). At the same time, the following jar files were upgraded:
+   - commons-chain, commons-fileupload, commons-io
+   
+* Spring: Introduced Spring v 4.3.6 in 11.6.
+  Spring jars are listed below 
+
+  spring-aop-4.3.6.RELEASE
+  spring-beans-4.3.6.RELEASE
+  spring-context-4.3.6.RELEASE
+  spring-expression-4.3.6.RELEASE
+  spring-jdbc-4.3.6.RELEASE
+  spring-test-4.3.6.RELEASE
+  spring-tx-4.3.6.RELEASE
+  spring-web-4.3.6.RELEASE
+  spring-webmvc-4.3.6.RELEASE
+  spring-context-support-4.3.6.RELEASE
+
+(APACHE LICENSE 2.0 : https://github.com/spring-projects/spring-framework/tree/4.3.x)
+  
+* Jackson jars used by Spring. 
+  jackson-annotations-2.7.2.jar
+  jackson-core-2.7.2.jar
+  jackson-databind-2.7.2.jar    
+  
+  License: Apache 2.0 license: http://wiki.fasterxml.com/JacksonLicensing  
+
+Libraries and sources
+---------------------
+Part of tomcat 7.0.70 ($TOMCAT_BASE/lib):
+  annotations-api.jar
+  catalina-ant.jar
+  catalina-ha.jar
+  catalina.jar
+  catalina-tribes.jar
+  ecj-4.4.2.jar
+  el-api.jar
+  jasper-el.jar
+  jasper.jar
+  jsp-api.jar
+  servlet-api.jar
+  tomcat7-websocket.jar
+  tomcat-api.jar
+  tomcat-coyote.jar
+  tomcat-dbcp.jar
+  tomcat-i18n-es.jar
+  tomcat-i18n-fr.jar
+  tomcat-i18n-ja.jar
+  tomcat-jdbc.jar
+  tomcat-util.jar
+  websocket-api.jar
+
+WEB-INF/lib, part of struts-1.3.8 (struts-blank.war):
+  struts-core-1.3.8.jar
+  struts-taglib-1.3.8.jar
+  struts-tiles-1.3.8.jar
+  struts-extras-1.3.8.jar
+  commons-beanutils-1.7.0.jar
+  commons-chain-1.1.jar
+  commons-digester-1.8.jar
+  commons-logging-1.0.4.jar
+  commons-validator-1.3.1.jar
+  antlr-2.7.2.jar
+  oro-2.0.8.jar
+
+WEB-INF/lib, downloaded from jakarta.apache.org/taglibs, JSTL 1.1 (aka "standard" taglib)
+  jstl.jar      1.1.2
+  standard.jar  1.1.2
+
+WEB-INF/lib, downloaded from jakarta.apache.org/commons:
+  commons-fileupload-1.2.1.jar
+  commons-io-1.4.jar
+  commons-collections-3.2.1.jar  (added when moving from tomcat 5.0 to 5.5)
+  beanutils-1.8.0.jar (replaced 1.7.0 which came with struts)
+  commons-javaflow-20060411.jar (required for Jasper Reports)
+  commons-codec-1.2.jar (for Base64 encoding, used in SMS messaging and eclaim attachments)
+
+WEB-INF/lib, downloaded R8 from https://xhtmlrenderer.dev.java.net (Required for html to pdf)
+  core-renderer.jar (required)
+   (Downloaded the source and re-compiled the jars after replacing itext2.0.8 with 2.1.5)
+  -- itext-2.0.8.jar -- replaced with iText-2.1.5
+  -- xml-apis-xerces-2.9.1.jar -- not copied, since we already have xerces.jar somewhere
+  
+WEB-INF/lib:downloaded junit-4.12.jar for https://github.com/junit-team/junit4/wiki/Download-and-Install
+  -- junit 4.12.jar - required for unit testing
+    -- hamcrest-library-1.3.jar - dependency for junit
+    -- hamcrest-core-1.3.jar - dependency for junit
+	-- testng-6.8.21.jar (from testng.org. License: Apache License V2.0) 
+    
+WEB-INF/lib: joda-time-2.9.7.jar - for replacing the default data time functionality of java
+downloaded from (http://www.joda.org/joda-time/)
+(APACHE LICENSE:http://www.joda.org/joda-time/license.html)
+  
+WEB-INF/lib: mockito-core-1.9.5.jar - for mocking and testing of api endpoints
+downloaded from (https://mvnrepository.com/artifact/org.mockito/mockito-core/1.9.5)
+(MIT LICENSE:https://code.google.com/archive/p/mockito/wikis/License.wiki)
+  -- hamcrest-core-1.3.jar - dependency for mockito
+  -- objenesis-1.0.jar - dependency for mockito
+
+WEB-INF/lib: miscellaneous
+  flexjson-2.1.jar - flexjson.sourceforge.net as flexjson.jar
+  jasperreports-3.5.0.jar - jasperforge.org
+  jcommon-1.0.0.jar - jfree.org/jcommon, reqd for jasper
+  log4j.jar - logging.apache.org, logging in the app. 
+  Replaced with latest version (v 1.2) in 11.2
+  primrose.jar - primrose.uk.org, connection pool
+  jfreechart-1.0.12.jar (as opensource from  http://sourceforge.net), required for jasper
+  opencsv-1.8.jar - opencsv.org, for generating CSV files
+  mail.jar - version 1.4.1 from java.sun.com/products/javamail/ - for email
+  activation1.1.1.jar - needed for email, mail.jar dependency
+  jlibs-core.jar - for templating support. (from http://code.google.com/p/jlibs LGPL licensed)
+  xalan.jar (2.7.1) - required for x: JSTL tags support (xpath) (from xml.apache.org/xalan-j)
+    (the download also comes with xerces, which we already have, so not taken from there)
+  serializer.jar - required for xalan.jar, from the same bundle as xalan.jar
+  ehcache-1.6.2.jar - caching library (from http://ehcache.org/ License: Apache License V2.0)
+  quartz-2.2.1.jar - job scheduling library (from http://www.quartz-scheduler.org/downloads/ License: Apache License V2.0)
+  poi-3.6-20091214.jar - for writing out MS Excel output (http://poi.apache.org License: Apache License V2.0)
+  freemarker.jar - (Version 2.3.15) - for template processing (http://freemarker.sourceforge.net/index.html)
+   (BSD-style license: http://freemarker.sourceforge.net/docs/app_license.html)
+     
+  libphonenumber-7.7.4.jar - for mobile number validation (https://github.com/googlei18n/libphonenumber) 
+       (Apache License - https://github.com/googlei18n/libphonenumber/blob/master/LICENSE)
+  pgCheckSum.jar - Used for generating checksum required by paytm api 
+       (https://github.com/Paytm-Payments/Paytm_Web_Sample_Kit_Java/tree/master/Java%20Kit%201.6)
+       (Apache License - https://github.com/Paytm-Payments/Paytm_Web_Sample_Kit_Java/blob/master/LICENSE)
+  
+  chargebee-java-2.2.1.jar - for communicate with chargebee apis (https://github.com/chargebee/chargebee-java) 
+       (MIT License -  https://github.com/chargebee/chargebee-java/blob/master/LICENSE)
+
+WEB-INF/lib: mime detection
+   mime-util-2.1.2.jar - mime detection library (from http://www.medsea.eu/mime-util License: Apache License V2.0)
+   slf4j-api-1.7.17.jar - logging facade, needed by mime-util (License similar of MIT)
+   slf4j-log4j12-1.7.17.jar  - log4j intergation lib (License similar of MIT)
+
+scripts/
+  multifile.js - Multifile upload from browser - www.the-stickman.com
+  xpmenuv21.js -  http://www.jswitch.com - XP style menubar??? (delete?)
+  lightbox.js  - Image overlays - http://huddletogether.com/projects/lightbox/ - Creative Commons license
+	
+  yui2.5.2 - (BSD) developer.yahoo.com/yui
+  tinyMCE - (LGPL) Version 3.2.4.1 from http://tinymce.moxiecode.com/
+
+Applets
+  imagej - http://rsbweb.nih.gov/ij/ - Public Domain
+  
+$TOMCAT_BASE/lib: from Tomcat 5/common/lib
+  postgresql jars: 
+  postgresql-9.2-1000.jdbc4.jar, postgresql-9.3-1101.jdbc4.jar from jdbc.postgresql.org, basic postgres jdbc
+  jaxws-rt.jar
+  jaxb-impl.jar
+  policy.jar
+  streambuffer.jar
+  stax-ex.jar
+  gmbal-api-only.jar
+  management-api.jar
+  ha-api.jar
+  
+$TOMCAT_BASE/endorsed: from Tomcat 5/common/endorsed
+  jaxws-api.jar
+
+DEPENDENCIES
+------------
+Jasper Reports requires the following:
+
+Commons: 
+  beanutils 1.7 or later (we use 1.8)
+  collections 2.1 or later (we use 3.2.1)
+  javaflow sandbox version
+  logging 1.0 or later (we use 1.0.4)
+
+JRXML:
+  commons-digester 1.7 or later (we use 1.8)
+  JDK 1.4, or, Eclipse JDT compiler, or, jikes compiler, or Groovy, or BeanShell
+   (we rely on JDK itself)
+
+Report Output:
+  PDF: iText 1.3.1 or later (we use 2.1.5)
+  XLS (not used): Jakarta POI 3.0.1 or later, JExcelApi 2.6 or later
+  Charts: JFreeChart 1.0.0 or later, JCommon required by JFreeChart, 
+    Batik SVG Toolkit 1.7 or later if rendering charts as SVG
+
+Recently Deleted
+----------------
+WEB-INF/lib: miscellaneous
+  jta-spec1_0_1.jar (jotm/xapool)  -- references to UserTransaction in code need to be removed
+

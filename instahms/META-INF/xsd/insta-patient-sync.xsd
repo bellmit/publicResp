@@ -1,0 +1,203 @@
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+elementFormDefault="qualified">
+    <xsd:element name="patient_record">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="schema" type="xsd:string" default="etihad" >
+                    <xsd:annotation>
+                        <xsd:documentation>Hospital in Insta</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                
+                <xsd:element ref="patient_details" minOccurs='1'/>
+                
+                <xsd:element ref="prepopulate_visit_info" minOccurs='0' />
+                
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+
+
+    <xsd:element name="patient_details">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="old_mr_no">
+                    <xsd:annotation>
+                        <xsd:documentation>Identifier of record in external system. Ex: MR No, Employee ID</xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:simpleType>
+                    	<xsd:restriction base="xsd:string">
+                    		<xsd:maxLength value="20" />
+                    	</xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:element>
+                <xsd:element name="first_name">
+                    <xsd:annotation>
+                        <xsd:documentation>First Name</xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:simpleType>
+	                    <xsd:restriction base="xsd:string">
+					      <xsd:maxLength value="50" />
+					    </xsd:restriction>
+				    </xsd:simpleType>
+                </xsd:element>
+                <xsd:element name="middle_name" minOccurs="0"   >
+                    <xsd:annotation>
+                        <xsd:documentation>Middle Name</xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:simpleType>
+	                    <xsd:restriction base="xsd:string">
+					      <xsd:maxLength value="50" />
+					    </xsd:restriction>
+				    </xsd:simpleType>
+                </xsd:element>
+                <xsd:element name="last_name" minOccurs="0"   >
+                    <xsd:annotation>
+                        <xsd:documentation>Last Name/Family Name/Surname</xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:simpleType>
+	                    <xsd:restriction base="xsd:string">
+					      <xsd:maxLength value="50" />
+					    </xsd:restriction>
+				    </xsd:simpleType>
+                </xsd:element>
+                <xsd:element name="gender" >
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="code" type="xsd:string" />
+                            <xsd:element name="description" type="xsd:string" >
+								<xsd:annotation>
+			                        <xsd:documentation>Example Male = M, Female = F, Unknown = U </xsd:documentation>
+			                    </xsd:annotation>
+                            </xsd:element>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+				
+				<xsd:element name="date_of_birth" type="xsd:date"   >
+                    <xsd:annotation>
+                        <xsd:documentation>Date of Birth in YYYY-MM-DD Format</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+
+                <xsd:element name="nationality_id"  minOccurs="0">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="code" type="xsd:string" />
+                            <xsd:element name="description" type="xsd:string">
+                            	<xsd:annotation>
+			                        <xsd:documentation>Example: for India = IN, send 2 character country code </xsd:documentation>
+			                    </xsd:annotation>
+                            </xsd:element>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+                
+                <xsd:element name="government_identifier" type="xsd:string">
+                    <xsd:annotation>
+                        <xsd:documentation>Government civil identifier (Emirates ID) Example:7000-1000-3000000-0</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+
+                <xsd:element name="mobile_number" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:documentation>Employee's mobile number, With country code(+91) Example: +919999999999</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="email" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:documentation>email id</xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:simpleType> 
+                        <xsd:restriction base="xsd:string"> 
+                            <xsd:pattern value="[^@]+@[^\.]+\..+"/> 
+                            <xsd:maxLength value="200" />
+				        </xsd:restriction> 
+                    </xsd:simpleType>
+                </xsd:element>
+                <xsd:element name="custom_list2_value" minOccurs="0" >
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="code" type="xsd:string" />
+                            <xsd:element name="description" type="xsd:string">
+	                            <xsd:annotation>
+			                        <xsd:documentation>Example: Active, Inactive, Withdrawn, Retire </xsd:documentation>
+			                    </xsd:annotation>
+                            </xsd:element>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element name="custom_list3_value">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="code" type="xsd:string" />
+                            <xsd:element name="description" type="xsd:string">
+                            	<xsd:annotation>
+			                        <xsd:documentation>Example: Single, Married, Widow, Divorce, Partner, Unknown </xsd:documentation>
+			                    </xsd:annotation>
+		                    </xsd:element>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element name="custom_field15" type="xsd:date" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:documentation>Separation Date field in YYYY-MM-DD Format</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="passport_number" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:documentation>Primary passport number</xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:simpleType>
+	                    <xsd:restriction base="xsd:string">
+					      <xsd:maxLength value="50" />
+					    </xsd:restriction>
+				    </xsd:simpleType>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="prepopulate_visit_info">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="visit_custom_list1">
+                    <xsd:annotation>
+                        <xsd:documentation>Company</xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="code" type="xsd:string" />
+                            <xsd:element name="description" type="xsd:string"  />
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element name="visit_custom_list2">
+                    <xsd:annotation>
+                        <xsd:documentation>Location</xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="code" type="xsd:string" />
+                            <xsd:element name="description" type="xsd:string"  />
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element name="visit_custom_field1" type="xsd:string">
+                    <xsd:annotation>
+                        <xsd:documentation>Cost Center</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="visit_custom_field2" type="xsd:string">
+                    <xsd:annotation>
+                        <xsd:documentation>Department</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="visit_custom_field3" type="xsd:string">
+                    <xsd:annotation>
+                        <xsd:documentation>Job Title</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

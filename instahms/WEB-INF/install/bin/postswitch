@@ -1,0 +1,490 @@
+#!/bin/bash
+
+#
+# part of upgrade: called after the version is switched. Thus, this script
+# is run from the "new" version, ie, after it has been installed in the
+# final target directory
+#
+
+source `dirname $0`/functions
+LOGFILE=$LOGDIR/upgrade.log
+
+source $INSTPATH/upgrade_vars
+
+if [ -z "$TOMCAT_HOME" ] ; then
+	TOMCAT_HOME="/usr/local/tomcat-9"
+fi
+
+OLDVER=$1
+NEWVER=`get_current_version`
+BACKUPFILE=/var/backups/pre_upgrade-${DB}-${OLDVER}.dump
+HOST=`hostname`
+HOST=${HOST#instahms-}
+OLDSQLPATH=$APPROOT.orig/WEB-INF/install/sql
+CUSTOMPATH=$APPROOT.orig/WEB-INF/custom
+CUSTOMOLDSQLPATH=$OLDSQLPATH/custom/*.sql
+NEWSQLPATH=$APPROOT/WEB-INF/install/sql
+CUSTOMNEWSQLPATH=$NEWSQLPATH/custom/*.sql
+
+do_log "Postswitch: OLDVER is $OLDVER"
+
+#
+# Other useful functions
+#
+function revert_sw() {
+	exec /tmp/switchver $APPROOT $APPROOT.new $APPROOT.orig  /etc/init.d/tomcat-9 start
+}
+
+function revert_db() {
+	sudo pg_restore -c -d $DB $1
+	# scan tables may not be restored, special care needs to be taken if scan tables
+	# are being modified. TODO.
+}
+
+#
+# run any postinstall scripts in the new version.
+# This is a hook for modifying the approot contents and/or copying any files to
+# the os filesystem directories outside our app root.
+#
+do_log "Running postinstall"
+$BINPATH/postinstall $OLDVER
+if [ $? -ne 0 ] ; then
+	do_log "Postinstall failed with exit code $?"
+	revert_sw
+fi
+
+NEWVERN=`get_numeric_version $NEWVER`
+OLDVERN=`get_numeric_version $OLDVER`
+NEWMAJOR=$((NEWVERN/100))
+OLDMAJOR=$((OLDVERN/100))
+
+#
+# Database: backup old db
+#
+if [ "$UPGRADE_BACKUP" != 'N' ] ; then
+	# Different option for minor version upgrades: this defaults to N
+	if [ "$UPGRADE_BACKUP_MINOR" = 'Y' -o $NEWMAJOR -ne $OLDMAJOR ] ; then
+		do_log "Backing up current database"
+		backup_db $BACKUPFILE partial nocompress
+	fi
+fi
+
+#
+# Drop audit-log triggers. These will anyway be re-installed along with vft.sql.
+# We do this is to speed up any migrations involving sweeping changes in any of the
+# audited tables. Also dropping all views from vft and report_views to facilitate
+# db_changes column type changes. (In practice, people should be dropping views
+# themselves in db_changes, but they don't)
+# Also takes care of dropping any custom views which will get recreated as part of custom_views_update.sh
+# Note: this drops triggers and views depending on the OLD version, because that
+# is what is currently installed and running.
+#
+
+#storing these two values to use to update system version in the database
+TRUENEWMAJOR=$NEWMAJOR
+TRUENEWVER=$NEWVER
+
+for schema in `get_all_schemas` ; do
+	do_log "Migrating schema: $schema"
+	# to support testsvr upgrades, we let them pass in different versions in
+	# each schema. In live databases, we expect all schemas to be same version
+	schema_ver_var=SCHEMA_VER_$schema
+	if [ ! -z ${!schema_ver_var} ] ; then
+		oldver=${!schema_ver_var}
+		oldvern=`get_numeric_version $oldver`
+		oldmajor=$((oldvern/100))
+		do_log "Special migration for $schema: from $oldver"
+	else
+		# use the default
+		oldver=$OLDVER
+		oldmajor=$OLDMAJOR
+	fi
+
+	script_ver_var=scripts_$oldmajor
+	#if new major is greater than or equal to 1113 then set new major ver to 1112 since no db changes files after that
+	if [[ $oldmajor -lt 1112 ]] ; then
+		NEWMAJOR=1112
+
+		#get the last build number in 1111_1112 file
+		NEWVER=$(grep "Build" $NEWSQLPATH/db_changes_1111_1112.sql | tail -1 | grep -o "[0-9].*")
+
+		do_log "Dropping Audit Log triggers and all views for: $schema"
+
+		DROP_VIEWS_TRIGGERS=/tmp/drop_views_triggers.sql
+		grep -i "DROP TRIGGER" $OLDSQLPATH/auditlog_triggers.sql > $DROP_VIEWS_TRIGGERS
+		grep -i "DROP TRIGGER" $OLDSQLPATH/vft.sql              >> $DROP_VIEWS_TRIGGERS
+
+		DROP_VIEWS_QUERY="SELECT 'DROP VIEW IF EXISTS ' || table_name || ' CASCADE;' FROM information_schema.views WHERE table_schema = '""$schema""'"
+		psql -t -q -d $DB -c "$DROP_VIEWS_QUERY" >> $DROP_VIEWS_TRIGGERS
+
+		for f in $CUSTOMPATH/*.sql
+		do
+			grep -i "DROP VIEW"    $f     >> $DROP_VIEWS_TRIGGERS
+		done
+
+
+		for f in $CUSTOMOLDSQLPATH 
+		do
+			grep -i "DROP VIEW"	   $f	>> $DROP_VIEWS_TRIGGERS	
+		done
+
+		run_in_schema $schema $DROP_VIEWS_TRIGGERS > $LOGDIR/migrate.log 2>&1
+
+		#
+		# Database: migrate the db
+		#
+		do_log "Migrating database"
+		if [ $NEWMAJOR -eq $oldmajor ] ; then
+			# incremental migration
+			dbchanges=$SQLPATH/${!script_ver_var}
+			splitbase=/tmp/db_changes_${oldver}_${NEWVER}.sql
+			csplit -s -f $splitbase   $dbchanges   "%-- Build $oldver%"
+			split=${splitbase}00
+			# include lines which must be run on incremental migration
+			sed --in-place -e 's/--_INCR_ONLY_ //' $split
+			do_log "Will run incremental migration: $split"
+			echo "Running $split on $schema" >> $LOGDIR/migrate.log 2>&1
+			run_in_schema $schema $split >> $LOGDIR/migrate.log 2>&1
+
+		else
+			# complete migration: run all scripts required, this could be multiple
+			do_log "Will run full migration from $oldver"
+			for script in ${!script_ver_var} ; do
+				dbchanges=$SQLPATH/$script
+				do_log "Full migration script: $dbchanges"
+				echo "Running $dbchanges on $schema" >> $LOGDIR/migrate.log 2>&1
+				run_in_schema $schema $dbchanges >> $LOGDIR/migrate.log 2>&1
+			done
+		fi
+		#
+		# Run precision3 in all schemas where the preference is set. This is needed
+		# for any new columns added in migration which are numeric
+		#
+		prec3schemas=`check_for_schemas "(SELECT after_decimal_digits FROM generic_preferences) = 3"`
+
+		for schema in $prec3schemas; do
+			run_in_schema $schema $SQLPATH/precision_3.sql >> $LOGDIR/migrate.log 2>&1
+		done
+			# all schemas
+	else
+		sudo rm $LOGDIR/migrate.log
+		sudo touch $LOGDIR/migrate.log
+	fi
+done
+
+#restore value of NEW MAJOR and NEWVER
+NEWMAJOR=$TRUENEWMAJOR
+NEWVER=$TRUENEWVER
+
+# finally update the version information in the schemas
+if [ $NEWMAJOR -ge 1009 ] ; then
+   for schema in `get_all_schemas` ; do
+      run_stmt_in_schema $schema "update system_data set version='${NEWVER}';" >> $LOGDIR/migrate.log 2>&1 
+   done
+fi
+
+if [ $? -ne 0 ] ; then
+	do_log "Migration failed: NOT restoring original db and software"
+	#do_log "Migration failed: restoring original db and software"
+	#revert_db $BACKUPFILE
+	#revert_sw
+else
+	do_log "db_changes ran successfully"
+fi
+
+#run only if oldmajor is less than 1112
+for schema in `get_all_schemas` ; do
+	schema_ver_var=SCHEMA_VER_$schema
+	if [ ! -z ${!schema_ver_var} ] ; then
+		oldver=${!schema_ver_var}
+		oldvern=`get_numeric_version $oldver`
+		oldmajor=$((oldvern/100))
+		do_log "Special migration for $schema: from $oldver"
+	else
+		# use the default
+		oldver=$OLDVER
+		oldmajor=$OLDMAJOR
+	fi
+	if [[ $oldmajor -lt 1112 && $NEWMAJOR -lt 1113 ]] ; then
+		#
+		# Run vft.sql -- even if no change in any view/function/trigger, it is OK to run this
+		#
+
+		do_log "Re-installing functions/triggers (vft.sql)"
+		run_in_schema $schema $SQLPATH/vft.sql >> $LOGDIR/migrate.log 2>&1
+		if [ $? -ne 0 ] ; then
+			do_log "Installing functions/triggers (vft.sql) failed"
+		else
+			do_log "vft.sql ran successfully"
+		fi
+
+		#
+		# Run report_views.sql -- These are views used by srxml report builders
+		#
+		do_log "Re-installing report_views.sql"
+		run_in_schema $schema $SQLPATH/report_views.sql >> $LOGDIR/migrate.log 2>&1
+		if [ $? -ne 0 ] ; then
+			do_log "Installing report_views.sql failed"
+		else
+			do_log "report_views.sql ran successfully"
+		fi
+
+		#
+		# Run gen_report_views.sql -- These are views generated by srjs with queryUnits
+		#
+		do_log "Re-installing gen_report_views.sql"
+		run_in_schema $schema $SQLPATH/gen_report_views.sql >> $LOGDIR/migrate.log 2>&1
+		if [ $? -ne 0 ] ; then
+			do_log "Installing gen_report_views.sql failed"
+		else
+			do_log "gen_report_views.sql ran successfully"
+		fi
+
+		#
+		# Run bi_views.sql -- These are views used by bi tool
+		#
+		# do_log "Re-installing bi_views.sql"
+		# run_in_all_schemas $SQLPATH/bi_views.sql >> $LOGDIR/migrate.log 2>&1
+		# if [ $? -ne 0 ] ; then
+			# do_log "Installing bi_views.sql failed"
+		# else
+			# do_log "bi_views.sql ran successfully"
+		# fi
+
+		#
+		# Update any custom reports based on the report name.
+		#
+		$BINPATH/custom_reports_update.sh
+
+		# Run custom views
+
+		for f in $CUSTOMNEWSQLPATH ; do
+		  do_log "Processing custom sql file from new app $f ..."
+		  run_in_all_schemas $f >> $LOGDIR/custom_views.log 2>&1
+		done
+
+		#
+		# Update any custom views
+		#
+		$BINPATH/custom_views_update.sh
+
+
+		#
+		# Run auditlog_triggers.sql -- even if no change in any trigger, it is OK to run this
+		#
+		do_log "Re-installing audit log/triggers (auditlog_triggers.sql)"
+		run_in_all_schemas $SQLPATH/auditlog_triggers.sql >> $LOGDIR/migrate.log 2>&1
+		if [ $? -ne 0 ] ; then
+			do_log "Installing audit log triggers (auditlog_triggers.sql) failed"
+		else
+			do_log "auditlog_triggers.sql ran successfully"
+		fi
+	fi
+done
+#add context for liquibase if newmajor was less than 1113
+if [[ $NEWMAJOR -ge 1113 ]] ; then
+
+	do_log "Running initial_liquibase_migrations"
+	for schema in `get_all_schemas` ; do
+		restored_db_ver_var=SCHEMA_VER_$schema
+		restored_db_ver=$oldmajor
+		if [ ! -z ${!restored_db_ver_var} ] ; then
+			restored_dboldver=${!restored_db_ver_var}
+			restored_dboldvern=`get_numeric_version $restored_dboldver`
+			restored_db_ver=$((restored_dboldvern/100))
+		fi
+		LIQUIBASEREADY=`echo "\\t\\d $schema.databasechangelog" | psql -U $PGUSER -d $DB -q --no-psqlrc`
+		if [ -z "$LIQUIBASEREADY" ] ; then
+			run_in_schema $schema $NEWSQLPATH/initial_liquibase_migration.sql >> $LOGDIR/migrate.log 2>&1 
+			#run-create-tables; in the case where previous migrations have missed creating tables
+			#create missing tables; this can happen if init.sql misses some migrations
+			run_in_schema $schema $NEWSQLPATH/create-tables.sql >> $LOGDIR/create-tables.log 2>&1
+			run_stmt_in_schema $schema "update databasechangelog set filename=replace(filename,'/root/webapps/instahms/src/main/resources','${APPROOT}/WEB-INF/classes'), md5sum = null;" >> $LOGDIR/migrate.log 2>&1 
+		else
+			run_stmt_in_schema $schema "update databasechangelog set filename=replace(filename,'/root/webapps/instahms${restored_db_ver}/WEB-INF/classes','${APPROOT}/WEB-INF/classes'), md5sum = null;" >> $LOGDIR/migrate.log 2>&1 
+		fi
+	done
+fi
+
+if [ -f $APPROOT/WEB-INF/install/bin/install_dependency.sh ] ; then 
+	do_log "Installing dependencies"
+	sudo chmod +x $APPROOT/WEB-INF/install/bin/install_dependency.sh
+	sudo $APPROOT/WEB-INF/install/bin/install_dependency.sh
+	if [ -f $APPROOT/requirements.txt ] ; then 
+		do_log "Installing python3 packages via pip"
+		sudo pip3 install -r $APPROOT/requirements.txt
+	fi
+fi
+
+if [ -f $APPROOT/WEB-INF/lib/CM-UareU-RTE-2.3.2-1.20160728_0125.tar.gz ] ; then 
+	if [ ! -d /opt/Crossmatch/urusdk-linux ] ; then
+		do_log "Installing Crossmatch U-are-U RTE.."
+		sudo tar -xvf $APPROOT/WEB-INF/lib/CM-UareU-RTE-2.3.2-1.20160728_0125.tar.gz -C /tmp
+		sudo /tmp/CM-UareU-RTE-2.3.2-1.20160728_0125/install
+	fi
+fi
+
+do_log "Checking and installing fonts"
+if [ ! -d "/usr/share/fonts/truetype/unicodefonts" ] ; then
+	sudo rm -rf /usr/share/fonts/truetype/*
+	sudo rm -rf /usr/share/fonts/unicode/*
+	sudo mkdir -p /usr/share/fonts/truetype
+	sudo tar -xvf $APPROOT/WEB-INF/install/lib/fonts.tar.gz -C /usr/share/fonts/
+	#Support for Versions < 12.3.17 if installation is for PR to be removed post Jun 2021
+	sudo mkdir -p /usr/share/fonts/unicode
+	ln -s /usr/share/fonts/truetype/unicodefonts/arialunicodems.ttf /usr/share/fonts/truetype/msttcorefonts/arialunicodems.ttf
+	ln -s /usr/share/fonts/truetype/unicodefonts/arialunicodems.ttf /usr/share/fonts/unicode/arial.ttf
+	ln -s /usr/share/fonts/truetype/unicodefonts/arialunicodems.ttf /usr/share/fonts/unicode/Arial.ttf
+fi
+
+prec3schemas=`check_for_schemas "(SELECT after_decimal_digits FROM generic_preferences) = 3"`
+
+if [ $NEWMAJOR -ge 1113 ]; then
+	#liquibase update
+	do_log "Running liquibase update"
+	sudo chmod +x $APPROOT/upgrade_schema.py
+	sudo rm -f $LOGDIR/liquibase.log
+	for schema in `get_all_schemas` ; do
+		sudo cp $APPROOT/WEB-INF/classes/liquibase/liquibase.update.properties.config $APPROOT/WEB-INF/classes/liquibase/liquibase.update.properties
+		precision=2
+		if [[ $prec3schemas == $schema ]] ; then
+		  precision=3
+		fi
+		if [[ $prec3schemas == *" $schema "* ]] ; then
+		  precision=3
+		fi
+		if [[ $prec3schemas == *"$schema "* ]] ; then
+		  precision=3
+		fi
+		if [[ $prec3schemas == *" $schema"* ]] ; then
+		  precision=3
+		fi
+		do_log "Detected precision for schema $schema is $precision. Passing same to liquibase."
+		sudo python3 $APPROOT/upgrade_schema.py $schema $DB $APPROOT $precision
+	done
+
+	error_messages=`grep 'ERROR' $LOGDIR/liquibase.log`
+	if [ ! -z "$error_messages" ]; then
+		do_log "Error messages in liquibase.log; Re-creating all views(vft,report-views,accounting-views,gen-report-views, audit-log-triggers)"
+		run_in_all_schemas $APPROOT/WEB-INF/classes/migrations/999999999985-vft.sql >> $LOGDIR/migrate.log 2>&1
+		run_in_all_schemas $APPROOT/WEB-INF/classes/migrations/999999999986-report-views.sql >> $LOGDIR/migrate.log 2>&1
+		run_in_all_schemas $APPROOT/WEB-INF/classes/migrations/999999999987-accounting-views.sql >> $LOGDIR/migrate.log 2>&1
+		run_in_all_schemas $APPROOT/WEB-INF/classes/migrations/999999999988-gen-report-views.sql >> $LOGDIR/migrate.log 2>&1
+		run_in_all_schemas $APPROOT/WEB-INF/classes/migrations/999999999988-audit-log-triggers.sql >> $LOGDIR/migrate.log 2>&1
+	fi
+fi
+#
+# Give rights for all report views to the user called 'reports'
+# Give rights for all export views to the user called 'exports'
+#
+if [ "$HA_IS_STANDBY" != "Y" ] ; then
+	# reports
+	echo '\t \du reports' | psql -q | grep -q reports
+	if [ $? -eq 0 ] ; then
+		for schema in `get_all_schemas` ; do
+			run_stmt_in_schema $schema "GRANT USAGE ON SCHEMA $schema TO reports" >> $LOGDIR/migrate.log 2>&1
+			run_stmt_in_schema $schema "SELECT grant_readonly_pattern('reports', '$schema', 'rpt_%')" >> $LOGDIR/migrate.log 2>&1
+		done
+	else
+		do_log "User reports not found, skipping report views GRANT"
+	fi
+	# exports
+	echo '\t \du exports' | psql -q | grep -q exports
+	if [ $? -eq 0 ] ; then
+		for schema in `get_all_schemas` ; do
+			run_stmt_in_schema $schema "GRANT USAGE ON SCHEMA $schema TO exports" >> $LOGDIR/migrate.log 2>&1
+			run_stmt_in_schema $schema "SELECT grant_readonly_pattern('exports', '$schema', 'aev_%')" >> $LOGDIR/migrate.log 2>&1
+		done
+	else
+		do_log "User exports not found, skipping export views GRANT"
+	fi
+	users=`psql -qAt -d $DB -c "SELECT u.usename FROM pg_catalog.pg_user u;"`
+	if [ $? -eq 0 ]; then
+		for user in $users; do
+			for schema in `get_all_schemas`; do
+				run_stmt_in_schema $schema "ALTER USER $user IN DATABASE $DB SET application.username TO '_system'";
+				run_stmt_in_schema $schema "GRANT SELECT ON user_confidentiality_association TO $user";
+				run_stmt_in_schema $schema "GRANT SELECT ON confidentiality_grp_master TO $user";
+				run_stmt_in_schema $schema "GRANT SELECT ON user_mrno_association TO $user";
+			done
+		done
+	fi
+fi
+
+#
+# Run any special migrations which can't be done using db_changes.sql, requiring
+# tools other than plain sql.
+#
+do_log "Running special migrations"
+sudo $BINPATH/spl_migrate.sh $OLDVER
+do_log "Special migrations completed"
+#
+# copy the migration results to apps
+#
+if is_local_server ; then
+	sudo /usr/bin/rsync -az $LOGDIR/migrate.log $HUBVPN::$HOST/$APP
+	echo $NEWVER > /tmp/version
+	sudo /usr/bin/rsync -az /tmp/version $HUBVPN::$HOST/$APP
+fi
+
+if [ "$UPGRADE_RESTART" != "N" -a "$HA_IS_STANDBY" != "Y" ] ; then
+	if [ "$ENABLE_TESTING" = "Y" ] ; then
+		do_log "Removing catalina.out on testing server."
+		sudo rm $TOMCAT_HOME/logs/catalina.out
+	fi
+	do_log "Restarting tomcat."
+	sudo /etc/init.d/tomcat-9 restart
+	if [ "$MOD_DIALYSIS" == "Y" ] ; then
+		do_log "Starting dialysis poller jobs."
+		$BINPATH/dialysis_poll_dbb06.pl &
+		$BINPATH/dialysis_poll_dbb27.pl &
+	fi
+
+if [ ! -f /etc/hms/hl7_cron ] ;
+then
+	#uncomment hl7 cron jobs in linux crontab and copy to hl7 file
+	sudo crontab -l | sed '/install\/bin\/hl7/ s/^#//' | grep 'install/bin/hl7' > /etc/cron.d/hl7
+else
+	sudo mv /etc/hms/hl7_cron /etc/cron.d/hl7
+fi
+
+sudo chmod +x /etc/cron.d/hl7
+
+	sudo $BINPATH/hl7_socket_in.pl &
+
+else
+	do_log "Not restarting tomcat as per preference setting."
+fi
+
+
+#
+# insert server side encryption key for minio
+#
+mkdir -p /var/tmp/allspark
+sse_key=`openssl rand -base64 32`
+for schema in `get_live_schemas` ; do
+	psql --no-psqlrc --no-align <<EOF
+		set search_path to $schema;
+		-- \set ON_ERROR_STOP t
+		INSERT INTO minio_sse (sse_key) SELECT 'sse_key' WHERE
+        NOT EXISTS (
+            SELECT onerow_id FROM minio_sse WHERE onerow_id = TRUE
+        );
+EOF
+#backup sse_key in allspark
+jq -n --arg key "$sse_key" --arg schema "$schema" '{minio_sse_key:$key, schema:$schema}' > /var/tmp/allspark/minio_sse_key.json
+done
+
+#
+# In case of an auto-upgrade, signal that we are done
+#
+sudo rm -f $APPHOME/upgrading
+
+do_log "------- Upgrade end: `date` ---------"
+do_log ""
+
+if is_local_server ; then
+	sudo /usr/bin/rsync -az $LOGDIR/upgrade.log $HUBVPN::$HOST/$APP
+fi
+
+exit 0

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+  <!DOCTYPE web-app PUBLIC
+	"-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+	"http://java.sun.com/dtd/web-app_2_3.dtd">
+
+<web-app xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd" version="2.4">
+	<filter>
+    	<filter-name>RequestContextFilter</filter-name>
+    	<filter-class>com.bob.hms.common.RequestContextFilter</filter-class>
+  	</filter>
+	<filter-mapping>
+	  <filter-name>RequestContextFilter</filter-name>
+	  <url-pattern>*.do</url-pattern>
+	</filter-mapping>
+	<filter>
+        <filter-name>CORSRequestHandler</filter-name>
+    	<filter-class>com.insta.instaapi.common.CorsRequestHandler</filter-class>
+  	</filter>
+	<filter-mapping>
+	    <filter-name>CORSRequestHandler</filter-name>
+	    <url-pattern>*.do</url-pattern>
+	</filter-mapping>
+	<!-- <filter>
+    	<filter-name>SessionCheckFilter</filter-name>
+    	<filter-class>com.instamobileapp.mhms.common.MobileSessionCheckFilter</filter-class>
+  	</filter>
+	<filter-mapping>
+	  <filter-name>SessionCheckFilter</filter-name>
+	  <url-pattern>*.do</url-pattern>
+	</filter-mapping> -->
+	<filter>
+		<filter-name>RequestHandlerKeyCheckFilter</filter-name>
+		<filter-class>com.insta.hms.api.RequestHandlerKeyCheckFilter</filter-class>
+		<init-param>
+	       <param-name>excludePatterns</param-name>
+	       <!-- Comma separated values -->
+	       <param-value>/api/version.json,/api/customer/</param-value>
+	    </init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>RequestHandlerKeyCheckFilter</filter-name>
+		<url-pattern>/api/*</url-pattern>
+	</filter-mapping>
+	<servlet>
+	  <servlet-name>action</servlet-name>
+	    <servlet-class>org.apache.struts.action.ActionServlet</servlet-class>
+	    <init-param>
+	      <param-name>config</param-name>
+	      <param-value>/WEB-INF/struts-config.xml</param-value>
+	    </init-param>
+	    <init-param>
+	      <param-name>debug</param-name>
+	      <param-value>2</param-value>
+	    </init-param>
+	    <init-param>
+	      <param-name>detail</param-name>
+	      <param-value>2</param-value>
+	    </init-param>
+	    <init-param>
+	      <param-name>application</param-name>
+	      <param-value>java.resources.application</param-value>
+	    </init-param>
+    	<load-on-startup>2</load-on-startup>
+  	</servlet>
+
+ 	<servlet-mapping>
+		<servlet-name>action</servlet-name>
+		<url-pattern>*.do</url-pattern>
+	</servlet-mapping>
+
+	<welcome-file-list>
+    	<welcome-file>home.do</welcome-file>
+  	</welcome-file-list>
+
+  	<session-config>
+    	<session-timeout>30</session-timeout>
+  	</session-config>
+	<servlet>
+		<servlet-name>spring</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>
+				/WEB-INF/spring/spring-config.apps.xml
+				/WEB-INF/spring/insta-api-config.xml
+				/WEB-INF/spring/insta-quartz.apps.xml
+			</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+        <async-supported>true</async-supported>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>spring</servlet-name>
+        <url-pattern>/ws/*</url-pattern>
+		<url-pattern>*.htm</url-pattern>
+		<url-pattern>*.json</url-pattern>
+		<url-pattern>*.xml</url-pattern>
+	</servlet-mapping>
+<!-- <listener>
+		<listener-class>com.insta.instaapi.common.SessionListener</listener-class>
+	</listener> -->
+</web-app>

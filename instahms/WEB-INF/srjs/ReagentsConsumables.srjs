@@ -1,0 +1,315 @@
+{
+    "title": "Reagent / Consumable",
+    "reportGroup": "Stores Mgmt Reports",
+    "dateFields": [
+        "date_time"
+    ],
+    "description": "This report shows the consumption of reagents / consumables from Diagnostics, Services and Operations.",
+    "defaultShowFields": [
+        "activity_name",
+        "medicine_name",
+        "batch_no",
+        "mrp",
+        "cost_price",
+        "consumed_qty",
+        "user_name",
+        "dept_name"
+    ],
+    "fields": {
+        "activity_name": {
+            "displayName": "Activity Name",
+            "width": "120",
+            "filterable": true,
+            "groupable": true,
+            "expressionLines": [
+                " CASE WHEN (um.reagent_type is not null AND um.reagent_type = 'S') THEN s.service_name ",
+                " WHEN (um.reagent_type IS NOT NULL AND  um.reagent_type = 'D') THEN d.test_name ",
+                " WHEN (um.reagent_type IS NOT NULL AND  um.reagent_type = 'O') THEN om.operation_name ",
+                " ELSE '(None)' END "
+            ],
+            "table": "um,d,s,om",
+            "allowedValuesQuery": "SELECT test_name AS activit_name FROM diagnostics UNION ALL SELECT service_name AS activity_name FROM services"
+        },
+        "reagent_type": {
+            "displayName": "Consumption Type",
+            "width": "120",
+            "filterable": true,
+            "groupable": true,
+            "expressionLines": [
+                " CASE WHEN (um.reagent_type is not null AND um.reagent_type = 'S') THEN 'Service' ",
+                " WHEN (um.reagent_type IS NOT NULL AND  um.reagent_type = 'D') THEN 'Test' ",
+                " WHEN (um.reagent_type IS NOT NULL AND  um.reagent_type = 'O') THEN 'Operation' ",
+                " ELSE 'General' END "
+            ],
+            "table": "um,d,s,om",
+            "allowedValues": [
+                "Service",
+                "Test",
+                "Operation",
+                "General"
+            ]
+        },
+        "medicine_name": {
+            "displayName": "Reagent / Consumable Name",
+            "width": "180",
+            "filterable": true,
+            "groupable": true,
+            "expression": "sitd.medicine_name",
+            "table": "sitd"
+        },
+        "cust_item_code": {
+            "displayName": "Custom Item Code",
+            "width": "180",
+            "filterable": true,
+            "groupable": true,
+            "expression": "sitd.cust_item_code",
+            "table": "sitd"
+        },
+        "batch_no": {
+            "displayName": "Batch No",
+            "width": "70",
+            "expression": "sibd.batch_no",
+            "table": "ud"
+        },
+        "mrp": {
+            "displayName": "MRP",
+            "width": "70",
+            "expression": "round((sibd.mrp/sitd.issue_base_unit)*ud.qty::numeric,2)",
+            "table": "sibd,ud"
+        },
+        "cost_price": {
+            "displayName": "Cost Price",
+            "width": "70",
+            "expression": "round(cost_value,2)",
+            "table": "ud"
+        },
+        "actual_qty": {
+            "displayName": "Actual Qty",
+            "width": "50",
+            "aggFunction": "sum",
+            "dataType": "numeric",
+            "decimalType": "quantity",
+            "expression": "COALESCE(COALESCE(sc.quantity_needed,dr.quantity_needed),oc.qty_needed)",
+            "table": "sc,dr,oc"
+        },
+        "consumed_qty": {
+            "displayName": "Qty Consumed",
+            "width": "70",
+            "aggFunction": "sum",
+            "dataType": "numeric",
+            "decimalType": "quantity",
+            "expression": "ud.qty",
+            "table": "ud"
+        },
+        "date_time": {
+            "displayName": "Date/Time",
+            "width": "100",
+            "dataType": "date",
+            "expression": "date(um.date_time)"
+        },
+        "user_name": {
+            "displayName": "User Name",
+            "width": "100",
+            "filterable": true,
+            "groupable": true,
+            "expression": "um.user_name",
+            "allowedValuesQuery": "SELECT emp_username AS user_name FROM u_user JOIN u_role USING(role_id) WHERE portal_id='N' GROUP BY emp_username"
+        },
+        "dept_name": {
+            "displayName": "Dept",
+            "width": "120",
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT dept_name FROM stores ORDER BY dept_name",
+            "expression": "st.dept_name",
+            "table": "st"
+        },
+        "center_name": {
+            "displayName": "Center Name",
+            "filterable": true,
+            "groupable": true,
+            "width": "100",
+            "allowedValuesQuery": "SELECT center_name FROM hospital_center_master WHERE center_id!=0 order by center_name",
+            "expression": "hcm.center_name",
+            "table": "hcm"
+        },
+        "patient_name": {
+            "displayName": "Patient Name",
+            "width": "150",
+            "dataType": "string",
+            "groupable": true,
+            "filterable": true,
+            "expressionLines": [
+                " TRIM(COALESCE(sm_tp.salutation,sm_sp.salutation,sm_opv.salutation,'') || ' ' || ",
+                " COALESCE(pd_tp.patient_name,pd_sp.patient_name,pd_opv.patient_name,'') || ' ' || ",
+                " COALESCE(pd_tp.middle_name,pd_sp.middle_name,pd_opv.middle_name,'') || ' ' || ",
+                " COALESCE(pd_tp.last_name,pd_sp.last_name,pd_opv.last_name,'')) "
+            ],
+            "table": "sm_tp,sm_sp,sm_opv,pd_tp,pd_sp,pd_opv"
+        },
+        "mr_no": {
+            "displayName": "MR No.",
+            "width": "100",
+            "filterable": true,
+            "dataType": "string",
+            "groupable": true,
+            "expression": "COALESCE(pd_tp.mr_no,pd_sp.mr_no,pd_opv.mr_no)",
+            "table": "pd_tp,pd_sp,pd_opv"
+        },
+        "name_local_language": {
+                     "table": "pd_tp,pd_sp,pd_opv",
+                     "dataType": "string",
+                     "displayName": "Name In Local Language",
+                     "width": 150,
+                     "expression": "COALESCE(pd_tp.name_local_language,pd_sp.name_local_language,pd_opv.name_local_language)"
+                 }
+    },
+    "queryUnits": [
+        {
+            "mainTableAlias": "um",
+            "mainTableName": "store_reagent_usage_main",
+            "groupBy": false,
+            "joinTables": [
+                {
+                    "name": "store_reagent_usage_details",
+                    "alias": "ud",
+                    "expression": "ON (um.reagent_usage_seq = ud.reagent_usage_seq)",
+                    "dependsOn": "um",
+                    "type": "JOIN"
+                },
+                {
+                    "name": "store_item_batch_details",
+                    "alias": "sibd",
+                    "dependsOn": "ud",
+                    "expression": "ON(sibd.item_batch_id = ud.item_batch_id)"
+                },
+                {
+                    "name": "diagnostics",
+                    "alias": "d",
+                    "dependsOn": "um",
+                    "expression": "ON (d.test_id = um.consumer_id)",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "services",
+                    "alias": "s",
+                    "dependsOn": "um",
+                    "expression": "ON (s.service_id = um.consumer_id)",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "operation_master",
+                    "alias": "om",
+                    "dependsOn": "um",
+                    "expression": "ON (om.op_id = um.consumer_id)",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "store_item_details",
+                    "alias": "sitd",
+                    "dependsOn": "sibd",
+                    "expression": "ON (sitd.medicine_id = sibd.medicine_id)",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "diagnostics_reagents",
+                    "alias": "dr",
+                    "dependsOn": "d,sitd",
+                    "expression": "ON (dr.test_id = d.test_id AND dr.reagent_id=sitd.medicine_id)",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "service_consumables",
+                    "alias": "sc",
+                    "dependsOn": "s,sitd",
+                    "expression": "ON (sc.service_id = s.service_id AND sc.consumable_id = sitd.medicine_id)",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "ot_consumables",
+                    "alias": "oc",
+                    "dependsOn": "om,sitd",
+                    "expression": "ON (oc.operation_id = om.op_id and oc.consumable_id = sitd.medicine_id)",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "tests_prescribed",
+                    "alias": "tp",
+                    "dependsOn": "um",
+                    "expression": "ON (tp.prescribed_id = um.ref_no and tp.test_id = um.consumer_id)",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "services_prescribed",
+                    "alias": "sp",
+                    "dependsOn": "um",
+                    "expression": "ON (sp.prescription_id = um.ref_no and sp.service_id = um.consumer_id)",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "advanced_operations_view",
+                    "alias": "opv",
+                    "dependsOn": "um",
+                    "expression": "ON (opv.prescription_id = um.ref_no and opv.operation_id = um.consumer_id)",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "patient_details",
+                    "alias": "pd_tp",
+                    "dependsOn": "tp",
+                    "expression": "ON (pd_tp.mr_no = tp.mr_no)",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "patient_details",
+                    "alias": "pd_sp",
+                    "dependsOn": "sp",
+                    "expression": "ON ( pd_sp.mr_no = sp.mr_no)",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "patient_details",
+                    "alias": "pd_opv",
+                    "dependsOn": "opv",
+                    "expression": "ON (pd_opv.mr_no = opv.mr_no)",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "salutation_master",
+                    "alias": "sm_tp",
+                    "dependsOn": "pd_tp",
+                    "expression": "ON pd_tp.salutation= sm_tp.salutation_id",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "salutation_master",
+                    "alias": "sm_sp",
+                    "dependsOn": "pd_sp",
+                    "expression": "ON pd_sp.salutation= sm_sp.salutation_id",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "salutation_master",
+                    "alias": "sm_opv",
+                    "dependsOn": "pd_opv",
+                    "expression": "ON pd_opv.salutation= sm_opv.salutation_id",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "stores",
+                    "alias": "st",
+                    "dependsOn": "um",
+                    "expression": "ON (st.dept_id = um.store_id)",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "hospital_center_master",
+                    "alias": "hcm",
+                    "dependsOn": "st",
+                    "expression": "ON(st.center_id=hcm.center_id)",
+                    "type": "LEFT"
+                }
+            ]
+        }
+    ]
+}

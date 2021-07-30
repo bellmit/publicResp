@@ -1,0 +1,391 @@
+#!/bin/bash
+#
+# Postinstall script: this is called after the software has been copied into the
+# app root via upgrade or install. Here, we can copy files to other places in the
+# filesystem, and do any changes to the app root contents depending on specific
+# install target.
+#
+
+source `dirname $0`/functions
+source /etc/hms/options
+[ -f /etc/hms/options.$APP ] && source /etc/hms/options.$APP
+
+LOGFILE=$LOGDIR/postinstall.log
+
+if [ -z "$APPHOME" ] ; then
+	APPHOME="/root/webapps"
+fi
+
+if [ -z "$TOMCAT_HOME" ] ; then
+	TOMCAT_HOME="/usr/local/tomcat-9"
+fi
+
+if [ -z "$HMSUSER" ]; then
+	HMSUSER="root"
+fi
+
+if [ -z "$HMS_DBCONN_MAXACTIVE" ]; then
+	if [ "$ENABLE_TESTING" = 'Y' ] ; then
+		HMS_DBCONN_MAXACTIVE=15
+	else
+		HMS_DBCONN_MAXACTIVE=50
+	fi
+fi
+
+if [ -z "$HMS_DBCONN_MAXIDLE" ]; then
+	if [ "$ENABLE_TESTING" = 'Y' ] ; then
+		HMS_DBCONN_MAXIDLE=10
+	else
+		HMS_DBCONN_MAXIDLE=25
+	fi
+fi
+
+if [ -z "$HMS_DBCONN_MINIDLE" ]; then
+	if [ "$ENABLE_TESTING" = 'Y' ] ; then
+		HMS_DBCONN_MINIDLE=5
+	else
+		HMS_DBCONN_MINIDLE=15
+	fi
+fi
+
+if [ -z "$HMSQUARTZ_DBCONN_MAXACTIVE" ]; then
+	if [ "$ENABLE_TESTING" = 'Y' ] ; then
+		HMSQUARTZ_DBCONN_MAXACTIVE=10
+	else
+		HMSQUARTZ_DBCONN_MAXACTIVE=15
+	fi
+fi
+
+if [ -z "$HMSQUARTZ_DBCONN_MAXIDLE" ]; then
+	if [ "$ENABLE_TESTING" = 'Y' ] ; then
+		HMSQUARTZ_DBCONN_MAXIDLE=6
+	else
+		HMSQUARTZ_DBCONN_MAXIDLE=10
+	fi
+fi
+
+if [ -z "$HMSQUARTZ_DBCONN_MINIDLE" ]; then
+	if [ "$ENABLE_TESTING" = 'Y' ] ; then
+		HMSQUARTZ_DBCONN_MINIDLE=3
+	else
+		HMSQUARTZ_DBCONN_MINIDLE=5
+	fi
+fi
+
+APPHOMEESCAPED=$(sed 's/\//\\\//g' <<< $APPHOME)
+TOMCATHOMEESCAPED=$(sed 's/\//\\\//g' <<< $TOMCAT_HOME)
+HMSWORKHOMEESCAPED=$(sed 's/\//\\\//g' <<< $HMS_WORK_HOME)
+
+# default unset prefs
+[ -z $WEEK_BEG ] && WEEK_BEG=Mon
+
+###########################
+# PREREQUISITES
+# The following must be installed already on the server. The rest, we take care of
+# in this script
+#  - default tomcat 5.5 installation at $TOMCAT_HOME
+#  - java installation at /usr/lib/jvm/java
+###########################
+
+#
+# Clean out the working directory for tomcat
+#
+do_log "Cleaning out work directory"
+sudo rm -rf $TOMCAT_HOME/work/Catalina/localhost/insta${APP}
+
+CURVER=`get_current_version`
+CURVERN=`get_numeric_version $CURVER`
+CURMAJOR=$((CURVERN/100))
+
+sudo cp $APPROOT/WEB-INF/web.xml $APPROOT/WEB-INF/web.xml.orig
+if [ "$ENABLE_SSL" == "Y" ] ; then
+	sudo sed --in-place -e '/REMOVE_FOR_SSL/d' $APPROOT/WEB-INF/web.xml
+fi
+
+if [ "$ENABLE_AD" == "Y" ] ; then
+	sudo sed --in-place -e '/REMOVE_FOR_AD_AUTHENTICATION/d' $APPROOT/WEB-INF/web.xml
+	sudo sed --in-place -e "s/{tomcat_home}/$TOMCATHOMEESCAPED/g" $APPROOT/WEB-INF/web.xml
+	if [ -z "$SPNEGO_USERNAME" -o "$SPNEGO_USERNAME" = " " ]; then
+		echo "Please specify spnego_username for ad authentication and rerun the postinstall script"
+		exit 1
+	else
+		sudo sed --in-place -e "s/{spnego_username}/$SPNEGO_USERNAME/g" $APPROOT/WEB-INF/web.xml
+	fi
+
+	if [ -z "$SPNEGO_PASSWORD" -o "$SPNEGO_PASSWORD" = " " ]; then
+		echo "Please specify spnego_password for ad authentication and rerun the postinstall script"
+		exit 1
+	else
+		sudo sed --in-place -e "s/{spnego_password}/$SPNEGO_PASSWORD/g" $APPROOT/WEB-INF/web.xml
+	fi
+
+	if [ -z "$AD_DOMAIN_NAME" -o "$AD_DOMAIN_NAME" = " " ]; then
+		echo "Please specify AD domain name in capitals for ad authentication and rerun the postinstall script"
+		exit 1
+	else
+		export AD_DOMAIN_NAME=$(echo $AD_DOMAIN_NAME | sed -e 's/\(.*\)/\U\1/g')
+		sudo sed --in-place -e "s/{AD_DOMAIN_NAME}/$AD_DOMAIN_NAME/g" $APPROOT/ldap/krb5.conf
+	fi
+
+	if [ -z "$AD_SERVER_NAME" -o "$AD_SERVER_NAME" = " " ]; then
+		echo "Please specify AD server name for ad authentication and rerun the postinstall script"
+		exit 1
+	else
+		sudo sed --in-place -e "s/{AD_SERVER_NAME}/$AD_SERVER_NAME/g" $APPROOT/ldap/krb5.conf
+	fi
+
+	sudo cp -r $APPROOT/ldap $TOMCAT_HOME/bin/
+fi
+
+if [ ! -z $DEFAULT_HOSPITAL ] ; then
+	sudo sed --in-place -e "s/defaultHospital=/defaultHospital=$DEFAULT_HOSPITAL/g" \
+		$APPROOT/WEB-INF/classes/java/resources/application.properties
+fi
+
+if [ ! -z $CSV_IMPORT_URI ] ; then
+	sudo sed --in-place -e "s|uri\.import\.csvs=.*|uri.import.csvs=$CSV_IMPORT_URI|g" \
+		$APPROOT/WEB-INF/classes/java/resources/environment.properties
+fi
+
+if [ ! -z $CSV_EXPORT_URI ] ; then
+	sudo sed --in-place -e "s|uri\.export\.csvs=.*|uri.export.csvs=$CSV_EXPORT_URI|g" \
+		$APPROOT/WEB-INF/classes/java/resources/environment.properties
+fi
+
+NEXUSROOT=$APPHOME/instanexus
+if [ ! -d $NEXUSROOT ] ; then
+	echo "Creating instanexus in webapps"
+	sudo mkdir $NEXUSROOT
+	sudo /usr/bin/rsync -az $HUBVPN::builds/nexusBuilds/ $NEXUSROOT
+	[ $? -ne 0 ] && echo "Failed to sync nexus builds"	
+fi
+#
+# Install our deployment descriptor and modify the primrose conf file
+#
+do_log "Installing deployment descriptor"
+#
+# Add simple nexus context for serving static downloads
+#
+NEXUS_CONTEXT_XML=$TOMCAT_HOME/conf/Catalina/localhost/instanexus.xml
+sudo cp $INSTPATH/nexus_context.xml $NEXUS_CONTEXT_XML
+sudo sed --in-place -e "s/__apphome__/$APPHOMEESCAPED/g" $NEXUS_CONTEXT_XML
+
+CONTEXT_XML=$TOMCAT_HOME/conf/Catalina/localhost/insta${APP}.xml
+
+sudo cp $INSTPATH/context.xml $CONTEXT_XML
+sudo sed --in-place -e "s/__app__/$APP/g" $CONTEXT_XML
+sudo sed --in-place -e "s/__apphome__/$APPHOMEESCAPED/g" $CONTEXT_XML
+sudo sed --in-place -e "s/__quartzdb__/$QUARTZDB/g" $CONTEXT_XML
+
+#Set Database Connection Limits for HMS Application
+sudo sed --in-place -e "s/__hms_db_minidle__/$HMS_DBCONN_MINIDLE/g" $CONTEXT_XML
+sudo sed --in-place -e "s/__hms_db_maxidle__/$HMS_DBCONN_MAXIDLE/g" $CONTEXT_XML
+sudo sed --in-place -e "s/__hms_db_maxactive__/$HMS_DBCONN_MAXACTIVE/g" $CONTEXT_XML
+
+#Set Database Connection Limits for HMS Quartz Processor
+sudo sed --in-place -e "s/__hms_quartz_minidle__/$HMSQUARTZ_DBCONN_MINIDLE/g" $CONTEXT_XML
+sudo sed --in-place -e "s/__hms_quartz_maxidle__/$HMSQUARTZ_DBCONN_MAXIDLE/g" $CONTEXT_XML
+sudo sed --in-place -e "s/__hms_quartz_maxactive__/$HMSQUARTZ_DBCONN_MAXACTIVE/g" $CONTEXT_XML
+
+# If a remote host is not defined, the  set it to local host else provide the DBHOST
+if [ -z "$DBHOST" -o "$DBHOST" = " " ]; then
+       sudo sed --in-place -e "s/__dbhost__/127.0.0.1/g" $CONTEXT_XML 
+else 
+       sudo sed --in-place -e "s/__dbhost__/$DBHOST/g" $CONTEXT_XML 
+fi
+
+# set default schema in context.xml
+if [ ! -z $DEFAULT_HOSPITAL ] ; then
+	sudo sed --in-place -e "s/__schema__/$DEFAULT_HOSPITAL/g" $CONTEXT_XML 
+fi
+
+# set default schema in context.xml
+if [ ! -z $SSO_LOGIN_ONLY ] ; then
+	sudo sed --in-place -e "s/__ssologinonly__/$SSO_LOGIN_ONLY/g" $CONTEXT_XML 
+else
+	sudo sed --in-place -e "s/__ssologinonly__/false/g" $CONTEXT_XML 
+fi
+# If postgres password  is not defined, the  set it to empty
+if [ -z "$DBPASSWORD" -o "$DBPASSWORD" = " " ]; then
+       sudo sed --in-place -e "s/"__dbpassword__"/""/g" $CONTEXT_XML
+else
+       sudo sed --in-place -e "s/__dbpassword__/$DBPASSWORD/g" $CONTEXT_XML
+fi
+
+# If DBUSER  is not defined, the  set it as postgres user
+if [ -z "$DBUSER" -o "$DBUSER" = " " ]; then
+       sudo sed --in-place -e "s/"__dbuser__"/"postgres"/g" $CONTEXT_XML
+else
+       sudo sed --in-place -e "s/__dbuser__/$DBUSER/g" $CONTEXT_XML
+fi
+
+# If DBPORT  is not defined, then set it as 5432
+if [ -z "$DBPORT" -o "$DBPORT" = " " ]; then
+       sudo sed --in-place -e "s/__dbport__/5432/g" $CONTEXT_XML
+else
+       sudo sed --in-place -e "s/__dbport__/$DBPORT/g" $CONTEXT_XML
+fi
+
+# If READ_DBHOST  is defined
+if [ ! -z "$PGREADHOST"  ] ; then
+   sudo sed --in-place -e "/READ_REPLICA/d" $CONTEXT_XML
+   sudo sed --in-place -e "s/__read_dbhost__/$READ_DBHOST/g" $CONTEXT_XML
+fi
+
+#
+# copy in any files that are to be moved into tomcat's common/lib
+#
+do_log "Copying libraries that are required in tomcat's common/lib"
+TOMCAT_LIB=$TOMCAT_HOME/lib
+sudo cp $APPROOT/WEB-INF/commonlib/*.jar $TOMCAT_LIB/
+#
+# Select the appropriate postgres driver, depending on the installed postgres
+# version. We have both drivers in our source directory, we just remove one.
+#
+
+sudo rm -f $TOMCAT_LIB/postgresql-8.*
+sudo rm -f $TOMCAT_LIB/postgresql-9.2-*
+if [[ $PG_VER_NUM -gt 1000 ]] ; then
+	sudo rm -f $TOMCAT_LIB/postgresql-9.*
+elif [[ "$PG_VER" == "9.3" ]] ; then
+	# remove all drivers except postgresql-9.3
+	sudo rm -f $TOMCAT_LIB/postgresql-42.*
+fi
+
+ENDORSED=$TOMCAT_HOME/endorsed
+sudo mkdir -p $ENDORSED
+sudo cp $APPROOT/WEB-INF/commonlib/endorsed/*.jar $ENDORSED/
+
+#
+# copy in the logo for favicon.ico
+#
+sudo cp $APPROOT/images/favicon.ico $TOMCAT_HOME/webapps/ROOT/
+
+# Ensure that the logo directory exists
+sudo mkdir -p /etc/hms/HospitalLogo
+# Copy all hospital logo from HOSPITAL_LOGO variable value to /etc/hms/HospitalLogo and application images/hospitalLogo folder.
+[ ! -z $HOSPITAL_LOGO ] && sudo cp -r $HOSPITAL_LOGO/* /etc/hms/HospitalLogo/
+sudo cp /etc/hms/HospitalLogo/* $APPROOT/images/hospitalLogo/
+
+#
+# Ensure that our log directory exists
+#
+sudo mkdir -p /var/log/insta/$APP
+
+#
+# Install our application cron-job in /etc/cron.d
+#
+if [ "$ENABLE_TESTING" != 'Y' ] ; then
+CRONFILE=/etc/cron.d/$APP
+
+cp $INSTPATH/hms.cron /etc/cron.d/$APP
+sed --in-place -e "s/__app__/$APP/g" $CRONFILE
+sed --in-place -e "s/__apphome__/$APPHOMEESCAPED/g" $CRONFILE
+sed --in-place -e "s/__weekbeg__/$WEEK_BEG/g" $CRONFILE
+sed --in-place -e "s/__tomcat_home__/$TOMCATHOMEESCAPED/g" $CRONFILE
+sed --in-place -e "s/__hmsuser__/$HMSUSER/g" $CRONFILE
+sed --in-place -e "s/__hmsworkhome__/$HMSWORKHOMEESCAPED/g" $CRONFILE
+fi
+
+#
+# Enable module specific cron jobs: uncomment modules specific crons
+#
+if [ "$MOD_DIALYSIS_DBB27" == "Y" ] ; then
+	sudo sed --in-place -e "s/#__mod_dialysis_dbb27__//g" $CRONFILE
+fi
+ 
+if [ "$MOD_DIALYSIS_DBB06" == "Y" ] ; then
+	sudo sed --in-place -e "s/#__mod_dialysis_dbb06__//g" $CRONFILE
+fi
+
+if is_default_app ; then
+	sudo sed --in-place -e "s/#__default_app__//g" $CRONFILE
+fi
+
+#
+# Adjust the output of hms.log based on our app name (if not the default: hms)
+#
+if ! is_default_app ; then
+	sudo sed --in-place -e "s/hms.log/$APP.log/g" $APPROOT/WEB-INF/classes/log4j2.xml
+	sudo sed --in-place -e "s/hms-%i.log/$APP-%i.log/g" $APPROOT/WEB-INF/classes/log4j2.xml
+fi
+
+#
+# Adjust the output of book_hms.log based on our app name
+#
+if ! is_default_app ; then
+	sudo sed --in-place -e "s/book_hms.log/book_$APP.log/g" $APPROOT/WEB-INF/classes/log4j2.xml
+	sudo sed --in-place -e "s/book_hms-%i.log/book_$APP-%i.log/g" $APPROOT/WEB-INF/classes/log4j2.xml
+fi
+
+#
+# Install tomcat startup script: we cannot run the tomcat startup from our WEB-INF, it
+# may not be there during upgrades etc. It must be copied over to /etc/init.d.
+#
+sudo cp $INSTPATH/etc_init.d_tomcat-9 /etc/init.d/tomcat-9
+if [ ! -z $JAVA_MAX_HEAP ] ; then
+	# use the per-hospital value for max heap to replace the default 800m
+	sudo sed --in-place -e "s/800m/${JAVA_MAX_HEAP}m/" /etc/init.d/tomcat-9
+fi
+sudo chmod +x /etc/init.d/tomcat-9
+sudo ln -fs ../init.d/tomcat-9 /etc/rc2.d/
+
+#
+# Install the wal archiver (used by HA and HB installations). This needs to be run
+# as user postgres, so it needs to be in an area where postgres can access it.
+# This is only a copy. WAL archiving is not enabled unless steps in ha_hb_readme.txt are followed.
+#
+sudo cp $BINPATH/wal_archive.sh /var/lib/postgresql/$PG_VER
+
+#
+# TODO: should we be dealing with tomcat's conf files like server.xml and web.xml also here?
+# Answer: yes, any files that we have changed inside tomcat's default conf directory should
+# be checked in here.
+#
+
+#
+# Trigger off any os updates
+# (none as yet)
+#
+
+
+#
+# make ipv6 localhost trust for liquibase
+#
+
+##check if ipv6 is not trust
+DB_CONFIG_FILE="/etc/postgresql/$PG_VER/main/pg_hba.conf"
+
+if [ ! -z $PGHOST ]; then
+	METHOD=`ssh root@$PGHOST cat $DB_CONFIG_FILE | grep ::1 | grep -v ^# | awk '{print $5}'`
+else
+	METHOD=`cat $DB_CONFIG_FILE | grep ::1 | grep -v ^# | awk '{print $5}'`
+fi
+if [ METHOD != "trust" ]; then
+	do_log "Replacing md5 with trust for localhost ipv6 and reloading postgresql"
+	sudo sed --in-place -e "s/::1\/128\s.*md5/::1\/128 trust/g" $DB_CONFIG_FILE
+	sudo /etc/init.d/postgresql reload
+fi
+
+##copy java 7 jce jars to JAVA_HOME
+JRUNSCRIPT=$JAVA_HOME/bin/jrunscript
+THIS_VERSION=$($JRUNSCRIPT -e 'java.lang.System.out.println(java.lang.System.getProperty("java.version"));')
+if [ ${THIS_VERSION:0:3} == "1.7" ]; then
+	cp -r $APPROOT/JCEJars $JAVA_HOME/jre/lib/security
+fi
+
+do_log "Installing quartz schemas if missing"
+sudo bash $BINPATH/install_quartz.sh
+do_log "Installing missing extensions"
+sudo bash $BINPATH/install_extensions.sh
+
+#
+# minio specific changes; first time setup
+#
+if [ "$INSTALL_MINIO" -eq "1" ] ; then
+	do_log "Looking for minio executable"
+	if [ ! -e "/etc/minio/certs" ] ; then
+		do_log "Minio executable not found; setting up Minio"
+		sudo bash $BINPATH/setup_minio.sh
+	fi
+fi

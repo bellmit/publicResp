@@ -1,0 +1,2 @@
+res_sch_id,res_sch_category,res_sch_name,description,default_duration,height_in_px,status,res_sch_type
+1,'DOC','*','for all doctors across the department',15,15,'A','DOC'

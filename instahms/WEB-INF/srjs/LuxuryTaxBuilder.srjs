@@ -1,0 +1,161 @@
+{
+    "title": "Luxury Tax Report",
+    "defaultOrder": "patient_id",
+    "allowNoDate": true,
+    "reportGroup": "Bed Util Reports",
+    "dateFields": [
+        "bill_finalized_date",
+        "bed_admit_date",
+        "bed_finalized_date"
+    ],
+    "description": "This report shows the daily account of occupancy of rooms and collection of tax in hospital within the given date range (bill finalized date).",
+    "tableName": [
+        "rpt_luxury_tax_view"
+    ],
+    "defaultShowFields": [
+        "mrno",
+        "full_name",
+        "bed_name",
+        "bill_finalized_date",
+        "bed_charge",
+        "tax_percent",
+        "period_of_stay",
+        "total_bed_charge",
+        "total_tax_amount"
+    ],
+    "fields": {
+        "mrno": {
+            "displayName": "MR No.",
+            "width": "65",
+            "groupable": true,
+            "filterable": true
+        },
+        "bill_no": {
+            "displayName": "Bill No.",
+            "width": "65",
+            "groupable": true,
+            "filterable": true
+        },
+        "name_local_language": {
+            "displayName": "Name In Local Language",
+            "width": 150
+         },
+        "patient_id": {
+            "displayName": "Visit ID",
+            "width": "65"
+        },
+        "full_name": {
+            "displayName": "Patient Name",
+            "width": "150"
+        },
+        "bed_type": {
+            "displayName": "Bed Type",
+            "width": "70",
+            "groupable": true,
+            "filterable": false
+        },
+        "bed_name": {
+            "displayName": "Bed Name",
+            "width": "70"
+        },
+        "status": {
+            "displayName": "Bill Status",
+            "width": "55",
+            "groupable": true,
+            "filterable": true,
+            "allowedValues": [
+                "Finalized",
+                "Settled",
+                "Closed"
+            ]
+        },
+        "bill_finalized_date": {
+            "displayName": "Bill Finalized Date",
+            "dataType": "date",
+            "width": "90",
+            "filterable": true
+        },
+        "bed_admit_date": {
+            "displayName": "Bed Admit Date",
+            "dataType": "date",
+            "width": "90",
+            "filterable": true
+        },
+        "bed_admit_date_time": {
+            "displayName": "Bed Admit Date/Time",
+            "dataType": "timestamp",
+            "width": "120",
+            "filterable": true
+        },
+        "bed_finalized_date": {
+            "displayName": "Bed Finalized Date",
+            "dataType": "date",
+            "width": "90",
+            "filterable": true
+        },
+        "bed_finalized_date_time": {
+            "displayName": "Bed Finalized Date/Time",
+            "dataType": "timestamp",
+            "width": "120",
+            "filterable": true
+        },
+        "bed_charge": {
+            "displayName": "Bed Charge Per Day",
+            "dataType": "numeric",
+            "width": "80",
+            "decimalType": "amount"
+        },
+        "tax_percent": {
+            "displayName": "Luxury Tax (%)",
+            "dataType": "numeric",
+            "width": "80",
+            "decimalType": "percent",
+            "filterable": true
+        },
+        "tax_amount": {
+            "displayName": "Tax Amount",
+            "dataType": "numeric",
+            "width": "80",
+            "groupable": false,
+            "aggFunction": "sum",
+            "filterable": true,
+            "decimalType": "amount"
+        },
+        "period_of_stay": {
+            "displayName": "Period Of Stay (Days)",
+            "width": "80",
+            "filterable": true,
+            "dataType": "numeric"
+        },
+        "admit_id": {
+            "displayName": "Admit Id",
+            "width": "80",
+            "filterable": false
+        },
+        "total_bed_charge": {
+            "dataType": "numeric",
+            "displayName": "Total Bed Charge",
+            "width": "60",
+            "groupable": false,
+            "aggFunction": "sum",
+            "filterable": false,
+            "decimalType": "amount"
+        },
+        "total_tax_amount": {
+            "dataType": "numeric",
+            "displayName": "Tax Collected",
+            "width": "60",
+            "groupable": false,
+            "aggFunction": "sum",
+            "filterable": false,
+            "decimalType": "amount"
+        },
+        "center_name": {
+            "displayName": "Center",
+            "width": "70",
+            "groupable": false,
+            "filterable": true,
+            "allowedValuesQuery": "SELECT center_name FROM hospital_center_master  ORDER BY center_id"
+        }
+    }
+}

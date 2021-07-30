@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/mvc
+	http://www.springframework.org/schema/mvc/spring-mvc.xsd
+	http://www.springframework.org/schema/tx
+    http://www.springframework.org/schema/tx/spring-tx.xsd
+    http://www.springframework.org/schema/util
+    http://www.springframework.org/schema/util/spring-util.xsd
+    http://www.springframework.org/schema/data/jpa
+    http://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
+
+    <tx:annotation-driven transaction-manager="txManager" proxy-target-class="true"/>
+
+    <context:component-scan base-package="com.insta.hms.mdm, com.insta.hms.common,
+					com.insta.hms.search, com.insta.hms.core, com.insta.hms.integration,
+					com.insta.hms.security, com.insta.hms.mdm.stores, com.insta.hms.documents" />
+
+    <context:component-scan base-package="com.insta.hms.testng" />
+
+    <context:property-placeholder location="classpath:/java/resources/spring/utility.properties" />
+
+    <mvc:annotation-driven>
+        <mvc:message-converters>
+            <bean class="com.insta.hms.common.ObjectHttpMessageConverter" />
+        </mvc:message-converters>
+    </mvc:annotation-driven>
+
+    <bean
+            class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
+        <property name="viewResolvers">
+            <list>
+                <bean id = "jsonViewResolver" class = "com.insta.hms.common.JsonViewResolver" >
+                    <property name="viewNames">
+                        <set>
+                            <value>*.json</value>
+                        </set>
+                    </property>
+                </bean>
+                <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+                    <property name="suffix" value=".jsp" />
+                    <property name="viewNames">
+                        <set>
+                            <value>/pages/*</value>
+                            <value>*.htm</value>
+                        </set>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <mvc:interceptors>
+        <ref bean="handlerInterceptor" />
+    </mvc:interceptors>
+
+    <bean id="handlerInterceptor" class="com.insta.hms.common.HandlerIntercepter" />
+
+    <!-- 	<bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+            <property name="jndiName" value="java:comp/env/postgres" />
+        </bean> -->
+
+    <bean id="dataSource" class="org.apache.tomcat.jdbc.pool.DataSource"
+          p:url="jdbc:postgresql://localhost:5432/hms"
+          p:driverClassName="org.postgresql.Driver"
+          p:username="postgres"
+          p:password=""
+          p:initSQL="set search_path to test_schema; set application.username = 'InstaAdmin';"
+    />
+
+
+    <bean id="txManager"
+          class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource" />
+    </bean>
+
+    <bean id="DatabaseHelper" class="com.insta.hms.common.DatabaseHelper">
+        <property name="dataSource" ref="dataSource" />
+        <property name="transactionManager" ref="txManager" />
+    </bean>
+
+    <bean id="applicationContextProvider" class="com.insta.hms.common.ApplicationContextProvider"
+          lazy-init="false">
+    </bean>
+
+    <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="annotatedClasses">
+            <list>
+                <!-- Add annotated classes here -->
+                <value>com.insta.hms.integration.insurance.remittance.InsuranceRemittanceModel</value>
+            </list>
+        </property>
+        <!-- <property name="packagesToScan">
+            <list>
+                Add packages containing annotated classes here
+                <value>com.insta.hms.integration.insurance.remittance</value>
+            </list>
+        </property> -->
+        <property name="hibernateProperties">
+            <props>
+                <prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</prop>
+                <!-- This property prints the SQL statements executed by hibernate -->
+                <prop key="hibernate.show_sql">true</prop>
+                <!-- This property is used to make the SQL statements a bit more readable -->
+                <prop key="hibernate.use_sql_comments">true</prop>
+                <!-- This formats the SQL before it prints it  -->
+                <prop key="hibernate.format_sql">true</prop>
+            </props>
+        </property>
+    </bean>
+    <bean id="entityManagerFactory"
+          class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <!--<property name="packagesToScan" value="com.insta.hms.mdm.departmentunits" />-->
+        <property name="packagesToScan" value="" />
+        <property name="dataSource" ref="dataSource" />
+        <property name="jpaProperties">
+            <props>
+                <prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</prop>
+            </props>
+        </property>
+        <property name="persistenceProvider">
+            <bean class="org.hibernate.jpa.HibernatePersistenceProvider" />
+        </property>
+    </bean>
+    <bean class="org.springframework.orm.jpa.JpaTransactionManager" id="transactionManager">
+        <property name="entityManagerFactory" ref="entityManagerFactory"/>
+    </bean>
+    <!--<jpa:repositories base-package="com.insta.hms.mdm.departmentunits" />-->
+</beans>

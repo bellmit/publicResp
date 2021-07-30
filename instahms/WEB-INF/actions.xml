@@ -1,0 +1,20 @@
+
+<!-- action-hook-config defines the action_id which will be associated to a list of action-plugins-->
+<!-- action-plugin defines the plugin classes associated with a specific action_id-->
+<!--id : action_id to be acted upon by the plugins 
+	primaryKey : Primary key value of main table used by action class
+	method : Method that will be called in the action class
+	tableName : main table name associated with action class
+	
+ -->
+ 
+<!-- following are example implementations-->
+<action-config>
+<!-- <action-hook-config id="credit_bill_collection" primaryKey="billNo" method="getCreditBillingCollectScreen">
+		<action-plugin name="com.insta.hms.common.EventLogPlugin" />
+	</action-hook-config>
+	
+	<action-hook-config id="update_mrd" primaryKey="mrNo" method="saveMrd">
+		<action-plugin name="com.insta.hms.common.EventLogPlugin" />
+	</action-hook-config> -->
+</action-config>

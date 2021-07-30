@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<parameter name="reportDate" class="java.util.Date"/>
+	<queryString>
+		<![CDATA[
+SELECT 'Sales' AS Particulars ,
+   (SELECT sum(total_item_amount+round_off-discount) AS trans FROM store_sales_main sm LEFT JOIN bill b using (bill_no)
+        WHERE type ='S' and
+        date(sale_date) = $P{reportDate}::date) AS trans_value
+
+        UNION ALL
+
+SELECT 'Sales Return' AS Particulars ,
+ (SELECT sum(total_item_amount+round_off-discount) AS trans FROM store_sales_main sm LEFT JOIN bill b using (bill_no)
+        WHERE  type ='R' AND
+        date(sale_date) = $P{reportDate}::date) AS trans_value
+
+ UNION ALL
+
+    SELECT 'Purchase' as Particulars, sum(grn_total_amount + invoice_level_amount) as trans
+      FROM (SELECT sum(g.billed_qty/id.issue_base_unit*g.cost_price - g.discount + g.tax) AS grn_total_amount,
+          CASE WHEN supplier_invoice_id IS NULL THEN
+            0-(dn.other_charges - dn.discount + dn.round_off)
+          ELSE
+            i.other_charges - i.discount + i.round_off + i.cess_tax_amt
+          END AS invoice_level_amount
+        FROM store_grn_details g
+          JOIN store_grn_main gm USING (grn_no)
+	  JOIN store_item_details id USING (medicine_id)
+          LEFT JOIN store_invoice i USING (supplier_invoice_id)
+          LEFT JOIN store_debit_note dn USING (debit_note_no)
+          WHERE date(gm.grn_date) = $P{reportDate}::date
+        GROUP BY  gm.grn_no, invoice_level_amount
+      ) as inv
+      
+ UNION ALL
+
+SELECT 'Purchase Return' AS Particulars,
+ (SELECT sum(item_amount-item_discount+item_tax + other_charges-discount+round_off+cess) 
+        FROM store_purchase_invoice_report_view WHERE purchase_type ='Debit Note' AND 
+        date(invoice_date) = $P{reportDate}::date) AS trans_value
+
+        UNION ALL
+        
+SELECT  'Cash Received' AS Particulars,
+ (SELECT SUM(amount) AS trans FROM bill_receipts br
+  LEFT JOIN counters c on (br.counter = c.counter_id)
+  WHERE counter_type = 'P' AND date(display_date) = $P{reportDate}::date) as trans_value
+
+  UNION ALL 
+
+SELECT 'Cash Paid' AS Particulars,
+ (SELECT SUM(amount) as trans from payments p 
+ left join counters c on (p.counter = c.counter_id)
+ where counter_type = 'P' AND payment_type in ('C','S','O')
+ AND date(date) = $P{reportDate}::date) as trans_value
+
+ UNION ALL
+
+SELECT 'Receivable' AS Particulars,
+        (SELECT SUM(amount-receipts) FROM
+  (SELECT sum(total_item_amount+round_off-discount)  AS amount,
+   COALESCE((SELECT coalesce(sum(br.total_receipts),0) FROM
+     bill br WHERE br.bill_no = b.bill_no GROUP BY bill_no),0) AS receipts
+  FROM store_sales_main
+  JOIN bill b using(bill_no)
+  WHERE b.status = 'A'
+  GROUP BY b.bill_no) as foo ) AS trans_value
+ 
+ UNION ALL
+
+SELECT 'Payable' AS Particulars,
+ (SELECT sum(item_amount-item_discount+item_tax + other_charges-discount+round_off+cess) 
+        FROM store_purchase_invoice_report_view WHERE invoice_status ='Finalized' ) AS trans_value
+
+        UNION ALL
+
+SELECT 'Expiry Stock Value(Current Month)' AS Particulars,
+ (SELECT round(sum((qty/stock_pkg_size)*mrp), 2) AS trans FROM store_stock_details
+ WHERE date(exp_dt) BETWEEN date_trunc('month', current_date::date) AND current_date::date) AS trans_value
+
+ UNION ALL
+
+SELECT 'Expiry Stock Value(Next Month)' AS Particulars,
+ (SELECT round(sum((qty/stock_pkg_size)*mrp), 2) AS trans FROM store_stock_details
+ WHERE date(exp_dt) BETWEEN date_trunc('month', date(current_date + INTERVAL '1 month')) AND date(current_date + INTERVAL '1 month')) AS trans_value
+
+ UNION ALL
+
+SELECT 'Closing Stock(MRP)' AS Particulars,
+       (SELECT round(sum((qty/stock_pkg_size)*mrp), 2) AS trans FROM store_stock_details 
+ WHERE date(stock_time)= current_date::date ) AS trans_value
+
+ UNION ALL
+ 
+SELECT 'Closing Stock(Cost Price)' AS Particulars,
+ (SELECT round(sum((qty/stock_pkg_size)*package_cp),2) AS trans FROM store_stock_details
+ WHERE date(stock_time) = current_date::date) AS trans_value]]>
+	</queryString>
+	<field name="Particulars" class="java.lang.String"/>
+	<field name="trans_value" class="java.lang.Number"/>
+	<background>
+		<band/>
+	</background>
+	<title>
+		<band height="26">
+			<staticText>
+				<reportElement x="145" y="0" width="281" height="17"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font size="14" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Pharmacy Consolidated Report]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band/>
+	</pageHeader>
+	<columnHeader>
+		<band height="26">
+			<staticText>
+				<reportElement x="8" y="7" width="100" height="15"/>
+				<textElement>
+					<font size="12" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Particulars]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="224" y="7" width="100" height="15"/>
+				<textElement>
+					<font size="12" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Value]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="2" width="554" height="1"/>
+			</line>
+			<line>
+				<reportElement x="0" y="24" width="554" height="2"/>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="19">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="6" y="0" width="245" height="15"/>
+				<textElement>
+					<font size="10" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{Particulars}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="###0.00" isBlankWhenNull="true">
+				<reportElement x="221" y="0" width="100" height="15"/>
+				<textElement>
+					<font size="10" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$F{trans_value}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54"/>
+	</pageFooter>
+	<summary>
+		<band height="42"/>
+	</summary>
+</jasperReport>

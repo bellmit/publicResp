@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Insta API Playground</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="../css/fa/semantic-2.2.13.min.css"/>
+    <link rel="stylesheet" type="text/css" href="../css/documentation/prism-okadia-1.5.1.min.css"/>
+    <style>
+      #request {
+        padding-top: 0;
+      }
+      .request-header, .parameter {
+         padding-top: 1em;
+      }
+      .response-header {
+        font-family: Monospace;
+        font-size: 0.8em;
+      }
+      #request h4 {
+         padding-top: 1em;
+         padding-bottom: 1em;
+      }
+      code {
+        white-space: pre-wrap !important;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="ui grid container">
+      <h1 class="row" style="padding-top: 2em;padding-bottom:0;">Insta API Client</h1>
+      <div class="row ui top attached segment">
+        <h3 class="column two wide">Request</h3>
+      </div>
+      <div class="row ui attached segment" id="request">
+        <div class="column three wide">
+          <h4 class="ui sub header">METHOD</h4>
+          <div class="ui selection dropdown">
+            <input type="hidden" name="http_method">
+            <i class="dropdown icon"></i>
+            <div class="default text">Select</div>
+            <div class="menu">
+              <div class="item" data-value="GET">GET</div>
+              <div class="item" data-value="POST">POST</div>
+              <div class="item" data-value="DELETE">DELETE</div>
+              <div class="item" data-value="PUT">PUT</div>
+              <div class="item" data-value="PATCH">PATCH</div>
+            </div>
+          </div>
+        </div>
+        <div class="column thirteen wide">
+          <h4 class="ui sub header">URI</h4>
+          <div class="fluid medium ui input">
+            <input type="text" name="apiep" value=""/>
+          </div>
+        </div>
+        <h4 class="ui sub header column sixteen wide" style="padding-bottom:0;">HEADERS</h4>
+        <div class="column four wide request-header request-header-0">
+          <div class="ui fluid input mini"><input name="key_0" value=""/></div>
+        </div>
+        <div class="column four wide request-header request-header-0">
+          <div class="ui fluid input mini"><input name="value_0" value=""/></div>
+        </div>
+        <div class="column eight wide request-header request-header-0">
+          <button class="ui button mini request-header-remove" data-headerid="0">Remove</button>
+        </div>
+        <div class="column sixteen wide" style="margin-top: 1em;">
+          <button class="ui add icon button mini" id="addHeader">
+            <i class="add icon"></i>
+            Add Header
+          </button>
+        </div>
+        <h4 class="ui sub header column sixteen wide" style="padding-top: 2em;">PARAMETERS</h4>
+        <div class="ui slider mini checkbox column sixteen wide" style="padding-bottom: 1em;">
+          <input type="checkbox" name="rawbody" id="rawBodyCheckbox">
+          <label>Raw Body</label>
+        </div>
+        <div class="column four wide parameter parameter-0">
+          <div class="ui fluid input mini"><input name="key_0" value=""/></div>
+        </div>
+        <div class="column four wide parameter parameter-0">
+          <div class="ui fluid input mini"><input name="value_0" value=""/></div>
+        </div>
+        <div class="column eight wide parameter parameter-0">
+          <button class="ui button mini parameter-remove" data-parameterid="0">Remove</button>
+        </div>
+        <div class="column sixteen wide parameter-add" style="margin-top: 1em;">
+          <button class="ui add icon button mini" id="addParameter">
+            <i class="add icon"></i>
+            Add Parameter
+          </button>
+        </div>
+        <div class="column sixteen wide raw-body" style="margin-top: 1em;">
+          <div class="ui form"><textarea name="rawBody" rows="8"></textarea></div>
+        </div>
+      </div>
+      <div class="row ui attached bottom segment">
+        <div class="column sixteen wide">
+          <button class="ui teal send button" id="sendRequest">
+            <i class="send icon"></i>
+            Send
+          </button>
+        </div>
+      </div>
+      <div class="row ui top attached segment response">
+        <h3 class="column two wide">Response</h3>
+      </div>
+      <div class="row ui attached segment response response-loader">
+        <div class="column sixteen wide ui active inverted dimmer" id="responseLoader">
+          <div class="ui large text loader">Loading</div>
+        </div>
+        <p></p>
+        <p></p>
+        <p></p>
+      </div>
+      <div class="row ui attached segment response response-status">
+        <div class="column sixteen wide" id="responseStatus">
+        </div>
+      </div>
+      <div class="row ui attached segment response response-section">
+        <h4 class="ui sub header column sixteen wide" id="responseHeader" style="padding-bottom: 1em;">HEADERS</h4>
+      </div>
+      <div class="row ui attached segment response response-section">
+        <h4 class="ui sub header column sixteen wide" style="padding-bottom: 1em;">BODY</h4>
+        <div class="column sixteen wide" id="responseBody">
+          <pre style="white-space: inherit">
+            <code id="responseBodyContainer"></code>
+          </pre>
+        </div>
+      </div>
+    </div>
+  </body>
+    <script type="text/javascript" src="../scripts/documentation/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" src="../scripts/fa/semantic-2.2.13.min.js"></script>
+    <script type="text/javascript" src="../scripts/documentation/prism.js"></script>
+    <script>
+      function encodeHTML( html ) {
+        return document.createElement( 'div' ).appendChild( document.createTextNode( html ) ).parentNode.innerHTML;
+      };
+      var headerIdx = 1;
+      var parameterIdx = 1;
+      var tmpl = '<div class="column four wide request-header request-header-{{idx}}"><div class="ui fluid input mini"><input name="key_{{idx}}" value=""/></div></div><div class="column four wide request-header request-header-{{idx}}"><div class="ui fluid input mini"><input name="value_{{idx}}" value=""/></div></div><div class="column eight wide request-header request-header-{{idx}}"><button class="ui button mini request-header-remove" data-headerid="{{idx}}">Remove</button></div>';
+      var tmplParameter = '<div class="column four wide parameter parameter-{{idx}}"><div class="ui fluid input mini"><input name="key_{{idx}}" value=""/></div></div><div class="column four wide parameter parameter-{{idx}}"><div class="ui fluid input mini"><input name="value_{{idx}}" value=""/></div></div><div class="column eight wide parameter parameter-{{idx}}"><button class="ui button mini parameter-remove" data-headerid="{{idx}}">Remove</button></div>';
+      var tmplResponseHeader = '<div class="column three wide response-header">{{key}}</div><div class="column thirteen wide response-header">{{value}}</div>'
+      $(function(){
+        $('.ui.dropdown').dropdown();
+        $(document).on('click', 'button.request-header-remove', function(){
+          var el = this;
+          headerid = $(el).data('headerid');
+          $('.request-header-' + headerid).remove();
+        });
+        $(document).on('click', 'button.parameter-remove', function(){
+          var el = this;
+          parameterid = $(el).data('parameterid');
+          $('.parameter-' + parameterid).remove();
+        });
+        $('#addHeader').click(function(){
+          $(tmpl.split('{{idx}}').join(headerIdx++)).insertAfter($('.request-header').last());
+        });
+        $('#addParameter').click(function(){
+          $(tmplParameter.split('{{idx}}').join(headerIdx++)).insertBefore($(this).parent().last());
+        });          
+        $('#rawBodyCheckbox').click(function(){
+          var el = this;
+          if ($(el).prop('checked') === true) {
+            $('.parameter').hide();
+            $('.parameter-add').hide();
+            $('.raw-body').show();
+          } else {
+            $('.parameter').show();
+            $('.parameter-add').show();
+            $('.raw-body').hide();
+          }
+        });
+        $('.response').hide();
+        $('.parameter').show();
+        $('.parameter-add').show();
+        $('.raw-body').hide();
+        $('#sendRequest').click(function(){
+          $('.response').show();
+          $('.response-section').hide();
+          $('.response-status').hide();
+          $('.response-loader').show();
+          $('.response-header').remove();
+          var headerKeys = {};
+          var headerValues = {};
+          var parameterKeys = {};
+          var parameterValues = {};
+          var parameters = {};
+          var headers = {};
+          $.each($('.request-header input'), function(idx, el){
+            var inputName = $(el).attr('name');
+            if (inputName.indexOf('key_') !== -1) {
+              headerKeys[inputName.replace("key_","")] = $(el).val();
+            } 
+            if (inputName.indexOf('value_') !== -1) {
+              headerValues[inputName.replace("value_","")] = $(el).val();
+            }
+          });
+
+          var hasAcceptHeader = false;
+          var hasContentTypeHeader = false;
+          $.each(headerKeys, function(key,value) {
+            if (value === "") {
+              return;
+            }
+            hasAcceptHeader = hasAcceptHeader || key.toLowerCase() === "accept";
+            hasContentTypeHeader = hasContentTypeHeader || key.toLowerCase() === "content-type";
+            headers[value] = headerValues[key];
+          });
+          if(!hasAcceptHeader) {
+            headers["accept"] = "application/json";
+          }
+          if(!hasContentTypeHeader) {
+            headers["content-type"] = "application/json";
+          }
+          if ($('#rawBodyCheckbox').prop('checked') === true) {
+            parameters = $('textarea[name="rawBody"]').val();
+          } else {
+            $.each($('.parameter input'), function(idx, el){
+              var inputName = $(el).attr('name');
+              if (inputName.indexOf('key_') !== -1) {
+                parameterKeys[inputName.replace("key_","")] = $(el).val();
+              } 
+              if (inputName.indexOf('value_') !== -1) {
+                parameterValues[inputName.replace("value_","")] = $(el).val();
+              }
+            });
+            $.each(parameterKeys, function(key,value) {
+              if (value === "") {
+                return;
+              }
+              parameters[value] = parameterValues[key];
+            });
+          }
+          var httpMethod = $('input[name="http_method"]').val();
+          var apiEp = $('input[name="apiep"]').val();
+          var ajaxRequest = {
+            "url" : apiEp,
+            "headers": headers,
+            "type": httpMethod,
+            "data": parameters,
+            "crossDomain": true,
+            "complete": function(jqXHR, textStatus) {
+              $('#responseStatus').removeClass("red green inverted");
+              if (jqXHR.status >= 400 || jqXHR.status < 100) {
+                $('#responseStatus').addClass("red inverted");
+              } else if (jqXHR.status >= 200 && jqXHR.status < 300) {
+                $('#responseStatus').addClass("green inverted");
+              } else if (jqXHR.status >= 300 && jqXHR.status < 400) {
+                $('#responseStatus').addClass("orange inverted");
+              } else if (jqXHR.status >= 100 && jqXHR.status < 200) {
+                $('#responseStatus').addClass("blue inverted");
+              }
+              $('#responseStatus').html('<b>' + jqXHR.status + '</b> ' + jqXHR.statusText);
+              var responseHeaders = jqXHR.getAllResponseHeaders().split('\n');
+              var contentType = "language-text";
+              $(responseHeaders).each(function(idx, header){
+                if (!header.trim()) {
+                  return;
+                }
+                var headerString = header.trim().split(':');
+                var key = headerString[0].trim();
+                var value = headerString.splice(1).join(':').trim();
+                if (key.toLowerCase() === 'content-type' && value.toLowerCase().indexOf("json") !== -1) {
+                  contentType = 'language-json';
+                } else if (key.toLowerCase() === 'content-type' && value.toLowerCase().indexOf("javascript") !== -1) {
+                  contentType = 'language-javascript';
+                } else if (key.toLowerCase() === 'content-type' && value.toLowerCase().indexOf("html") !== -1) {
+                  contentType = 'language-html';
+                } else if (key.toLowerCase() === 'content-type' && value.toLowerCase().indexOf("xml") !== -1) {
+                  contentType = 'language-xml';
+                } 
+                $(tmplResponseHeader
+                    .replace('{{key}}',key)
+                    .replace('{{value}}',value)).insertAfter($('#responseHeader')); 
+              });
+              if (jqXHR.responseXML) {
+                $('#responseBodyContainer').html(encodeHTML(jqXHR.responseXML));
+              } else {
+                $('#responseBodyContainer').html(encodeHTML(jqXHR.responseText));
+              }
+              $('#responseBodyContainer').removeClass("language-html language-text language-xml language-json language-javascript").addClass(contentType);
+              $('.response-section').show();
+              $('.response-status').show();
+              $('.response-loader').hide();
+              $(".button").removeClass("disabled");
+              Prism.highlightAll();
+            }
+          }
+          $(".button").addClass("disabled");
+          $.ajax(ajaxRequest);            
+        });
+      });
+    </script>
+</html>

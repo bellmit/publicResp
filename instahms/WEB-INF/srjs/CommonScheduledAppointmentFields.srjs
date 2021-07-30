@@ -1,0 +1,430 @@
+{
+    "queryUnits": [
+        {
+            "joinTables": [
+                {
+                    "name": "patient_details",
+                    "alias": "pd",
+                    "dependsOn": "sa",
+                    "expression": "ON(pd.mr_no=sa.mr_no)"
+                },
+                {
+                    "name": "scheduler_master",
+                    "alias": "sm",
+                    "dependsOn": "sa",
+                    "expression": "ON (sm.res_sch_id=sa.res_sch_id)"
+                },
+                {
+                    "name": "admission",
+                    "alias": "adm",
+                    "dependsOn": "pd",
+                    "expression": "ON (pd.visit_id = adm.patient_id)"
+                },
+                {
+                    "name": "admission",
+                    "alias": "adm1",
+                    "dependsOn": "sa",
+                    "expression": "ON (sa.visit_id = adm1.patient_id)"
+                },
+                {
+                    "name": "bed_names",
+                    "alias": "bn",
+                    "dependsOn": "adm",
+                    "expression": "ON(bn.bed_id = adm.bed_id)"
+                },
+                {
+                    "name": "ward_names",
+                    "alias": "wn",
+                    "dependsOn": "bn",
+                    "expression": "ON(wn.ward_no = bn.ward_no)"
+                },
+                {
+                    "name": "bed_names",
+                    "alias": "bn1",
+                    "dependsOn": "adm1",
+                    "expression": "ON(bn1.bed_id = adm1.bed_id)"
+                },
+                {
+                    "name": "ward_names",
+                    "alias": "wn1",
+                    "dependsOn": "bn1",
+                    "expression": "ON(wn1.ward_no = bn1.ward_no)"
+                },
+                {
+                    "name": "mrd_diagnosis",
+                    "alias": "md",
+                    "dependsOn": "sa",
+                    "expression": "ON (md.visit_id = sa.visit_id AND md.diag_type = 'P')"
+                },
+                {
+                    "name": "hospital_center_master",
+                    "alias": "hcm",
+                    "dependsOn": "sa",
+                    "expression": "ON (hcm.center_id=sa.center_id)"
+                },
+                {
+                    "name": "patient_category_master",
+                    "alias": "prcm",
+                    "dependsOn": "pd",
+                    "expression": "on prcm.category_id = pd.patient_category_id"
+                },
+                {
+                    "name": "doctor_consultation",
+                    "alias": "dc",
+                    "dependsOn": "sa",
+                    "expression": "on dc.appointment_id=sa.appointment_id"
+                },
+                {
+                    "name": "confidentiality_grp_master",
+                    "alias": "cgm",
+                    "dependsOn": "pd",
+                    "expression": "ON(pd.patient_group=cgm.confidentiality_grp_id)"
+                }
+            ]
+        }
+    ],
+    "includes": [
+        "CommonToCenter.srjs"
+    ],
+    "fields": {
+        "appointment_date": {
+            "table": "sa",
+            "displayName": "Appointment Date",
+            "dataType": "date",
+            "width": 60,
+            "groupable": true,
+            "filterable": true,
+            "expression": "date(appointment_time)"
+        },
+        "appointment_time": {
+            "table": "sa",
+            "displayName": "Appointment Date/Time",
+            "width": 100,
+            "dataType": "timestampnosecs",
+            "groupable": true,
+            "filterable": true,
+            "expression": "appointment_time"
+        },
+        "booked_date": {
+            "table": "sa",
+            "displayName": "Booked Date",
+            "dataType": "date",
+            "width": 60,
+            "groupable": false,
+            "filterable": true,
+            "expression": "date(booked_time)"
+        },
+        "orig_appt_date": {
+            "table": "sa",
+            "displayName": "Orig Appt Date",
+            "dataType": "date",
+            "width": 60,
+            "groupable": true,
+            "filterable": true,
+            "expression": "date(orig_appt_time)"
+        },
+        "arrival_date": {
+            "table": "sa",
+            "displayName": "Arrival Date",
+            "dataType": "date",
+            "width": 60,
+            "groupable": false,
+            "filterable": true,
+            "expression": "date(arrival_time)"
+        },
+        "booked_time": {
+            "table": "sa",
+            "displayName": "Booked Date/Time",
+            "width": 60,
+            "dataType": "timestampnosecs",
+            "groupable": false,
+            "filterable": true,
+            "expression": "booked_time"
+        },
+        "name_local_language": {
+            "table": "pd",
+            "displayName": "Name In Local Language",
+            "width": 150,
+            "expression": "pd.name_local_language"
+        },
+        "orig_appt_time": {
+            "table": "sa",
+            "displayName": "Orig Appt Date/Time",
+            "width": 60,
+            "dataType": "timestampnosecs",
+            "groupable": true,
+            "filterable": true,
+            "expression": "orig_appt_time"
+        },
+        "arrival_time": {
+            "table": "sa",
+            "displayName": "Arrival Date/Time",
+            "dataType": "timestampnosecs",
+            "width": 60,
+            "filterable": true,
+            "expression": "arrival_time"
+        },
+        "mr_no": {
+            "table": "sa",
+            "displayName": "MR No.",
+            "width": 65,
+            "groupable": true,
+            "filterable": true
+        },
+        "visit_id": {
+            "table": "sa",
+            "displayName": "Visit Id",
+            "width": 60
+        },
+        "patient_name": {
+            "table": "sa",
+            "displayName": "Patient Name",
+            "width": 100,
+            "groupable": true,
+            "filterable": true
+        },
+        "patient_contact": {
+            "table": "sa",
+            "displayName": "Patient Mobile",
+            "width": 100
+        },
+        "patient_age": {
+            "table": "pd",
+            "displayName": "Age",
+            "width": 60,
+            "expression": "get_patient_age(pd.dateofbirth, pd.expected_dob)"
+        },
+        "age_in": {
+            "table": "pd,sa",
+            "displayName": "Age In",
+            "width": 30,
+            "expressionLines": [
+                " CASE  WHEN sa.mr_no='' THEN '' ",
+                " WHEN current_date - COALESCE(pd.dateofbirth, pd.expected_dob) < 31 THEN 'D'  ",
+                " WHEN (current_date - COALESCE(pd.dateofbirth, pd.expected_dob) < 730) THEN 'M'  ",
+                " ELSE 'Y' END "
+            ]
+        },
+        "patient_gender": {
+            "table": "pd",
+            "displayName": "Gender",
+            "width": 70,
+            "expression": "CASE WHEN pd.patient_gender ='M' THEN 'Male' WHEN pd.patient_gender ='F' THEN 'Female' WHEN pd.patient_gender ='C' THEN 'Couple' ELSE 'Others' END",
+            "allowedValues": [
+                "Male",
+                "Female",
+                "Couple",
+                "Others"
+            ],
+            "groupable": true,
+            "filterable": true
+        },
+
+        "complaint_name": {
+            "table": "sa",
+            "displayName": "Complaint",
+            "width": 100,
+            "expression": "sa.complaint"
+        },
+        "remarks": {
+            "table": "sa",
+            "displayName": "Remarks",
+            "width": 100
+        },
+        "cancel_reason": {
+            "table": "sa",
+            "displayName": "Appointment Cancel Reason",
+            "width": 100,
+            "groupable": true,
+            "filterable": true
+        },
+        "diag_code": {
+            "table": "md",
+            "displayName": "Diagnosis Code",
+            "width": 80,
+            "expression": "md.icd_code"
+        },
+        "diag_descr": {
+            "table": "md",
+            "displayName": "Diagnosis Description",
+            "allowNull": true,
+            "width": 120,
+            "groupable": true,
+            "filterable": true,
+            "expression": "md.description"
+        },
+        "bed_name": {
+            "table": "bn,bn1",
+            "displayName": "IP Patient Bed",
+            "width": 100,
+            "groupable": true,
+            "filterable": true,
+            "allowedValuesQuery": "select bed_name from bed_names",
+            "expression": "coalesce(bn.bed_name,bn1.bed_name)"
+        },
+        "ward_name": {
+            "table": "wn,wn1",
+            "displayName": "IP Patient Ward",
+            "width": 100,
+            "groupable": true,
+            "filterable": true,
+            "allowedValuesQuery": "select ward_name from ward_names",
+            "expression": "coalesce(wn.ward_name,wn1.ward_name)"
+        },
+        "appointment_type": {
+            "table": "sa,sm",
+            "displayName": "Appointment Type",
+            "width": 70,
+            "groupable": true,
+            "filterable": true,
+            "allowedValues": [
+                "Consultation",
+                "Test",
+                "Surgery",
+                "Service"
+            ],
+            "expressionLines": [
+                " CASE WHEN sm.res_sch_id = 1 THEN 'Consultation' ",
+                " WHEN sm.res_sch_id = 2 THEN 'Surgery' ",
+                " WHEN sm.res_sch_id = 3 THEN 'Service' ",
+                " WHEN sm.res_sch_id = 4 THEN 'Test' END "
+            ]
+        },
+        "appointment_status": {
+            "table": "sa",
+            "displayName": "Appointment Status",
+            "width": 65,
+            "groupable": true,
+            "filterable": true,
+            "allowedValues": [
+                "Arrived",
+                "Confirmed",
+                "Booked",
+                "Completed",
+                "No Show",
+                "Cancelled"
+            ],
+            "expressionLines": [
+                " CASE WHEN sa.appointment_status = 'Arrived' THEN 'Arrived'",
+                " WHEN sa.appointment_status = 'Noshow' THEN 'No Show'",
+                " WHEN sa.appointment_status = 'Confirmed' THEN 'Confirmed'",
+                " WHEN sa.appointment_status = 'Booked' THEN 'Booked'",
+                " WHEN sa.appointment_status = 'Completed' THEN 'Completed'",
+                " WHEN sa.appointment_status = 'Cancel' THEN 'Cancelled' END"
+            ]
+        },
+        "rescheduled": {
+            "table": "sa",
+            "displayName": "Rescheduled",
+            "width": 65,
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "expressionLines": [
+                " CASE WHEN sa.rescheduled = 'Y' THEN 'Yes'",
+                " WHEN sa.rescheduled = 'N' THEN 'No' END"
+            ]
+        },
+        "booked_by": {
+            "table": "sa",
+            "displayName": "Booked By",
+            "width": 80,
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT distinct emp_username FROM u_user;"
+        },
+        "changed_by": {
+            "table": "sa",
+            "displayName": "Modified By",
+            "width": 80,
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT distinct emp_username FROM u_user;"
+        },
+        "duration": {
+            "table": "sa",
+            "displayName": "Duration (Min)",
+            "width": 50,
+            "description": "Duration in minutes",
+            "filterable": true,
+            "aggFunction": "sum",
+            "expression": "sa.duration",
+            "dataType": "numeric",
+            "decimalType": "integer"
+        },
+        "duration_hrs": {
+            "table": "sa",
+            "displayName": "Duration (Hrs)",
+            "width": 50,
+            "description": "Duration in hours",
+            "filterable": true,
+            "aggFunction": "sum",
+            "expression": "(sa.duration/60.0)::numeric(10,2)",
+            "dataType": "numeric"
+        },
+        "patient_category_name": {
+            "table": "prcm",
+            "displayName": "Patient Category",
+            "width": 120,
+            "allowedValuesQuery": "SELECT category_name FROM patient_category_master ORDER BY category_name",
+            "filterable": true,
+            "groupable": true,
+            "expression": "prcm.category_name "
+        },
+        "cons_start_date": {
+            "table": "dc",
+            "displayName": "Consultation Start Date",
+            "dataType": "date",
+            "width": 100,
+            "groupable": true,
+            "filterable": true,
+            "expression": "date(start_datetime)"
+        },
+        "cons_start_time": {
+            "table": "dc",
+            "displayName": "Consultation Start Date/Time",
+            "width": 100,
+            "groupable": true,
+            "filterable": true,
+            "expression": "TO_CHAR((start_datetime::date +start_datetime::time ), 'dd-MM-yyyy hh24:mi')"
+        },
+        "cons_end_date": {
+            "table": "dc",
+            "displayName": "Consultation End Date",
+            "dataType": "date",
+            "width": 100,
+            "groupable": true,
+            "filterable": true,
+            "expression": "date(end_datetime)"
+        },
+        "cons_end_time": {
+            "table": "dc",
+            "displayName": "Consultation End Date/Time",
+            "width": 100,
+            "groupable": true,
+            "filterable": true,
+            "expression": "TO_CHAR((end_datetime::date +end_datetime::time ), 'dd-MM-yyyy hh24:mi')"
+        },
+        "patient_group": {
+            "table": "cgm",
+            "displayName": "Patient Confidentiality Group",
+            "width": 150,
+            "expression": "cgm.name",
+            "filterable": true,
+            "groupable": true
+        },
+        "waitlist": {
+            "table": "sa",
+            "displayName": "Waitlist Number",
+            "width": 50,
+            "filterable": true,
+            "groupable": true,
+            "expression": "CASE when waitlist = 0 THEN 'NA' ELSE waitlist::text END ",
+            "dataType": "numeric",
+            "decimalType": "integer"
+        }
+    }
+}

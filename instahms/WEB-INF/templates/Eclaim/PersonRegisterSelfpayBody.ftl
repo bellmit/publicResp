@@ -1,0 +1,20 @@
+	<Person>
+		[#if unified_number?? && unified_number != ""]<UnifiedNumber>${unified_number!""}</UnifiedNumber>[/#if]
+		<FirstNameEn>${first_name_en!""}</FirstNameEn>
+		<MiddleNameEn>${middle_name_en!""}</MiddleNameEn>
+		<LastNameEn>${last_name_en!""}</LastNameEn>
+		<ContactNumber>${contact_number!""}</ContactNumber>
+		<BirthDate>${birth_date!""}</BirthDate>
+		<Gender>${gender!""}</Gender>
+		<Nationality>${nationality!""}</Nationality>
+		<NationalityCode>${nationality_code!""}</NationalityCode>
+		<City>${city!""}</City>
+		<CityCode>${city_code!""}</CityCode>
+		<CountryOfResidence>${country_of_residence!""}</CountryOfResidence>
+		<EmirateOfResidence>${emirate_of_residence!""}</EmirateOfResidence>
+		<PassportNumber>${passport_number!""}</PassportNumber>
+		<EmiratesIDNumber>${emirates_id_number!""}</EmiratesIDNumber>
+		<Member>
+			<ID>${member_id!""}</ID>
+		</Member>
+	</Person>

@@ -1,0 +1,271 @@
+.yui-skin-sam .yui-ac-input{
+			position:initial !important;
+		}
+		.comment-signature {
+            float: left;
+			font-style: italic;
+		}
+		.commenterComment {
+		    float: right !important;
+		}
+		div.showDetails{
+			max-height: 100px;
+    		overflow-y: scroll;
+    		min-height: 50px;
+		}
+		.old-value{
+			text-decoration: line-through;
+		}
+
+		.diff-added{
+			color: green;
+		}
+
+		.diff-removed{
+			color: red;
+		}	
+
+		.changelist li{
+			list-style: initial;
+		}
+
+		.yui-nav{
+			border: solid rgb(73, 89, 110) !important;
+			border-width: 0 0 5px !important;
+		}
+		
+		.yui-nav .selected a{
+			background: rgb(73, 89, 110) !important;
+		}
+
+		.yui-content{
+			background: #fff !important;
+		}
+
+		.changesetTime{
+			font-style: italic;
+			float: right;
+		}
+		#ticketBody, #commentTextBox {
+		    width: 818px;
+            height: 50px;
+            border-radius: 2px;
+            background-color: #ffffff;
+            border: solid 1px #b4b4be;
+			margin: 14px;
+			padding-left: 10px;
+		}
+		#ticketTitle {
+			width:300px;
+			height: 22px;
+            border: solid 1px #999999;
+            color: #666;
+		}
+		#msgTypeText {
+			border: solid 1px #999999;
+			width: 198px;
+		    height: 22px;
+		    color: #666;
+		}
+		textarea,input[type="text"] {
+			border: solid 0.5px #ccc;
+		}
+		div.showDetails{
+			max-height: 100px;
+    		overflow-y: scroll;
+    		min-height: 50px;
+		}
+		#msgTypeBlock{
+			width: 198px;
+  			height: 22px;
+  			background-color: #ffffff;
+		}
+		fieldset.fieldsetReview{
+			width: 957px;
+	  		height: 87px;
+	  		background-color: #ffffff;
+	  		border: solid 1px #cccccc;
+	  		margin-bottom: 0px;
+  		}
+  		label{
+  			height: 14px;
+  			font-family: Arial;
+  			font-size: 12px;
+            font-weight: normal;
+            font-style: normal;
+            font-stretch: normal;
+            line-height: normal;
+            letter-spacing: normal;
+            color: #666666;
+  		}
+  		div.activityBlock{
+  			min-height: 326px;
+            background-color: #ffffff;
+            border: solid 1px #cccccc;
+            overflow: auto;
+  		}
+  		div.messageBodyBlock{
+  			width: 957px;
+  			height: 79px;
+            background-color: #ffffff;
+            border: solid 1px #cccccc;  			
+  		}
+  		.codercliamReviewButton{
+  			width: 77px;
+            height: 18px;
+            opacity: 0.5;
+            border-radius: 3px;
+            background-color: #ffffff;
+            border: solid 1px #d4d4dc;
+  			
+  		}
+  		select{
+     		height: 22px;
+            background-color: #ffffff;
+            border: solid 1px #999999;
+            background-size: 16px;
+		    
+  		}
+  		select::-ms-expand { 
+  			display: block; 
+		}
+  		input[type="submit"]:hover{
+  			cursor: pointer;
+  		}
+  		div.statusBlock{
+  			margin-top: 15px;
+  		}
+  		div.codificationStatusBlock{
+  			float:right;	
+ 		}
+ 		.codification_status_label{
+ 			font-weight:bold;
+ 		}
+  		div.statusBlock select{
+  			margin-left:8px;
+  		}
+  		div.activityList{
+  			padding-top: 18px;
+  			padding-left: 18px
+  			
+  		}
+  		.activityByBlock{
+  			text-transform:uppercase !important;
+  			height: 11px;
+  			font-family: Arial;
+  			font-size: 10px;
+  			font-weight: normal;
+  			font-style: normal;
+  			font-stretch: normal;
+  			line-height: normal;
+  			letter-spacing: normal;
+  			color: #787887;
+  			margin-bottom: 3px;
+  		}
+  		.activityByBlockRight{
+  			text-transform:uppercase !important;
+  			height: 11px;
+  			font-family: Arial;
+  			font-size: 10px;
+  			font-weight: normal;
+  			font-style: normal;
+  			font-stretch: normal;
+  			line-height: normal;
+  			letter-spacing: normal;
+  			color: #787887;
+  			margin-bottom: 3px;
+  			text-align: right !important;
+  		}
+  		.activityBodyBlock{
+  			width: 535px;
+  			border-radius: 2px;
+  			background-color: #f0f0f5;
+  			padding: 8px 15px 15px 13px;
+  			margin-bottom: 10px;
+  			white-space: pre-line;
+  		}
+  		.activityBodyBlockRight{
+  		    width: 535px;
+  			border-radius: 2px;
+  			padding: 8px 15px 15px 13px;
+  			margin-bottom: 10px;
+  			background-color: #b4b4be !important;
+  		}
+  		.activityBlockCenter{
+   			margin: 0 auto;
+    		width: 640px;
+  		}
+  		.activityBodyBlockCenter{
+  			border-radius: 30.5px;
+  			background-color: rgba(255, 215, 147, 0.23);
+  			width: 535px;
+    		float: left;
+            line-height: 1.82;
+            color: #787887;
+            margin-bottom: 10px;
+   		}
+   		.activityBodyBlockCenter .activityBodyCenterContent{
+            line-height: 1.82;
+    		letter-spacing: normal;
+    		text-align: center;
+    		padding: 0px 20px 0px 20px;
+    		width: 91%;
+    		float: inherit;
+   		}
+   		.activityBlockCenterDateTime{
+    		float: left;
+    		font-size: 10px;
+    		color: #787887;
+    		padding: 5px 0px 0px 5px;
+   		}
+   		.activityItemLeft{
+ 			float: left;
+ 			margin-right: 18px;
+ 		}
+ 		.activityItemRight{
+ 			float: right;
+ 			margin-right: 18px;
+ 		}
+ 		
+ 		input[type="text"]:disabled, select:disabled{
+ 			background-color: #d4d4dc;
+ 		}
+ 		input[type=text]{
+ 			height: 22px;
+ 		}
+ 		.saveStatusButton{
+ 			width: 87px;
+  			height: 18px;
+  			border-radius: 3px;
+  			background-color: #ffffff;
+  			border: solid 1px #d4d4dc;
+ 			
+ 		}
+ 		.messageSubmitButton input{
+			height: 18px;
+			border-radius: 3px;
+			border: solid 1px #d4d4dc;
+			background-color: #ffffff;
+			margin: 30px 10px 24px 10px
+ 		}
+ 		.diff-removed, .diff-added {
+ 			color: #787887 !important;
+ 		}
+  		.activityCapitalized{
+  			text-transform: capitalize;
+  		}
+  		.messageBodyTextBox{
+ 		    display: inline-block;
+ 		    float: left;
+ 		}
+ 		#commentTextBox {
+		    width: 818px;
+            height: 51px;
+            border-radius: 2px;
+            background-color: #ffffff;
+            border: solid 1px #b4b4be;
+			margin: 14px;
+			padding-left: 10px;
+			
+
+		}

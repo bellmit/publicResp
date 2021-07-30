@@ -1,0 +1,64 @@
+{
+    "title": "Purchase Order Pending Items",
+    "description": "This report shows the list of items Pending to be received in any PO based on PO Date.",
+    "reportGroup": "Procurement Reports",
+    "dateFields": [
+        "po_date"
+    ],
+    "includes": [
+        "POItems.srjs"
+    ],
+    "queryUnits": [
+        {
+            "mainTableName": "store_po",
+            "mainTableAlias": "po",
+            "joinTables": [],
+            "whereExpression": "(po.qty_req > po.qty_received) AND po.status != 'R'"
+        }
+    ],
+    "defaultShowFields": [
+        "po_no",
+        "supplier_name",
+        "item_name",
+        "mrp",
+        "cost_price",
+        "discount",
+        "qty_received",
+        "qty_req",
+        "qty_in_pending"
+    ],
+    "fields": {
+        "qty_in_pending": {
+            "displayName": "Qty Pending",
+            "width": 60,
+            "decimalType": "quantity",
+            "expression": "round((po.qty_req - po.qty_received),2)"
+        },
+        "pkg_qty_in_pending": {
+            "displayName": "Pkg Qty Pending",
+            "width": 60,
+            "decimalType": "quantity",
+            "expression": "round((po.qty_req - po.qty_received)/po.po_pkg_size,2)"
+        },
+        "bonus_qty_in_pending": {
+            "displayName": "Bonus Qty Pending",
+            "width": 60,
+            "decimalType": "quantity",
+            "expressionLines": [
+                " CASE WHEN (po.bonus_qty_req - po.bonus_qty_received)<0 THEN 0 ",
+                " ELSE round((po.bonus_qty_req - po.bonus_qty_received),2) END "
+            ]
+        },
+        "grn_no": {
+            "displayName": "GRN No",
+            "width": 60,
+            "expression": "(select textcat_commacat(sgm.grn_no::text) as grn_no from store_grn_main sgm where po.po_no = sgm.po_no)"
+        },
+        "grn_date": {
+            "displayName": "GRN Date",
+            "datatype": "date",
+            "width": 70,
+            "expression": "(select textcat_commacat((sgm.grn_date :: date)::text) as grn_no from store_grn_main sgm where po.po_no = sgm.po_no)"
+        }
+    }
+}

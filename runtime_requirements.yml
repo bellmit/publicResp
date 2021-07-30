@@ -1,0 +1,13 @@
+---
+# List of prerequisites softwares for running this version of insta hms or app
+# This file is used by insta-devops-scripts to provision server where instahms and
+# instaapps is being deployed. Its assumed that both apps & hms use same environment
+
+jdk: 
+  version: 1.7.x
+tomcat:
+  version: 7.0.x
+postgres:
+  version: 
+    - 9.1.x
+    - 9.3.x

@@ -1,0 +1,36 @@
+# environemnt settings
+ENABLE_TESTING=N # Set to Y for applying test server configurations
+DEFAULT_HOSPITAL= # Set default schema to be used
+
+#path settings
+APPHOME=/root/webapps #Base path of tomcat document home or base folder
+TOMCAT_HOME=/usr/local/tomcat # Installation path of tomcat
+HMS_DIST_HOME=/root # Base path for look for builds. Assumption is that the folder has "builds" and "Appsbuilds" subfolder
+HMS_BIN_DIR=/root/bin # Path to look for custom server side scripts (Used only by test servers)
+HMS_WORK_HOME=/root # Used by backup script and ssl check scripts. Assumption is that the folder has "db-backups" and "files" subfolder
+
+#Cron Settings
+HMSUSER=root # System user that executed linux crons
+WEEK_BEG=Mon # Day of week on which week for cron begins
+
+#database connection configuration
+DBUSER=postgres
+DBHOST=127.0.0.1
+DBPASSWORD=
+DBPORT=5432
+
+#instahms database configurations
+HMS_DBCONN_MINIDLE=10
+HMS_DBCONN_MAXIDLE=25
+HMS_DBCONN_MAXACTIVE=50
+HMSQUARTZ_DBCONN_MINIDLE=5
+HMSQUARTZ_DBCONN_MAXIDLE=10
+HMSQUARTZ_DBCONN_MAXACTIVE=15
+
+#instaapps specific configuration
+APPS_DBCONN_MINIDLE=10
+APPS_DBCONN_MAXIDLE=25
+APPS_DBCONN_MAXACTIVE=50
+APPSQUARTZ_DBCONN_MINIDLE=5
+APPSQUARTZ_DBCONN_MAXIDLE=10
+APPSQUARTZ_DBCONN_MAXACTIVE=15

@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Comment -->
+<beans default-lazy-init="true"
+	xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:jpa="http://www.springframework.org/schema/data/jpa" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:websocket="http://www.springframework.org/schema/websocket"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans  
+	http://www.springframework.org/schema/beans/spring-beans.xsd  
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/mvc
+	http://www.springframework.org/schema/mvc/spring-mvc.xsd
+	http://www.springframework.org/schema/tx
+    http://www.springframework.org/schema/tx/spring-tx.xsd
+    http://www.springframework.org/schema/util
+    http://www.springframework.org/schema/util/spring-util.xsd
+    http://www.springframework.org/schema/websocket
+    http://www.springframework.org/schema/websocket/spring-websocket.xsd">
+
+	<tx:annotation-driven transaction-manager="txManager"
+		proxy-target-class="true" />
+
+	<context:component-scan
+		base-package="com.insta.hms.documents, com.insta.hms.mdm, com.insta.hms.common, com.insta.hms.search, com.insta.hms.core,
+			com.insta.hms.integration, com.insta.hms.security, com.insta.hms.jobs, com.insta.hms.extension, com.insta.hms.fpmodule, com.insta.hms.api">
+		<context:exclude-filter type="annotation"
+                expression="org.springframework.stereotype.Controller"/>
+	</context:component-scan>
+
+	<mvc:annotation-driven>
+		<mvc:message-converters>
+			<bean class="com.insta.hms.common.ObjectHttpMessageConverter" />
+			<bean
+				class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+				<property name="objectMapper" ref="jacksonObjectMapper" />
+			</bean>
+			<bean class="org.springframework.http.converter.xml.Jaxb2RootElementHttpMessageConverter"></bean>
+		</mvc:message-converters>
+	</mvc:annotation-driven>
+
+	<bean
+		class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
+		<property name="viewResolvers">
+			<list>
+				<bean id="jsonViewResolver" class="com.insta.hms.common.JsonViewResolver">
+					<property name="viewNames">
+						<set>
+							<value>*.json</value>
+						</set>
+					</property>
+				</bean>
+				<bean id="csvViewResolver" class="org.springframework.web.servlet.view.XmlViewResolver">
+					<property name="order" value="1" />
+					<property name="location" value="WEB-INF/spring/csv-views.xml" />
+				</bean>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="multipartResolver"
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver"
+		p:defaultEncoding="utf-8">
+	</bean>
+
+
+	<mvc:interceptors>
+		<ref bean="handlerInterceptor" />
+	</mvc:interceptors>
+
+	<bean id="handlerInterceptor" class="com.insta.hms.common.HandlerIntercepter" />
+
+	<bean id="jndiDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName" value="java:comp/env/postgres" />
+	</bean>
+
+	<bean id="dataSource" class="com.insta.hms.common.TenantAwareProxy">
+		<property name="targetDataSource" ref="jndiDataSource" />
+	</bean>
+
+	<bean id="txManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="jndiDataSource" />
+	</bean>
+
+	<bean id="DatabaseHelper" class="com.insta.hms.common.DatabaseHelper"
+		lazy-init="false">
+		<property name="dataSource" ref="dataSource" />
+		<property name="transactionManager" ref="txManager" />
+	</bean>
+
+	<bean id="localeResolver"
+		class="org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver">
+		<property name="defaultLocale" value="en" />
+	</bean>
+
+	<bean id="messageSource"
+		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		<property name="basenames">
+			<list>
+				<value>classpath:/java/resources/application</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="applicationContextProvider" class="com.insta.hms.common.ApplicationContextProvider"
+		lazy-init="false">
+	</bean>
+
+	<bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+			<property name="targetObject">
+					<bean
+							class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+							<property name="targetClass" value="java.lang.System" />
+							<property name="targetMethod" value="getProperties" />
+					</bean>
+			</property>
+			<property name="targetMethod" value="putAll" />
+			<property name="arguments">
+					<util:properties>
+							<prop key="org.jboss.logging.provider">slf4j</prop>
+					</util:properties>
+			</property>
+	</bean>
+
+	<bean id="jacksonObjectMapper" class="com.insta.hms.common.CustomObjectMapper">
+		<property name="PropertyNamingStrategy"
+			value="#{T(com.fasterxml.jackson.databind.PropertyNamingStrategy).SNAKE_CASE}" />
+	</bean>
+	<bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		<property name="dataSource" ref="dataSource"/>
+		<property name="annotatedClasses">
+			<list>
+				<!-- Add annotated classes here -->
+				<value>com.insta.hms.integration.insurance.remittance.InsuranceRemittanceModel</value>
+				<value>com.insta.hms.integration.insurance.remittance.ReconciliationModel</value>
+				<value>com.insta.hms.integration.insurance.remittance.ReconciliationActivityDetailsModel</value>
+				<value>com.insta.hms.mdm.paymentmode.PaymentModeMasterModel</value>
+				<value>com.insta.hms.model.PaymentTransactionsIdSequence</value>
+				<value>com.insta.hms.model.PaymentTransactionsModel</value>
+				<value>com.insta.hms.mdm.tpas.TpaMasterModel</value>
+				<value>com.insta.hms.mdm.insurancecompanies.InsuranceCompanyMasterModel</value>
+				<value>com.insta.hms.core.patient.registration.PatientInsurancePlansModel</value>
+				<value>com.insta.hms.mdm.insuranceplans.InsurancePlanMainModel</value>
+				<value>com.insta.hms.security.usermanager.UUserModel</value>
+				<value>com.insta.hms.integration.insurance.remittance.InsuranceRemittanceActivityDetailsModel</value>
+				<value>com.insta.hms.model.InsuranceSubmissionBatchModel</value>
+				<value>com.insta.hms.core.insurance.InsuranceClaimModel</value>
+				<value>com.insta.hms.core.billing.BillModel</value>
+				<value>com.insta.hms.core.clinical.patientactivities.PatientActivitiesModel</value>
+				<value>com.insta.hms.core.clinical.mar.MarSetupModel</value>
+				<value>com.insta.hms.model.ConsolidatedPatientBillModel</value>
+				<value>com.insta.hms.integration.insurance.submission.ClaimSubmissionsModel</value>
+				<value>com.insta.hms.core.billing.BillChargeClaimModel</value>
+				<value>com.insta.hms.core.billing.BillChargeClaimTaxModel</value>
+				<value>com.insta.hms.core.billing.BillChargeModel</value>
+				<value>com.insta.hms.core.billing.BillChargeTaxModel</value>
+				<value>com.insta.hms.core.patient.registration.PatientRegistrationModel</value>
+				<value>com.insta.hms.core.diagnostics.incomingsampleregistration.IncomingSampleRegistrationModel</value>
+				<value>com.insta.hms.core.patient.PatientDetailsModel</value>
+				<value>com.insta.hms.core.billing.ReceiptModel</value>
+				<value>com.insta.hms.core.billing.BillReceiptsModel</value>
+				<value>com.insta.hms.core.billing.BillChargeReceiptAllocationModel</value>
+				<value>com.insta.hms.core.billing.ReceiptRefundReferenceModel</value>
+				<value>com.insta.hms.core.billing.RefundReferenceAllocationViewModel</value>
+				<value>com.insta.hms.core.billing.ReceiptUsageModel</value>
+				<value>com.insta.hms.model.PatientDepositsSetoffAdjustmentsModel</value>
+				<value>com.insta.hms.mdm.packages.PatientPackagesModel</value>
+				<value>com.insta.hms.core.insurance.BillRemittanceModel</value>
+				<value>com.insta.hms.mdm.centers.HospitalCenterMasterModel</value>
+				<value>com.insta.hms.mdm.chargeheads.ChargeheadConstantsModel</value>
+				<value>com.insta.hms.model.ChargegroupConstantsModel</value>
+				<value>com.insta.hms.mdm.servicegroup.ServiceGroupsModel</value>
+				<value>com.insta.hms.mdm.servicesubgroup.ServiceSubGroupModel</value>
+				<value>com.insta.hms.model.BillAccountHeadsModel</value>
+				<value>com.insta.hms.mdm.taxsubgroups.ItemSubGroupsModel</value>
+				<value>com.insta.hms.mdm.doctors.DoctorsModel</value>
+				<value>com.insta.hms.mdm.referraldoctors.ReferralModel</value>
+				<value>com.insta.hms.mdm.departments.DepartmentModel</value>
+				<value>com.insta.hms.model.HmsAccountingInfoModel</value>
+				<value>com.insta.hms.model.AccountingFailedExportsModel</value>
+				<value>com.insta.hms.core.inventory.sales.SalesClaimDetailsModel</value>
+				<value>com.insta.hms.core.inventory.sales.SalesClaimTaxDetailsModel</value>
+				<value>com.insta.hms.mdm.item.StoreItemDetailsModel</value>
+				<value>com.insta.hms.mdm.stores.StoresModel</value>
+				<value>com.insta.hms.model.StoreSalesDetailsModel</value>
+				<value>com.insta.hms.model.StoreSalesMainModel</value>
+				<value>com.insta.hms.model.StoreSalesTaxDetailsModel</value>
+				<value>com.insta.hms.model.StoreRetailCustomersModel</value>
+				<value>com.insta.hms.mdm.salutations.SalutationMasterModel</value>
+				<value>com.insta.hms.model.StoreCategoryMasterModel</value>
+				<value>com.insta.hms.mdm.accounting.AccountGroupMasterModel</value>
+				<value>com.insta.hms.mdm.ordersets.PackOrgDetailsModel</value>
+				<value>com.insta.hms.mdm.taxsubgroups.ItemSubGroupsModel</value>
+				<value>com.insta.hms.mdm.ordersets.PackageContentCharges</value>
+				<value>com.insta.hms.mdm.ordersets.PackageContentsModel</value>
+				<value>com.insta.hms.mdm.ordersets.PackagesModel</value>
+				<value>com.insta.hms.mdm.ordersets.PackageChargesModel</value>
+				<value>com.insta.hms.mdm.ordersets.CenterPackageApplicabilityModel</value>
+				<value>com.insta.hms.mdm.ordersets.PackageCategoryMasterModel</value>
+				<value>com.insta.hms.mdm.ordersets.PackageSponsorMasterModel</value>
+				<value>com.insta.hms.mdm.ordersets.PackagePlanMasterModel</value>
+				<value>com.insta.hms.core.billing.BillActivityChargeModel</value>
+				<value>com.insta.hms.model.StockIssueMainModel</value>
+				<value>com.insta.hms.model.StockIssueDetailsModel</value>
+				<value>com.insta.hms.model.StoreIssueReturnsMainModel</value>
+				<value>com.insta.hms.model.StoreIssueReturnsDetailsModel</value>
+				<value>com.insta.hms.mdm.counters.CountersModel</value>
+				<value>com.insta.hms.mdm.cardtypes.CardTypeMasterModel</value>
+				<value>com.insta.hms.model.ForeignCurrencyModel</value>
+				<value>com.insta.hms.model.DepositsReceiptsViewModel</value>
+				<value>com.insta.hms.model.CounterAssociatedAccountgroupViewModel</value>
+				<value>com.insta.hms.core.billing.ReceiptTaxModel</value>
+				<value>com.insta.hms.core.clinical.ivadministrationdetails.PatientIvAdminstrationModel</value>				
+			</list>
+		</property>
+		<!-- <property name="packagesToScan">
+			<list>
+				Add packages containing annotated classes here
+				<value>com.insta.hms.integration.insurance.remittance</value>
+			</list>
+		</property> -->
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</prop>
+				<!-- This property prints the SQL statements executed by hibernate -->
+				<!-- <prop key="hibernate.show_sql">true</prop> -->
+				<!-- This property is used to make the SQL statements a bit more readable -->
+				<!-- <prop key="hibernate.use_sql_comments">true</prop> -->
+				<!-- This formats the SQL before it prints it  -->
+				<!-- <prop key="hibernate.format_sql">true</prop> -->
+			</props>
+		</property>
+	</bean>
+<!-- Web Sockets -->
+	 <websocket:message-broker application-destination-prefix="/ws">
+        <websocket:stomp-endpoint path="/instahms" allowed-origins="*">
+            <websocket:sockjs client-library-url="../scripts/sockjs-v1.4.0-min.js" />
+        </websocket:stomp-endpoint>
+        <websocket:simple-broker prefix="/topic, /queue, /user"/>
+    </websocket:message-broker>
+</beans>  

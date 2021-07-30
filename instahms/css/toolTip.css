@@ -1,0 +1,22 @@
+.topnav-tooltip-header {
+    display: none;
+    position: absolute;
+}
+
+.topnav-tooltip-header:after {
+    content: '';
+    position: absolute;
+    border-style: solid;
+    border-width: 0 8px 8px;
+    border-color: white transparent;
+    top: 27px;
+}
+
+.topnav-tooltip-header:before {
+    content: '';
+    position: absolute;
+    border-style: solid;
+    border-width: 0 8px 8px;
+    border-color: #DDE0E3 transparent;
+    top: 24px;
+}

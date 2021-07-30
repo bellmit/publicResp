@@ -1,0 +1,2 @@
+patient_name,patient_contact,appointment_id,appointment_time,res_sch_id,appointment_status,scheduler_visit_type,center_id,unique_appt_ind,patient_category
+'Steve','+919087611234',20,'2018-02-24 16:00:00',1,'Booked','M',7,0,0

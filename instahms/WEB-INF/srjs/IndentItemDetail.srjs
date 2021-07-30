@@ -1,0 +1,186 @@
+{
+    "title": "Indent Items Detail Report",
+    "reportGroup": "Store Mgmt Reports",
+    "dateFields": [
+        "indent_date"
+    ],
+    "description": "This report shows details of the items contained in the indent.",
+    "tableName": [
+        "rpt_indent_item_details_view"
+    ],
+    "defaultShowFields": [
+        "indent_no",
+        "medicine_name",
+        "manf_mnemonic",
+        "generic_name",
+        "category",
+        "approved_date",
+        "indent_date",
+        "purchased",
+        "from_dept",
+        "requesting_dept",
+        "requesting_ward",
+        "to_dept"
+    ],
+    "fields": {
+        "indent_no": {
+            "displayName": "Indent No",
+            "width": "60"
+        },
+        "medicine_name": {
+            "displayName": "Item Name",
+            "width": "130",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true
+        },
+        "cust_item_code": {
+            "displayName": "Custom Item Code",
+            "width": "130",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true
+        },
+        "manf_mnemonic": {
+            "displayName": "Manf Name",
+            "width": "80"
+        },
+        "generic_name": {
+            "displayName": "Generic Name",
+            "width": "100",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT generic_name from generic_name"
+        },
+        "category": {
+            "displayName": "Category Name",
+            "width": "100",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT category FROM store_category_master"
+        },
+        "to_center_name": {
+            "displayName": "To Center Name",
+            "filterable": true,
+            "groupable": true,
+            "width": "100",
+            "allowedValuesQuery": "SELECT center_name FROM hospital_center_master WHERE center_id!=0 order by center_name"
+        },
+        "from_center_name": {
+            "displayName": "Requesting Center",
+            "filterable": true,
+            "groupable": true,
+            "width": "100",
+            "allowedValuesQuery": "SELECT center_name FROM hospital_center_master WHERE center_id!=0"
+        },
+        "qty": {
+            "displayName": "Qty",
+            "dataType": "numeric",
+            "width": "40",
+            "decimalType": "quantity",
+            "aggFunction": "sum"
+        },
+        "qty_fullfilled": {
+            "displayName": "Qty Fullfilled",
+            "dataType": "numeric",
+            "width": "50",
+            "decimalType": "quantity",
+            "aggFunction": "sum"
+        },
+        "qty_in_rejection": {
+            "displayName": "Qty Rejected",
+            "dataType": "numeric",
+            "filterable": true,
+            "width": "60",
+            "decimalType": "quantity",
+            "aggFunction": "sum"
+        },
+        "approved_by": {
+            "displayName": "Approved By",
+            "width": "80"
+        },
+        "approved_date": {
+            "displayName": "Approved Date",
+            "width": "80"
+        },
+        "indent_date": {
+            "displayName": "Indent Date",
+            "width": "80"
+        },
+        "po_no": {
+            "displayName": "Po No",
+            "width": "50"
+        },
+        "purchased": {
+            "displayName": "Purchased",
+            "width": "60",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValues": [
+                "No",
+                "Yes"
+            ]
+        },
+        "requesting_dept": {
+            "displayName": "Requesting Dept",
+            "groupable": true,
+            "filterable": true,
+            "width": "80",
+            "allowedValuesQuery": "SELECT dept_name FROM department WHERE status = 'A'"
+        },
+        "requesting_ward": {
+            "displayName": "Requesting Ward",
+            "groupable": true,
+            "filterable": true,
+            "allowedValuesQuery": "SELECT ward_name FROM ward_names WHERE status = 'A'",
+            "width": "80"
+        },
+        "from_dept": {
+            "displayName": "Requesting Store",
+            "width": "80",
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT dept_name FROM stores WHERE status = 'A' ORDER BY dept_name"
+        },
+        "to_dept": {
+            "displayName": "Indent Store",
+            "width": "80",
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT dept_name FROM stores WHERE is_super_store = 'Y' and status = 'A'"
+        },
+        "status": {
+            "displayName": "Item Status",
+            "width": "120",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValues": [
+                "Open",
+                "Approved",
+                "Rejected",
+                "Transferred",
+                "Cancelled",
+                "Closed"
+            ]
+        },
+        "indent_type": {
+            "displayName": "Indent Type",
+            "width": "70",
+            "filterable": true,
+            "groupable": true,
+            "allowedValues": [
+                "Stock transfer",
+                "Dept / Ward Issue",
+                "Request for new Items"
+            ]
+        },
+        "purchase_flag_date": {
+            "displayName": "Purchase Flag Date",
+            "width": "80"
+        }
+    }
+}

@@ -1,0 +1,2 @@
+discount_plan_id,discount_plan_name,discount_plan_description,validity_start,validity_end,status
+2,'Plan1','description',,,'A'

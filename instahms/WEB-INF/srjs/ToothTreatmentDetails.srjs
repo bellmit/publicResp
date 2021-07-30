@@ -1,0 +1,253 @@
+{
+    "title": "Dental Treatment Details Report",
+    "reportGroup": "Dental Reports",
+    "description": "This report shows Dental Treatment Details within the given date range.",
+    "dateFields": [
+        "planned_date",
+        "completed_date"
+    ],
+    "allowNoDate": true,
+    "defaultOrder": "mr_no",
+    "defaultShowFields": [
+        "mr_no",
+        "full_name",
+        "tooth_number",
+        "service_name",
+        "order_qty",
+        "planned_by_name",
+        "completed_by_name",
+        "treatment_status",
+        "visit_center"
+    ],
+    "includes": [
+        "PatientDetailFields.srjs"
+    ],
+    "fields": {
+        "service_name": {
+            "displayName": "Service Name",
+            "width": "100",
+            "groupable": true,
+            "filterable": true,
+            "table": "s"
+        },
+        "order_qty": {
+            "displayName": "Order Qty",
+            "expression": "ttd.qty",
+            "table": "ttd",
+            "dataType": "integer",
+            "filterable": true
+        },
+        "planned_qty": {
+            "displayName": "Planned Qty",
+            "expression": "ttd.planned_qty",
+            "table": "ttd",
+            "dataType": "integer",
+            "filterable": true
+        },
+        "tooth_number": {
+            "displayName": "Tooth Number",
+            "width": "42",
+            "filterable": true,
+            "expression": "CASE WHEN COALESCE(ttd.tooth_unv_number, '') = '' THEN ttd.tooth_fdi_number ELSE ttd.tooth_unv_number END",
+            "table": "ttd"
+        },
+        "planned_by_name": {
+            "displayName": "Planned By",
+            "width": "70",
+            "filterable": true,
+            "expression": "pdoc.doctor_name",
+            "table": "pdoc"
+        },
+        "completed_by_name": {
+            "displayName": "Conducted By",
+            "width": "70",
+            "filterable": true,
+            "expression": "cd.doctor_name",
+            "table": "cd"
+        },
+        "order_status": {
+            "displayName": "Ordered Status",
+            "width": "45",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValues": [
+                "Order",
+                "Ordered"
+            ],
+            "expression": "CASE WHEN coalesce(ttd.service_prescribed_id, 0) = 0 THEN 'Order' ELSE 'Ordered' END"
+        },
+        "treatment_status": {
+            "displayName": "Treatment Status",
+            "width": "55",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValues": [
+                "Planned",
+                "Completed",
+                "Cancelled",
+                "In Progress",
+                "Patient No Show"
+            ],
+            "expression": "CASE WHEN treatment_status='P' THEN 'Planned' WHEN treatment_status='C' then 'Completed' WHEN treatment_status='I' THEN 'In Progress' WHEN treatment_status ='N' THEN 'Patient No Show' ELSE 'Cancelled' END"
+        },
+        "cancelled_date": {
+            "displayName": "Cancelled Date",
+            "width": "60",
+            "filterable": true,
+            "groupable": true,
+            "dataType": "date",
+            "table": "ttd"
+        },
+        "cancelled_by": {
+            "displayName": "Cancelled By",
+            "width": "100",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "table": "ttd",
+            "allowedValuesQuery": "SELECT emp_username FROM u_user JOIN u_role USING(role_id) WHERE portal_id='N' ORDER BY emp_username"
+        },
+        "planned_date": {
+            "dataType": "date",
+            "displayName": "Planned Date",
+            "expression": "date(ttd.planned_date)",
+            "filterable": true,
+            "groupable": true,
+            "table": "ttd",
+            "width": 60
+        },
+        "planned_date_time": {
+            "displayName": "Planned Date Time",
+            "expression": "TO_CHAR(ttd.planned_date, 'yyyy-MM-dd hh24:mi')",
+            "filterable": false,
+            "groupable": true,
+            "table": "ttd",
+            "width": 60
+        },
+        "start_date": {
+            "displayName": "Start Date",
+            "expression": "TO_CHAR(ttd.start_date, 'yyyy-MM-dd hh24:mi')",
+            "filterable": true,
+            "groupable": true,
+            "table": "ttd",
+            "width": 60
+        },
+        "completed_date": {
+            "dataType": "date",
+            "displayName": "Completed Date",
+            "expression": "date(ttd.completed_date)",
+            "filterable": true,
+            "groupable": true,
+            "table": "ttd",
+            "width": 60
+        },
+        "completed_date_time": {
+            "displayName": "Completed Date Time",
+            "expression": "TO_CHAR(ttd.completed_date, 'yyyy-MM-dd hh24:mi')",
+            "filterable": false,
+            "groupable": true,
+            "table": "ttd",
+            "width": 60
+        },
+        "visit_center": {
+            "displayName": "Visit Center",
+            "expression": "hcm.center_name",
+            "table": "hcm",
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT center_name FROM hospital_center_master ORDER BY center_name",
+            "width": 100
+        },
+        "plan_time_elapsed_days": {
+            "displayName": "Plan Time Elapsed (Days)",
+            "expression": "(current_date - date(ttd.planned_date))",
+            "table": "ttd",
+            "width": "50",
+            "filterable": true,
+            "dataType": "integer"
+        },
+        "plan_time_elapsed_weeks": {
+            "displayName": "Plan Time Elapsed (Weeks)",
+            "expression": "cast(round((current_date - date(ttd.planned_date))/7) as integer)",
+            "table": "ttd",
+            "width": "50",
+            "filterable": true,
+            "dataType": "integer"
+        },
+        "plan_time_elapsed_months": {
+            "displayName": "Plan Time Elapsed (Months)",
+            "expression": " cast(round((current_date -date(ttd.planned_date))/30.43) as integer)",
+            "table": "ttd",
+            "width": "50",
+            "filterable": true,
+            "dataType": "integer"
+        },
+        "creation_date": {
+            "displayName": "Creation Date",
+            "expression": "TO_CHAR(ttd.creation_date, 'yyyy-MM-dd hh24:mi')",
+            "width": "70",
+            "table": "ttd",
+            "filterable": true,
+            "groupable": true
+        }
+    },
+    "queryUnits": [
+        {
+            "mainTableAlias": "ttd",
+            "mainTableName": "tooth_treatment_details",
+            "groupBy": false,
+            "joinTables": [
+                {
+                    "name": "doctors",
+                    "alias": "pdoc",
+                    "expression": "ON (ttd.planned_by = pdoc.doctor_id)",
+                    "dependsOn": "ttd",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "patient_details",
+                    "alias": "pd",
+                    "expression": "ON (ttd.mr_no = pd.mr_no)",
+                    "dependsOn": "ttd",
+                    "type": "JOIN"
+                },
+                {
+                    "name": "doctors",
+                    "alias": "cd",
+                    "dependsOn": "ttd",
+                    "expression": "ON (ttd.completed_by = cd.doctor_id)",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "services",
+                    "alias": "s",
+                    "dependsOn": "ttd",
+                    "expression": "ON (ttd.service_id=s.service_id)"
+                },
+                {
+                    "name": "services_prescribed",
+                    "alias": "sp",
+                    "dependsOn": "ttd",
+                    "expression": "ON (ttd.service_prescribed_id=sp.prescription_id)",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "patient_registration",
+                    "alias": "pr",
+                    "dependsOn": "sp",
+                    "expression": "ON (sp.patient_id=pr.patient_id)",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "hospital_center_master",
+                    "alias": "hcm",
+                    "dependsOn": "pr",
+                    "expression": " ON (pr.center_id=hcm.center_id) ",
+                    "type": "LEFT"
+                }
+            ]
+        }
+    ]
+}

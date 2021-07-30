@@ -1,0 +1,101 @@
+<!--
+    Context specific tomcat configuration file for the instahms application
+-->
+
+<Context
+	path="/insta__app__"
+	debug="0"
+	reloadable="false"
+	crossContext="true"
+	docBase="__apphome__/insta__app__">
+    <JarScanner scanManifest="false" scanClassPath="false"/>
+	<Parameter
+		name="defaultSchema"
+		value="__schema__"
+		override="false"
+	/>
+	<Parameter
+		name="ssoLoginOnly"
+		value="__ssologinonly__"
+	/>
+	
+	<Resource
+		name="postgres"
+		auth="Container"
+		type="javax.sql.DataSource"
+		factory="org.apache.tomcat.jdbc.pool.DataSourceFactory"
+		driverClassName="org.postgresql.Driver"
+		url="jdbc:postgresql://__dbhost__:__dbport__/__app__"
+		username="__dbuser__"
+		password="__dbpassword__"
+		minIdle="__hms_db_minidle__"
+		maxIdle="__hms_db_maxidle__"
+		maxActive="__hms_db_maxactive__"
+		maxWait="30000"
+    	minEvictableIdleTimeMillis="60000"
+    	timeBetweenEvictionRunsMillis="20000"
+    	validationInterval="30000"
+    	removeAbandonedTimeout="300"
+		testOnBorrow="true"
+		testWhileIdle="true"
+    	removeAbandoned="true"
+    	logAbandoned="true"
+		validationQuery="select 1"
+		jdbcInterceptors="StatementFinalizer;ResetAbandonedTimer"
+	/>
+
+	<Resource
+		name="quartz"
+		auth="Container"
+		type="javax.sql.DataSource"
+		factory="org.apache.tomcat.jdbc.pool.DataSourceFactory"
+		driverClassName="org.postgresql.Driver"
+		url="jdbc:postgresql://__dbhost__:__dbport__/__quartzdb__"
+		username="__dbuser__"
+		password="__dbpassword__"
+		minIdle="__hms_quartz_minidle__"
+		maxIdle="__hms_quartz_maxidle__"
+		maxActive="__hms_quartz_maxactive__"
+		maxWait="10000"
+		minEvictableIdleTimeMillis="60000"
+		timeBetweenEvictionRunsMillis="20000"
+		validationInterval="30000"
+		removeAbandonedTimeout="600"
+		testOnBorrow="true"
+		logAbandoned="true"
+		testWhileIdle="true"
+		removeAbandoned="true"
+		validationQuery="select 1"
+		jdbcInterceptors="StatementFinalizer;ResetAbandonedTimer"
+	/>
+
+	<!--  REMOVE FOR READ_REPLICA
+
+	<Resource
+		name="postgres_read"
+		auth="Container"
+		type="javax.sql.DataSource"
+		factory="org.apache.tomcat.jdbc.pool.DataSourceFactory"
+		driverClassName="org.postgresql.Driver"
+		url="jdbc:postgresql://__read_dbhost__:__read_dbport__/__app__"
+		username="__dbuser__"
+		password="__dbpassword__"
+		minIdle="__hms_db_minidle__"
+		maxIdle="__hms_db_maxidle__"
+		maxActive="__hms_db_maxactive__"
+		maxWait="30000"
+    	minEvictableIdleTimeMillis="60000"
+    	timeBetweenEvictionRunsMillis="20000"
+    	validationInterval="30000"
+    	removeAbandonedTimeout="300"
+		testOnBorrow="true"
+		testWhileIdle="true"
+    	removeAbandoned="true"
+    	logAbandoned="true"
+		validationQuery="select 1"
+		jdbcInterceptors="StatementFinalizer;ResetAbandonedTimer"
+	/>
+
+	REMOVE FOR READ_REPLICA	-->
+
+</Context>

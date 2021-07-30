@@ -1,0 +1,248 @@
+{
+    "title": "Item-Wise Stock Report",
+    "description": "This report gives an item-wise stock (sum of all batches) stock at various stores.",
+    "reportGroup": "Store Mgmt Reports",
+    "defaultOrder": "item_name",
+    "includes": [
+        "StoreItemFields.srjs",
+        "StoreItemCodeFields.srjs"
+    ],
+    "queryUnits": [
+        {
+            "mainTableNameLines": [
+                "(",
+                "SELECT ssd.medicine_id, dept_id, sum(qty) AS qty, ",
+                " max(package_cp) AS max_cp, min(package_cp) AS min_cp, ",
+                " max(sibd.mrp) AS mrp_max, min(sibd.mrp) AS mrp_min, ",
+                " round(sum(qty*(package_cp/issue_base_unit)),2) AS cp_val, ",
+                " round(sum(qty*(sibd.mrp/issue_base_unit)),2) AS mrp_val, ",
+                " max(sibd.exp_dt) AS max_exp, min(sibd.exp_dt) AS min_exp, ",
+                " max(date(stock_time)) AS max_stck, min(date(stock_time)) AS min_stck ",
+                "FROM store_stock_details ssd ",
+                " JOIN store_item_details USING(medicine_id) ",
+                " JOIN store_item_batch_details sibd USING(item_batch_id) ",
+                "GROUP BY ssd.medicine_id, dept_id ",
+                ")"
+            ],
+            "mainTableAlias": "ils",
+            "joinTables": [
+                {
+                    "name": "store_item_details",
+                    "alias": "sid",
+                    "dependsOn": "ils",
+                    "expression": "ON (sid.medicine_id = ils.medicine_id)"
+                },
+                {
+                    "includeName": "StoreItemFields.srjs"
+                },
+                {
+                    "name": "stores",
+                    "alias": "s",
+                    "dependsOn": "ils",
+                    "expression": "ON (s.dept_id = ils.dept_id)"
+                },
+                {
+                    "name": "hospital_center_master",
+                    "alias": "hcm",
+                    "dependsOn": "s",
+                    "expression": "ON (hcm.center_id = s.center_id)"
+                },
+                {
+                    "includeName": "StoreItemCodeFields.srjs"
+                },
+                {
+                    "name": "store_type_master",
+                    "alias": "stm",
+                    "dependsOn": "s",
+                    "expression": "ON (stm.store_type_id = s.store_type_id)"
+                },
+                {
+                    "name": "item_store_level_details",
+                    "alias": "re",
+                    "dependsOn": "s,ils",
+                    "expression": "ON (re.medicine_id = ils.medicine_id AND re.dept_id = ils.dept_id)"
+                }
+            ]
+        }
+    ],
+    "fields": {
+        "center_name": {
+            "table": "hcm",
+            "displayName": "Center Name",
+            "width": 100,
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT center_name FROM hospital_center_master WHERE center_id!=0 ORDER BY center_name"
+        },
+        "dept_name": {
+            "table": "s",
+            "displayName": "Store Name",
+            "width": 100,
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT dept_name FROM stores ORDER BY dept_name"
+        },
+        "store_type_name": {
+            "table": "stm",
+            "displayName": "Store Type",
+            "width": 80,
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT store_type_name FROM store_type_master ORDER BY store_type_name"
+        },
+        "reorder_level": {
+            "table": "re",
+            "displayName": "Reorder Level",
+            "dataType": "numeric",
+            "width": 60,
+            "filterable": true
+        },
+        "min_level": {
+            "table": "re",
+            "displayName": "Min Level",
+            "dataType": "numeric",
+            "width": 60,
+            "filterable": true
+        },
+        "max_level": {
+            "table": "re",
+            "displayName": "Max Level",
+            "dataType": "numeric",
+            "width": 60,
+            "filterable": true
+        },
+        "danger_level": {
+            "table": "re",
+            "displayName": "Danger Level",
+            "dataType": "numeric",
+            "width": 60,
+            "filterable": true
+        },
+        "bin": {
+            "table": "re",
+            "displayName": "Bin/Rack",
+            "width": 60,
+            "filterable": true,
+            "groupable": true,
+            "expression": "COALESCE(re.bin,sid.bin)"
+        },
+        "qty": {
+            "table": "ils",
+            "displayName": "Stock Quantity (Units)",
+            "width": 60,
+            "dataType": "numeric",
+            "decimalType": "quantity",
+            "aggFunction": "sum",
+            "filterable": true
+        },
+        "qty_pkg": {
+            "table": "ils",
+            "displayName": "Stock Quantity (Pkgs)",
+            "width": 60,
+            "dataType": "numeric",
+            "decimalType": "quantity",
+            "aggFunction": "sum",
+            "filterable": true,
+            "expression": "qty/issue_base_unit"
+        },
+        "mrp_max": {
+            "table": "ils",
+            "displayName": "MRP (max)",
+            "width": 60,
+            "decimalType": "amount",
+            "dataType": "numeric",
+            "filterable": true
+        },
+        "mrp_min": {
+            "table": "ils",
+            "displayName": "MRP (min)",
+            "width": 60,
+            "decimalType": "amount",
+            "dataType": "numeric",
+            "filterable": true
+        },
+        "mrp_val": {
+            "table": "ils",
+            "displayName": "MRP Value",
+            "width": 60,
+            "decimalType": "amount",
+            "dataType": "numeric",
+            "filterable": true
+        },
+        "mrp_avg": {
+            "table": "ils",
+            "displayName": "MRP (avg)",
+            "width": 60,
+            "decimalType": "amount",
+            "dataType": "numeric",
+            "filterable": true,
+            "expression": "CASE WHEN qty!=0 THEN (mrp_val/qty*issue_base_unit) ELSE NULL END"
+        },
+        "max_cp": {
+            "table": "ils",
+            "displayName": "Cost Price (max)",
+            "width": 60,
+            "decimalType": "amount",
+            "dataType": "numeric",
+            "filterable": true
+        },
+        "min_cp": {
+            "table": "ils",
+            "displayName": "Cost Price (min)",
+            "width": 60,
+            "decimalType": "amount",
+            "dataType": "numeric",
+            "filterable": true
+        },
+        "cp_val": {
+            "table": "ils",
+            "displayName": "Cost Price Value",
+            "width": 60,
+            "decimalType": "amount",
+            "dataType": "numeric",
+            "filterable": true
+        },
+        "avg_cp": {
+            "table": "ils",
+            "displayName": "Cost Price (avg)",
+            "width": 60,
+            "decimalType": "amount",
+            "dataType": "numeric",
+            "filterable": true,
+            "expression": "CASE WHEN qty!= 0 THEN cp_val/qty*issue_base_unit ELSE NULL END"
+        },
+        "max_exp": {
+            "table": "ils",
+            "displayName": "Max. Expiry Date",
+            "width": 70,
+            "dataType": "date"
+        },
+        "min_exp": {
+            "table": "ils",
+            "displayName": "Min. Expiry Date",
+            "width": 70,
+            "dataType": "date"
+        },
+        "min_stck": {
+            "table": "ils",
+            "displayName": "Max. Stock Date",
+            "width": 70,
+            "dataType": "date"
+        },
+        "max_stck": {
+            "table": "ils",
+            "displayName": "Min. Stock Date",
+            "width": 70,
+            "dataType": "date"
+        }
+    },
+    "defaultShowFields": [
+        "dept_name",
+        "item_name",
+        "package_size",
+        "reorder_level",
+        "qty",
+        "mrp_val",
+        "cp_val"
+    ]
+}

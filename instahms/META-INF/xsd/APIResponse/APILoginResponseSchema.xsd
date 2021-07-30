@@ -1,0 +1,15 @@
+<xs:schema attributeFormDefault="unqualified"
+	elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:element name="APILoginResponse">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element type="xs:string" name="requestHandlerKey"
+					minOccurs="0"/>
+					<xs:element type="xs:integer" name="expiresIn"
+						minOccurs="0" />
+					<xs:element type="xs:string" name="returnMessage" />
+					<xs:element type="xs:string" name="returnCode" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

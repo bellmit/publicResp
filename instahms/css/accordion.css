@@ -1,0 +1,65 @@
+/* CSS Document */
+
+.accordion {
+	margin:0;
+	padding:0;
+	background: #fff;
+}
+
+.accordion dt {
+	border:1px solid #ff0000;
+	display: block;
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:12px;
+	color:#333333;
+	background-image: url(../images/clmn_hd_bg.jpg);
+	/* background:#E4EBF5 url(../images/acchd_bg.jpg) repeat-x; */
+	border:1px solid;
+	border-bottom-color:#B4C1D1;
+	border-left-color:#E2E2E2;
+	border-top-color:#E9EEF5;
+	border-right-color:#CAD6E3;
+	padding:5px 0 5px 11px;
+	cursor: pointer;
+}
+
+.accordion dt span{
+	display:block;
+	background:url(../images/down.gif) no-repeat right 5px;
+	margin-right:10px;
+}
+	
+
+.accordion dt.selected {
+	color:#333333;
+}
+.accordion dt.selected span{
+	display:block;
+	background:url(../images/down.gif) no-repeat right -14px;
+}
+
+.accordion dt:hover, .accordion dt.over {
+	text-decoration: none;
+	cursor: pointer;
+	cursor: hand;
+}
+
+.accordion dd {
+	display: none;
+	overflow: hidden;
+	padding:0;
+	margin:0 0 1px 0;
+	border:1px solid #E2E2E2;
+	border-top:0;
+	background:#F8FBFE;
+}
+.accordion dd ul,li{margin:0;padding:0;list-style:none;}
+.accordion dd li{border-bottom:1px dotted #E6E6E6;padding:5px 0 5px 21px}
+
+.accordion dd.open {
+	display: block;
+}
+
+.accordion dd.getHeight {
+	display: block;
+}

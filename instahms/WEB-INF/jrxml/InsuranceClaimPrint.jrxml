@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="InsuranceClaimPrint" pageWidth="550" pageHeight="842" whenNoDataType="NoDataSection" columnWidth="490" leftMargin="30" rightMargin="30" topMargin="40" bottomMargin="40">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="mrno" class="java.lang.String"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="insuranceID" class="java.lang.Integer" isForPrompting="false"/>
+	<parameter name="visitId" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="billNo" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="admitDoctor" class="java.lang.String"/>
+	<parameter name="refDoctor" class="java.lang.String"/>
+	<parameter name="patPayDetailed" class="java.lang.String">
+		<defaultValueExpression><![CDATA[$P{patPayDetailed}]]></defaultValueExpression>
+	</parameter>
+	<parameter name="center_id" class="java.lang.Integer" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new Integer(0)]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT distinct b.charge_id, b.bill_no, b.charge_group, b.charge_head, b.act_department_id,
+            b.act_description, b.act_remarks, b.act_rate, b.act_unit, b.act_quantity,
+            b.amount, b.discount, b.discount_reason, b.charge_ref, b.paid_amount, b.posted_date,
+            b.status, b.username, b.mod_time, b.approval_id, b.orig_rate, b.package_unit,
+            b.doctor_amount, b.doc_payment_id, b.ref_payment_id, b.oh_payment_id,
+            b.act_description_id, b.hasactivity, CASE WHEN b.insurance_claim_amount is null THEN 0.00 ELSE   b.insurance_claim_amount end, chargegroup_name, chargehead_name, dept_name,
+ 	 case when bil.status='A' then 'Provisional Insurance Claim'
+	when bil.status = 'F' or bil.status = 'S' or bil.status = 'C'  then 'Final Insurance Claim' end as title
+	FROM bill bil,bill_charge b LEFT OUTER JOIN department  ON
+	(b.act_department_id = department.dept_id) JOIN chargehead_constants ON
+	(b.charge_head = chargehead_constants.chargehead_id)  JOIN chargegroup_constants ON
+	(b.charge_group = chargegroup_constants.chargegroup_id)
+	WHERE b.bill_no ='$P!{billNo}'  and b.status != 'X' and bil.bill_no = b.bill_no]]>
+	</queryString>
+	<field name="charge_id" class="java.lang.String"/>
+	<field name="bill_no" class="java.lang.String"/>
+	<field name="charge_group" class="java.lang.String"/>
+	<field name="charge_head" class="java.lang.String"/>
+	<field name="act_department_id" class="java.lang.String"/>
+	<field name="act_description" class="java.lang.String"/>
+	<field name="act_remarks" class="java.lang.String"/>
+	<field name="act_rate" class="java.math.BigDecimal"/>
+	<field name="act_unit" class="java.lang.String"/>
+	<field name="act_quantity" class="java.math.BigDecimal"/>
+	<field name="amount" class="java.math.BigDecimal"/>
+	<field name="discount" class="java.math.BigDecimal"/>
+	<field name="discount_reason" class="java.lang.String"/>
+	<field name="charge_ref" class="java.lang.String"/>
+	<field name="paid_amount" class="java.math.BigDecimal"/>
+	<field name="posted_date" class="java.sql.Timestamp"/>
+	<field name="status" class="java.lang.String"/>
+	<field name="username" class="java.lang.String"/>
+	<field name="mod_time" class="java.sql.Timestamp"/>
+	<field name="approval_id" class="java.lang.String"/>
+	<field name="orig_rate" class="java.math.BigDecimal"/>
+	<field name="package_unit" class="java.math.BigDecimal"/>
+	<field name="doctor_amount" class="java.math.BigDecimal"/>
+	<field name="doc_payment_id" class="java.lang.String"/>
+	<field name="ref_payment_id" class="java.lang.String"/>
+	<field name="oh_payment_id" class="java.lang.String"/>
+	<field name="act_description_id" class="java.lang.String"/>
+	<field name="hasactivity" class="java.lang.Boolean"/>
+	<field name="insurance_claim_amount" class="java.math.BigDecimal"/>
+	<field name="chargegroup_name" class="java.lang.String"/>
+	<field name="chargehead_name" class="java.lang.String"/>
+	<field name="dept_name" class="java.lang.String"/>
+	<field name="title" class="java.lang.String"/>
+	<variable name="SUM_paid_amount_1" class="java.math.BigDecimal" resetType="Group" resetGroup="chargehead" calculation="Sum">
+		<variableExpression><![CDATA[$F{paid_amount}]]></variableExpression>
+	</variable>
+	<variable name="SUM_insurance_claim_amount_1" class="java.math.BigDecimal" resetType="Group" resetGroup="chargehead" calculation="Sum">
+		<variableExpression><![CDATA[$F{insurance_claim_amount}]]></variableExpression>
+	</variable>
+	<variable name="SUM_amount_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{amount}]]></variableExpression>
+	</variable>
+	<variable name="SUM_pat_pay_amount_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{amount}.subtract($F{paid_amount}).subtract($F{insurance_claim_amount}).add($F{discount})]]></variableExpression>
+	</variable>
+	<group name="PatientDetails">
+		<groupExpression><![CDATA[]]></groupExpression>
+		<groupHeader>
+			<band height="27">
+				<subreport isUsingCache="true">
+					<reportElement key="subreport-1" x="5" y="3" width="485" height="24"/>
+					<subreportParameter name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="insuranceID">
+						<subreportParameterExpression><![CDATA[$P{insuranceID}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="refDoctor">
+						<subreportParameterExpression><![CDATA[$P{refDoctor}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="visitId">
+						<subreportParameterExpression><![CDATA[$P{visitId}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="mrno">
+						<subreportParameterExpression><![CDATA[$P{mrno}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="admitDoctor">
+						<subreportParameterExpression><![CDATA[$P{admitDoctor}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR}+"/InsurancePatientDetails.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<group name="chargehead">
+		<groupExpression><![CDATA[]]></groupExpression>
+		<groupHeader>
+			<band height="15">
+				<staticText>
+					<reportElement key="staticText-6" x="9" y="0" width="50" height="15"/>
+					<textElement verticalAlignment="Middle">
+						<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[Date]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-7" x="59" y="0" width="103" height="15"/>
+					<textElement verticalAlignment="Middle">
+						<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[ChargeHead]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-9" x="284" y="0" width="132" height="15"/>
+					<textElement verticalAlignment="Middle">
+						<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[Remarks]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-12" x="416" y="0" width="74" height="15"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[ClaimAmount]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-8" x="162" y="0" width="122" height="15"/>
+					<textElement verticalAlignment="Middle">
+						<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[Description]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="15">
+				<staticText>
+					<reportElement key="staticText-13" x="284" y="0" width="132" height="15"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[TOTALS:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" pattern="0.00" isBlankWhenNull="true">
+					<reportElement key="textField" x="416" y="0" width="74" height="15"/>
+					<textElement textAlignment="Right">
+						<font isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{SUM_insurance_claim_amount_1}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band/>
+	</background>
+	<title>
+		<band height="21">
+			<subreport isUsingCache="true">
+				<reportElement key="subreport-2" x="-26" y="1" width="542" height="20"/>
+				<subreportParameter name="type">
+					<subreportParameterExpression><![CDATA["bill"]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="center_id">
+					<subreportParameterExpression><![CDATA[$P{center_id}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR}+"/PrintmasterHeader.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="28">
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField-10" x="8" y="5" width="476" height="22"/>
+				<textElement textAlignment="Center">
+					<font pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{title}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band/>
+	</columnHeader>
+	<detail>
+		<band height="15">
+			<staticText>
+				<reportElement key="staticText-5" x="28" y="8" width="0" height="0"/>
+				<textElement/>
+				<text><![CDATA[Static Text]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement key="textField-3" x="9" y="0" width="50" height="15"/>
+				<textElement>
+					<font size="9" pdfFontName="Helvetica"/>	
+				</textElement>
+				<textFieldExpression class="java.sql.Timestamp"><![CDATA[$F{posted_date}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField-4" x="59" y="0" width="103" height="15"/>
+				<textElement>
+					<font size="9" pdfFontName="Helvetica"/>	
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{chargehead_name}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField-5" x="162" y="0" width="122" height="15"/>
+				<textElement>
+					<font size="9" pdfFontName="Helvetica"/>	
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{act_description}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField-6" x="284" y="0" width="132" height="15"/>
+				<textElement>
+					<font size="9" pdfFontName="Helvetica"/>	
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{act_remarks}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="0.00" isBlankWhenNull="true">
+				<reportElement key="textField-9" x="416" y="0" width="74" height="15"/>
+				<textElement textAlignment="Right">
+					<font size="9" pdfFontName="Helvetica"/>	
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{insurance_claim_amount}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band/>
+	</columnFooter>
+	<pageFooter>
+		<band/>
+	</pageFooter>
+	<summary>
+		<band/>
+	</summary>
+	<noData>
+		<band height="32">
+			<staticText>
+				<reportElement key="staticText-1" x="0" y="0" width="490" height="32"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[No data found]]></text>
+			</staticText>
+		</band>
+	</noData>
+</jasperReport>

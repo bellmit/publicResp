@@ -1,0 +1,112 @@
+#!/bin/bash
+#
+# Install script: this is called from within the build directory, for the
+# first time installation of the software. Tomcat may or may not be running
+# another application (eg, installing hmsNew, whereas hms is already running)
+# when this is called.
+#
+# This should be called like this:
+#  bash /root/builds/3.0.0-1111/WEB-INF/install/bin/install <app>
+# where app is like hms or hmsNew.
+# (bash is required since the distribution does not preserve permissions)
+#
+# The software will be installed in /root/webapps/<app> and a database with
+# the same name will be created. Typically, you will run create_schema.sh after
+# this, or upload a pre-built schema into this database.
+#
+
+source `dirname $0`/functions
+source `dirname $0`/tomcat_version.sh
+
+#
+# Initial checks
+#
+
+# check usage
+APP=$1
+[ -z $APP ] && echo "Usage: install <app>" && exit 1
+
+sudo mkdir -p /var/log/insta/$APP
+
+# check not already occupied app
+DB=$APP
+APPROOT=$APPHOME/insta${APP}
+[ -e $APPROOT ] && echo "Application already installed at $APPROOT" && exit 1
+
+# functions think that we are running from approot. Need to reset
+# it and set APPROOT, APP and DB appropriately.
+DISTDIR=$APPROOT
+if [ ! -d $DISTDIR ] ; then
+	DISTDIR=${BINPATH%/WEB-INF*}
+fi
+
+# check tomcat is installed
+[ ! -d $TOMCAT_HOME ] && echo "Tomcat not installed: please install at $TOMCAT_HOME" && exit 1
+
+echo "Checking tomcat-9 installation version"                                  
+
+is_tomcat9
+
+if [ "$ENABLE_SSL" == "Y" ] ; then
+	sudo sed --in-place -e '/REMOVE_FOR_SSL/d' $TOMCAT_HOME/conf/server.xml
+fi
+
+
+# check java installed
+[ -z $JAVA_HOME ] && echo "Java 8 not installed: please install at /usr/lib/jvm" \
+	&& exit 1
+
+# check postgres installed
+PSQLPATH=`which psql`
+[ -z $PSQLPATH ] && echo "postgresql not installed: please install using apt-get" && exit 1
+
+# check postgres connectivity
+export PGDATABASE=postgres			# since we don't have a db yet
+psql -c ""  						# run an empty sql command
+[ $? -ne 0 ] && echo "Could not login as user postgres into postgresql. Modify pg_hba.conf." && exit 1
+
+#
+# Stop the application, if it is already installed and running
+#
+if [ -f /etc/init.d/tomcat-9 ] ; then
+	sudo /etc/init.d/tomcat-9 stop
+fi
+
+#
+# Software: copy the distribution on to the approot
+#
+echo "Creating app root at: $APPROOT"
+mkdir -p $APPHOME
+sudo cp -a $DISTDIR $APPROOT
+
+BINPATH=$APPROOT/WEB-INF/install/bin
+# dist does not have permissions, whereas installed dir must have.
+sudo chmod -R +x $BINPATH/*
+
+#
+# run our postinstall script
+# This is a hook for modifying the war contents and/or copying any files to
+# the os filesystem directories outside our app root.
+echo "Running postinstall"
+if [ -x $BINPATH/postinstall ] ; then
+	$BINPATH/postinstall
+	RETVAL=$?
+	if [ $RETVAL -ne 0 ] ; then
+		echo "Postinstall failed with exit code $RETVAL"
+		exit 1
+	fi
+fi
+
+echo "Creating database $APP"
+psql << EOF
+	create database $APP;
+	\c $APP
+	create language plpgsql;
+EOF
+
+echo "Starting tomcat-9 again" 
+sudo /etc/init.d/tomcat-9 start
+
+echo "Installation successful (no schemas created)"
+echo "Run $BINPATH/new_schema.sh to create an empty schema"
+

@@ -1,0 +1,234 @@
+{
+    "title": "Sales/Issues ABC Analysis Report",
+    "description": "This report shows an ABC analysis of pharmacy sales done in the chosen period.",
+    "reportGroup": "Sales/Issues Reports",
+    "dateFields": [
+        "sale_date"
+    ],
+    "defaultDate": "sale_date",
+    "allowNoDate": true,
+    "queryLines": [
+        [
+            "SELECT * ",
+            " FROM ( ",
+            "SELECT *, ",
+            " (qty*100/sum(qty) OVER ())::numeric(10,2) as qty_p, ",
+            " sum(qty) OVER (ORDER BY amt DESC) as cum_qty, ",
+            " (sum(qty) OVER (ORDER BY amt DESC) * 100/sum(qty) OVER ())::numeric(10,2) as cum_qty_p, ",
+            " (amt*100/sum(amt) OVER ())::numeric(10,2) as amt_p, ",
+            " sum(amt) OVER (ORDER BY amt DESC) as cum_amt, ",
+            " (sum(amt) OVER (ORDER BY amt DESC) * 100/sum(amt) OVER ())::numeric(10,2) as cum_amt_p, ",
+            " amt/GREATEST(qty,1) AS avg_rate, ",
+            " CASE WHEN (sum(amt) OVER (ORDER BY amt DESC) * 100/sum(amt) OVER ())::numeric(10,2) < 71 THEN 'A' ",
+            "   WHEN (sum(amt) OVER (ORDER BY amt DESC) * 100/sum(amt) OVER ())::numeric(10,2) < 91 THEN 'B' ",
+            "   ELSE 'C' END AS abc_class, issue_type ",
+            "FROM ( ",
+            " SELECT medicine_name, medicine_short_name,cust_item_code,criticality,sum(qty) as qty,sum(amt) as amt,max(pkg_mrp/GREATEST(package_unit,1)) as max_mrp,category, issue_type ",
+            " FROM (",
+            " SELECT medicine_name, medicine_short_name,cust_item_code,criticality, qty, amt,pkg_mrp,package_unit,category,issue_type ",
+            " FROM ",
+            " (SELECT date(sale_date) as sale_date, medicine_name, medicine_short_name,cust_item_code,criticality, quantity as qty, amount as amt, pkg_mrp, ",
+            " package_unit,category,'Sales'::text as issue_type, s.dept_name as dept_name, vtn.visit_type_name as visit_type_name ",
+            " FROM store_sales_details ssd ",
+            "  JOIN store_sales_main ssm USING (sale_id) ",
+            "  JOIN bill b USING (bill_no) ",
+            "  JOIN visit_type_names vtn USING (visit_type) ",
+            "  JOIN store_item_details sid using (medicine_id) ",
+            "  JOIN stores s ON (ssm.store_id = s.dept_id) ",
+            "  LEFT JOIN generic_name gn  ON (sid.generic_name= gn.generic_code) ",
+            "  LEFT JOIN store_category_master scm ON(scm.category_id=sid.med_category_id) ",
+            " ) as foo1 ",
+            " ${prefilter} ",
+            " UNION ",
+            " SELECT medicine_name, medicine_short_name,cust_item_code,criticality, qty, amt,pkg_mrp,package_unit,category,issue_type ",
+            "  FROM ",
+            " (SELECT date(sim.date_time) as sale_date, medicine_name, medicine_short_name,cust_item_code,criticality, sids.qty as qty, sids.amount as amt, pkg_mrp, ",
+            " issue_pkg_size as package_unit,category, ",
+            " CASE WHEN sim.user_type = 'Patient' THEN 'Patient Issues'  WHEN sim.user_type = 'Hospital' THEN 'Dept Issues'  ELSE 'Sales'   END as Issue_Type, ",
+            " s.dept_name as dept_name, vtn.visit_type_name as visit_type_name ",
+            " FROM stock_issue_details sids ",
+            " JOIN stock_issue_main sim USING (user_issue_no) ",
+            " JOIN store_item_details sid using (medicine_id) ",
+            " JOIN bill_activity_charge bac ON (sids.item_issue_no::text = bac.activity_id ) ",
+            " JOIN bill_charge bc USING (charge_id) ",
+            " JOIN bill b USING (bill_no) ",
+            " JOIN visit_type_names vtn USING (visit_type) ",
+            " JOIN stores s ON (sim.dept_from = s.dept_id) ",
+            " LEFT JOIN generic_name gn  ON (sid.generic_name= gn.generic_code) ",
+            " LEFT JOIN store_category_master scm ON(scm.category_id=sid.med_category_id) ",
+            " ) as foo2 ",
+            " ${prefilter} ",
+            " UNION ",
+            " SELECT medicine_name, medicine_short_name,cust_item_code,criticality, qty, amt,pkg_mrp,package_unit,category,issue_type  ",
+            " FROM ",
+            " (SELECT date(sirm.date_time) as sale_date, medicine_name, medicine_short_name,cust_item_code,criticality, sird.qty as qty , sird.amount as amt, pkg_mrp, ",
+            " rtn_pkg_size as package_unit,category, ",
+            " CASE WHEN sim.user_type = 'Patient' THEN 'Patient Issues'  WHEN sim.user_type = 'Hospital' THEN 'Dept Issues'  ELSE 'Sales'   END as Issue_Type, ",
+            " s.dept_name as dept_name, vtn.visit_type_name as visit_type_name ",
+            " FROM store_issue_returns_details sird ",
+            " JOIN store_issue_returns_main sirm USING (user_return_no) ",
+            " JOIN stock_issue_main sim ON (sirm.user_issue_no = sim.user_issue_no) ",
+            " JOIN stock_issue_details sids ON (sim.user_issue_no = sids.user_issue_no) ",
+            " JOIN store_item_details sid ON (sid.medicine_id = sird.medicine_id) ",
+            " JOIN bill_activity_charge bac ON (sird.item_return_no::text = bac.activity_id ) ",
+            " JOIN bill_charge bc USING (charge_id) ",
+            " JOIN bill b USING (bill_no) ",
+            " JOIN visit_type_names vtn USING (visit_type) ",
+            " JOIN stores s ON (sirm.dept_to = s.dept_id) ",
+            " LEFT JOIN generic_name gn  ON (sid.generic_name= gn.generic_code) ",
+            " LEFT JOIN store_category_master scm ON(scm.category_id=sid.med_category_id) ",
+            "  ) as foo3 ",
+            " ${prefilter} ",
+            " ) as raw ",
+            " GROUP BY medicine_name, medicine_short_name,cust_item_code,criticality,category,issue_type) as foo4 ",
+            " ORDER BY amt DESC ) as abc "
+        ]
+    ],
+    "useQueryAsIs": true,
+    "defaultShowFields": [
+        "medicine_short_name",
+        "qty",
+        "avg_rate",
+        "amt",
+        "cum_amt",
+        "cum_amt_p",
+        "abc_class"
+    ],
+    "filterOnlyFields": {
+        "visit_type_name": {
+            "table": "vtn",
+            "displayName": "Visit Type",
+            "filterable": true,
+            "expression": "vtn.visit_type_name",
+            "allowedValuesQuery": "SELECT visit_type_name FROM visit_type_names"
+        },
+        "dept_name": {
+            "table": "s",
+            "displayName": "Store",
+            "filterable": true,
+            "expression": "s.dept_name",
+            "allowedValuesQuery": "SELECT dept_name FROM stores WHERE status='A' ORDER BY dept_name"
+        },
+        "sale_date": {
+            "displayName": "Sale Date",
+            "dataType": "date"
+        },
+        "category": {
+            "table": "scm",
+            "displayName": "Item Category",
+            "width": 100,
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT category FROM store_category_master order by category"
+        },
+        "issue_type": {
+            "allowedValues": [
+                "Sales",
+                "Patient Issues",
+                "Dept Issues"
+            ],
+            "dataType": "string",
+            "displayName": "Issue Type",
+            "width": 100,
+            "description": "Sales/Patient Issues/Dept Issues",
+            "filterable": true
+        }
+    },
+    "fields": {
+        "medicine_name": {
+            "displayName": "Item Long Name",
+            "width": 120,
+            "filterable": true
+        },
+        "cust_item_code": {
+            "displayName": "Custom Item Code",
+            "width": 120,
+            "filterable": true
+        },
+        "medicine_short_name": {
+            "displayName": "Item Name",
+            "width": 100,
+            "description": "Item Short Name",
+            "filterable": true
+        },
+        "qty": {
+            "displayName": "Quantity",
+            "width": 70,
+            "dataType": "numeric",
+            "decimalType": "integer",
+            "aggFunction": "sum"
+        },
+        "qty_p": {
+            "displayName": "% of Total Qty",
+            "width": 70,
+            "dataType": "numeric",
+            "decimalType": "percent",
+            "aggFunction": "sum"
+        },
+        "cum_qty": {
+            "displayName": "Cumulative Qty",
+            "width": 70,
+            "dataType": "numeric",
+            "decimalType": "integer"
+        },
+        "cum_qty_p": {
+            "displayName": "% of Cumulative Qty",
+            "width": 70,
+            "dataType": "numeric",
+            "decimalType": "percent"
+        },
+        "amt": {
+            "displayName": "Value",
+            "width": 70,
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "aggFunction": "sum"
+        },
+        "amt_p": {
+            "displayName": "% of Total Value",
+            "width": 70,
+            "dataType": "numeric",
+            "decimalType": "percent",
+            "aggFunction": "sum"
+        },
+        "cum_amt": {
+            "displayName": "Cumulative Value",
+            "width": 70,
+            "dataType": "numeric",
+            "decimalType": "amount"
+        },
+        "cum_amt_p": {
+            "displayName": "% of Cumulative Value",
+            "width": 70,
+            "dataType": "numeric",
+            "decimalType": "percent"
+        },
+        "abc_class": {
+            "displayName": "Class",
+            "width": 40,
+            "groupable": true
+        },
+        "max_mrp": {
+            "displayName": "Unit MRP",
+            "width": 70,
+            "description": "Maximum is used if multiple rates have been sold",
+            "dataType": "numeric",
+            "decimalType": "amount"
+        },
+        "avg_rate": {
+            "displayName": "Unit Rate",
+            "width": 70,
+            "description": "Average price at which item is sold",
+            "dataType": "numeric",
+            "decimalType": "amount"
+        },
+        "criticality": {
+            "displayName": "VED",
+            "width": 40,
+            "description": "Criticality as Vital/Essential/Desirable",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true
+        }
+    }
+}

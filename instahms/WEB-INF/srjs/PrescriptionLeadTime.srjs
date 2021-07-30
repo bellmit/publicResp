@@ -1,0 +1,134 @@
+{
+    "title": "Prescription Lead Time",
+    "reportGroup": "Sales/Issues Reports",
+    "dateFields": [
+        "prescribed_date"
+    ],
+    "description": "This report shows the lead time between the time the medicine was prescribed to the time when it was actually dispensed.",
+    "tableName": [
+        "rpt_prescription_lead_time_view"
+    ],
+    "defaultShowFields": [
+        "mr_no",
+        "patient_id",
+        "patname",
+        "doctor_name",
+        "medicine_name",
+        "generic_name",
+        "medicine_quantity",
+        "issued_qty",
+        "sold_status",
+        "prescribed_date_str"
+    ],
+    "fields": {
+        "mr_no": {
+            "displayName": "MR No.",
+            "width": "65",
+            "groupable": true,
+            "filterable": true
+        },
+        "patname": {
+            "displayName": "Patient Name",
+            "width": "100"
+        },
+        "name_local_language": {
+                    "displayName": "Name In Local Language",
+                    "width": "150"
+                },
+        "patient_id": {
+            "displayName": "Prescribing Visit",
+            "width": "65",
+            "filterable": false,
+            "groupable": false
+        },
+        "doctor_name": {
+            "displayName": "Doctor Name",
+            "width": "100",
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT doctor_name FROM doctors"
+        },
+        "medicine_name": {
+            "displayName": "Medicine Name",
+            "width": "100",
+            "filterable": true,
+            "groupable": true
+        },
+        "cust_item_code": {
+            "displayName": "Custom item Code",
+            "width": "100",
+            "filterable": true,
+            "groupable": true
+        },
+        "generic_name": {
+            "displayName": "Generic Name",
+            "width": "100",
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT generic_name FROM generic_name"
+        },
+        "medicine_quantity": {
+            "displayName": "Prescribed Qty",
+            "width": "60",
+            "decimalType": "quantity"
+        },
+        "issued_qty": {
+            "displayName": "Sold Qty",
+            "width": "40",
+            "decimalType": "quantity"
+        },
+        "sold_status": {
+            "displayName": "Sold Status",
+            "width": "60",
+            "filterable": true,
+            "groupable": true,
+            "allowedValues": [
+                "Not Sold",
+                "Partially Sold",
+                "Fully Sold"
+            ]
+        },
+        "prescribed_date_str": {
+            "displayName": "Prescribed Date",
+            "width": "100",
+            "filterable": true
+        },
+        "prescribed_date": {
+            "filterable": true
+        },
+        "center_id": {
+            "displayName": "Center ID",
+            "width": 100,
+            "filterable": true,
+            "groupable": true
+        },
+        "center_name": {
+            "displayName": "Center Name",
+            "width": 100,
+            "allowedValuesQuery": "SELECT center_name FROM hospital_center_master WHERE center_id!=0",
+            "filterable": true,
+            "groupable": true
+        },
+        "expiry_date": {
+            "displayName": "Expiry Date",
+            "dataType": "timestamp",
+            "width": "100"
+        },
+        "initial_sale_date": {
+            "displayName": "Initial Sale Date",
+            "width": "100"
+        },
+        "final_sale_date": {
+            "displayName": "Final Sale Date",
+            "width": "100"
+        },
+        "initial_sale_aging": {
+            "displayName": "Initial Sale Aging (HH:MM)",
+            "width": "100"
+        },
+        "final_sale_aging": {
+            "displayName": "Final Sale Aging (HH:MM)",
+            "width": "100"
+        }
+    }
+}

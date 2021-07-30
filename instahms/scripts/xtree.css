@@ -1,0 +1,87 @@
+.webfx-tree-container {
+	margin: 0px;
+	padding: 0px;
+	font: icon;
+	white-space: nowrap;
+}
+
+.webfx-tree-item {
+	padding: 0px;
+	margin: 0px;
+	font: icon;
+	color: black;
+	white-space: nowrap;
+}
+
+.webfx-tree-item a, .webfx-tree-item a:active, .webfx-tree-item a:hover {
+	margin-left: 3px;
+	padding: 1px 2px 1px 2px;
+}
+
+.webfx-tree-item a {
+	color: black;
+	text-decoration: none;
+}
+
+.webfx-tree-item a:hover {
+	color: blue;
+	text-decoration: underline;
+}
+
+.webfx-tree-item a:active {
+	background: highlight;
+	color: highlighttext;
+	text-decoration: none;
+}
+
+.webfx-tree-item img {
+	vertical-align: middle;
+	border: 0px;
+}
+
+.webfx-tree-icon {
+	width: 16px;
+	height: 16px;
+}
+.menuContainer{
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	width:110%;
+	height: 96%;
+	padding-left: 4px;
+	overflow: auto;
+	background-color: #F5F5F5;
+	border-bottom-width: thin;
+	border-bottom-style: inset;
+	/*border-bottom-color: #6699cc;*/
+	border-right-color: White;
+	border-right-style: inset;
+	border-right-width: thin;
+	border-top-color: White;
+	border-top-style: inset;
+	border-top-width: thin;
+	margin-right: 0px;
+	border-bottom-color : White;
+	scrollbar-arrow-color : Black;
+	scrollbar-base-color : #666666;
+	scrollbar-face-color : #E8E8E8;
+	scrollbar-highlight-color : White;
+	scrollbar-shadow-color : Silver;
+}
+.menuHeader{
+	background-color: #cccccc;
+	width: 100%;
+	height: 15px;
+	margin-top: 0px;
+	margin-right: 0px;
+	margin-left: 0px;
+	padding-left: 0px;
+	padding-right: 0px;
+	padding-top: 0px;
+	vertical-align: top;
+}
+.bodybg{
+/*	background-color:#6699cc;*/
+	margin-top: 0px;
+}

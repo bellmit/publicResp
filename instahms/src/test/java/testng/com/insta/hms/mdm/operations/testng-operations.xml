@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<suite name="OperationsMasterTest" verbose="1">
+	<test name="operations">
+		<classes>
+			<class
+				name="testng.com.insta.hms.mdm.operations.OperationsServiceTest" />
+		</classes>
+	</test>
+</suite>

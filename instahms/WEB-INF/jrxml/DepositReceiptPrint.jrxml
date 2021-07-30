@@ -1,0 +1,498 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="DepositReceiptPrint" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="515" leftMargin="50" rightMargin="30" topMargin="100" bottomMargin="15" scriptletClass="com.insta.hms.common.JRCommonScriptlet">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="receiptNo" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["RC000139"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
+	<parameter name="printUserName" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="currencySymbol" class="java.lang.String"/>
+	<parameter name="center_id" class="java.lang.Integer" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new Integer(0)]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select receipt_id as deposit_no, mr_no, receipt_type as deposit_type, amount, created_at as deposit_date, counter,
+        bank_name, reference_no, pd.created_by as username, remarks, modified_at as mod_time ,
+        (select deposit_avalibility from generic_preferences) as deposit_avalibility,
+        created_by as deposit_payer_name, mob_number as payer_phone_no, '' as payer_address, pd.payment_mode_id, pm.payment_mode, pd.card_type_id,
+        ctm.card_type, pm.bank_required, pm.ref_required
+     	FROM  receipt_usage_view pd
+		JOIN payment_mode_master pm ON (pd.payment_mode_id = pm.mode_id)
+		LEFT JOIN card_type_master ctm ON (pd.card_type_id = ctm.card_type_id)
+     where deposit_no = $P{receiptNo}]]>
+	</queryString>
+	<field name="deposit_no" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="mr_no" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="deposit_type" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="amount" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="deposit_date" class="java.sql.Timestamp">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="counter" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="payment_mode" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="bank_name" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="reference_no" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="username" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="remarks" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="deposit_avalibility" class="java.lang.String"/>
+	<field name="payer_address" class="java.lang.String"/>
+	<field name="payer_phone_no" class="java.lang.String"/>
+	<field name="deposit_payer_name" class="java.lang.String"/>
+	<field name="bank_required" class="java.lang.String"/>
+	<field name="ref_required" class="java.lang.String"/>
+	<field name="card_type" class="java.lang.String"/>
+	<group name="patientGroup">
+		<groupHeader>
+			<band height="72">
+				<subreport isUsingCache="true">
+					<reportElement key="subreport-6" x="0" y="23" width="516" height="25"/>
+					<subreportParameter name="mr_no">
+						<subreportParameterExpression><![CDATA[$F{mr_no}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "/PatientDetail.jasper"]]></subreportExpression>
+				</subreport>
+				<staticText>
+					<reportElement key="staticText-1" x="0" y="0" width="515" height="25"/>
+					<box>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="14" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[DEPOSIT RECEIPT]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-43" x="0" y="48" width="62" height="15"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Bottom">
+						<font size="10" isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<text><![CDATA[Receipt No:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement key="textField-20" x="64" y="48" width="90" height="15"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Bottom">
+						<font size="10" isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{deposit_no}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement key="staticText-43" x="328" y="48" width="68" height="15"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Bottom">
+						<font size="10" isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<text><![CDATA[Deposit Date:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" pattern="dd-MM-yyyy HH.mm" isBlankWhenNull="true">
+					<reportElement key="textField-20" x="411" y="52" width="90" height="15" forecolor="#000000"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Bottom">
+						<font size="10" isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<textFieldExpression class="java.sql.Timestamp"><![CDATA[$F{deposit_date}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<group name="advance">
+		<groupExpression><![CDATA[]]></groupExpression>
+		<groupHeader>
+			<band height="205">
+				<staticText>
+					<reportElement key="staticText-18" x="415" y="150" width="100" height="15"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="10" isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<text><![CDATA[Signature]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-32" x="0" y="22" width="93" height="15" isRemoveLineWhenBlank="true"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Bottom">
+						<font size="10" isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<text><![CDATA[Mode Of Payment:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement key="textField-14" x="93" y="22" width="90" height="15" isRemoveLineWhenBlank="true"/>
+					<textElement textAlignment="Left" verticalAlignment="Bottom">
+						<font size="10" isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{payment_mode}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement key="staticText-41" x="3" y="42" width="30" height="15" isRemoveLineWhenBlank="true">
+						<printWhenExpression><![CDATA[new Boolean(!$F{bank_required}.equalsIgnoreCase("N" ))]]></printWhenExpression>
+					</reportElement>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Bottom">
+						<font size="10" isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<text><![CDATA[Bank:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement key="textField-19" x="33" y="42" width="82" height="15" isRemoveLineWhenBlank="true">
+						<printWhenExpression><![CDATA[new Boolean(!$F{bank_required}.equalsIgnoreCase("N" ))]]></printWhenExpression>
+					</reportElement>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Bottom">
+						<font size="10" isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{bank_name}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement key="staticText-43" x="1" y="61" width="92" height="15"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Bottom">
+						<font size="10" isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<text><![CDATA[Against MR No:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement key="textField-20" x="93" y="61" width="90" height="15"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Bottom">
+						<font size="10" isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{mr_no}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement key="staticText-45" x="115" y="42" width="53" height="15" isRemoveLineWhenBlank="true">
+						<printWhenExpression><![CDATA[new Boolean(!$F{ref_required}.equalsIgnoreCase("N" ))]]></printWhenExpression>
+					</reportElement>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Bottom">
+						<font size="10" isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<text><![CDATA[Reference:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement key="textField-21" x="168" y="42" width="167" height="15" isRemoveLineWhenBlank="true">
+						<printWhenExpression><![CDATA[new Boolean(!$F{ref_required}.equalsIgnoreCase("N" ))]]></printWhenExpression>
+					</reportElement>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Bottom">
+						<font size="10" isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{reference_no}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement key="staticText-47" x="183" y="7" width="63" height="15"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Justified" verticalAlignment="Bottom">
+						<font size="10" isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<text><![CDATA[Towards:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-48" x="0" y="7" width="93" height="15"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Justified" verticalAlignment="Bottom">
+						<font size="10" isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<text><![CDATA[Received Amount:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement key="textField-24" x="93" y="7" width="90" height="15"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Bottom">
+						<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{amount}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement key="staticText-50" x="183" y="61" width="209" height="15"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Bottom">
+						<font size="10" isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<text><![CDATA[Net amount received against this Receipt:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement key="textField-25" x="392" y="61" width="97" height="15" isRemoveLineWhenBlank="true"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Bottom">
+						<font size="10" isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{amount}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement key="staticText-52" x="1" y="76" width="93" height="15">
+						<printWhenExpression><![CDATA[new Boolean($F{remarks} != null && !$F{remarks}.equals(""))]]></printWhenExpression>
+					</reportElement>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Justified" verticalAlignment="Bottom">
+						<font size="10" isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<text><![CDATA[Narration:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement key="textField-26" x="94" y="76" width="423" height="15"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Justified" verticalAlignment="Bottom">
+						<font size="10" isUnderline="false"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{remarks}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="0" y="3" width="515" height="1" forecolor="#808080"/>
+				</line>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+					<reportElement isPrintRepeatedValues="false" mode="Transparent" x="415" y="164" width="101" height="13"/>
+					<textElement textAlignment="Center"/>
+					<textFieldExpression class="java.lang.String"><![CDATA["(" +" "+$F{username}.toString()+" " + ")"]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement key="staticText-47" x="246" y="7" width="146" height="15"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Justified" verticalAlignment="Bottom">
+						<font size="10" isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<text><![CDATA[Deposit]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-12" x="0" y="131" width="118" height="15"/>
+					<textElement verticalAlignment="Top">
+						<font size="10" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Received with thanks:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+					<reportElement key="textField-11" x="118" y="131" width="397" height="15"/>
+					<textElement verticalAlignment="Top">
+						<font size="10" isItalic="true" pdfFontName="Helvetica-Oblique"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{REPORT_SCRIPTLET}.toWords($F{amount}) + " only"]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="1" y="95" width="93" height="15"/>
+					<textElement/>
+					<text><![CDATA[Deposit For :]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="95" y="95" width="133" height="15"/>
+					<textElement/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{deposit_avalibility}.equalsIgnoreCase("B" )?"Pharmacy & Hospital":
+$F{deposit_avalibility}.equalsIgnoreCase("P" )?"Pharmacy":"Hospital"]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="229" y="95" width="109" height="15">
+						<printWhenExpression><![CDATA[new Boolean($F{deposit_payer_name} != null && !$F{deposit_payer_name}.equals(""))]]></printWhenExpression>
+					</reportElement>
+					<textElement/>
+					<text><![CDATA[Deposit Payer Name:]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="338" y="102" width="100" height="15"/>
+					<textElement/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{deposit_payer_name}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="1" y="109" width="93" height="15">
+						<printWhenExpression><![CDATA[new Boolean($F{payer_phone_no} != null && !$F{payer_phone_no}.equals(""))]]></printWhenExpression>
+					</reportElement>
+					<textElement/>
+					<text><![CDATA[Payer Phone No:]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="94" y="109" width="134" height="15"/>
+					<textElement/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{payer_phone_no}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="230" y="109" width="93" height="15">
+						<printWhenExpression><![CDATA[new Boolean($F{payer_address} != null && !$F{payer_address}.equals(""))]]></printWhenExpression>
+					</reportElement>
+					<textElement/>
+					<text><![CDATA[Payer Address:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement x="323" y="109" width="178" height="15"/>
+					<textElement/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{payer_address}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="183" y="22" width="63" height="15"/>
+					<textElement verticalAlignment="Bottom"/>
+					<text><![CDATA[Card Type:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="253" y="22" width="100" height="15"/>
+					<textElement verticalAlignment="Bottom"/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{card_type}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<background>
+		<band/>
+	</background>
+	<title>
+		<band/>
+	</title>
+	<pageHeader>
+		<band height="20">
+			<subreport isUsingCache="true">
+				<reportElement key="subreport-1" x="-50" y="-100" width="595" height="110" isRemoveLineWhenBlank="true"/>
+				<subreportParameter name="type">
+					<subreportParameterExpression><![CDATA["Bill"]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="center_id">
+					<subreportParameterExpression><![CDATA[$P{center_id}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR}+"/PrintmasterHeader.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band/>
+	</columnHeader>
+	<detail>
+		<band/>
+	</detail>
+	<columnFooter>
+		<band/>
+	</columnFooter>
+	<pageFooter>
+		<band/>
+	</pageFooter>
+	<summary>
+		<band/>
+	</summary>
+</jasperReport>

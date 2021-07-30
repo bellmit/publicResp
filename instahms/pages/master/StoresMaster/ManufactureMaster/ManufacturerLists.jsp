@@ -1,0 +1,110 @@
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
+<%@ taglib tagdir="/WEB-INF/tags" prefix="insta" %>
+<%@ taglib uri="/WEB-INF/instafn.tld" prefix="ifn" %>
+<html>
+<head>
+	<title>Pharmacy Manufacturer List - Insta HMS</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<insta:link type="css" file="widgets.css"/>
+	<insta:link type="script" file="widgets.js"/>
+	<insta:link type="script" file="stores/manf_list.js"/>
+	<insta:link type="script" file="dashboardsearch.js"/>
+	<jsp:include page="/pages/Common/MrnoPrefix.jsp" />
+  <insta:link file="SpryAssets/SpryCollapsiblePanel.js" type="js"/>
+  <insta:link path="scripts/SpryAssets/SpryCollapsiblePanel.css" type="css" />
+</head>
+<c:set var="cpath" value="${pageContext.request.contextPath}"/>
+<c:set var="manfList" value="${pagedList.dtoList}"/>
+<c:set var="hasResults" value="${not empty manfList}"/>
+<jsp:useBean id="statusDisplay" class="java.util.HashMap"/>
+<c:set target="${statusDisplay}" property="A" value="Active"/>
+<c:set target="${statusDisplay}" property="I" value="Inactive"/>
+<body onload="init(); showFilterActive(document.manfListSearchForm)">
+
+<h1>Manufacturers List</h1>
+
+<insta:feedback-panel/>
+
+<form name="manfListSearchForm" method="GET">
+	<input type="hidden" name="_method" value="getManufacturerDetails">
+	<input type="hidden" name="_searchMethod" value="getManufacturerDetails"/>
+
+	<input type="hidden" name="sortOrder" value="${ifn:cleanHtmlAttribute(param.sortOrder)}" />
+	<input type="hidden" name="sortReverse" value="${ifn:cleanHtmlAttribute(param.sortReverse)}"/>
+
+	<insta:search form="manfListSearchForm" optionsId="optionalFilter" closed="${hasResults}" >
+	  <div class="searchBasicOpts" >
+	  	<div class="sboField">
+			<div class="sboFieldLabel">Manufacturer</div>
+				<div class="sboFieldInput">
+					<input type="text" name="manf_name"  value="${ifn:cleanHtmlAttribute(param.manf_name)}"/>
+					<input type="hidden" name="manf_name@op" value="ilike" />
+				</div>
+	    	</div>
+	  	</div>
+	  </div>
+	  <div id="optionalFilter" style="clear: both; display: ${hasResults ? 'none' : 'block'}" >
+	  	<table class="searchFormTable">
+				<tr>
+					<td>
+						<div class="sfLabel">Manuf.Code</div>
+						<div class="sfField">
+							<input type="text" name="manf_mnemonic"  value="${ifn:cleanHtmlAttribute(param.manf_mnemonic)}"/>
+								<input type="hidden" name="manf_mnemonic@op" value="ilike" />
+					    </div>
+					</td>
+					<td>
+						<div class="sfLabel">Status</div>
+						<div class="sfField">
+							<insta:checkgroup name="status" selValues="${paramValues.status}"
+							opvalues="A,I" optexts="Active,Inactive"/>
+						</div>
+					</td>
+				</tr>
+		</table>
+	  </div>
+	</insta:search>
+
+	<insta:paginate curPage="${pagedList.pageNumber}" numPages="${pagedList.numPages}" totalRecords="${pagedList.totalRecords}"/>
+
+	<div class="resultList">
+		<table class="resultList" cellspacing="0" cellpadding="0" id="resultTable" onmouseover="hideToolBar('');">
+			<tr onmouseover="hideToolBar();">
+				<insta:sortablecolumn name="manf_name" title="Manufacturer"/>
+				<insta:sortablecolumn name="manf_mnemonic" title="Manuf. Code"/>
+				<th>Status</th>
+			</tr>
+            <c:forEach var="manf" items="${manfList}" varStatus="st">
+				<tr class="${st.index == 0 ? 'firstRow' : ''} ${st.index % 2 == 0 ? 'even' : 'odd'}"
+					onclick="showToolbar(${st.index}, event, 'resultTable',
+						{manufacturer_Id:'${manf.manf_code }'},
+						[true]);"
+					onmouseover="hideToolBar(${st.index})" id="toolbarRow${st.index}"	>
+
+					<td><c:out value="${manf.manf_name}"/></td>
+					<td><c:out value="${manf.manf_mnemonic}"/></td>
+					<td>${statusDisplay[manf.status]}</td>
+				</tr>
+			</c:forEach>
+		</table>
+
+		<c:if test="${param._method == 'getManufacturerDetails'}">
+			<insta:noresults hasResults="${hasResults}"/>
+		</c:if>
+
+    </div>
+
+    <div class="screenActions">
+		<a href="${cpath }/pages/masters/insta/stores/ManufacturerDetails.do?_method=getManfDetailsScreen">Add New Manufacturer </a>
+	</div>
+
+</form>
+
+<insta:CsvDataHandler divid="upload1" action="ManufacturerDetails.do"/>
+
+</body>
+</html>

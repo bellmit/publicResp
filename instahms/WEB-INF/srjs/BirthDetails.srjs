@@ -1,0 +1,241 @@
+{
+    "title": "Birth Details Report",
+    "reportGroup": "Patient Stats Reports",
+    "description": "This report shows new born details.",
+    "dateFields": [
+        "reg_date"
+    ],
+    "defaultOrder": "mr_no",
+    "allowNoDate": true,
+    "queryUnits": [
+        {
+            "mainTableName": "admission",
+            "mainTableAlias": "bby",
+            "joinTables": [
+                {
+                    "type": "JOIN",
+                    "alias": "pdy",
+                    "name": "patient_details",
+                    "expression": "ON (bby.mr_no = pdy.mr_no)"
+                },
+                {
+                    "alias": "pdysm",
+                    "name": "salutation_master",
+                    "dependsOn": "pdy",
+                    "expression": "ON (pdysm.salutation_id = pdy.salutation)"
+                },
+                {
+                    "type": "LEFT",
+                    "alias": "mreg",
+                    "name": "patient_registration",
+                    "dependsOn": "bby",
+                    "expression": "ON (mreg.patient_id = bby.parent_id)"
+                },
+                {
+                    "alias": "pdp",
+                    "name": "patient_details",
+                    "dependsOn": "mreg",
+                    "expression": "ON (mreg.mr_no = pdp.mr_no)"
+                },
+                {
+                    "alias": "pdpsm",
+                    "name": "salutation_master",
+                    "dependsOn": "pdp",
+                    "expression": "ON (pdpsm.salutation_id = pdp.salutation)"
+                },
+                {
+                    "alias": "breg",
+                    "name": "patient_registration",
+                    "dependsOn": "bby",
+                    "expression": "ON (breg.patient_id = bby.patient_id)"
+                },
+                {
+                    "alias": "org",
+                    "name": "organization_details",
+                    "dependsOn": "mreg",
+                    "expression": "ON (org.org_id = mreg.org_id)"
+                },
+                {
+                    "alias": "cm",
+                    "name": "city",
+                    "dependsOn": "pdp",
+                    "expression": "ON (cm.city_id = pdp.patient_city)"
+                },
+                {
+                    "alias": "hcm",
+                    "name": "hospital_center_master",
+                    "dependsOn": "mreg",
+                    "expression": "ON (hcm.center_id = mreg.center_id)"
+                },
+                {
+                    "type": "LEFT",
+                    "alias": "csim",
+                    "name": "indication_for_caesarean_section",
+                    "dependsOn": "pdy",
+                    "expression": "ON (csim.id = pdy.caesarean_indication_id)"
+                }
+            ],
+            "whereExpression": "bby.parent_id IS NOT NULL",
+            "whereTable": "bby"
+        }
+    ],
+    "defaultShowFields": [
+        "mr_no",
+        "mother_name",
+        "patient_name",
+        "patient_gender",
+        "dateofbirth",
+        "delivey_type"
+    ],
+    "fields": {
+        "mr_no": {
+            "table": "bby",
+            "displayName": "MR No",
+            "width": 65,
+            "filterable": true
+        },
+        "dateofbirth": {
+            "table": "pdy",
+            "displayName": "Date Of Birth",
+            "width": 60,
+            "comment": "Name is not required",
+            "dataType": "date",
+            "filterable": true
+        },
+        "reg_date": {
+            "table": "breg",
+            "displayName": "Baby Reg Date",
+            "width": 60,
+            "dataType": "date",
+            "filterable": true
+        },
+        "patient_name": {
+            "table": "pdy,pdysm",
+            "displayName": "Baby Name",
+            "width": 100,
+            "filterable": true,
+            "expression": "CONCAT_WS(' ', pdysm.salutation, pdy.patient_name, pdy.middle_name, pdy.last_name)"
+        },
+        "patient_gender": {
+            "table": "pdy",
+            "displayName": "Gender",
+            "width": 30,
+            "filterable": true,
+            "groupable": true
+        },
+        "mother_name": {
+            "table": "pdp,pdpsm",
+            "displayName": "Mother's Name",
+            "width": 100,
+            "filterable": true,
+            "expression": "CONCAT_WS(' ', pdpsm.salutation, pdp.patient_name, pdp.middle_name, pdp.last_name)"
+        },
+        "parent_age": {
+            "table": "pdp",
+            "displayName": "Age Of Mother",
+            "width": 40,
+            "dataType": "numeric",
+            "decimalType": "integer",
+            "filterable": true,
+            "expression": "get_patient_age(pdp.dateofbirth,pdp.expected_dob)"
+        },
+        "delivey_type": {
+            "table": "pdy",
+            "displayName": "Delivery Type",
+            "width": 100,
+            "filterable": true,
+            "groupable": true,
+            "expressionLines": [
+                "CASE WHEN pdy.delivery_type='N' THEN 'Normal' ",
+                " WHEN pdy.delivery_type = 'C' THEN 'Caesarean' END"
+            ]
+        },
+        "indication_cs": {
+            "table": "csim",
+            "displayName": "Indication for CS",
+            "width": 100,
+            "filterable": true,
+            "groupable": true,
+            "expressionLines": "csim.indication"
+        },
+        "mother_reg_date": {
+            "table": "mreg",
+            "displayName": "Mother's Reg date",
+            "width": 70,
+            "dataType": "date",
+            "filterable": true,
+            "expression": "mreg.reg_date"
+        },
+        "mother_address": {
+            "table": "pdp",
+            "displayName": "Mother's Address",
+            "width": 100,
+            "expression": "pdp.patient_address"
+        },
+        "mother_city": {
+            "table": "cm",
+            "displayName": "Mother's City",
+            "width": 100,
+            "expression": "cm.city_name"
+        },
+        "mother_area": {
+            "table": "pdp",
+            "displayName": "Mother's Area",
+            "width": 100,
+            "expression": "pdp.patient_area"
+        },
+        "mother_careof_address": {
+            "table": "pdp",
+            "displayName": "Mother's C/O Adress",
+            "width": 100,
+            "expression": "pdp.patient_careof_address"
+        },
+        "org_name": {
+            "table": "org",
+            "displayName": "Mother's Rate Plan",
+            "width": 100
+        },
+        "mother_mrno": {
+            "table": "pdp",
+            "displayName": "Mother's MR No",
+            "width": 65,
+            "expression": "pdp.mr_no"
+        },
+        "mother_patient_id": {
+            "table": "mreg",
+            "displayName": "Mother's Visit Id",
+            "width": 65,
+            "expression": "mreg.patient_id"
+        },
+        "child_birth_remarks": {
+            "table": "breg",
+            "displayName": "Birth Remarks",
+            "width": 65,
+            "expression": "breg.child_birth_remarks"
+        },
+        "parent_family_id": {
+            "table": "pdp",
+            "displayName": "Mother's Family Id",
+            "width": 80,
+            "groupable": true,
+            "filterable": true,
+            "expression": "pdp.family_id"
+        },
+        "baby_family_id": {
+            "table": "pdy",
+            "displayName": "Baby's Family Id",
+            "width": 80,
+            "groupable": true,
+            "filterable": true,
+            "expression": "pdy.family_id"
+        },
+        "center_name": {
+            "table": "hcm",
+            "displayName": "Center Name",
+            "width": 60,
+            "groupable": true,
+            "filterable": true,
+            "allowedValuesQuery": "SELECT center_name FROM hospital_center_master WHERE center_id!=0"
+        }
+    }
+}

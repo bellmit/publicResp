@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+		xmlns:p="http://www.springframework.org/schema/p"
+		xmlns:context="http://www.springframework.org/schema/context"
+		xmlns:mvc="http://www.springframework.org/schema/mvc" 
+		xmlns:tx="http://www.springframework.org/schema/tx"
+		xmlns:jpa="http://www.springframework.org/schema/data/jpa" xmlns:aop="http://www.springframework.org/schema/aop"
+		xsi:schemaLocation="http://www.springframework.org/schema/beans  
+		http://www.springframework.org/schema/beans/spring-beans.xsd  
+		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/mvc
+		http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/tx
+	    http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+	<!-- Scheduler Resource List -->
+	<bean id="schedulerResourceSearchController" class="com.insta.hms.core.scheduler.resourcelist.SchedulerResourceSearchController">
+		<property name="authMode" value="passthru"/>
+	</bean>
+	
+	<!-- Scheduler Calendar View -->
+	<bean id="schedulerCalendarViewController" class="com.insta.hms.core.scheduler.SchedulerCalendarViewController">
+		<property name="authMode" value="passthru"/>
+	</bean>	
+	<bean id="schedulerCalendarViewIndexController" class="com.insta.hms.core.scheduler.SchedulerCalendarViewIndexController">
+		<property name="actionId" value="doc_scheduler_calender_view"/>
+	</bean>		
+	
+	<!-- Scheduler Availability View -->
+	<bean id="schedulerAvailabilityViewController" class="com.insta.hms.core.scheduler.SchedulerAvailabilityViewController">
+		<property name="authMode" value="passthru"/>
+	</bean>	
+	
+	<!-- Scheduler  View -->
+	<bean id="schedulerIndexController" class="com.insta.hms.core.scheduler.SchedulerIndexController">
+		<property name="actionId" value="doc_scheduler_available_slots"/>
+	</bean>
+
+	<!-- Planner View -->
+	<bean id="appointmentPlannerController" class="com.insta.hms.core.scheduler.appointmentplanner.AppointmentPlannerController">
+		<property name="authMode" value="passthru"/>
+	</bean>
+	
+	<!-- Bulk Appointment View -->
+	<bean id="schedulerBulkAppointmentsController" class="com.insta.hms.core.scheduler.SchedulerBulkAppointmentsController">
+		<property name="actionId" value="new_op_appointment"/>
+	</bean>
+	
+		<!-- Contact Details -->
+	<bean id="patientContactDetailsController" class="com.insta.hms.core.scheduler.PatientContactDetailsController">
+		<property name="authMode" value="passthru"/>
+	</bean>
+	
+</beans>    

@@ -1,0 +1,50 @@
+<!--
+  Digester rules for parsing and making classes out of screens.xml.
+  See DigestingPlugIn (struts) and Digester (commons-digester) for details.
+
+  See also struts-config.xml, where this file path is passed to the DigesterPlugIn.
+-->
+
+<digester-rules>
+  <!-- create ScreenConfig object on seeing <screen_config>, copy properties -->
+  <pattern value="menu_config">
+    <object-create-rule classname="com.insta.hms.common.MenuConfig"/>
+    <set-properties-rule/>
+<!-- <call-method-rule pattern="menu" methodname="addMenu" paramcount="1"/>
+    <call-param-rule pattern="menu" attrname="name" paramnumber="0"/> -->
+  </pattern>
+
+  <pattern value="menu_config/menu_group">
+    <object-create-rule classname="com.insta.hms.common.MenuGroup"/>
+    <set-properties-rule/>
+    <set-next-rule methodname="addMenuGroup"/>
+  </pattern>
+
+  <pattern value="menu_config/menu_group/menu_group">
+    <object-create-rule classname="com.insta.hms.common.MenuGroup"/>
+    <set-properties-rule/>
+    <set-next-rule methodname="addSubGroups"/>
+  </pattern>
+
+  <pattern value="menu_config/menu_group/menu_item">
+    <object-create-rule classname="com.insta.hms.common.MenuItem"/>
+    <set-properties-rule/>
+    <set-next-rule methodname="addMenuItem"/>
+  </pattern>
+
+  <pattern value="menu_config/top_menu">
+  	<object-create-rule classname="java.util.ArrayList"/>
+  	<set-next-rule methodname="addTopMenu"/>
+  	<call-method-rule pattern="menu_group" methodname="add" paramcount="1"/>
+  	<call-param-rule pattern="menu_group" attrname="id" paramnumber="0"/>
+  </pattern>
+
+  <pattern value="menu_config/home_menu">
+  	<object-create-rule classname="java.util.ArrayList"/>
+  	<set-next-rule methodname="addHomeMenu"/>
+  	<call-method-rule pattern="menu_group" methodname="add" paramcount="1"/>
+  	<call-param-rule pattern="menu_group" attrname="id" paramnumber="0"/>
+  </pattern>
+
+</digester-rules>
+

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<suite name="DoctorsMasterTest" verbose="1">
+	<test name="doctors">
+		<classes>
+			<class
+				name="testng.com.insta.hms.mdm.doctors.DoctorServiceTest" />
+		</classes>
+	</test>
+</suite>

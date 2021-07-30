@@ -1,0 +1,397 @@
+{
+    "title": "Claim History Report",
+    "reportGroup": "Insurance Reports",
+    "description": "A report to get the details of claim at every phases ",
+    "dateFields": [
+        "submission_date",
+        "visit_date",
+        "discharge_date"
+    ],
+    "allowNoDate": true,
+    "defaultOrder": "claim_id",
+    "defaultShowFields": [
+        "claim_id",
+        "visit_type",
+        "tpa_name",
+        "submission_batch_id",
+        "submission_date",
+        "submission_amount",
+        "submission_pay_ref",
+        "submission_paid_date",
+        "submission_paid_amount",
+        "submission_rejected_amount",
+        "submission_rejection_perc"
+    ],
+    "queryUnits": [
+        {
+            "mainTableAlias": "icl",
+            "mainTableName": "insurance_claim",
+            "joinTables": [
+                {
+                    "name": "claim_submission_history",
+                    "alias": "fSub",
+                    "expression": "ON (fSub.claim_id = icl.claim_id AND fSub.submission_number = 1)",
+                    "dependsOn": "icl",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "claim_submission_history",
+                    "alias": "fResub",
+                    "expression": "ON (fResub.claim_id = icl.claim_id AND fResub.submission_number = 2)",
+                    "dependsOn": "icl",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "claim_submission_history",
+                    "alias": "sResub",
+                    "expression": "ON (sResub.claim_id = icl.claim_id AND sResub.submission_number = 3)",
+                    "dependsOn": "icl",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "insurance_submission_batch",
+                    "alias": "isb",
+                    "expression": "ON (isb.submission_batch_id = fSub.submission_batch_id)",
+                    "dependsOn": "fSub",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "insurance_submission_batch",
+                    "alias": "fisb",
+                    "expression": "ON (fisb.submission_batch_id = fResub.submission_batch_id)",
+                    "dependsOn": "fResub",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "insurance_submission_batch",
+                    "alias": "sisb",
+                    "expression": "ON (sisb.submission_batch_id = sResub.submission_batch_id)",
+                    "dependsOn": "sResub",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "insurance_remittance_details",
+                    "alias": "fRemi",
+                    "expression": "ON (fRemi.remittance_id = fSub.remittance_id AND fRemi.claim_id = fSub.claim_id)",
+                    "dependsOn": "fSub",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "insurance_remittance_details",
+                    "alias": "sRemi",
+                    "expression": "ON (sRemi.remittance_id = fResub.remittance_id AND sRemi.claim_id = fResub.claim_id)",
+                    "dependsOn": "fResub",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "insurance_remittance_details",
+                    "alias": "tRemi",
+                    "expression": "ON (tRemi.remittance_id = sResub.remittance_id AND tRemi.claim_id = sResub.claim_id)",
+                    "dependsOn": "sResub",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "patient_registration",
+                    "alias": "pr",
+                    "expression": "ON (pr.patient_id = icl.patient_id)",
+                    "dependsOn": "icl",
+                    "type": "JOIN"
+                },
+                {
+                    "name": "patient_insurance_plans",
+                    "alias": "pip",
+                    "expression": "ON (pip.patient_id = icl.patient_id AND pip.plan_id = icl.plan_id)",
+                    "dependsOn": "icl",
+                    "type": "JOIN"
+                },
+                {
+                    "name": "tpa_master",
+                    "alias": "tpa",
+                    "expression": "ON (pip.sponsor_id = tpa.tpa_id)",
+                    "dependsOn": "pip",
+                    "type": "LEFT"
+                }
+            ]
+        }
+    ],
+    "fields": {
+        "claim_id": {
+            "displayName": "Claim Id",
+            "dataType": "string",
+            "width": "65",
+            "groupable": true,
+            "filterable": true,
+            "expression": "icl.claim_id",
+            "table": "icl"
+        },
+        "visit_type": {
+            "displayName": "Visit Type",
+            "dataType": "string",
+            "width": "60",
+            "groupable": true,
+            "expression": "CASE WHEN pr.visit_type='o' THEN 'OP' ELSE 'IP' END",
+            "table": "pr"
+        },
+        "tpa_name": {
+            "displayName": "Sponsor",
+            "dataType": "string",
+            "width": "120",
+            "groupable": true,
+            "filterable": true,
+            "expression": "tpa.tpa_name",
+            "table": "tpa"
+        },
+        "visit_date": {
+            "displayName": "Visit Date",
+            "dataType": "date",
+            "width": "60",
+            "groupable": true,
+            "expression": "pr.reg_date",
+            "table": "pr"
+        },
+        "discharge_date": {
+            "displayName": "Discharge Date",
+            "dataType": "date",
+            "width": "60",
+            "groupable": true,
+            "expression": "pr.discharge_date",
+            "table": "pr"
+        },
+        "submission_batch_id": {
+            "displayName": "Submission Batch ID",
+            "dataType": "string",
+            "width": "65",
+            "groupable": true,
+            "filterable": true,
+            "expression": "fSub.submission_batch_id",
+            "table": "fSub"
+        },
+        "submission_date": {
+            "displayName": "Submission Date",
+            "dataType": "date",
+            "width": "60",
+            "groupable": true,
+            "expression": "isb.submission_date::date",
+            "table": "isb"
+        },
+        "submission_amount": {
+            "displayName": "Submission Amt",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "width": "100",
+            "aggFunction": "sum",
+            "filterable": true,
+            "expression": "fSub.total_claim_amount",
+            "table": "fSub"
+        },
+        "submission_pay_ref": {
+            "displayName": "Submission Payment Ref",
+            "dataType": "string",
+            "width": "100",
+            "expression": "fRemi.payment_reference",
+            "table": "fRemi"
+        },
+        "submission_paid_date": {
+            "displayName": "Submission Paid Date",
+            "dataType": "date",
+            "width": "60",
+            "groupable": true,
+            "expression": "fRemi.settlement_date",
+            "table": "fRemi"
+        },
+        "submission_paid_amount": {
+            "displayName": "Submission Paid Amount",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "width": "100",
+            "aggFunction": "sum",
+            "filterable": true,
+            "expression": "fSub.received_amt",
+            "table": "fSub"
+        },
+        "submission_rejected_amount": {
+            "displayName": "Submission Rejected Amount",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "width": "100",
+            "aggFunction": "sum",
+            "filterable": true,
+            "expression": "CASE WHEN fSub.remittance_id != 0 THEN (fSub.total_claim_amount - fSub.received_amt) ELSE 0 END",
+            "table": "fSub"
+        },
+        "submission_rejection_perc": {
+            "displayName": "Submission Rejection%",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "width": "100",
+            "aggFunction": "sum",
+            "filterable": true,
+            "expression": "CASE WHEN fSub.remittance_id != 0 THEN (((fSub.total_claim_amount - fSub.received_amt)/fSub.total_claim_amount)*100) ELSE 0 END",
+            "table": "fSub"
+        },
+        "first_resub_batch_id": {
+            "displayName": "1st Resub Batch ID",
+            "dataType": "string",
+            "width": "65",
+            "groupable": true,
+            "filterable": true,
+            "expression": "fResub.submission_batch_id",
+            "table": "fResub"
+        },
+        "first_resub_batch_date": {
+            "displayName": "1st Resub Date",
+            "dataType": "date",
+            "width": "60",
+            "groupable": true,
+            "expression": "fisb.submission_date",
+            "table": "fisb"
+        },
+        "first_resub_payment_ref": {
+            "displayName": "1st Resub Payment Ref",
+            "dataType": "string",
+            "width": "100",
+            "expression": "sRemi.payment_reference",
+            "table": "sRemi"
+        },
+        "first_resub_paid_date": {
+            "displayName": "1st Resub Paid Date",
+            "dataType": "date",
+            "width": "60",
+            "groupable": true,
+            "expression": "sRemi.settlement_date",
+            "table": "sRemi"
+        },
+        "first_resub_amount": {
+            "displayName": "1st Resub Amount",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "width": "100",
+            "aggFunction": "sum",
+            "filterable": true,
+            "expression": "fResub.total_claim_amount",
+            "table": "fResub"
+        },
+        "first_resub_paid_amount": {
+            "displayName": "1st Resub Paid Amount",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "width": "100",
+            "aggFunction": "sum",
+            "filterable": true,
+            "expression": "fResub.received_amt",
+            "table": "fResub"
+        },
+        "first_resub_rejected_amt": {
+            "displayName": "1st Resub Rejected Amount",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "width": "100",
+            "aggFunction": "sum",
+            "filterable": true,
+            "expression": "CASE WHEN fResub.remittance_id != 0 THEN (fResub.total_claim_amount - fResub.received_amt) ELSE 0 END",
+            "table": "fResub"
+        },
+        "first_resub_rejection_perc": {
+            "displayName": "1st Resub Rejection%",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "width": "100",
+            "aggFunction": "sum",
+            "filterable": true,
+            "expression": "CASE WHEN fResub.remittance_id != 0 THEN (((fResub.total_claim_amount - fResub.received_amt)/fResub.total_claim_amount)*100) ELSE 0 END",
+            "table": "fResub"
+        },
+        "sec_resub_batch_id": {
+            "displayName": "2nd Resub Batch ID",
+            "dataType": "string",
+            "width": "65",
+            "groupable": true,
+            "filterable": true,
+            "expression": "sResub.submission_batch_id",
+            "table": "sResub"
+        },
+        "sec_resub_batch_date": {
+            "displayName": "2nd Resub Date",
+            "dataType": "date",
+            "width": "60",
+            "groupable": true,
+            "expression": "sisb.submission_date",
+            "table": "sisb"
+        },
+        "sec_resub_amount": {
+            "displayName": "2nd Resub Amount",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "width": "100",
+            "aggFunction": "sum",
+            "filterable": true,
+            "expression": "sResub.total_claim_amount",
+            "table": "sResub"
+        },
+        "sec_resub_payment_ref": {
+            "displayName": "2nd Resub Payment Ref",
+            "dataType": "string",
+            "width": "100",
+            "expression": "tRemi.payment_reference",
+            "table": "tRemi"
+        },
+        "sec_resub_paid_date": {
+            "displayName": "2nd Resub Paid Date",
+            "dataType": "date",
+            "width": "60",
+            "groupable": true,
+            "expression": "tRemi.settlement_date",
+            "table": "tRemi"
+        },
+        "sec_resub_paid_amount": {
+            "displayName": "2nd Resub Paid Amount",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "width": "100",
+            "aggFunction": "sum",
+            "filterable": true,
+            "expression": "sResub.received_amt",
+            "table": "sResub"
+        },
+        "sec_resub_rejected_amt": {
+            "displayName": "2nd Resub Rejected Amount",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "width": "100",
+            "aggFunction": "sum",
+            "filterable": true,
+            "expression": "CASE WHEN sResub.remittance_id != 0 THEN (sResub.total_claim_amount - sResub.received_amt) ELSE 0 END",
+            "table": "sResub"
+        },
+        "sec_resub_rejected_perc": {
+            "displayName": "2nd Resub Rejection%",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "width": "100",
+            "aggFunction": "sum",
+            "filterable": true,
+            "expression": "CASE WHEN sResub.remittance_id != 0 THEN (((sResub.total_claim_amount - sResub.received_amt)/sResub.total_claim_amount)*100) ELSE 0 END",
+            "table": "sResub"
+        },
+        "first_take_back_amt": {
+            "displayName": "1st TakeBack",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "width": "100",
+            "aggFunction": "sum",
+            "filterable": true,
+            "expression": "fSub.recovery_amt",
+            "table": "fSub"
+        },
+        "sec_take_back_amt": {
+            "displayName": "2nd TakeBack",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "width": "100",
+            "aggFunction": "sum",
+            "filterable": true,
+            "expression": "fResub.recovery_amt",
+            "table": "fResub"
+        }
+    }
+}

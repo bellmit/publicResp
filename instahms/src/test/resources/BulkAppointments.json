@@ -1,0 +1,80 @@
+{
+  "values": [
+    {
+      "patient": {
+              "mr_no": "MR006399",
+              "patient_name": "Mrs. Hemalatha",
+              "patient_contact": "+919987654321",
+              "vip_status": "N",
+              "scheduler_visit_type": "M",
+              "no_show": 0,
+              "total_appointment_count": 0
+      },
+      "appointments": {
+        "category": "DOC",
+        "primary_resource_id": "DOC0075",
+        "primary_resource_name": "DR.LAKSHMAN",
+        "secondary_resource_id": "1",
+        "secondary_resource_name": "Duty Doctor OP Consultation",
+        "center_id": 7,
+        "date": "24-10-2030",
+        "slot_time": "15:30",
+        "duration": 15,
+        "complaint": "",
+        "remarks": "",
+        "status": "Booked",
+        "presc_doc_id": "DOC0075",
+        "presc_doc_id_name": "DR.LAKSHMAN",
+        "conducting_doc_id": "",
+        "conducting_doc_id_name": "",
+        "parent_pack_ob_id": null,
+        "package_id": null,
+        "additional_resources_insert": []
+      },
+      "additional_info": {
+        "patient_age": "25",
+        "patient_age_units": "Y",
+        "patient_gender": "M",
+        "patient_email_id": "abc@practo.com"
+      }
+    },
+    {
+      "patient": {
+        "mr_no": "MR006399",
+        "patient_name": "Mrs. Hemalatha",
+        "patient_contact": "+919987654321",
+        "vip_status": "N",
+        "scheduler_visit_type": "M",
+        "no_show": 0,
+        "total_appointment_count": 0
+      },
+      "appointments": {
+        "category": "SNP",
+        "primary_resource_id": "1",
+        "primary_resource_name": "Fresenius-3",
+        "secondary_resource_id": "SER001",
+        "secondary_resource_name": "Service",
+        "center_id": 7,
+        "date": "24-10-2030",
+        "slot_time": "16:00",
+        "duration": 15,
+        "complaint": "",
+        "remarks": "",
+        "status": "Booked",
+        "presc_doc_id": "DOC0075",
+        "presc_doc_id_name": "DR.LAKSHMAN",
+        "conducting_doc_id": "",
+        "conducting_doc_id_name": "",
+        "parent_pack_ob_id": null,
+        "package_id": null,
+        "additional_resources_insert": []
+      },
+      "additional_info": {
+        "patient_age": "25",
+        "patient_age_units": "Y",
+        "patient_gender": "M",
+        "patient_email_id": "abc@practo.com"
+      }
+    }
+  ]
+}

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Remittance.Advice xmlns:tns="http://www.eclaimlink.ae/DHD/ValidationSchema"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://www.eclaimlink.ae/DHD/ValidationSchema/ClaimSubmission.xsd">
+
+	<!-- Header: Submission identification information -->
+	<Header>
+		<SenderID>@Shweta Tpa1</SenderID>
+		<ReceiverID>MF2222</ReceiverID>
+		<TransactionDate>04/10/2017 14:25</TransactionDate>
+		<RecordCount>1</RecordCount>
+		<DispositionFlag>PRODUCTION</DispositionFlag>
+	</Header>
+	<Claim>
+		<!-- Claim identification information -->
+		<ID>CLD000089</ID>
+		<IDPayer>TESTPAYERID</IDPayer>
+		<MemberID>112312</MemberID>
+		<PayerID>@Shweta company1</PayerID>
+		<ProviderID>TESTPROID</ProviderID>
+		<EmiratesIDNumber>111-1111-1111111-1</EmiratesIDNumber>
+
+		<Gross>1125.68</Gross>
+		<PatientShare>112.57</PatientShare>
+		<Net>1013.11</Net>
+
+		<!-- Encounter information -->
+		<Encounter>
+			<FacilityID>11</FacilityID>
+			<Type>1</Type>
+			<PatientID>MR012872</PatientID>
+			<Start>09/03/2017 11:55</Start>
+			<End>09/03/2017 12:29</End>
+			<StartType>1</StartType>
+			<EndType>1</EndType>
+
+
+		</Encounter>
+
+
+		<!-- Diagnosis information -->
+		<Diagnosis>
+			<Type>Principal</Type>
+			<Code>E03.9</Code>
+		</Diagnosis>
+
+		<!-- Activities information -->
+		<Activity>
+			<ID>P-CH257025-54402</ID>
+			<Start>09/03/2017 12:29</Start>
+
+			<Type>0</Type>
+			<Code>88</Code>
+			<Quantity>2.00</Quantity>
+
+			<Net>41.11</Net>
+			<Clinician>123123</Clinician>
+
+		</Activity>
+		<Activity>
+			<ID>P-CH257025-54403</ID>
+			<Start>09/03/2017 12:29</Start>
+
+			<Type>0</Type>
+			<Code>54</Code>
+			<Quantity>2.00</Quantity>
+
+			<Net>972</Net>
+			<Clinician>123123</Clinician>
+
+		</Activity>
+
+	</Claim>
+
+</Remittance.Advice>

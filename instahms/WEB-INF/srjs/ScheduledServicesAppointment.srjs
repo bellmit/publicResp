@@ -1,0 +1,134 @@
+{
+    "title": "Services Scheduled Report",
+    "description": "This report shows all the Services appointments.",
+    "reportGroup": "Scheduler Reports",
+    "dateFields": [
+        "appointment_date",
+        "booked_date",
+        "orig_appt_date",
+        "arrival_date"
+    ],
+    "includes": [
+        "CommonScheduledAppointmentFields.srjs"
+    ],
+    "queryUnits": [
+        {
+            "mainTableName": "scheduler_appointments",
+            "mainTableAlias": "sa",
+            "joinTables": [
+                {
+                    "includeName": "CommonScheduledAppointmentFields.srjs"
+                },
+                {
+                    "name": "services",
+                    "alias": "ser",
+                    "dependsOn": "sa",
+                    "expression": "ON(ser.service_id = sa.res_sch_name)"
+                },
+                {
+                    "name": "services_departments",
+                    "alias": "sd",
+                    "dependsOn": "ser",
+                    "expression": "ON(sd.serv_dept_id = ser.serv_dept_id)"
+                },
+                {
+                    "name": "scheduler_appointment_items",
+                    "alias": "sai",
+                    "dependsOn": "sa",
+                    "expression": "ON (sai.appointment_id = sa.appointment_id AND resource_type = 'SRID')"
+                },
+                {
+                    "name": "service_resource_master",
+                    "alias": "srm",
+                    "dependsOn": "sai",
+                    "expression": "ON (srm.serv_res_id::text=sai.resource_id)"
+                }
+            ],
+            "whereExpression": "sm.res_sch_category = 'SNP'",
+            "whereTable": "sm"
+        }
+    ],
+    "fields": {
+        "equipment_name": {
+            "table": "srm",
+            "displayName": "Primary Resource",
+            "width": 120,
+            "groupable": true,
+            "filterable": true,
+            "expression": "srm.serv_resource_name"
+        },
+        "service_name": {
+            "table": "ser",
+            "displayName": "Service Name",
+            "width": 120,
+            "groupable": true,
+            "filterable": true
+        },
+        "service_doctor": {
+            "table": "sai,sa",
+            "displayName": "Service Doctor",
+            "width": 70,
+            "groupable": true,
+            "filterable": true,
+            "allowedValuesQuery": "select doctor_name from doctors order by doctor_name",
+            "expressionLines": [
+                " (SELECT textcat_commacat(doctor_name) ",
+                "  FROM scheduler_appointment_items sai ",
+                "   JOIN doctors doc ON (doc.doctor_id=sai.resource_id) ",
+                "  WHERE sa.appointment_id = sai.appointment_id AND sai.resource_type='DOC') "
+            ]
+        },
+        "prescribing_doctor_name": {
+            "table": "sa",
+            "displayName": "Prescribing doctor",
+            "width": 100,
+            "groupable": true,
+            "filterable": true,
+            "expressionLines": [
+                " (SELECT d.doctor_name ",
+                " FROM doctors d WHERE(d.doctor_id=sa.presc_doc_id)) "
+            ]
+        },
+        "other_resources": {
+            "table": "sai,sa",
+            "displayName": "Other Resources",
+            "width": 70,
+            "groupable": true,
+            "filterable": true,
+            "expressionLines": [
+                " (SELECT textcat_commacat(resourcename) ",
+                "  FROM (SELECT ",
+                " CASE WHEN sai1.resource_type = 'DOC' THEN (select doctor_name from doctors where doctor_id = sai1.resource_id) ",
+                "           WHEN sai1.resource_type = 'OPDOC' THEN (select doctor_name from doctors where doctor_id = sai1.resource_id) ",
+                "ELSE ",
+                "(SELECT generic_resource_name FROM generic_resource_type grt ",
+                "JOIN generic_resource_master grm ON(grm.generic_resource_type_id = grt.generic_resource_type_id) ",
+                "AND grm.generic_resource_id::text = sai1.resource_id ",
+                "WHERE sa.appointment_id = sai1.appointment_id AND grt.scheduler_resource_type = sai1.resource_type) ",
+                "END AS resourcename ",
+                "FROM scheduler_appointment_items sai1 WHERE sa.appointment_id = sai1.appointment_id) ",
+                " as foo)"
+            ]
+        },
+        "serv_dept_name": {
+            "table": "sd",
+            "displayName": "Service Department",
+            "width": 100,
+            "groupable": true,
+            "filterable": true,
+            "allowedValuesQuery": "select department from services_departments order by department",
+            "expression": "sd.department"
+        }
+    },
+    "defaultShowFields": [
+        "appointment_time",
+        "equipment_name",
+        "mr_no",
+        "patient_name",
+        "service_name",
+        "appointment_status",
+        "service_doctor",
+        "duration",
+        "other_resources"
+    ]
+}

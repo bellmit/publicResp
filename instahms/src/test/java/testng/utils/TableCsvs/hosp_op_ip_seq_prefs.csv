@@ -1,0 +1,3 @@
+priority,visit_type,pattern_id,center_id,visit_seq_id
+100,'o','OUTPATIENT',0,1
+200,'i','INPATIENT',0,2

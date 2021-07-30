@@ -1,0 +1,218 @@
+@charset "UTF-8";
+
+/**
+ * This file is part of jquery-mytour plugin.
+ * @version 1.0.4 ~
+ */
+
+#my-tour-overlay {
+	position: fixed;
+	top: 0;
+	width: 976px;
+	height: 100%;
+	background: rgba(0,0,0,0.1);
+	z-index: 1500;
+}
+
+#my-tour-shield {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: transparent;
+	z-index: 3000;
+}
+
+#my-tour-tooltip {
+    background: white;
+	border-radius: 4px;
+	color: #555;
+	position: absolute;
+	width: 318px;
+	z-index: 3100;
+	text-shadow: none;
+}
+
+#my-tour-tooltip h1,
+#my-tour-tooltip h2, 
+#my-tour-tooltip h3,
+#my-tour-tooltip h4 {
+	padding: 10px;
+	color: #FFFFFF;
+	background: #49596E;
+	margin : 0px;
+}
+
+#my-tour-tooltip h2 {
+	font-size: 13px;
+}
+
+#my-tour-tooltip p {
+	margin: 0px;
+	padding: 12px;
+	background-color: rgb(242,249,255);
+    text-align: left;
+    color: #49596e;
+    font-size: 12px;
+    line-height : 19px;
+}
+
+#my-tour-tooltip-nub, 
+#my-tour-tooltip-nub:after {
+    display: block;
+    height: 0;
+    left: 22px;
+    position: absolute;
+    width: 0;
+    border-color: transparent;
+	border-style: solid;
+}
+
+#my-tour-tooltip-nub.bottom {
+	top: -15px;
+	border-top-width: 0;
+}
+
+#my-tour-tooltip-nub.bottom:after {
+	content: " ";
+	left: -15px;
+	bottom: -16px;
+	border-top-width: 0;
+	border-bottom-color: #49596E;
+	border-width: 10px;
+}
+
+#my-tour-tooltip-nub.top {
+	bottom: -7px;
+	border-bottom-width: 0;
+	border-top-color: #AAA;
+}
+
+#my-tour-tooltip-nub.top:after {
+	content: " ";
+	left: -15px;
+	bottom: -13px;
+	border-bottom-width: 0;
+	border-top-color: rgb(242, 249, 255);
+	border-width: 10px;
+}
+
+#my-tour-tooltip-nub.right {
+	left: -15px;
+	border-left-width: 0;
+	border-right-color: #AAA;
+}
+
+#my-tour-tooltip-nub.right:after {
+	content: " ";
+	left: -13px;
+	bottom: -15px;
+	border-left-width: 0;
+	border-right-color: #cae4ff;
+	border-width: 10px;
+}
+
+#my-tour-tooltip-nub.left {
+	left: -15px;
+	border-right-width: 0;
+	border-left-color: #AAA;
+}
+
+#my-tour-tooltip-nub.left:after {
+	content: " ";
+	left: -17px;
+	bottom: -15px;
+	border-right-width: 0;
+	border-left-color: #cae4ff;
+	border-width: 10px;
+}
+
+#my-tour-button-bar {
+	text-align: right;
+	padding : 0px 12px;
+	background-color: rgb(242,249,255);
+	overflow: hidden;
+	border-bottom-right-radius: 4px;
+	border-bottom-left-radius: 4px;
+}
+
+#my-tour-button-bar > a {
+    color: #49596e;
+    font-size: 12px;
+    text-decoration: none;
+    width: auto;
+    float: right;
+}
+
+#my-tour-button-bar > span {
+	display: inline-block;
+	font-size : 11px;
+	padding: 11px 0px 12px 0px;
+	color: #49596e;
+	float: left;
+}
+
+#my-tour-button-bar > a.disabled {
+	color: #DDD;
+	text-shadow: 0 -1px 0 rgba(255, 255, 255, 0.5);
+	cursor: default;
+}
+
+#my-tour-dropdown-steps {
+	padding: 4px;
+	height: 26px;
+	width: 55px;
+	margin: 0 0 0 15px;
+	border: 0;
+	font-weight: bold;
+	color: #0E59BE;
+}
+
+#my-tour-content {
+	overflow: auto;
+	border-top-left-radius: 4px;
+	border-top-right-radius: 4px;
+	border-bottom: 1px solid #bfc8d1;
+}
+
+.my-tour-highlight {
+	z-index: 1600;
+	position: relative;
+}
+
+#my-tour-button-finish {
+	float: right;
+	font-size : 12px;
+}
+
+#my-tour-button-next {
+	padding: 12px 8px 12px 8px;
+}
+
+#my-tour-button-prev {
+	padding: 12px 8px 12px 0px;
+}
+
+.image-section {
+    width: 300px;
+    padding: 0px 9px;
+    background-color: rgb(242,249,255);
+}
+
+.close-button {
+	float: right;
+	width: 25%;
+}
+
+.display-none {
+	display: none;
+}
+
+.button-separator {
+	display: inline-block;
+	color: #bcbcbc;
+	font-size: 15px;
+	position: relative;
+	top: 10px;
+}

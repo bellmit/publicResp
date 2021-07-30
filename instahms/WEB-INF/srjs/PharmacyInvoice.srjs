@@ -1,0 +1,424 @@
+{
+    "title": "Purchase Invoice Report",
+    "defaultOrder": "invoice_date",
+    "reportGroup": "Procurement Reports",
+    "dateFields": [
+        "grn_date",
+        "invoice_date",
+        "due_date",
+        "paid_date"
+    ],
+    "description": "This report builder shows the pharmacy purchase amounts. It reports one line for every invoice between the chosen date range and various components of the amounts within that invoice. It includes debit notes, but does not include returns and replacements.",
+    "queryUnits": [
+        {
+            "mainTableName": "rpt_purchase_invoice_view",
+            "mainTableAlias": "rpiv",
+            "joinTables": []
+        }
+    ],
+    "defaultShowFields": [
+        "store_name",
+        "supplier_name",
+        "invoice_no",
+        "invoice_date",
+        "grn_nos",
+        "received_debit_amt",
+        "raised_amt",
+        "difference_amt",
+        "invoice_amount"
+    ],
+    "fields": {
+        "store_name": {
+            "displayName": "Store",
+            "width": "80",
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT dept_name AS store_name FROM stores ORDER BY dept_name"
+        },
+        "center_name": {
+            "displayName": "Center Name",
+            "filterable": true,
+            "groupable": true,
+            "width": "100",
+            "allowedValuesQuery": "SELECT center_name FROM hospital_center_master WHERE center_id!=0 order by center_name"
+        },
+        "store_type_name": {
+            "displayName": "Store Type",
+            "width": "80",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT store_type_name FROM store_type_master ORDER BY store_type_name"
+        },
+        "purchase_type": {
+            "displayName": "Purchase Type",
+            "width": "80",
+            "filterable": true,
+            "groupable": true,
+            "allowedValues": [
+                "Purchase",
+                "Debit Note"
+            ]
+        },
+        "purchasetype": {
+            "displayName": "Cash/Credit",
+            "width": "80",
+            "filterable": true,
+            "groupable": true,
+            "allowedValues": [
+                "Cash",
+                "Credit"
+            ]
+        },
+        "supplier_name": {
+            "displayName": "Supplier Name",
+            "width": "140",
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT supplier_name FROM supplier_master ORDER BY supplier_name"
+        },
+        "cust_supplier_code": {
+            "displayName": "Supplier Code",
+            "width": "140",
+            "filterable": true,
+            "groupable": true
+        },
+        "drug_license_no": {
+            "displayName": "Drug License No.",
+            "width": "80",
+            "filterable": false,
+            "groupable": false
+        },
+        "pan_no": {
+            "displayName": "PAN No.",
+            "width": "80",
+            "filterable": false,
+            "groupable": false
+        },
+        "cin_no": {
+            "displayName": "CIN No.",
+            "width": "80",
+            "filterable": false,
+            "groupable": false
+        },
+        "invoice_no": {
+            "displayName": "Invoice No.",
+            "width": "80",
+            "filterable": false,
+            "groupable": false
+        },
+        "po_no": {
+            "displayName": "PO No.",
+            "width": "60",
+            "filterable": true,
+            "groupable": false
+        },
+        "invoice_date": {
+            "displayName": "Invoice Date",
+            "dataType": "date",
+            "width": "70",
+            "filterable": false,
+            "groupable": false
+        },
+        "po_date": {
+            "displayName": "PO Date",
+            "dataType": "date",
+            "width": "70",
+            "filterable": false,
+            "groupable": false
+        },
+        "invoice_status": {
+            "displayName": "Invoice Status",
+            "width": "80",
+            "filterable": true,
+            "groupable": true,
+            "allowedValues": [
+                "Open",
+                "Finalized",
+                "Closed"
+            ]
+        },
+        "stock_type": {
+            "displayName": "Stock Type",
+            "width": "80",
+            "filterable": true,
+            "groupable": true,
+            "allowedValues": [
+                "Normal",
+                "Consignment"
+            ]
+        },
+        "due_date": {
+            "displayName": "Due Date",
+            "dataType": "date",
+            "width": "70",
+            "filterable": true,
+            "groupable": false
+        },
+        "paid_date": {
+            "displayName": "Paid Date",
+            "dataType": "date",
+            "width": "70",
+            "filterable": true,
+            "groupable": false
+        },
+        "mod_datetime": {
+            "displayName": "Mod. Date Time",
+            "dataType": "timestamp",
+            "width": "100",
+            "filterable": true,
+            "groupable": false,
+            "description": "Last Modification Date With Time"
+        },
+        "user_name": {
+            "displayName": "User",
+            "width": "100",
+            "filterable": true,
+            "groupable": false,
+            "description": "Last Modifying User"
+        },
+        "tax_name": {
+            "displayName": "Tax Type",
+            "width": "65",
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": " SELECT  CASE WHEN procurement_tax_label='V' then 'VAT' else 'GST' END as procurement_tax_label FROM generic_preferences UNION SELECT 'CST'"
+        },
+        "grn_nos": {
+            "displayName": "GRN No.",
+            "width": "60",
+            "filterable": false,
+            "groupable": false
+        },
+        "grn_date": {
+            "displayName": "GRN Date",
+            "dataType": "date",
+            "width": "70",
+            "filterable": true,
+            "groupable": false
+        },
+        "received_debit_amt": {
+            "displayName": "Revised Debit Amt",
+            "dataType": "numeric",
+            "width": "60",
+            "decimalType": "amount",
+            "filterable": false,
+            "groupable": false,
+            "expression": "MAX(received_debit_amt) over (partition by rpiv.grn_nos)",
+            "aggFunction": "sum"
+        },
+        "raised_amt": {
+            "displayName": "Original Debit Amt",
+            "dataType": "numeric",
+            "width": "60",
+            "decimalType": "amount",
+            "filterable": false,
+            "groupable": false,
+            "expression": "MAX(raised_amt) over (partition by rpiv.grn_nos)",
+            "aggFunction": "sum"
+        },
+        "difference_amt": {
+            "displayName": "Difference in Debit Amt",
+            "dataType": "numeric",
+            "width": "60",
+            "decimalType": "amount",
+            "filterable": false,
+            "groupable": false,
+            "expression": "MAX(difference_amt) over (partition by rpiv.grn_nos)",
+            "aggFunction": "sum"
+        },
+        "item_amount": {
+            "displayName": "Items Amount",
+            "dataType": "numeric",
+            "width": "60",
+            "decimalType": "amount",
+            "filterable": true,
+            "groupable": false,
+            "aggFunction": "sum",
+            "expression": "MAX(item_amount) over (partition by rpiv.grn_nos)",
+            "description": "Total of all item amounts in the GRN"
+        },
+        "item_discount": {
+            "displayName": "Items Discount",
+            "dataType": "numeric",
+            "width": "60",
+            "decimalType": "amount",
+            "filterable": true,
+            "groupable": false,
+            "aggFunction": "sum",
+            "expression": "MAX(item_discount) over (partition by rpiv.grn_nos)",
+            "description": "Total of all item discounts in the GRN"
+        },
+        "item_scheme_discount": {
+            "displayName": "Items Scheme Discount",
+            "dataType": "numeric",
+            "width": "60",
+            "decimalType": "amount",
+            "filterable": true,
+            "groupable": false,
+            "aggFunction": "sum",
+            "expression": "MAX(item_scheme_discount) over (partition by rpiv.grn_nos)",
+            "description": "Total of all item scheme discounts in the GRN"
+        },
+        "item_tax": {
+            "displayName": "Item Tax Amount",
+            "dataType": "numeric",
+            "width": "60",
+            "decimalType": "amount",
+            "filterable": true,
+            "groupable": false,
+            "aggFunction": "sum",
+            "expression": "MAX(item_tax) over (partition by rpiv.grn_nos)",
+            "description": "Total of all item tax in the GRN"
+        },
+        "discount": {
+            "displayName": "Invoice Discount",
+            "dataType": "numeric",
+            "width": "60",
+            "decimalType": "amount",
+            "filterable": false,
+            "groupable": false,
+            "aggFunction": "sum",
+            "expression": "MAX(discount) over (partition by rpiv.grn_nos)",
+            "description": "Invoice Level discounts"
+        },
+        "other_charges": {
+            "displayName": "Other Charges",
+            "dataType": "numeric",
+            "width": "60",
+            "decimalType": "amount",
+            "filterable": false,
+            "groupable": false,
+            "aggFunction": "sum",
+            "expression": "MAX(other_charges) over (partition by rpiv.grn_nos)",
+            "description": "Other charges added to Invoice"
+        },
+        "transportation_charges": {
+            "displayName": "Transportation Charges",
+            "dataType": "numeric",
+            "width": "60",
+            "decimalType": "amount",
+            "filterable": false,
+            "groupable": false,
+            "aggFunction": "sum",
+            "expression": "MAX(transportation_charges) over (partition by rpiv.grn_nos)",
+            "description": "Transportation charges added to Invoice"
+        },
+        "cess": {
+            "displayName": "Cess",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "width": "60",
+            "filterable": false,
+            "groupable": false,
+            "aggFunction": "sum",
+            "expression": "MAX(cess) over (partition by rpiv.grn_nos)",
+            "description": "Cess added to Invoice"
+        },
+        "round_off": {
+            "displayName": "Round Off",
+            "dataType": "numeric",
+            "width": "60",
+            "filterable": false,
+            "groupable": false,
+            "expression": "MAX(round_off) over (partition by rpiv.grn_nos)",
+            "aggFunction": "sum"
+        },
+        "invoice_amount": {
+            "displayName": "Net Amount",
+            "dataType": "numeric",
+            "width": "60",
+            "filterable": true,
+            "groupable": false,
+            "aggFunction": "sum",
+            "expression": "MAX(invoice_amount) over (partition by rpiv.grn_nos)",
+            "description": "Net Invoice Amount payable"
+        },
+        "tcs_amount": {
+            "displayName": "TCS Amount",
+            "dataType": "numeric",
+            "width": "60",
+            "filterable": true,
+            "groupable": false,
+            "aggFunction": "sum",
+            "expression": "MAX(tcs_amount) over (partition by rpiv.grn_nos)",
+            "description": "Net TCS Amount payable"
+        },
+        "ced_amt": {
+            "displayName": "CED Amount",
+            "dataType": "numeric",
+            "width": "60",
+            "decimalType": "amount",
+            "filterable": true,
+            "groupable": false,
+            "aggFunction": "sum",
+            "expression": "MAX(ced_amt) over (partition by rpiv.grn_nos)",
+            "description": "Total Central Excise Duty"
+        },
+        "form_8h": {
+            "allowHorizGroup": true,
+            "allowNull": false,
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "dataType": "string",
+            "displayName": "Form 8H",
+            "expression": "form_8h",
+            "filterable": true,
+            "width": 100
+        },
+        "supplier_state": {
+            "displayName": "Supplier State",
+            "width": "60",
+            "filterable": true,
+            "groupable": false
+        },
+        "supplier_tin_no": {
+            "displayName": "Supplier GSTIN No.",
+            "width": "60",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true
+        },
+        "pharmacy_tin_no": {
+            "displayName": "Store GSTIN No.",
+            "width": "60",
+            "filterable": true,
+            "groupable": false
+        },
+        "remarks": {
+            "displayName": "Remarks",
+            "width": "60"
+        },
+        "purpose_of_purchase": {
+            "displayName": "Purpose Of Purchase",
+            "width": "60"
+        },
+        "return_type": {
+            "displayName": "Return Type",
+            "width": "80",
+            "filterable": true,
+            "groupable": true,
+            "allowedValues": [
+                "Others",
+                "Expiry",
+                "Damage"
+            ]
+        },
+        "return_reason": {
+            "displayName": "Return Reason",
+            "width": "60",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true
+        },
+        "return_remarks": {
+            "displayName": "Return Remarks",
+            "width": "60",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true
+        }
+    }
+}

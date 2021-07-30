@@ -1,0 +1,240 @@
+{
+	comment: "Used by HNH, icon",
+	title: "Bills Charges Categorized Report",
+	description: "This report shows all Bills within the given date range the value of the bill and the amount under different categories in the bill.",
+	reportGroup: "Billing Reports",
+
+	allowNoDate: true,
+	dateFields: ["open_date","finalized_date","closed_date","visit_date"],
+
+	queryLines: [[
+		"SELECT pr.mr_no, od.org_name as rate_plan, ",
+		" smb.salutation || ' ' || pd.patient_name|| case when coalesce(pd.middle_name, '') = '' ",
+		" then '' else (' ' || pd.middle_name) end|| case when coalesce(pd.last_name, '') = '' ",
+		" then '' else (' ' || pd.last_name) end AS bill_patient_full_name, ",
+		" (SELECT d.doctor_name FROM bed_operation_schedule o LEFT JOIN doctors d ON (d.doctor_id = o.surgeon)WHERE o.patient_id = b.visit_id LIMIT 1) as doctor_name, ",
+		" (SELECT op.operation_name FROM bed_operation_schedule o LEFT JOIN operation_master op ON (op.op_id = o.operation_name)WHERE o.patient_id = b.visit_id LIMIT 1) as surgery_name, ",
+		" pr.reg_date, (pr.reg_date) as visit_date, pr.discharge_date, ",
+		" pr.discharge_date -pr.reg_date + 1 as num_days, pr.bed_type, bc.bed, bc.dia, bc.pha, bc.ot, ",
+		" bc.otc, bc.eqp, bc.prof, bc.admission, bc.sch, ",
+		" bc.sicu, bc.doc, bc.mis, bc.ana, bc.sur, bc.ana+bc.sur as doc_tot, ",
+		" bc.bed+bc.dia+bc.pha+bc.ot+bc.sicu+bc.doc+bc.mis+bc.otc+bc.eqp+bc.prof+bc.admission+bc.sch ",
+		" as hosp_tot, b.total_amount, b.visit_id, ",
+		" CASE WHEN b.bill_type='P' THEN 'Bill Now' ELSE 'Bill Later' END AS bill_type, ",
+		" CASE WHEN b.status = 'A' THEN 'Open' WHEN b.status = 'F' THEN 'Finalized' ",
+		" WHEN b.status = 'C' THEN 'Closed' ELSE 'Canceled' END AS bill_status, ",
+		" CASE WHEN b.payment_status = 'P' THEN 'Paid' ELSE 'Unpaid' END as payment_status, ",
+		" date(open_date) as open_date, date(b.finalized_date) as finalized_date, ",
+		" date(closed_date) as closed_date, b.closed_by, b.finalized_by, b.opened_by, ",
+		" b.remarks as bill_remarks, CASE WHEN b.is_tpa THEN 'Yes' ELSE 'No' END AS insurance_bill, ",
+		" CASE WHEN b.is_tpa THEN tm.tpa_name ELSE null END AS bill_tpa, ",
+		" CASE WHEN b.primary_claim_status = 'S' AND b.is_tpa THEN 'Sent' ",
+		" WHEN b.primary_claim_status = 'R' AND b.is_tpa IS NOT NULL THEN 'Received' ",
+		" WHEN b.primary_claim_status = 'O' AND b.is_tpa IS NOT NULL THEN 'Open' ELSE NULL END AS claim_status, ",
+		" CASE WHEN b.is_primary_bill='Y' THEN 'Yes' ELSE 'No' END AS primary_bill, ",
+		" b.approval_amount, b.total_discount, (total_amount+total_discount) AS bill_amount, ",
+		" b.total_receipts, (b.total_claim - b.insurance_deduction) AS total_claim, ",
+		" b.deposit_set_off ",
+		" FROM (SELECT bill_no, sum(bed) as bed, sum(dia) as dia, sum(pha) as pha, ",
+		"  sum(ot) as ot, sum(sicu) as sicu, sum(doc) as doc, sum(mis) as mis, sum(ana) as ana, ",
+		"  sum(sur) as sur, sum(admission) as admission, sum(sch) as sch, sum(eqp) as eqp, ",
+		"  sum(prof) as prof, sum(otc) as otc ",
+		"  FROM ( ",
+		"   SELECT bill_no, CASE WHEN category = 'BED' THEN amount ELSE 0 END AS bed, ",
+		"    CASE WHEN category = 'DIA' THEN amount ELSE 0 END AS dia, ",
+		"    CASE WHEN category = 'PHA' THEN amount ELSE 0 END AS pha, ",
+		"    CASE WHEN category = 'OT' THEN amount ELSE 0 END AS ot, ",
+		"    CASE WHEN category = 'REG' THEN amount ELSE 0 END AS admission, ",
+		"    CASE WHEN category = 'SERVICE-CHARGES' THEN amount ELSE 0 END AS sch, ",
+		"    CASE WHEN category = 'SICU' THEN amount ELSE 0 END AS sicu, ",
+		"    CASE WHEN category = 'DOC' THEN amount ELSE 0 END AS doc, ",
+		"    CASE WHEN category = 'MIS' THEN amount ELSE 0 END AS mis, ",
+		"    CASE WHEN category = 'ANA' THEN amount ELSE 0 END AS ana, ",
+		"    CASE WHEN category = 'SUR' THEN amount ELSE 0 END AS sur, ",
+		"    CASE WHEN category = 'OTC' THEN amount ELSE 0 END AS otc, ",
+		"    CASE WHEN category = 'EQUIPMENT' THEN amount ELSE 0 END AS eqp, ",
+		"    CASE WHEN category = 'PROFESSIONAL' THEN amount ELSE 0 END AS prof ",
+		"   FROM ( ",
+		"    SELECT bc.bill_no, ",
+		"     CASE WHEN bc.charge_group IN('ICU') THEN 'SICU' ",
+		"      WHEN bc.charge_group IN ('BED') THEN 'BED' ",
+		"      WHEN bc.charge_head IN ('LTAX') THEN 'BED' ",
+		"      WHEN bc.charge_group IN ('OTC') THEN 'OTC' ",
+		"      WHEN bc.charge_head IN ('PCBED','PCICU') THEN  'PROFESSIONAL' ",
+		"      WHEN bc.charge_head IN ('IPREG') THEN 'REG' ",
+		"      WHEN bc.charge_head IN ('SERSNP') THEN 'SERVICE-CHARGES' ",
+		"      WHEN bc.charge_head IN ('EQOPE','EQOTC') THEN 'EQUIPMENT' ",
+		"      WHEN bc.charge_group = 'DIA' THEN 'DIA' ",
+		"      WHEN bc.charge_group IN ('MED', 'RET') THEN 'PHA' ",
+		"      WHEN bc.charge_head = 'TCOPE' THEN 'OT' ",
+		"      WHEN bc.charge_head IN ('ANAOPE', 'AANOPE') THEN 'ANA' ",
+		"      WHEN bc.charge_head IN ('SUOPE', 'ASUOPE') THEN 'SUR' ",
+		"      WHEN bc.charge_group = 'DOC' THEN 'DOC' ",
+		"      ELSE 'MIS' END AS category, ",
+		"      sum(amount) as amount ",
+		"    FROM bill_charge bc ",
+		"     JOIN bill b ON (b.bill_no = bc.bill_no) ",
+		"     LEFT JOIN bed_names bn ON (bn.bed_id::text = bc.act_description_id) ",
+		"    WHERE bc.status != 'X' AND b.status != 'X' and b.visit_type = 'i' ",
+		"    GROUP by bc.bill_no, category ",
+		"   ) as charge_groups ",
+		"  ) as charge_categories ",
+		"  GROUP BY bill_no ",
+		" ) as bc ",
+		"  JOIN bill b ON (b.bill_no = bc.bill_no) ",
+		"  LEFT JOIN patient_registration pr ON (pr.patient_id = b.visit_id) ",
+		"  LEFT JOIN tpa_master tm ON (tm.tpa_id = pr.primary_sponsor_id) ",
+		"  LEFT JOIN patient_details pd ON (pd.mr_no = pr.mr_no) ",
+		"  LEFT JOIN salutation_master smb ON (smb.salutation_id = pd.salutation) ",
+		"  LEFT JOIN organization_details od ON pr.org_id = od.org_id"
+	]],
+
+	defaultShowFields: [
+		"bill_no", "bill_patient_full_name", "bill_status",
+		"total_amount", "total_receipts", "total_claim"
+	],
+	fields: {
+		bill_status: {
+			displayName: "Status", width: 50,
+			groupable: true, filterable: true,
+			allowedValues: ["Open","Finalized","Closed","Canceled"]
+		},
+		mr_no: {
+			displayName: "MR NO", width: 60,
+			filterable: true
+		},
+		rate_plan: {
+			displayName: "Rate Plan", width: 60,
+			filterable: true
+		},
+		bill_patient_full_name: {
+			displayName: "Patient Name", width: 150,
+			description: "Patient or retail customer name",
+			groupable: true, allowNull: true
+		},
+		doctor_name: {
+			displayName: "Doctor Name", width: 60,
+			filterable: true
+		},
+		surgery_name: {
+			displayName: "Surgery", width: 60,
+			filterable: true
+		},
+		reg_date: {
+			displayName: "DoA", dataType: "date", width: 60,
+			aggFunction: "sum",
+			filterable: true
+		},
+		discharge_date: {
+			displayName: "DoD", dataType: "date", width: 60,
+			aggFunction: "sum",
+			filterable: true
+		},
+		num_days: {
+			displayName: "Number Of Days", dataType: "numeric", width: 60,
+			filterable: true
+		},
+		bed_type: {
+			displayName: "Bed Type", width: 60,
+			filterable: true
+		},
+		bed: {
+			displayName: "Room Rent",
+		},
+		dia: {
+			displayName: "LAB And RAD",
+			width: 60, dataType: "numeric", aggFunction: "sum", decimalType: "amount",
+			filterable: true
+		},
+		pha: {
+			displayName: "Pharmacy",
+			width: 60, dataType: "numeric", aggFunction: "sum", decimalType: "amount",
+			filterable: true
+		},
+		ot: {
+			displayName: "OT",
+			width: 60, dataType: "numeric", aggFunction: "sum", decimalType: "amount",
+			filterable: true
+		},
+		sicu: {
+			displayName: "SICU",
+			width: 60, dataType: "numeric", aggFunction: "sum", decimalType: "amount",
+			filterable: true
+		},
+		mis: {
+			displayName: "Mis.",
+			width: 60, dataType: "numeric", aggFunction: "sum", decimalType: "amount",
+			filterable: true
+		},
+		ana: {
+			displayName: "Anaes.",
+			width: 60, dataType: "numeric", aggFunction: "sum", decimalType: "amount",
+			filterable: true
+		},
+		sur: {
+			displayName: "Sur.",
+			width: 60, dataType: "numeric", aggFunction: "sum", decimalType: "amount",
+			filterable: true
+		},
+		prof: {
+			displayName: "Prof.",
+			width: 60, dataType: "numeric", aggFunction: "sum", decimalType: "amount",
+			filterable: true
+		},
+		eqp: {
+			displayName: "Eqp.",
+			width: 60, dataType: "numeric", aggFunction: "sum", decimalType: "amount",
+			filterable: true
+		},
+		otc: {
+			displayName: "Other.",
+			width: 60, dataType: "numeric", aggFunction: "sum", decimalType: "amount",
+			filterable: true
+		},
+		admission: {
+			displayName: "Adm.",
+			width: 60, dataType: "numeric", aggFunction: "sum", decimalType: "amount",
+			filterable: true
+		},
+		sch: {
+			displayName: "Serv.",
+			width: 60, dataType: "numeric", aggFunction: "sum", decimalType: "amount",
+			filterable: true
+		},
+		doc_tot: {
+			displayName: "Doctor Total",
+			width: 60, dataType: "numeric", aggFunction: "sum", decimalType: "amount",
+			filterable: true
+		},
+		hosp_tot: {
+			displayName: "Hosp.Tot",
+			width: 60, dataType: "numeric", aggFunction: "sum", decimalType: "amount",
+			filterable: true
+		},
+		total_amount: {
+			displayName: "Tot",
+			width: 60, dataType: "numeric", aggFunction: "sum", decimalType: "amount",
+			filterable: true
+		},
+		open_date: {
+			displayName: "Open Date",
+			width: 60, dataType: "date",
+			filterable: true
+		},
+		visit_date: {
+			displayName: "Visit Date",
+			width: 60, dataType: "date",
+			filterable: true
+		},
+		finalized_date: {
+			displayName: "Finalized Date",
+			width: 60, dataType: "date",
+			filterable: true
+		},
+		closed_date: {
+			displayName: "Closed Date",
+			width: 60, dataType: "date",
+			filterable: true
+		}
+	}
+}

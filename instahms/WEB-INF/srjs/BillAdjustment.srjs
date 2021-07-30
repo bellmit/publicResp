@@ -1,0 +1,376 @@
+{
+    "title": "Bills Adjustment Report",
+    "reportGroup": "Billing Reports",
+    "description": "This report shows all Bills adjustment within the given date range, the value of the bill adjustment and various attributes of the bill adjustment.",
+    "dateFields": [
+        "open_date",
+        "finalized_date",
+        "closed_date",
+        "visit_date",
+        "payment_recd_date"
+    ],
+    "allowNoDate": true,
+    "defaultOrder": "bill_no",
+    "defaultShowFields": [
+        "bill_no",
+        "bill_patient_full_name",
+        "bill_status",
+        "total_amount",
+        "total_receipts"
+    ],
+    "includes": [
+        "BillDetailFields.srjs",
+        "PatientVisitFields.srjs",
+        "PatientDetailFields.srjs"
+    ],
+    "fields": {
+        "bill_patient_full_name": {
+            "displayName": "Patient Name",
+            "width": "150",
+            "description": "Patient or Retail Customer Name",
+            "expressionLines": [
+                "COALESCE ((smb.salutation || ' ' || pd.patient_name ",
+                " || CASE WHEN coalesce(pd.middle_name, '') = '' THEN '' ELSE (' ' || pd.middle_name) END ",
+                " || CASE WHEN coalesce(pd.last_name, '')   = '' THEN '' ELSE (' ' || pd.last_name) END), ",
+                " prc.customer_name, isr.patient_name) "
+            ],
+            "table": "smb,pr,prc,isr",
+            "groupable": true
+        },
+        "visit_date": {
+            "displayName": "Visit Date",
+            "dataType": "date",
+            "width": "60",
+            "groupable": true,
+            "expression": "pr.reg_date",
+            "table": "pr"
+        },
+        "admit_date": {
+            "displayName": "Admission Date",
+            "dataType": "date",
+            "width": "60",
+            "groupable": true,
+            "expression": "pr.reg_date",
+            "table": "pr"
+        },
+        "payment_recd_date": {
+            "displayName": "Payment Recd. Date",
+            "dataType": "date",
+            "width": "60",
+            "description": "Insurance Payment Received Date",
+            "groupable": true,
+            "filterable": true,
+            "table": "rv"
+        },
+        "payment_reference": {
+            "displayName": "Payment Reference",
+            "width": "90",
+            "groupable": true,
+            "filterable": true,
+            "table": "rv"
+        },
+        "approval_amount": {
+            "displayName": "Approval Amount",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "width": "60",
+            "aggFunction": "sum",
+            "filterable": true
+        },
+        "bill_amount": {
+            "displayName": "Amount",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "width": "60",
+            "aggFunction": "sum",
+            "expression": "(b.total_amount + b.total_discount)",
+            "filterable": true
+        },
+        "total_discount": {
+            "displayName": "Discount",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "width": "60",
+            "aggFunction": "sum",
+            "filterable": true
+        },
+        "total_amount": {
+            "displayName": "Net Amt",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "width": "60",
+            "aggFunction": "sum",
+            "filterable": true
+        },
+        "total_tax": {
+            "displayName": "Tax Amt.",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "width": "100",
+            "aggFunction": "sum",
+            "filterable": true
+        },
+        "total_receipts": {
+            "displayName": "Paid Amt",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "width": "60",
+            "aggFunction": "sum",
+            "filterable": true
+        },
+        "total_claim": {
+            "displayName": "Total Claim Amt",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "width": "60",
+            "aggFunction": "sum",
+            "filterable": true,
+            "expression": "(b.total_claim -  b.insurance_deduction)",
+            "table": "b"
+        },
+        "dyna_package_charge": {
+            "displayName": "Dyna Package Charge",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "width": "70",
+            "aggFunction": "sum",
+            "filterable": true
+        },
+        "insurance_deduction": {
+            "displayName": "Patient Deduction",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "width": "60",
+            "aggFunction": "sum",
+            "filterable": true
+        },
+        "claim_recd_amount": {
+            "displayName": "Claim Recd Amt",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "width": "60",
+            "aggFunction": "sum",
+            "filterable": true,
+            "expression": "(COALESCE(b.claim_recd_amount,0)+COALESCE(b.primary_total_sponsor_receipts,0)+COALESCE(b.secondary_total_sponsor_receipts,0))"
+        },
+        "claim_recd_unalloc_amount": {
+            "displayName": "Claim Recd Unalloc. Amt",
+            "description": "Claim Received Unallocated Amount",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "width": "60",
+            "aggFunction": "sum",
+            "filterable": true
+        },
+        "deposit_set_off": {
+            "displayName": "Deposit Set Off",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "width": "60",
+            "aggFunction": "sum",
+            "filterable": true
+        },
+        "points_earned": {
+            "displayName": "Points Earned",
+            "dataType": "numeric",
+            "decimalType": "integer",
+            "width": "60",
+            "aggFunction": "sum",
+            "filterable": true
+        },
+        "points_redeemed": {
+            "displayName": "Points Redeemed",
+            "dataType": "numeric",
+            "decimalType": "integer",
+            "width": "60",
+            "aggFunction": "sum",
+            "filterable": true,
+            "table": "b",
+            "expression": "b.points_redeemed"
+        },
+        "points_redeemed_amt": {
+            "displayName": "Points Redeemed Amt",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "width": "60",
+            "aggFunction": "sum",
+            "filterable": true
+        },
+        "due_amount": {
+            "displayName": "Due Amt",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "width": "60",
+            "aggFunction": "sum",
+            "expression": "(b.total_amount - b.total_receipts - b.total_claim - b.deposit_set_off - b.points_redeemed_amt )",
+            "filterable": true
+        },
+        "patient_amount": {
+            "displayName": "Patient Amt",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "width": "60",
+            "aggFunction": "sum",
+            "expression": "(b.total_amount - b.total_claim)",
+            "filterable": true
+        },
+        "write_off": {
+            "displayName": "Patient Write-Off Amt.",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "width": "60",
+            "aggFunction": "sum",
+            "expression": "(CASE WHEN b.status = 'C' THEN GREATEST((b.total_amount + b.insurance_deduction - b.total_receipts - total_claim - b.deposit_set_off-b.points_redeemed_amt), 0) ELSE 0::NUMERIC END)",
+            "filterable": true
+        },
+        "primary_tpa_due": {
+            "displayName": "Primary Sponsor Due Amt.",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "width": "60",
+            "aggFunction": "sum",
+            "filterable": true,
+            "table": "btcdv,c",
+            "expression": "(CASE WHEN b.primary_claim_status ='S' THEN COALESCE(btcdv.pri_claim_amt,0) - (COALESCE(btcdv.pri_claim_recd_total,0)+COALESCE(b.primary_total_sponsor_receipts,0)) ELSE 0::NUMERIC END)"
+        },
+        "secondary_tpa_due": {
+            "displayName": "Secondary Sponsor Due Amt.",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "width": "60",
+            "aggFunction": "sum",
+            "filterable": true,
+            "table": "btcdv,c",
+            "expression": "(CASE WHEN b.secondary_claim_status ='S' THEN COALESCE(btcdv.sec_claim_amt,0) - (COALESCE(btcdv.sec_claim_recd_total,0)+COALESCE(b.secondary_total_sponsor_receipts,0)) ELSE 0::NUMERIC END)"
+        },
+        "primary_tpa_writeoff": {
+            "displayName": "Primary Sponsor Write-Off Amt.",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "width": "60",
+            "aggFunction": "sum",
+            "filterable": true,
+            "table": "btcdv",
+            "expression": "(CASE WHEN b.primary_claim_status ='R' THEN COALESCE(btcdv.pri_claim_amt,0) -(COALESCE(btcdv.pri_claim_recd_total,0)+COALESCE(b.primary_total_sponsor_receipts,0)) ELSE 0::NUMERIC END)"
+        },
+        "secondary_tpa_writeoff": {
+            "displayName": "Secondary Sponsor Write-Off Amt.",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "width": "60",
+            "aggFunction": "sum",
+            "filterable": true,
+            "table": "btcdv",
+            "expression": "(CASE WHEN b.secondary_claim_status ='R' THEN COALESCE(btcdv.sec_claim_amt,0) -(COALESCE(btcdv.sec_claim_recd_total,0)+COALESCE(btcdv.sec_claim_recd_total,0)) ELSE 0::NUMERIC END)"
+        },
+        "o_datetime": {
+            "displayName": "Open Date Time",
+            "dataType": "timestamp",
+            "width": "60",
+            "filterable": true,
+            "expression": "(b.open_date)"
+        },
+        "bill_excess": {
+            "displayName": "Excess Bill over Approval Amt",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "width": "60",
+            "aggFunction": "sum",
+            "expression": "(b.total_amount-b.approval_amount)",
+            "filterable": true
+        },
+        "claim_excess": {
+            "displayName": "Excess Claim over Approval Amt",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "width": "60",
+            "aggFunction": "sum",
+            "expression": "(b.total_claim-b.approval_amount)",
+            "filterable": true
+        },
+        "approval_type": {
+            "displayName": "Approval Type",
+            "width": "100",
+            "groupable": true,
+            "filterable": true,
+            "expression": "CASE WHEN b.approval_amount = 0 THEN 'Unlimited' WHEN b.approval_amount is null THEN 'NA' WHEN b.approval_amount > 0 THEN 'Limited' END",
+            "allowedValues": [
+                "Limited",
+                "Unlimited",
+                "NA"
+            ]
+        },
+        "primary_total_claim": {
+            "displayName": "Primary Sponsor Amount",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "width": "60",
+            "aggFunction": "sum",
+            "filterable": true,
+            "table": "btcdv",
+            "expression": "btcdv.pri_claim_amt"
+        },
+        "secondary_total_claim": {
+            "displayName": "Secondary Sponsor Amount",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "width": "60",
+            "aggFunction": "sum",
+            "filterable": true,
+            "table": "btcdv",
+            "expression": "btcdv.sec_claim_amt"
+        },
+        "full_name": {},
+        "patient_category_name": {},
+        "cancel_reason": {
+            "displayName": "Cancel Reason"
+        },
+        "reopen_reason": {
+            "displayName": "Reopen Reason"
+        },
+        "finalized_time": {
+            "dataType": "timestamp",
+            "displayName": "Finalized Date/Time",
+            "expression": " b.finalized_date ",
+            "filterable": true,
+            "groupable": true,
+            "table": "b",
+            "width": 100
+        },
+        "bill_label_name": {
+            "displayName": "Bill Label Name",
+            "table": "blm",
+            "filterable": true,
+            "groupable": true
+        }
+    },
+    "queryUnits": [
+        {
+            "mainTableAlias": "b",
+            "mainTableName": "bill_adjustment_view",
+            "groupBy": false,
+            "joinTables": [
+                {
+                    "name": "insurance_remittance_details_view",
+                    "alias": "rv",
+                    "expression": "ON (b.bill_no = rv.bill_no)",
+                    "dependsOn": "b"
+                },
+                {
+                    "name": "bill_total_claim_dues_view",
+                    "alias": "btcdv",
+                    "expression": "ON (b.bill_no = btcdv.bill_no)",
+                    "dependsOn": "b",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "bill_label_master",
+                    "alias": "blm",
+                    "dependsOn": "b",
+                    "expression": "ON (b.bill_label_id = blm.bill_label_id)",
+                    "type": "LEFT"
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="500" pageHeight="842" whenNoDataType="NoDataSection" columnWidth="460" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<parameter name="fromDate" class="java.util.Date"/>
+	<parameter name="toDate" class="java.util.Date"/>
+	<parameter name="doctorname" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select mr_no, patient_name, sum(amt),doctor_name from
+(select dc.mr_no,get_patient_name(pd.salutation, pd.patient_name, pd.middle_name, pd.last_name) as patient_name,
+bc.amount as amt ,pr.visit_type,d.doctor_name from doctor_consultation  dc
+ left join patient_details pd on (dc.mr_no=pd.mr_no)
+ left join bill_activity_charge bac on
+(CASE WHEN trim(bac.activity_id) SIMILAR TO '[0-9]+'
+        THEN CAST(trim(bac.activity_id) AS integer)
+    ELSE '0' END  = dc.consultation_id)
+ left join salutation_master sm on sm.salutation_id = pd.salutation
+ left join bill_charge bc on  (bac.charge_id=bc.charge_id)
+ left join patient_registration pr on pr.mr_no=pd.mr_no
+ left join doctors d on d.doctor_id = dc.doctor_name
+ left join bill b on b.bill_no = bc.bill_no
+ where pr.visit_type='o' and visited_date::date between $P{fromDate} and $P{toDate}
+and  bc.charge_group in ('DOC') and  bc.charge_head in  ('ODDOPDOC','OPDOC','SPODDOC','SPRDOC','DDRDOC','DDODOC','PRODOC','POPDOC','PAEDOC','ROPDOC')
+and  b.status='C' and bc.status!='X'
+ group by dc.mr_no,sm.salutation,pd.patient_name,pd.last_name,bc.amount,pr.visit_type,d.doctor_name
+ ) as foo
+ group by mr_no, patient_name,doctor_name
+ order by doctor_name]]>
+	</queryString>
+	<field name="mr_no" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="patient_name" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="sum" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="doctor_name" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<variable name="doctor_amt" class="java.lang.Number" resetType="Group" resetGroup="doctor level" calculation="Sum">
+		<variableExpression><![CDATA[$F{sum}]]></variableExpression>
+	</variable>
+	<variable name="grand_amt" class="java.lang.Number" calculation="Sum">
+		<variableExpression><![CDATA[$F{sum}]]></variableExpression>
+	</variable>
+	<filterExpression><![CDATA[new Boolean(
+    $P{doctorname}.equals("all")?true:
+    $F{doctor_name}.toString().equals($P{doctorname})?true:false)]]></filterExpression>
+	<group name="grand total">
+		<groupHeader>
+			<band height="20"/>
+		</groupHeader>
+		<groupFooter>
+			<band height="29">
+				<staticText>
+					<reportElement x="256" y="6" width="100" height="20"/>
+					<textElement/>
+					<text><![CDATA[Grand Total:
+]]></text>
+				</staticText>
+				<textField evaluationTime="Report">
+					<reportElement x="333" y="6" width="100" height="20"/>
+					<textElement/>
+					<textFieldExpression class="java.lang.Number"><![CDATA[$V{grand_amt}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="doctor level">
+		<groupExpression><![CDATA[$F{doctor_name}]]></groupExpression>
+		<groupHeader>
+			<band height="28">
+				<textField>
+					<reportElement x="89" y="4" width="100" height="20"/>
+					<textElement/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{doctor_name}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="9" y="4" width="86" height="20"/>
+					<textElement/>
+					<text><![CDATA[Doctor Name: ]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="29">
+				<staticText>
+					<reportElement x="282" y="6" width="38" height="20"/>
+					<textElement/>
+					<text><![CDATA[Total:]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="330" y="5" width="100" height="20" printWhenGroupChanges="doctor level"/>
+					<textElement/>
+					<textFieldExpression class="java.lang.Number"><![CDATA[$V{doctor_amt}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band/>
+	</background>
+	<title>
+		<band height="53">
+			<staticText>
+				<reportElement x="102" y="5" width="230" height="20"/>
+				<textElement>
+					<font size="13"/>
+				</textElement>
+				<text><![CDATA[Doctors Finished Scheduled Report]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="95" y="30" width="100" height="20"/>
+				<textElement/>
+				<text><![CDATA[From Date:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="270" y="28" width="100" height="20"/>
+				<textElement/>
+				<text><![CDATA[To Date:]]></text>
+			</staticText>
+			<textField pattern="yyyy-MM-dd">
+				<reportElement x="155" y="31" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.util.Date"><![CDATA[$P{fromDate}]]></textFieldExpression>
+			</textField>
+			<textField pattern="yyyy-MM-dd">
+				<reportElement x="315" y="29" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.util.Date"><![CDATA[$P{toDate}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band/>
+	</pageHeader>
+	<columnHeader>
+		<band height="27">
+			<staticText>
+				<reportElement x="75" y="6" width="100" height="20"/>
+				<textElement/>
+				<text><![CDATA[Mr No
+]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="178" y="6" width="104" height="20"/>
+				<textElement/>
+				<text><![CDATA[Patient Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="327" y="5" width="100" height="20"/>
+				<textElement/>
+				<text><![CDATA[Amount]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="7" y="7" width="33" height="20"/>
+				<textElement/>
+				<text><![CDATA[Sl No.]]></text>
+			</staticText>
+			<line>
+				<reportElement x="7" y="2" width="453" height="1"/>
+			</line>
+			<line>
+				<reportElement x="9" y="24" width="453" height="1"/>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="27">
+			<printWhenExpression><![CDATA[new Boolean(
+    $P{doctorname}.equals("all")?true:
+    $F{doctor_name}.toString().equals($P{doctorname})?true:false)]]></printWhenExpression>
+			<textField>
+				<reportElement x="9" y="6" width="23" height="17"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.Integer"><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="63" y="5" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{mr_no}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="176" y="5" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{patient_name}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="329" y="7" width="100" height="17"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$F{sum}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band/>
+	</columnFooter>
+	<pageFooter>
+		<band/>
+	</pageFooter>
+	<summary>
+		<band/>
+	</summary>
+	<noData>
+		<band height="41">
+			<staticText>
+				<reportElement x="102" y="3" width="213" height="36"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[No data found for a given search.
+]]></text>
+			</staticText>
+		</band>
+	</noData>
+</jasperReport>

@@ -1,0 +1,80 @@
+{
+    "allowNoDate": false,
+    "fields": {
+        "center_name": {
+            "table": "hcm",
+            "displayName": "Center Name",
+            "width": 100,
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT center_name FROM hospital_center_master WHERE center_id!=0"
+        },
+        "center_city": {
+            "table": "hci,hcm",
+            "displayName": "Center City",
+            "width": 70,
+            "allowedValuesQuery": "SELECT city_name  FROM city c JOIN hospital_center_master hcm1 ON hcm1.city_id = c.city_id GROUP BY city_name ORDER BY city_name",
+            "expression": "hci.city_name",
+            "filterable": true,
+            "groupable": true
+        },
+        "center_state": {
+            "table": "hst,hcm",
+            "displayName": "Center State",
+            "width": 70,
+            "allowedValuesQuery": "SELECT state_name FROM state_master st JOIN hospital_center_master hcm1 ON hcm1.state_id = st.state_id GROUP BY state_name ORDER BY state_name",
+            "expression": "hst.state_name",
+            "filterable": true,
+            "groupable": true
+        },
+        "center_country": {
+            "table": "hc,hcm",
+            "displayName": "Center Country",
+            "width": 70,
+            "allowedValuesQuery": "SELECT country_name  FROM country_master c JOIN hospital_center_master hcm1 ON hcm1.country_id = c.country_id GROUP BY country_name ORDER BY country_name",
+            "expression": "hc.country_name",
+            "filterable": true,
+            "groupable": true
+        },
+        "center_region": {
+            "table": "hrm,hcm",
+            "displayName": "Center Region",
+            "width": 70,
+            "allowedValuesQuery": "SELECT region_name  FROM region_master rm JOIN hospital_center_master hcm1 ON hcm1.region_id = rm.region_id GROUP BY region_name ORDER BY region_name",
+            "expression": "hrm.region_name",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true
+        }
+    },
+    "queryUnits": [
+        {
+            "joinTables": [
+                {
+                    "name": "city",
+                    "alias": "hci",
+                    "dependsOn": "hcm",
+                    "expression": " ON hcm.city_id = hci.city_id"
+                },
+                {
+                    "name": "state_master",
+                    "alias": "hst",
+                    "dependsOn": "hcm",
+                    "expression": " ON hcm.state_id = hst.state_id"
+                },
+                {
+                    "name": "country_master",
+                    "alias": "hc",
+                    "dependsOn": "hcm",
+                    "expression": " ON hcm.country_id = hc.country_id"
+                },
+                {
+                    "name": "region_master",
+                    "alias": "hrm",
+                    "dependsOn": "hcm",
+                    "expression": " ON hcm.region_id = hrm.region_id"
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,2146 @@
+FORMAT: 1A
+HOST: http://blog.acme.com
+
+# Insta HMS 12.2 Release Notes
+
+## New Features [/]
+
+### Automated PhilHealth and BPJS Billing [GET]
+
+The Case Rate model is the lump sum reimbursement model for in-patient treatments which is gaining a lot of widespread adoption amongst several countries as recommended by the World Health Council. The Case Rate Billing model has been implemented in Insta considering the prevalent rules in Philippines and Indonesia. The Case Rate amounts are the amounts payable by the Government Health Insurance Company to healthcare providers, for a group of related services, based on the expected costs for a clinically defined episode of care. This case rate model applies to all public and private PhilHealth accredited hospitals. The case rate payment system is already "all in" where hospital charges and professional fees are already covered. The difference between case rate system and FFS is that in FFS, the amount of benefits varies depending on the hospital level, doctor's qualification, and severity of illness and complexity of operation but case rate remains same for all.
+
+#### Introduction of New properties in the Insurance Plan Master
+
+**Limit Type**: to determine whether the plan supports the case rate model or not. There are two possible values applicable, Category Based or Case Rate Based.
+
+-   Category based to continue supporting the existing visit/category wise limit billing.
+
+-   Case Rate based enables the case rate model for billing, Philhealth and BPJS Insurance Plans must use this property, all other plans use category based.
+
+-   All visit/category based configuration gets disabled when case rate based limit type is selected. This configuration can not switch over to Category Based once it is saved.
+
+**No. of Case Rates Allowed**: it is to define maximum number of case rates supported by insurance plan. This gets enabled only when Limit Type is Case Rate Based. Allowed count must be 2 for Philhealth Plan.
+
+![](media/image1202_76.png)
+
+#### Case Rate Master
+
+New master called Case Rate master has been introduced under Billing Master Group which is being used to create list of all case rate codes with rates
+
+-   Case Rates are being mapped with Insurance Plans
+
+-   All those insurance plans which having limit type as 'Case Rate Based' and its insurance categories are available for case rates definitions.
+
+-   Case Rate Number is to determine whether particular case rate can be billed as Case Rate-1 or Case Rate-2 in the bill
+
+-   All the Code Types and Codes from the mrd code master are available to define the case rates
+
+-   Sum of all the categories is the grand total of each care rate
+
+![](media/image1202_17.png)
+
+![](media/image1202_71.png)
+
+#### Case Rate Billing
+
+In billing screen, Case rate fields will be available if selected insurance plan supports case rate billing. No of case rate fields in the billing screens is depends on property called 'Number of Case Rates Allowed' in the Insurance Plan Master. Case rate fields will be available only in primary bill later bill but case rate amount will be applied across all the insurance bills of a visit.
+
+![](media/image1202_60.png)
+
+-   All the codes with case rate number 1 in the case rate master are available for the selection as case rate 1 and all the codes with case rate number 2 in the case rate master are available for the selection as case rate 2 in the bill, it shows the rate definition in the case rate master by clicking button provided next to case rate dropdown.
+
+-   There is a case rate process button at bottom of bill to process the billing after selection of case rate code. Case rates limit will auto-calculated as and when items are added or edited.
+
+![](media/image1202_25.png)
+
+-   Insurance categories sponsor limit will be re-calculated as per case rate codes on applying it, if two case rates are selected for a visit, then sum of both case rates would be the total sponsor amount.
+
+-   New section called 'Case Rate Totals' is populated when any case rate is processed in the bill, which shows the insurance category wise totals of each case rates separately.
+
+![](media/image1202_66.png)
+
+-   Can use below mentioned tokens for displaying case rate details in bill print.
+
+    -   For primary and secondary case rate ids -> patient.primary_case_rate_id, patient.secondary_case_rate_id
+
+    -   visitCaseRateDetailsMap -> Map<case_rate_id, List of categoryLimitBeans>
+
+    -   caseRateCategoryAmountMap -> Map<case_rate_id, Map<category name, category amount>>
+
+    -   Primary Case Rate Code : ${patient.primary_caserate_code}
+
+    -   Primary Case Rate Code Desc : ${patient.primary_caserate_code_desc}
+
+    -   Secondary Case Rate Code : ${patient.secondary_caserate_code}
+
+    -   Secondary Case Rate Code Desc : ${patient.secondary_caserate_code_desc}
+
+### Introduction of Billing Group [GET]
+
+New group called billing group has introduced in all the billing masters, which is to classify all the billable services to support billing needs without disturbing all other group definitions like service group and sub groups, charge heads etc. In current version this being referred only for the bill print customization, in future it might extend to other billing features as such.
+
+#### Billing Group master
+
+Under billing admin masters menu, New master is provided to add all required billing groups.
+
+![](media/image1202_52.png)
+
+It has three fields such as billing group name, Display order and Status
+
+![](media/image1202_45.png)
+
+#### Billing Items Mapping with Billing group
+
+In all below list of masters have billing group field but it is optional.
+
+-   Diagnostic Tests
+-   Services
+-   Operations
+-   Consultation Types
+-   Operation Theatres
+-   Anaesthesia Types
+-   Packages
+-   Other Charges
+-   Store Items
+-   Equipment Master
+-   Dietary Master
+-   Other Charges
+-   Bed Types
+
+registration charges by default associated with general group
+
+Only one billing group can be mapped with any billing item, which is being referred while billing and saved it at transaction tables.
+
+![](media/image1202_39.png)
+
+Current scope is limited to only for bill print customization based on billing group classification. billing_group_name are created as bill print tokens
+
+-   billing_group_id will give the id of billing group mapped with the item
+
+-   billing_group_name will give the name of billing_group_name mapped to the item
+
+### Introduction of Billing to the OP and IP Flow [GET]
+
+Billing activity tab is introduced as part of the OP Flow (Registration -> Billing -> Triage -> Consultation -> Order) as well as the incomplete but in transition IP Flow (which only has the Biling->IP Emr-> Order as of now). The patient list is common for all activities relevant in the OP/IP Flow
+
+![](media/image1202_18.png)
+
+#### Selecting Existing Bills
+
+As is the case with most new screens in the New UX, the Billing screen has the below landing page which allows the user to select recent open bill or select bills from the buckets in the sub-activity for both Active/Inactive visits
+
+![](media/image1202_9.png)
+
+#### Sub-Activity Header
+
+There are two buckets in the sub-activity for open bills and other finalized/closed/cancelled bills, considering the fact that the billing user would typically work with open bills. Open bill bucket's card shows Bill No, Bill Type, Bill Open Date, Payment Status, Visit Id and Sponsor. Other Card shows Bill No, Bill Type, Bill Open Date, Bill Status, Visit Id and Sponsor
+
+![](media/image1202_68.png)
+
+![](media/image1202_3.png)
+
+#### Billing Screen
+
+Old billing screen is rather wired to new workflow based new UX with few changes especially all additional actions are moved out as terminal actions
+
+![](media/image1202_65.png)
+
+##### Terminal Actions:
+
+-   Terminal actions available are Cancel Bill, Save, Pay&Close, Pay & Save. Cancel Bill & Pay&Close are enabled only based on the role-based access controls.
+
+-   There are other links available such audit log and Other Actions.
+
+-   Other Actions- more actions, such as Connect/Disconnect Insurance, Change Primary/Secondary, To Bill Later, Edit Patient Insurance, Issue,Change Rate Plan/Bed Type are available within other actions
+
+
+### User Wise Discount Controls [GET]
+
+Till v12.1, the users were able to give the discounts on the percentage or absolute amount, which was controlled by ACL in the system, but no further controls on the limit they would apply the discounts in the bill.Now new feature that have been introduced in 12.2 v, which specify maximum discount percentage permitted to each billing users, to ensure that users are giving discounts within their discount limit allowed.
+
+-   User Master (Roles and Users-> Users): has a new field introduced as 'Permissible Discount Cap%'.
+
+![](media/image1202_49.png)
+
+-   Any value between 0 to 100 is accepted, It is also allowed two decimals for value. "0" means the user cannot give any discount and "100" means the user can give 100% discount. Shows message if value is not within 100%.
+
+![](media/image1202_6.png)
+
+-   This field is migrated with 100 as a value as migration should not change the way users used to give the discounts today.
+
+-   This value should explicitly be given when new users are added, otherwise it goes with value 0.
+
+-   Discount Cap% works with Discount ACL assigned to User Role.
+
+
+#### Billing Screen
+
+-   Users are authorized to apply the discount up to his/her Cap% assigned, This limit is applied to both line items and Bill discount given on the Bill. For example, If a user is given a max of 30%, the user can give a 30% discount on a line level and 30% discount on the total bill amount.
+
+-   Rate Plans Discounts/Discount Plan Mapped with Insurance Plan are not considered as User Discounts, therefore, it doesn't come under User Discount Limit. Any other mode of discounts is being considered for applying the User Discount Limit.
+
+-   On-fly discounts by selecting discount plan must be within User Discount Limit, otherwise it show below message and stop them.
+
+![](media/image1202_28.png)
+
+-   While giving Bill discount, show below message if discount exceeds logged in user's discount limit assigned.
+
+![](media/image1202_74.png)
+
+-   While giving item level discount, show below message if discount exceeds logged in user's discount limit assigned.
+
+![](media/image1202_47.png)
+
+-   While editing discount, discount must be within User Discount Limit of logged in User, otherwise it show below message and stop them.
+
+![](media/image1202_70.png)
+
+-   Deletion of any item from the bill in which Bill Discount is given is henceforth not supported as it may affect the discount limit already applied for particular bill. In such circumstances, Bill Discount must be removed first and then delete the item.
+
+![](media/image1202_58.png)
+
+#### Dental Consultation
+
+-   User Discount Cap% is also implemented in Dental Consultation screen, which ensures that applied discount is within Logged in user's Discount Limit, otherwise it show message and stop users.
+
+-   In Dental consultation user can not give discount more than his limit in both percentage and amount cases.
+
+-   If user have selected 2 items to give discount then if any one's discount is crossing above limit system will not allow to add discount. If discount amount satisfies all items discount capacity then only user can give discount.
+
+
+### Splitting Doctor's and Coder's Diagnosis [GET]
+
+-   Till v12.1, the system had only one set of diagnosis for a visit, which was being referred for all purpose, such as, Pre-auth, Hospital Claim, PBM request, Pharmacy Claim/E-Prescriptions. With this approach, Codification was affecting diagnosis reported by doctor in EMR/ Pharmacy approvals/prescriptions etc. New approach is to separate coder's diagnosis from the diagnosis reported by doctor, which is being referred for Hospital Claims henceforth.
+
+-   Added new read-only section called 'Diagnosis Details Entered By Doctor' in codification screen, where in Diagnosis codes entered in consultation are auto populating.
+
+-   Earlier Diagnosis section is now relabelled as 'Coder Diagnosis Details' which also shows all the diagnosis entered by doctor, it allows coders to modify/delete/add diagnosis without affecting actual diagnosis reported by doctor. Any further modifications made by doctor will not be adding to coders diagnosis details by default once codification opened and start working it.
+
+![](media/image1202_54.png)
+
+-   Coders Diagnosis are being referred in Hospital Claim XMLs. Diagnosis entered by doctors continue as part of Pharmacy Claims and all other transactions
+
+-   Tokens are available to show all Coders diagnosis in the EMR with separate header, Coder_diagnosis_details.visit_id, Coder_diagnosis_details.description, coder_diagnosis_details.icd_code, coder_diagnosis_details.code_type, coder_diagnosis_details.diag_type, coder_diagnosis_details.mod_time, coder_diagnosis_details.year_of_onset, coder_diagnosis_details.remarks and Coder_diagnosis_details.present_on_admission
+
+-   In Claim Reconciliation->View Bills screen , added both Diagnosis entered by doctor and diagnosis modified by coders as separate sections. For pharmacy claims, diagnosis entered by doctor are considered.
+
+![](media/image1202_75.png)
+
+### Insurance Coverage Definition Override in OP Consultation [GET]
+
+Introduced a feature to override the insurance payable configuration in insurance plan master, Currently this is the way to define the Insurance general coverage rules of insurance plans, which is now possible to override in the OP Consultation screen while ordering by Doctor based on the patients clinical conditions
+
+#### OP Consultation
+
+-   Option given to override the insurance plan coverage definition with remarks while ordering any item through Management Grid. In previous version, Insurance Coverage status was a label which has converted as drop down menu and allow doctors to override it. Remarks is mandatory field when value is overriding by doctor
+
+![](media/image1202_63.png)
+
+-   It shows Overridden status in Management Grid. This status can also be possible to edit through Edit Option available in the grid.
+
+![](media/image1202_41.png)
+
+-   If any item is excluded from the patient visit rate plan, then it shows a warning toast message and insurance coverage would be marked it as Excluded and keep it grayed-out.
+
+![](media/image1202_53.png)
+
+#### Billing Order
+
+-   This overriden status is also available in the Billing Order. On mouse-hovering the status, it shows the remarks entered by doctor.
+
+-   Items which are excluded by doctor would default to Open Cash Bill or New Cash Bill while adding to order grid through pending prescription, which is still allowed to add to insurance bill explicitly by user.
+
+![](media/image1202_14.png)
+
+-   When doctor override excluded item to Covered, the billed amount of that particular item would be posted to sponsor account in bill by default.
+
+
+### Linking Pre-auth to Billing Order [GET]
+
+Prior auth details are now linked to billing order to improve the productivity of the billing users.
+
+#### Pending Prescriptions
+
+-   Pending Prescription is enhanced in such way to show Prior-Auth Details from Prior Auth Prescription Screen.
+
+-   When ordering prescribed item through pending prescription, Prior Auth ID and Prior Auth Mode are auto-filled in Edit Pop up screen from Prior-Auth Prescription screen.
+
+![](media/image1202_35.png)
+
+-   If any item is marked for Prior auth to be taken by doctor when he prescribed, then Prior auth ID is mandated while ordering particular item, otherwise it can be added to only cash bill.
+
+![](media/image1202_73.png)
+
+-   Prior auth details also auto-fills in OP Registration while adding through Pending Prescription.
+
+-   Prior Auth Details will not flow across centers as Pre-Authorization always receives for the center where pre-auth request sent.
+
+
+#### Active Pre-Auth Approvals
+
+-   New link introduced in Billing Order screen which lists all pre-auth approved items from the Prior-Auth Prescription screen (approvals received against prescribed items + any item added directly in the Prior-Auth Prescription screen ). This is patient-level list and available across the visits but gets filtered based on sponsor and center. Item approved by one sponsor will not be available for those visits which registered under other sponsor.
+
+![](media/image1202_27.png)
+
+-   It shows only those items got approvals within last 30 days. If any item prior auth validity expired before within 30 days, then it goes off from this list.
+
+-   All approved items would add to order grid with Prior-auth ID and Prior-auth Mode auto-filled on clicking Active Pre-Auth Approvals.
+
+-   If any prescribed item is already ordered via pending prescriptions, then it will rip out of Active Pre-Auth Approvals and vice-versa.
+
+-   If multiple qty is approved for an item, then showing only one item at a time while adding to order grid and tracking remaining quantity in Prior Authorization Prescription screen
+
+![](media/image1202_56.png)
+
+### UAE Specific Insurance Changes [GET]
+
+#### Uploading Documents for E-Claim
+
+-   Introduced a feature to support uploading supporting documents for an item and populate the data as observation in the e-claim file.
+
+-   In the codification screen, it is possible to upload pdf/jpg/png files as observation document
+
+    -   'File' must be added as Observation Type in the mrd observation supported type master and which is to be considered as observation supported code type in the supported code master
+
+    -   When you choose 'File' as observation type for any item in the codification screen, then will get option to upload the document and save it.
+
+    -   All pdf/png/jpg documents convert as base64PDF format and inserted as observation for that particular item in the XML.
+
+![](media/image1202_40.png)
+
+-   Option is available to download uploaded document.
+
+![](media/image1202_7.png)
+
+-   User has to select required Observation Code based on the document he uploads. Anyway, File is the only code recommended by DHA.
+
+-   Based on the health authority, system defaults the value type in the xml. If health authority is HAAD, then Base64PDF is the value type, for DHA, File is the value type. Below are the format
+
+    _DHA XML_
+
+    ```xml
+    <Observation>
+        <Type>File</Type>
+        <Code>File</Code>
+        <Value>AC99DHDAK...ASFA32S</Value>
+       <ValueType>File</ValueType>
+    </Observation>
+    ```
+    _HAAD XML_
+
+    ```xml
+    <Observation>
+        <Type>File</Type>
+        <Code>Invoice</Code>
+        <Value>AC99DHDAK...ASFA32S</Value>
+        <ValueType>Base64PDF</ValueType>
+    </Observation>
+    ```
+
+#### Medical Tourism Changes
+
+The following enhancements have been done to enable customers to report medical tourism patient in selfpay claims.
+
+-   There is a new optional field added called 'Visit Classification' in OP /IP/OSP registration screens, which gets enabled only when new back-end preference called 'is_visit_classification_mandatory' is set to true in health_authority_preference master
+
+-   Visit Classification field has options such as
+
+    -   Medical tourist
+
+    -   Self-pay patient
+
+    -   Other non-insurance patient
+
+![](media/image1202_30.png)
+
+-   Depending on the value which is selected by user while registering any patient, the corresponding data standard will be shown as PayerID in the selfpay claim xml.
+
+#### Physiotherapy Claims Changes
+
+-   Productized a feature to send the referral doctor as clinician ordering doctor in HAAD E-claim XML.
+
+-   In the Department master a new field is added as "Send Referral Doctor as Ordering Clinician". Only InstaAdmin user can set this field to Yes or No. For other users this field will be disabled.
+
+-   If Send Referral Doctor as Ordering Clinician is set to yes, then for the claims with such department, Referral doctor goes as Ordering clinician in the E-claim XML.
+
+-   By default this field will be set to "No" for all departments.
+
+![](media/image1202_5.png)
+
+#### Other DHA Insurance Changes
+
+-   Tooth number has to submitted as 'Value' in the xml. Tooth number will now come under value & Code tag. Sample format is given below:
+
+    ```xml
+    <Observation>
+        <Type>UniversalDental</Type>
+        <Code>23</Code>
+        <Value>23</Value>
+        <ValueType></ValueType>
+    </Observation>
+    ```
+
+-   Conduction date to be submitted as value type for defined set of lab results.
+
+    -   If a laboratory test is conducted and observation type is Result then conducted date will be the value type in the xml.
+
+    -   If a laboratory Test in not conducted and xml is generated then values given in codification will be the Value type.
+
+-   For vital observation in the xml, showing doctor consultation date as observation value type.
+
+### IP-EMR v1 [GET]
+
+#### Introducing the IP Flow - New UX and new Navigation
+
+-   With v12.2, Insta introduces IP features in the upgraded workflow based UX with a modern UI and easier to learn philosophy.
+
+-   The navigation as part of the hamburger menu introduces the IP Flow which enables access to the IP EMR,Order Screen and Discharge Summary. The same will be extended to Registration,ADT and OT in future releases.
+
+##### The IP Flow hamburger menu
+
+-   The new navigation as part of the IP Flow also introduces the activity bar which has the activities together for IP EMR, Order screens and Discharge summary which share a common Patients List.
+
+    -   The Patients List also displays all the active inpatients . If the logged in user is doctor he would be able to see the patients admitted under him and associated to him through care team
+
+![](media/image1202_82.png)
+
+-   The new IP EMR in UX activity which compromises earlier IP Activity like IP Record, Notes and Physician Order. This upgrade introduces the following changes in the Feature behaviour:
+
+    -   Old IP Record, IP Case Sheet and Doctor Order screens functionalities are merged into IP EMR, enabling the user to access most of the IP care related activities in single place.
+
+    -   All the Navigation Link to these screens (Order, Vitals, IP Case Sheet, Doctor Order and Care Team) has been replaced with links to IP EMR/Doctor Order.
+
+        -   From the Inpatient List IP Record and Doctor Order links are replaced with IP EMR (Doctor Order) link
+
+![](media/image1202_96.png)
+
+-   IP Record can be created as part of the IP EMR and would be always available for review, Few of the Assessments can be repeated with time stamps in courses of stay.
+
+-   IP EMR level templates are introduced for standardisation, it is managed at admitting doctor department level.
+
+-   TOC of Sections enables easier navigation
+
+    -   Section level access management will enable the control of usage of custom section among user roles
+
+    -   Customization sections list on the fly made easy
+
+-   IP Case sheet is merged into IP EMR Under sections Notes and Vitals , deprecating the Current Ward activities feature the rest of the functionality of the screens are available .
+
+    -   Notes feature can be extended to the other caregivers apart from the Doctor and Nurses. Note Templates are introduced for ease of recording and standardisation in data capture
+
+    -   New Vital recording is available which can be customized at Admitting doctor Department level and Center of Admission
+
+-   Doctor Order is merged into IP EMR under Physician Order section.
+
+    -   Existing Functionality of triggering Ward activity from prescription is maintained AS IS (Frequency and Duration determines the ward activity)
+
+    -   PRN and STAT orders types are introduced in the Physician order , however the downward flow of the orders is not complete.
+
+
+##### Patient List
+
+The patient list is common for all activities relevant in the IP Flow and there are no changes since this was introduced in with Discharge Functionality,with the IP EMR in new UX. It displays patients Who are currently admitted.
+
+    
+##### Creating IP EMR
+
+Once the patient is selected from the patient list with IP EMR context, IP EMR is loaded with available information on default.
+
+-   If patient has visited already and when the IP EMR is open first time the patient sections gets pre-filled.
+
+-   If the patient is selected in anytime during the visit is active all the details filled so far for the visit is available.
+
+![](media/image1202_23.png)
+
+##### Sub-Activity
+
+The sub-activity bar displays the patient's allergy status and allows the user to either access a Active Visit or access an existing documentation from the Past buckets.
+
+![](media/image1202_78.png)
+
+##### Patient Summary
+
+The Patient Summary has the following features:
+
+-   **Templates**: v12.2 introduces the concept of Template for IP EMR to enable standardization of clinical protocols and faster data entry. This allows the user to build medical condition based templates with a high level of customizability of sections on the IP EMR and with the additional option of storing the template with pre-set data as is relevant for sections such as complaints, diagnoses and other sections.
+
+-   The templates by default are stored at the Admitting doctor's Department level across doctors .
+
+-   The templates do not store patient specific information such as allergies, vitals, health maintenance section, obstetric history section, antenatal details section, pre anesthesia check up section, insta sections defined as a patient section etc.
+
+-   If the user has already captured data on the IP EMR screen and then applies a template. The page will display the union of data with sections captured and the additional sections(with/without data) from the template.
+
+![](media/image1202_38.png)
+
+-   IP Templates does not store details of Notes and Physician orders in 12.2.
+
+-   **Other Details**: Other Details displayed under the Patient Summary sections
+
+    -   Visit Details - Visit ID, Admitting Doctor & Department, Admission Date & Time and Care Team Doctors
+
+    -   Other Details - Current Ward & Bed Details,Discharge Status , Referred by & Insurance Details
+
+![](media/image1202_59.png)
+
+-    **Care Team**: In 12.2 Adding and Removing of Care team Doctors can be initiated from the "add/remove Care team doctors" link .
+
+    -   Care team Doctors can be added to the patient by the privileged user who have access rights.
+
+    -   Once the doctor is added as part of the care team he/she will have access to the patient details. Patient list of the doctor will reflect the patient.
+
+![](media/image1202_88.png)
+
+##### Table of Contents
+
+The Table of Contents as is available in IP EMR, summarizes the list of sections available in the IP EMR for documentation and allows the user to quickly navigate to the relevant section and enables faster data entry.
+
+![](media/image1202_91.png)
+
+##### Links
+
+The ToC has links at the bottom (subject to role-based access controls) which allows easy navigation to related tasks/screens.
+
+![](media/image1202_94.png)
+
+##### Customize Sections
+
+Allows the user to change the default construct of the IP-EMR form and remove/add sections on the fly. This allows the doctor to capture specific observations based on patient medical conditions and additionally store them in the template for future use. Once data is captured in a section it cannot be removed.
+
+##### Physician Order
+
+-   Existing Doctor order feature is deprecated and all the functionalities are moves back to the Physician order section under IP EMR.
+
+-   Default prescription card details
+
+    -   The physician order section allows the user to search and add new items/types to the prescription.
+
+    -   The grid displays all items added to the prescription with a view of the summary of details such as item name, route of medication, frequency & Duration, etc.
+
+-   The Physician order pop-up displays the various item types supported which are: medicine, investigation, service, order set, doctor consultation or a other item.
+
+![](media/image1202_15.png)
+
+-   The medicine prescription has
+
+    -   Information like a> medicine name, b> priority = normal, PRN/SOS, Stat, Urgent. c> Item Form, d> Item Strength, e> Item Strength units, f> Admin Strength g> Route of Administration, d> Dosage, e> Dosage Units and k> Remarks
+
+    -   There is a display of allergies so that the information is not hidden from view.
+
+    -   Frequency is available with Option to select Freqeuncy or to mention repeat intervals in the Minutes , hours and Days
+
+    -   Duration can be specified with start and end date or with number of occurence and start date or Till discontinue with Occurrence.
+
+    -   The medicine details such as Qty in Stock is highlighted as additional information. (Low Stock, qty < 5, Out of Stock, qty = 0, In Stock, qty > 5).
+
+    -   The availability of the stock displayed is only for the stores marked as prescription stores relevant for the center only. (This will be subsequently modified to auto-fill indents based in a 12.2.x release).
+
+    -   If the medicine prescribed is the same as the drug allergy captured there is a drug-allergy alert that is displayed to the user.
+
+![](media/image1202_86.png)
+
+-   **Investigation**: The tests can be prescribed with the additional option of flagging the priority of the test , otherwise the functionality of old doctor order is maintained
+
+-   **Service**: The Services can be prescribed with the additional option of flagging the priority of the service, otherwise the functionality of old doctor order is maintained
+
+-   **Doctor Consultation**: The Old Functionality of Doctor is maintained.
+
+-   **Others**: The other activitiy can be prescribed with the additional option of flagging the priority of the others, otherwise the functionality of old doctor order is maintained
+
+-   **Order Sets**: For the convenience of ordering and better treatment the Management section now has 'Order Sets made available. In the current Orderset definition Diagnostics, Service and Consultation can be included under a Order Set, The user can use the orderset while creating a Care Plan so all the items defined can be ordered in single go.
+
+    -   All the Order sets defined for IP and common for both OP and IP are listed under Order Set in Physician order.
+
+    -   Once the Order Set is selected and added, the list of individual items under order set are populated in the Physician order grid and users are allowed to Edit or Delete individual item level only.
+
+-   All the Physician orders with Frequency and Duration are converted to the patient Ward activities like earlier.
+
+
+##### Notes
+
+The Existing functionality of Doctor Notes and Nurses Notes in the IP Case sheet is merged and enhanced in New Notes sections and rendered in New UX.
+
+With the New Notes and Vitals section introduction the existing functionality of the Doctor and Nurse Notes are deprecated.
+
+![](media/image1202_24.png)
+
+-   **Notes Master**
+
+    -   New Notes can be defined with Note type, Associated Role, Editable By, Note Template, Transcriber Role and Show options for Billing and the note type can be made active or Inactive
+
+    -   The Note type can have more than one templates , these templates can be added or removed at any point of time
+
+    -   Associated Roles are listed from hospital role master.
+
+        -   **To use the new functionality of notes section the users should be associated to one or more of the Hospital roles**
+
+        -   While user creating Notes the only the note types associated to the user roles will be listed.
+
+    -   Editable By, Notes can be edited by the author or the user in the same role as author.
+
+    ![](media/image1202_89.png)
+
+    -   Note Template , Allows to create more formats for the note type defining standard template for specific use will be bring standardization in document, reduces the ambiguity in documenting and ease documenting
+
+    -   Transcriber Role(on behalf of), Notes can also be created by user in transcriber roles on behalf of other role user or same role user.
+
+    -   Billing Applicability , when any note type is marked with billing applicability is saved it allows a billing entry restricted only to the Doctor Consultation charges and doctor is allowed to select.
+
+    -   It complies with the "Maximum Billable consultation per day" preference . if the count exceeds while saving notes the user is allowed to save only notes and not to make additional billing entry.
+
+-   **Notes Section**
+
+    -   Old Doctor Notes and Nurses Notes are deprecated and the Note Content are migrated to New note Format under the four Note Types.
+
+    ![](media/image1202_95.png)
+
+    -   Notes consumption view renders the note details which are created last in reverse chronological order of the date and time
+
+        -   To Filter and view notes filters are available are date range, Note Type and User.
+
+        -   For every notes the note type , creation details along with note contents are rendered
+
+        -   Draft Notes are available only for the user and role who have created the notes .
+
+        -   Edited Notes are available with crossed lines.
+
+        -   Edited Notes reference is available as trail in the new notes.
+
+    -   Add new notes allow the user to create notes
+
+        -   The notes are created by selecting the Note type and template.
+
+            ![](media/image1202_97.png)
+
+        -   Based on the associated hospital role(s) of the user logged in , the note types are filtered.
+
+        -   If the transcriber logged in on behalf information is forced to select.
+
+        -   The Consultation charges are saved only with the notes for which billing applicability is set , and allowed only for doctor note type for now.
+
+        -   Notes can be saved in Draft, user are allowed to save only one draft per note type.
+
+        -   Existing notes are allowed to Edit, once the notes are edited the old note reference are available with the new notes.
+
+
+-   **Vitals**
+
+    -   Vital recording in new UX is rendered with Department and Center specific Vitals feature
+
+    ![](media/image1202_48.png)
+
+    -   **Vital Master**
+
+        -   Vitals parameters are defined across IP and OP Visit.
+
+            ![](media/image1202_92.png)
+
+        -   The Parameters can be specified as default and mandated for a department and center and can be configured for OP and IP separately
+
+        -   Vital parameter defaulted are available for direct Key-in while recording vitals and the other parameter can be added while recording
+
+        -   Access Control to Add, Edit and Delete Vitals can be set additionally
+
+        -   Reference ranges for Vitals can be added with Normal, Abnormal and Critical range.
+
+            -   Reference range colors are derived from the preference setting
+
+    -   **Vital Recording**
+
+        -   Vitals Recording has been introduced as new system section and can be added under any form.
+
+        -   In OP visit the Vital parameters are defaulted and mandated based on the Consultation Doctor and the center of visit.
+
+        -   In IP Visit the Vital Parameters are defaulted and Mandated based on the Admission Doctor and center of Admission
+
+        -   Additional Vital parameter can be added while recording at any point in time.
+
+        -   Vital Consumption view list all the vitals recorded across the visit
+
+        ![](media/image1202_69.png)
+
+    -   Vitals recorded are validated against the applicable reference range and highlighted
+
+        ![](media/image1202_85.png)
+
+    -   Option to View Vital chart has been deprecated.
+
+
+-   **System Sections**
+
+    -   Its rendered and functions in similar fashion to the OP Consultation, Triage/Nurse Assessment and Initial Assessment section.
+
+-   **Insta Sections**
+
+    -   Its rendered and functions in similar fashion to the OP Consultation, Triage/Nurse Assessment and Initial Assessment section.
+
+-   **Terminal Actions**
+
+    -   The Terminal actions available are
+
+    -   Save , the IP EMR Can be saved in any point of time (Once Multiuser concept of IP EMR is introduced their would be terminal actions like Discard, save and close and Re-open with appropriate functionality)
+
+-   **Print Options**
+
+    -   The Print Options displays IP-EMR ,Notes and Physician order to be printed separately for the IP Visit
+
+    ![](media/image1202_83.png)
+
+-   **EMR View**
+
+    -   With the Enhancement of the IP Documentation with IP EMR , the option to view all the recorded information is retained . In IP EMR the user should be able to view the IP EMR, Notes and Physician order.
+
+-   **Audit Log**
+
+    -   All the existing Audit Logs for individual sections are available in a consolidated fashion which redirects you to the respective pages.
+
+
+### Introduction of application-wide Patient Confidentiality Controls [GET]
+
+This feature introduces a new concept of Patient Confidentiality controls across the application so that only authorized users have access to confidential patient details and medical records.
+
+#### Confidentiality Groups Master
+
+Confidentiality Groups Master this allows the admin to setup confidentiality groups and define whether these groups allow i> Break the Glass: a means to allow special users temporary access to a patient record for enabling transactions or access to medical records with mandatory comments. ii> Requires EMR Access Justification Comments: an additional security feature which enforces capturing comments at the time of EMR access. iii> There is an Confidentiality Group Code which is mandated as it displays this code as a tag on transaction screens iv> User applicability: allows the admin to authorize specific users to have access to a Confidentiality Group.
+
+![](media/image1202_33.png)
+
+#### Registration screens
+
+-   The OP Registration screen has the field Patient Confidentiality Groups made available so that during visit or MR No generation the user can mark the patient as part of the respective Patient Confidentiality Group.
+
+    -   The user only has access to select the Patient Confidentiality Groups that the user has authorized access to from the respective Registration screens.
+
+    ![](media/image1202_16.png)
+
+-   The same field is also enabled to the IP / OSP and Pre-Registration as well as Edit Patient Details screen in the old UI.
+
+    ![](media/image1202_32.png)
+
+-   **Patient List:** The Patient List in the OP Flow and the IP Flow has a tag which will display the confidentiality group short code as set up in the masters.
+
+    ![](media/image1202_64.png)
+
+#### Scheduler changes
+
+-   The scheduler pop-up at the time of booking an appointment also displays the Confidentiality tag against the patient.
+
+![](media/image1202_12.png)
+
+-   The Calendar displays the confidential patient details to an authorized user only with the tag.
+
+![](media/image1202_31.png)
+
+-   But to an unauthorized user the slot is displayed as blocked for Consultation/Service/Test etc but masks the patient details and the user is blocked from viewing/modifying the appointment details.
+
+![](media/image1202_62.png)
+
+#### Break the Glass
+
+This is a feature that allows special users temporary access to a patient record for enabling transactions or access to medical records with mandatory comments incase of an emergency as the term "Break the Glass" suggests. This screen can be accessed by authorized users from the Patient menu > Break the Glass and the user can simply search for any patient, enter comments (min 30 characters) and request access.
+
+![](media/image1202_34.png)
+
+-   The following toast is displayed on successful request granted to the user to access the MR No. The user has temporary access till he logs out from the current session after which the access is automatically revoked.
+
+![](media/image1202_37.png)
+
+#### EMR View Justification comments
+
+This is an add-on feature to Patient Confidentiality which enforces user comments every time a user accesses the confidential patient's Patient/Visit EMR. On accessing the EMR view screens there will be a mandatory pop-up which enforces comments from the user to access the patient's EMR medical records.
+
+![](media/image1202_20.png)
+
+#### Application-wide behaviour
+
+There is an application-wide check in all Patient/MRNo search fields and worklists such that the users can access only patients which are either not confidential or the user has authorized access to the respective Patient Confidentiality Groups. The only screens to which this check could not apply are the Insurance modules as this would interfere with the Claim Batching, Submission and Remittance process and Insta classified non-usage modules such as IVF, Davita-Billing, CSSD etc.
+
+
+### Patient Issues/Returns transaction support for taxes for GCC-VAT compliance [GET]
+
+-   The Issue to Patient screen allows for issuing and billing consumables, reusables and medicines to the patient. In India, this screen is primarily used only for inpatient medication treatment where as per the prevailing taxation rules taxation is exempt and no sales taxation can apply for the patient, hence this automatically doesn't apply if the India-GST rules are applied for the customer. These changes currently apply only when the tax model setup is as per GCC-VAT rules.
+
+-   The tax applies on the Selling Price or Net price i.e. (Gross - Discount) only for the Inventory Item.
+
+-   The tax can be modified on the fly by the user for an item subject to the action right which is "Allow Sub group editing".
+
+-   The total amounts including tax fields are displayed at the bottom as a grid.
+
+-   The same changes apply for the Returns from Patient.
+
+-   Respective amount and tax tokens have been enabled for the Issue to Patient prints.
+
+![](media/image1202_26.png)
+
+### Patient Portal 2.0 [GET]
+
+The Patient Portal booking experience has been refreshed to accommodate changes as requested by various customers.
+
+    ![](media/image1202_46.png)
+
+-   The center drop-down available for selection allows the user to select the center in which the user would like to book the appointment and is dropped-down as the first selection option.
+
+-   The customer logo can be uploaded from the admin console and shows up in the top left bar. This enabled white labelling of the Patient Portal and showcases the customer's brand.
+
+-   Book Appointments using the Basic/Advanced Search criteria:
+
+    -   The Basic Search criteria is quite straightforward in the sense that it allows the user to directly search by resource i.e. doctor/department or package/order set name.
+
+    -   The Advanced Search criteria allows the user to select a resource, specify time and category specifically at the time of search. The categories are doctor, department or package.
+
+    ![](media/image1202_8.png)
+
+    ![](media/image1202_50.png)
+
+-   After allowing the user to specify the appointment criteria the availability of the resource is displayed in the second pane. If the user specifies time then the available slot is pre-selected for the user. If the user doesn't specify time available slots for the entire day are displayed.
+
+    ![](media/image1202_10.png)
+
+-   The last step to go ahead and book the appointment is for the user to specify their details such as First Name and Last Name and complete the booking.
+
+    ![](media/image1202_22.png)
+
+-   After Booking is successful a success message with the appointment details are displayed.
+
+    ![](media/image1202_72.png)
+
+-   The Admin Console allows the user to a> upload the logo and b> specify custom confirmation text to the user on successful booking of an appointment.
+
+    ![](media/image1202_1.png)
+
+-   The Doctor master has an attribute called Schedulable by which can be defined as a> None = which means the doctor is not available for appointments from Portal or Scheduler, b> HMS Staff = which means the doctor can be scheduled only from the Scheduler and c> All which means the doctor can be scheduled for appointments from Scheduler and Portal.
+
+
+## Minor enhancements [/]
+
+### Scheduler [GET]
+
+### Doctor Scheduler 
+
+The Doctor Scheduler now allows users to directly book an appointment from the Calendar View and is not mandated to only book an appointment using the Availability View.
+
+-   Clicking on the calendar view will automatically determine the slot selected and assume the user to wanting to book an appointment for the selected time slot. The user can however change the slot from the drop-down option which is available for selection which shows all available slots for the day.
+
+    ![](media/image1202_61.png)
+
+-   Incase multiple doctors were selected from the Calendar View then the drop-down in the appointment pop-up requires the user to select a doctor to book an appointment.
+
+    ![](media/image1202_11.png)
+
+-   The secondary action on click is now a switcher tab to "Block the Calendar" which retains the existing functionality.
+
+-   Reschedule an appointment across doctors
+
+    -   This can now be done after hitting the Reschedule/Edit action where the user can switch the applicable doctor for the appointment.
+
+#### Availability View 
+
+Availability View displays Overbooked slots with remaining available slots.
+
+-   As is available in the screenshot below the slots in the Availability View displays the number of used slots out of available overbook slots.
+
+    ![](media/image1202_29.png)
+
+#### Doctor Appointments with Consultation Type based appointment duration
+
+-   The Doctor appointments now apply a rule such that the duration of an appointment is based on the Consultation Type selected and is mandatory for selection to book an appointment.
+
+    ![](media/image1202_51.png)
+
+-   The Consultation Types displayed in the drop-down are only those values which are mapped to the doctor's respective practitioner type.
+
+-   All Consultation Types have been migrated with a default duration based on the Resource Default Availability settings setup for All doctors.
+
+    ![](media/image1202_44.png)
+
+-   For Service appointments we now apply a rule such that the duration of an appointment is based on the Service specific duration. There is also an option to define which Service can be done on which Service Resources, so that while booking a service appointment only those specifically mapped Service Resources are available for selection.
+
+    ![](media/image1202_57.png)
+
+-   For Test appointments, there is also an option to define which Test can be done on which Test Equipments, so that while booking a test appointment only those specifically mapped Test Equipments are available for selection.
+
+    ![](media/image1202_21.png)
+
+-   On the Doctor Calendar the following UI changes were made to enable the user to differentiate based on appointment statuses:
+
+    -   Booked appointments only have the outer tile colored.
+
+        ![](media/image1202_42.png)
+
+    -   Confirmed appointments have the tile filled.
+
+        ![](media/image1202_2.png)
+
+    -   Cancelled appointments have the appointment struck out.
+
+        ![](media/image1202_36.png)
+
+    -   Cancelled appointments can also be hidden from being displayed on the Doctor Calendar.
+
+        ![](media/image1202_13.png)
+
+    -   No Show appointments have the appointments with a color file with a gradient of lines.
+
+        ![](media/image1202_4.png)
+
+-   On the Doctor Calendar(Day/Week View): the user's last selection is stored and defaulted to Week/Day view when the user returns to the Doctor Calendar screen.
+
+-   For Doctor Appointments the status gets marked completed automatically once the doctor consultation gets completed.
+
+-   On the Doctor Calendar Availability View: there is an option to show/hide of Show All Slots.
+
+    ![](media/image1202_67.png)
+
+-   The following Scheduler specific action rights are enabled which are:
+
+    -   Block/Unblock Calendar: so that only an authorized users can block/unblock the calendar for a doctor from the doctor's calendar.
+
+    -   Allow backdated appointments/block calendar: so that only an authorized user can back-date an appointment or back-date and block a doctor's calendar.
+
+-   The System Preferences called "*Registration On Arrival"* has been removed as this was not being used as intended. This preference earlier would allow a schema level setting for deciding whether marking Arrival should take the user to the Registration screen or only update the status.
+
+### Registration [GET]
+
+#### Mark a Patient OP Visit as "Emergency" and if necessary as "Unidentified".
+
+-   The OP Visit Registration screen introduces an option to mark a patient visit as an Emergency visit as well as if necessary to mark the patient as unidentified in case of an MLC (Medico-Legal case) /RTA (Road-Traffic accident)/Disaster cases where there is no patient information available to register the patient.
+
+-   The top-section of the OP Visit Registration screen there are new fields to mark as an "Emergency", and if selected there is an additional option to select the patient as unidentifiable in which case 2 new Registration Preferences and one Center-wise Preferences apply which are a> Unidentified Patient First Name, b> Unidentified Patient Last Name and c> Emergency Patient Default Patient Category.
+
+    -   The Unidentified Patient First Name defaults to John and Unidentified Patient Last Name defaults to Doe on migration for all customers, but as when more unidentified patients are registered the last name Doe has a sequence as One, Two, Three which increments to differentiate each unidentified patient registration from each other.
+
+    -   The center-wise emergency patient default patient category is an additional option to default the patient category selection for Emergency cases.
+
+-   The main feature of marking a patient as an Emergency case is that it overrides all the Registration Preferences which mandate certain fields and only mandates Title, First Name, Last Name, Age, Gender, City and Department fields.
+
+-   The user can always update the patient demographic details at a later time from Edit Patient details and provide complete information.
+
+-   There are 2 attributes added as part of the Visit Details Report Builder to identify the visit registrations done against Emergency and Unidentified patients.
+
+#### New Registration Preferences 
+
+-   There are 2 new OP Registration screen specific Registration preferences which are a> *Patient Photo Mandatory* (which as the name suggests simply mandates capturing patient photo for every OP Registration) and b> "*Patient Outstanding Controls For OP Registration*": there are 2 values to select from, one which is Warn which is an existing functionality and it displays a blue color information warning which gives the front desk user the details that the patient has an outstanding patient due > 0. If set to Block then the user is displayed the same patient due information > 0 in a red color toast but is blocked from proceeding with the OP Registration. In this case the user has to redirect the patient to clear all outstanding patient dues to proceed with a new OP visit registration. This preference doesn't apply to the OSP or IP Registration screens.
+
+-   A previously available back-end Registration Preference called Patient Identification with values = i> Govt Identifier Type or ii> Govt Identifier Type + Passport Fields has now been moved to a center level.
+
+    -   This preference with the option 1 enables capturing Govt ID for all OP visit registrations regardless of with/without insurance and option 2 enables capturing either Govt ID or passport details (if setup on the Registration screen only).
+
+-   There is a new Registration Preference added called Patient Outstanding Controls for OP Registrations, this works such that for a OP visit registration the user could see a blue information toast incase the patient had outstanding dues such as below:
+
+    ![](media/image1202_55.png)
+
+    -   This is now modified such that the preference has two options: warn the user only and proceed for OP visit registration or block the user with the toast and mandatorily clear the patient dues for a new OP visit registration.
+
+#### Other minor changes 
+
+-   There is a minor fix for the smart card integration with the Kuwait Civil ID card such that if the input name from the card has 4 names and the Registration screens are enabled with 2 middle names then the names get split accordingly across First / Middle Name 1 / Middle Name 2 and Last name fields.
+
+-   An earlier feature where if 0 charges were applicable at the time of OP Visit Registration that creation of a bill was skipped has been deprecated as this can cause audit concerns for customers.
+
+-   Death Patient OP and IP Registration control is applied such that if the patient was marked discharged by type = Death, in a previous IP visit then a new visit registration is blocked and a message is displayed which says: "Patient is no longer alive as per records (Date of death: Date Month Year HH:MM). Can not create new visit"
+
+#### Doctor Follow up Rule Changes
+
+-   Reversal of OP Follow-up count on Cancellation of Doctor Order - Cancellation of Consultation will reverse the op follow up count, if consultation is cancelled for a main visit, then next visit will consider as main visit.
+
+-   Doctor Order through Billing Order considered for OP Follow-up - It is now consider all the doctor order billed through Billing Order for OP follow up determination.
+
+-   Visit without Consultation type does not considered as Doctor follow up.
+
+
+### Billing [GET]
+
+#### Revenue Attribution based on Admitting Department
+
+-   It is now store the admitting department name at the bill charge level at the time of posting to bill and make this field available in bill charge.
+
+-   Added new field revenue_department_id in bill charge table and latest department id is inserting when any item is poting to bill.
+
+-   OSP registration, Pharmacy Retail, Pharmacy Retail Credit, Incoming sample transactions do not have department, then revenue_department_id would be empty.
+
+-   New field 'Revenue Department' is added in bill charge report builder
+
+#### Minor Order Screen Changes
+
+-   Added new item totals which shows the total of the newly added items to the grid. This value will reset to zero after every save of order screen.
+
+-   Order Id is enabled as hyperlink for non cancelled items, for cancelled items it will not be a hyperlink. On clicking order id link Print dialog box opens with selected order id's print by default
+
+#### Minor changes in EDC Machine Master 
+
+- In the EDC machine master, Merchant Store POS code character length is increased to 20 characters
+
+
+### Insurance [GET]
+
+-   Separate Claim ID sequence for Hospital and Pharmacy claims
+
+    -   It is introduced an option to generate claim ids based on the account group in claim id sequence master, This would differentiate claim id sequence for both hospital & pharmacy claims.
+
+-   Self-pay Claim introduced two filters such as,
+
+    -   Department Filter - This is to filter all the visits based on the selected departments
+
+    -   Ignore Visits with Opn Bills - it will exclude a claim if atleast one bill still in open status, which apparently consider only those visits in which all bills are either finalized or closed status.
+
+
+### OP Consultation EMR Changes [GET]
+
+#### OP Consultation
+
+##### Landing page changes
+
+-   "Add New Consultation" is reworded as "Start New Consultation"
+
+-   Allergy details pop's up only if the allergy is recorded. Earlier behaviour of allergy pop-up without details is replaced with new behaviour.
+
+![](media/image1202_87.png)
+
+##### Management Section
+
+-   Test Result Validations in Order Set,Favourites and Previous Prescription (Validations on the Package order is not done)
+
+    -   The Feature to Validate Diagnostic test with specific days/Months of validation while ordering is now extended while ordering the test from
+
+    -   Orderset
+
+    -   Favourites
+
+    -   Previous Prescriptions.
+
+-   Link to Open Prescription Pop-Up
+
+    -   In management section, shortcut options to Navigate to the Non-Hospital Item is deprecated as its leading to few errors in usage. And new link to Open Prescription item Pop-up is introduced.
+
+![](media/image1202_80.png)
+
+- Search and add from Favourite
+
+    -   New Search functionality is provided for the users while searching and adding from the Favourite section to the Management section.
+
+![](media/image1202_81.png)
+
+##### Templates
+
+Tempaltes can be Save Department or Doctor Specific
+
+-   Preference are introduced for templates in OP Documents
+
+    -   To Allow Templates , only when this preference is set the
+        user are allowed to select the template in OP Consultation
+        and Triage/Nurses Assessment
+
+    -   To Allow Templates to save with Data , Only when this
+        preference is set User allowed to save the template with
+        Data in OP Consultation and Triage/Nurses Assessment
+
+    -   Along with this in OP Consultation Templates alone have
+        additional Option saving the Template at Doctor or
+        department level
+
+    ![](media/image1202_90.png)
+
+##### PACS Viewer Link
+
+Under the OP Consultation TOC PACS Viewer Link has been added. Links become enabled or disabled based on the PACS setup
+
+![](media/image1202_79.png)
+
+#### Triage/Nurses Assessment Changes
+
+##### Re-Open Triage Summary with Remark
+
+Triage summary is allowed to Re-open with remarks and the re-open time limit is determined with "OP Documentation Time Limit in Hours"
+
+##### Audit Trail for Triage
+
+Triage / Nurses Assessment Form level audit trail is available for users .
+
+#### Food Allergy Alert in Diet Chart Preparation Screen 
+
+In Prescribe Meal and Meal Schedule for Canteen screen, Allergy alert for the food allergies are shown to the user , alert with message"The patient has a Food Allergy to ABC and the same is prescribed in Diet XYZ. Please review the diet plan". However the alert doesn't stop any action.
+
+![](media/image1202_84.png)
+
+#### Patient Discharge Screen
+
+-   Till the Initiate Discharge status is saved the user are not allowed to change the Clinical Discharge status the section remains disabled.
+
+-   There is a Generic Preference introduced called: "*Physical discharge for pending patient indent*" = Allow/Warn/Block based on which we will allow/warn/block the Physical Discharge step.
+
+    -   Allow: As is today no changes.
+
+    -   Warn: displays an alert: "There is a pending patient indent to be dispensed. Please review the discharge."
+
+    -   Block: displays an alert: "There is a pending patient indent to be dispensed. Discharge is blocked."
+
+#### OP List Enhancements
+
+The OP List has some minor enhancements done where a> Arrival Time is renamed as Visit Time, b> Est. Cons. Start Time is renamed from Cons. Start Time which is the time the order was placed, c> Actual Cons. Start Time will be blank until the EMR is opened. d> The same fields are made available in the Doctor Consultation Report Builder.
+
+#### Intake /Output Chart
+
+-   Remarks displayed along side of the Intake and Output value Display
+
+### ![](media/image1202_93.png)
+
+### Diagnostics [GET]
+
+-   Lab and Radiology Dashboards highlights STAT/Urgent items
+
+    -   Any Lab and Radiology orders marked as STAT or Urgent in Prescription or in Order will be bolded and highlighted in Lab and Radiology Dashboards
+
+-   In Laboratory and Radiology Reports dashboards , the order remarks are shown in tooltip
+
+-   Result Label level Interface Code
+
+    -   In Diagnostic Test Master option to store Interface Codes at Test level is provided for specific equipments , these respective values are updated when HL7 ORU messages are sent from Outsource Lab.
+
+    -   Centerwise Interface codes are maintained
+
+    -   The Interface Codes from the Outsource lab of each center has to be Updated as and when need arise.
+
+-   Radiology Arrivals and Test status to mentioned patient arrived and not modality arrived.
+
+    -   Modality Arrived has been renamed to Patient Arrived in all reports and Dashboards.
+
+-   If conducting Doctor is single then in Laboratory and Radiology Reports conducting Doctor field default instead of selection
+
+-   Services: Service Names to support 600 characters.
+
+### Inventory [GET]
+
+-   Discount Plan now applies on Pharmacy Sales:
+
+    -   The Discount Plan master now supports an additional attribute of adding Item Categories to the applicable category.
+
+    ![](media/image1202_77.png)
+
+-   The Discount Plan applies on the Pharmacy Sales screen. There are 2 ways of applying Discount Plans, a> on the fly for a cash/insurance patient and b> pre-populated from the Insurance Plan and cannot be edited as it does on the Bill screen. This is because the drug pricing rules can vary across Insurance Cos/TPAs.
+
+-   The Pharmacy Sales screen add item pop-up has the item, item-code and barcode fields merged so that the user can search either by item or item code or barcode in a single field.
+
+![](media/image1202_43.png)
+
+-   Stock Entry screen now has the option to select a Print Template and at the Store level the Default GRN Print applicable can be selected.
+
+-   Supplier Rate Contracts has an additional field which allows the user to apply Purchase Margin as a % or as an absolute amount. The field is also available in the CSV for ease of upload/download.
+
+![](media/image1202_19.png)
+
+-   On the PO screen if the Supplier Rate contract has the Purchase Margin defined then there will be a blocking alert only if margin falls less than the defined %/amount.
+
+    -   NOTE:The Margin considered here is the MRP - Cost Price amount excluding discounts.
+
+-   The PO screen also has validations built in such that if there are multiple Supplier Rate contracts defined and it so happens that there is another Supplier offering a lower price then there is a validation which displays this information to the user.
+
+-   A generic preferences is available called PO Round Off = Automatic / Manual, so that the user can manually update the Round-off in the PO rather than be constrained by the automatically calculated Round-off amount.
+
+
+### Reports [GET]
+
+-   IP Outstanding Report is now available in the application, which shows all the amount including tax
+
+-   Reports Dashboard - it auto-refreshes the screen every 30 seconds
+
+-   Once filters are applied on a Report Builder and then generated the report, then all selected set of filters and fields are retained.
+
+-   In Clinical Data Reports -> Lab Test Results Report Builder- Diag Department is added as available field
+
+-   Prescribing Doctor is added in below listed Reports,
+
+    -   Doctor Appointments Report Builder
+
+    -   Services Scheduled Report Builder
+
+    -   Surgery Appointments Report Builder
+
+    -   Scheduled Tests Report Builder
+
+    -   Consolidated Appointments Report
+
+### Masters [GET]
+
+#### Message Dispatcher Configuration
+
+New settings screen for Message Dispatcher Configuration is now available under settings. This screen allows configuring service provider settings for Notifications, Email and SMS for various communications generated by Insta HMS.
+
+![](media/image1202_100.png)
+
+![](media/image1202_101.png)
+
+### Windows Integrated Authentication Enhancements [GET]
+
+#### SSO Only User Support
+ 
+For customers using Windows Integrated Authentication (Kerberos SSO) for login, we have simplified creation of users by introducing option in Add User to allow creation of password less users for sso based logins.
+
+![](media/image1202_98.png)
+
+The users created using this option are not allowed to login using password based login screens
+
+![](media/image1202_99.png)
+
+The username for SSO Only User is always converted to small case while storing and is treated as case insensitive username when authenticating with Kerberos Domain Controller.
+
+## Bugs fixes [/bug-fixes]
+
+### List of bugs [GET]
+
+JIRA ID|Module|Description
+---------|-----------|---
+HMS-24837|Enhancement|Add a filter: Data of Birth (Patient Details) in the Patient Search/Visits Search/Active Visits screens.
+HMS-25534|Enhancement|Clinical Preference screen to be moved under Hospital Preference
+HMS-25559|Enhancement|One Apollo - Display of Tier Benefits in Registration and Billing Screen
+HMS-25614|Enhancement|Token to display ERx Item status in prescription print.
+HMS-25760|Enhancement|"Show All Slots" check box for day view
+HMS-25478|Enhancement|[Scheduler] Recent appointment details need to be displayed.
+HMS-24878|Enhancement|The OB for overbooked appointments should be accompanied with the number of appointments overbooked else the information is not available to the Front Desk.
+HMS-26110|Enhancement|Adding service duration field in service details xls
+HMS-25722|Enhancement|Reports: once filters are applied on a Report Builder and then generated retain the user's selected set of filters.
+HMS-18679|Enhancement|Add Prescribing Doctor as a field to the Scheduler Reports.
+HMS-26387|Enhancement|Needs to be added Payment reference field in bills report builder.
+HMS-24694|Enhancement|Triage/Nurse Assessment: to have the View EMR Link.
+HMS-26516|Enhancement|Diagnosis section: rename show previous history to show previous diagnoses
+HMS-26514|Enhancement|Change the hyperlink color across the application.
+HMS-25649|Enhancement|Vertical Scroll in Order print screen to get print of latest added item
+HMS-25847|Enhancement|Reports Dashboard: Auto-refresh the screen every 30 seconds.
+HMS-26440|Registration|Getting Error while converting OP to IP .
+HMS-26439|Registration|Getting null pointer exception on registering a Ip patient .
+HMS-26451|Registration|OP Registration: on removing defaulted insurance revert to default rate plan from patient category mapping.
+HMS-25307|Registration|[Practitioner type] Back end validation is not there in op registration ,registration order and order screen
+HMS-26382|Registration|Type Search on insurance details in registration screen is not happening with contains search.
+HMS-26377|Registration|Getting exception if OP Revisit Consultation Validity and Count is not there for a doctor
+HMS-24854|Registration|Cross center registration is working even though setting is Show Other Center Patients in Reg. Screen = No
+HMS-26374|Registration|Salutation link is not coming under general master .
+HMS-25869|Registration|[Clarification] Not getting Patient already exist alert in below case .
+HMS-26682|Registration|OP to IP Conversion screen-> keys missing for Save button
+HMS-25507|Registration|Smart Card Expired validation is not working in 12.1
+HMS-26235|Registration|java.lang.IllegalArgumentException: Invalid property name 'dateofbirth' exception in hms log
+HMS-26294|Registration|Slow patient_section_details query
+HMS-26492|Registration|Pre-Registration/Visit Registration screens MR No duplication validation rules.
+HMS-25891|Registration|Unable to select patient category in IP registration when user does not have right to Pre registration screen
+HMS-26356|Registration|Marking visit as DRG throws NullPointerException.
+HMS-27239|Registration|Pre Registration screen save is throwing console error if name parts preference is not 4.
+HMS-23540|Registration|[Registration] Government ID Type label field to be mandatory in registration screen
+HMS-26313|Registration|Validating as patient already exists even if govt ID is not set to unique in govt id master.
+HMS-25125|Registration|Order throws error for a followup cash patient after insurance is added.
+HMS-26234|Registration|Not able search patient in the registration screen
+HMS-26230|Registration|Not able to register a patient for re-visit
+HMS-26527|Registration|Active patient search, OP registration screen and many of other screens throws exception
+HMS-24849|Registration|[Registration] Increase the db length for the field Patient Category
+HMS-25501|Registration|One patient category name is going above the select Patient category value .
+HMS-25613|Registration|Emirates ID read card error - Index out of bound
+HMS-25786|Registration|Web cam (Photo) is not capturing in Mozilla Firefox.
+HMS-25687|Registration|Order link is not coming in registration success page of OSP patient .
+HMS-25595|Registration|patient category is not coming in Ip registration screen in below case .
+HMS-25634|Registration|Admission date, admission time and token are not getting displayed in below case.
+HMS-26237|Scheduler|lookup.json is not triggering after entering 4 characters in mobile number field in new appointment screen.
+HMS-26139|Scheduler|On searching for the time in this case there is a callout as in the mock which displays the next 3 available slot options for the date.
+HMS-26129|Scheduler|There is no check in "cancelbulkappointments.json" on cancelling an appointment.
+HMS-25859|Scheduler|Practo_appointment_id is getting updated to empty after editing the hms appointment.
+HMS-26098|Scheduler|The resource name is coming as null when creating/ rescheduling appointment for the slot in which patient has another doctor appointment.
+HMS-25853|Scheduler|Doctor Scheduler (v12) is not displaying patient on search by Govt ID.
+HMS-25923|Scheduler|block me from rescheduling or cancelling appointments.
+HMS-26082|Scheduler|[Single-center]Alignment of visit purpose is not proper in appointment grid.
+HMS-26054|Scheduler|irrelevant results when user search a patient using mr no. in new appointment pop up.
+HMS-26016|Scheduler|Not able enter patient name in New Appointment pop up.
+HMS-25244|Scheduler|When user closes one appointment card pop up all the appointment card pop ups are getting closed.
+HMS-25966|Scheduler|Slots are showing available even if colliding with not available time in patient portal.
+HMS-23504|Scheduler|Reverting the patient name match implementation from add appointment window.
+HMS-24882|Scheduler|The Completed status is not linked with the actual order status of the doctor consultation
+HMS-25477|Scheduler|Appointment Pop-Up needs to display the historical 'No Show' count.
+HMS-25390|Scheduler|module check is not there for 'appointment_details_changed' sms.
+HMS-25294|Scheduler|[UI issues] Appointment grid is scrollable even there is no more items to show.
+HMS-25220|Scheduler|Doctor Availability View: For a single doctor selection, display all the slots are there is enough room for this on the UI.
+HMS-25517|Scheduler|Get continuous slot API should be called on clicking enter after entering time.
+HMS-26226|Scheduler|Mobile number search is not working if not searching with country code in appointment screen.
+HMS-26417|Scheduler|Searching patient with mobile number is not working in Doctor scheduler.
+HMS-26357|Scheduler|schedule.json api is not returning the slot as per entered time.
+HMS-26510|Scheduler|Not able to create appointment with less than 3 character name
+HMS-25746|Scheduler|Issue - In doctor scheduler, available slot showing wrong slots
+HMS-25706|Scheduler|Unable to create appointment for existing patient
+HMS-25665|Scheduler|scheduled by column should be added in the Doctor Details export document.
+HMS-25653|Scheduler|Getting exception while searching in doctor appointment screen.
+HMS-26155|Scheduler|In cancel appointment pop up for service appointment 'appointment type name' is showing as test.
+HMS-25636|Scheduler|Getting console error whenever user selects the existing visit on arrival from today's appointment screen
+HMS-25788|Scheduler|Appointment Booking: Allow the user to update remarks only and save appointment without changing status.
+HMS-25260|Scheduler|When we try to search for patient Whose MR.NO ends with 6793 all the patient who have 6793 in the MR.NO is showing up except for the patient whose MR.NO ends with 6793.
+HMS-24008|Scheduler|Doctor Scheduler - Calendar View hover of an appointment on the extreme right column is hidden
+HMS-25590|Scheduler|Appointment list is not filtered as per the logged in center in appointment grid.
+HMS-26076|Scheduler|consultation type is not populating in edit appointment
+HMS-24781|Scheduler|Throwing null pointer exception in Doctor scheduler, while trying to block appointment for a doctor.
+HMS-26229|Patient Administration|Exception when applying advanced filters in OP Flow Patient List
+HMS-27131|Patient Administration|Not able to create/reschedule appointment for lab tests.
+HMS-25927|Patient Administration|display the text as book another appointment and not followup
+HMS-25664|Patient Administration|Overbook limit is disabled when schedule by is 'HMS staff'.
+HMS-26345|Patient Administration|[Portal]: Patient Portal RTL alignment fix and translation text correction for Arabic language
+HMS-13214|Patient Administration|Throwing time out error when click on view message log.
+HMS-25836|Patient Administration|On changing the appointment duration SDK is call is not made to share details to Practo.com
+HMS-25758|Patient Administration|getappointments.json is called thrice when user search for a patient & select in patient list.
+HMS-26494|Patient Administration|Government Identifier is not showing in patient details screen.
+HMS-24904|Billing|Order link in billing screen is always pointing to latest visit.
+HMS-25700|Billing|Order link option is missing from active patients list .
+HMS-25175|Billing|Bed charges are getting cancelled automatically when cron Jobs runs in Night and not getting posted in next day.
+HMS-25070|Billing|Allocate Bed Screen is showing duty doctor list mapped to other center
+HMS-26352|Billing|Saving order screen by adding Dietary items to DRG visit throws error
+HMS-26325|Billing|Ordering/Cancelling item to/from order screen throws internal server error
+HMS-26311|Billing|order screen not working if visit id is having '/'
+HMS-26200|Billing|Ordering surgery to DRG IP visit throws error
+HMS-24913|Billing|Not able to re-open bill, if claim is denied
+HMS-26201|Billing|Getting NULL pointer exception while ordering Equipment in order screen.
+HMS-25506|Billing|Bug : Operation allocation details timings details not showing in the bill
+HMS-18318|Billing|Cancellation of Consultation Order should be considered for op type determination
+HMS-24117|Billing|Follow up/OP type should be reversed if no consultation billed
+HMS-24112|Billing|Setting quantity to 0 in Bill for cancelled Bed charges
+HMS-25764|Billing|OT Doctor Type wrongly getting ordered after we save in order screen
+HMS-26506|Billing|Membership ID not showing in order screen, patient detail section
+HMS-25780|Billing|The tax amount in the issue to patient screen should be of 2 decimal digits in case of multi sponsor.
+HMS-25862|Billing|Finalized and closed bill is not getting open if we are saving edit insurance screen without changing any value of any field
+HMS-25909|Billing|In billing order screen, order id should be a hyperlink to open corresponding order print
+HMS-25489|Billing|Unable to do sales (raise bill) for insurance patient
+HMS-27038|Billing|[Existing-12.0] Allowing to order items from OP registration order screen and register an OP patient with different prescribing doctor even though " One Presc Doctor For OP: Yes" in generic preference
+HMS-27037|Billing|[Existing-12.0] Allowing to order items from order screen with different prescribing doctor even though " One Presc Doctor For OP: Yes" in generic preference
+HMS-26449|Billing|[Performance] Bill is getting timeout while saving or doing pay and close
+HMS-25893|Billing|Surgery sponsor charges are getting removed on changing Tax Subgroups
+HMS-25655|Billing|In Order screen we are unable to order any services with Decimal Qty.
+HMS-25420|Billing|Throwing error occurred on trying to select visit id in OP order screen
+HMS-26315|Billing|No validation on time field in bill receipt screen.
+HMS-26212|Billing|Add doctor to surgery link on order screen is not working if we are selecting new bill or new insurance bill
+HMS-26181|Billing|Add doctor to surgery link on order screen is not working for osp patient
+HMS-25654|Billing|In new version when they select the prescribing doctor while ordering the test it is not retaining and it get vanished after adding the first test.
+HMS-25483|Billing|Auto selection of doctor consultation type in the order screen, if orders are fetching pending prescription
+HMS-25615|Billing|Unable to order doctor from the order screen in a case.
+HMS-26061|Billing|Posted date is taking current time instead of back dated date/time while ordering through order screen.
+HMS-25864|Billing|Duty doctor is selecting randomly in allocate bed screen
+HMS-25845|Billing|Not able to order other charges items from Order IP Flow screen.
+HMS-25816|Billing|User is able to select Points Redemption as payment mode in deposits and Payment Voucher screens.
+HMS-25594|Billing|Primary Surgeon is not coming in the OT Management even after selection done in order screen
+HMS-26968|Billing|Package activities are not getting canceled, if package is canceled in new order screen
+HMS-27167|Billing|In bill conducted by field is showing blank when we order a surgery from Order Ip screen.
+HMS-27322|Billing|Allowing to Refund deposit Against a Package where the package Deposits amount is zero
+HMS-26173|Billing|[Existing]Bill Now is having open and paid status
+HMS-26172|Billing|[Existing] Cancelling item from order screen throws error
+HMS-26372|Billing|[Dyna Package]Excluded items from dyna package is not getting added to sponsor if the items are Claimable.
+HMS-22795|Billing|Showing wrong discount amount in bed when quantity gets reduced.
+HMS-21267|Billing|Activity is not showing in bill screen, but in bill dashboard activity amount is showing
+HMS-27160|Insurance|In self pay present complaint validation should not be checked for HAAD.
+HMS-26434|Insurance|In self pay error log, error for clinician or clinician id is not coming at once for all the visits.
+HMS-26433|Insurance|[Insurance] Child Duplicate Memb ID Validity (Days) should be considered from the birth date of child instead of mother's admission date
+HMS-26428|Insurance|prior auth no is getting updated as 0 in patient registration table and patient insurance plan tables if the patient comes as follow up.
+HMS-26183|Insurance|PBM sales screen is displaying on clicking sales in prescription list screen
+HMS-26300|Insurance|copay is not calculating by default for re-visit patients.
+HMS-26330|Insurance|Error logs are not able to see from Claim Submissions List screen
+HMS-26919|Insurance|Getting error message from HAAD saying that"Combination of Claim.ID and Claim.ProviderID is reported more than once in your transaction. Claim.ID in combination with Claim.ProviderID must be unique within a transaction file."
+HMS-27529|Insurance|for combined activity Only one item's observation is coming in XML even though other combined items also has the observations
+HMS-24955|Insurance|Field to enter Prior Auth No and this should be copied to all the individual sale items in the e-claim xml
+HMS-24952|Insurance|Automated capture of ERx Reference No from ErX prescription for OP patients in Insta while auto-populating prescriptions
+HMS-26360|Insurance|DRG bill shows all amount for patient instead of sponsor
+HMS-26879|Insurance|LOINC value validation error while completing codification
+HMS-26855|Insurance|XML is not generating if there are merged service activity.
+HMS-25905|Insurance|Removing secondary sponsor in case of multiple insurance is making patient amount zero in the bill
+HMS-24473|Insurance|While finalizing codification it is throwing "coder claim review pending",But in coder claim review nothing is showing.
+HMS-25453|Insurance|Hospital Observations are not displaying in XML
+HMS-26175|Insurance|For osp patient patient amount is becoming zero for all the items in bill when we connect insurance
+HMS-26478|Insurance|RA upload shows failed but no error in error log.
+HMS-25871|Insurance|For IP patient changing rate plan without editing any co-pay in edit screen is calculating wrong amount in bill screen
+HMS-25273|Insurance|In error log hyper link is not active in claim submission screen
+HMS-24990|Insurance|Remarks field is getting vanished in Bill for consultation if we change the code for E&M in codification screen.
+HMS-26096|Insurance|Drg Claim Submission is not working in 12.0 Series
+HMS-25734|Insurance|Follow the HAAD claim format to bring the data in the E-claim xml as observation for an item
+HMS-25733|Insurance|Follow the DHA claim format to bring the data in the E-claim xml as observation for an item
+HMS-25827|Insurance|With following usecase: Consultation amount is not changing as per consultation type selected in codification screen
+HMS-25487|Insurance|While creating claim batch, show only those same items from the bills which not flagged as external PBM
+HMS-26918|Insurance|In self pay claim's if patient has multiple bill's in a single visit, claim id's are repeating, since visit id is the claim id for self pay, hence we are getting error message from HAAD
+HMS-26209|Insurance|Pharmacy item claim amount shows in DRG XML.
+HMS-26287|Insurance|[PERFORMANCE] Slowness in Insurance Details API
+HMS-25724|Insurance|Not able to upload Ra file: Getting error: Invalid XML Header, Please Check XML tags
+HMS-25951|Insurance|Zero claim activity are not coming in xml.
+HMS-24286|Insurance|[Existing] In Codification screen for cash patient finalize all bills check box is already checked and not clickable.
+HMS-26283|Insurance|in codification .screen, once we enter value type for observation and save. On editing again value type is empty.
+HMS-25409|Insurance|If user does not selects any visit classification while registering a patient then PayerID is coming blank in XML
+HMS-26218|Clinical|On saving consultation it is not responding.
+HMS-23264|Clinical|Switching between New and Old Consultation Screen
+HMS-22728|Clinical|Consultation screen: "the past" sub-activity buckets drop down doesn't work on clicking.
+HMS-23981|Clinical|PACS Viewer Link on the OP Consultation Screen
+HMS-18781|Clinical|Throwing Null Pointer exception when click on save and print in patient vaccination screen.
+HMS-12745|Clinical|[Validate]Entered By user name is showing wrongly in consultation and management screen.
+HMS-26086|Clinical|BMI value is shown zero on reloading the page
+HMS-27400|Clinical|Consultation screen throwing console error on prescribing from previous prescription.
+HMS-26467|Clinical|[Consultation] Manage Consultation Favourites > Do not keep inactive generic names / medicine names / tests / services
+HMS-25666|Clinical|While printing the discharge summary getting run time Exception <br> tag is not enclosed.
+HMS-26443|Clinical|Not able to search any item in consultation screen when visit ID having '/'
+HMS-25587|Clinical|[Existing] Console error on adding operation in IP order screen
+HMS-26375|Clinical|Vitals parameters are reordering once the data saved.
+HMS-26282|Clinical|Need prescription Fields like item strength, item strength units, dosage unit as editable as in previous version.
+HMS-26240|Clinical|When we click on edit for prescription of type medicine in Consultation screen is not working
+HMS-26309|Clinical|[Performance] Slowness in /TriageFormController/savecconsultation
+HMS-25322|Clinical|Allergy details Pop-up on Landing page
+HMS-25108|Clinical|[Consultation] Frequency search in Management Section should be non-case sensitive
+HMS-25052|Clinical|[Dental] Tooth Numbering Sequence for Dental Service as per the system preferences set for Tooth Numbering Systems
+HMS-25825|Clinical|Stacktrace Error on clicking Print Options
+HMS-26288|Clinical|[Performance] Slowness in com.insta.hms.GenericForms.GenericFormPrintAction
+HMS-24102|Clinical|Showing wrong username in patient discharge under physical discharge field.
+HMS-25440|Clinical|Unable to prescribe test within the test validity period via autocomplete search outside the management grid
+HMS-25650|Clinical|OP Followup Form migration: should be a copy of the OP Consultation form only from 11.13 to 12.0.
+HMS-24869|Clinical|"Image Markers" not showing in Nurse (Triage screen) and Doctors consultation screen user logins but it's working fine in Admin user login.
+HMS-25275|Clinical|After cancelling ERx request, on resending the prescription, select all medicines by default.
+HMS-25327|Clinical|Getting null pointer exception while upload generic document
+HMS-23620|Clinical|Prescription Status is not changing in Prescription list after enabling mod_eclaim_erx module
+HMS-25986|Clinical|OP Consultation: Diagnosis Favorites checkbox gets unselected after hitting Add.
+HMS-25982|Clinical|Drop down is not working in odt forms
+HMS-16223|Clinical|In Patient EMR Screen Doctor's notes are duplicating.
+HMS-24789|Clinical|Getting time out error in prescription list
+HMS-26298|Clinical|OP Consultation-Diagnosis Section: Long diagnosis codes/descriptions cannot be differentiated on search.
+HMS-25406|Clinical|Sections are not showing in EMR for visits.
+HMS-25179|Clinical|[Consultation] Remove the validation in dosage field while editing the doctor favorites
+HMS-25176|Clinical|Allowing to add Duplicate items to favorites and in management section with warning message and while saving the consultation it is throwing error message and not allowing to save.
+HMS-26530|Clinical|Instructions are auto-removed if dosage is edited
+HMS-26432|Clinical|Delete button is disabled in consultation screen for medicine item in a case
+HMS-26381|Clinical|In a case section save issue occurs for deleted record
+HMS-26835|Clinical|[Performance] EMR Screen: Slowness caused due to multiple clicks
+HMS-26801|Clinical|In consultation screen, We have an empty box which is not editable.
+HMS-25946|Clinical|In consultation and management screen under management while ordering medicines we are not able to add decimals in dosage field if granular units is set as "Yes" in item form master.
+HMS-26104|Clinical|Throwing sql exception error "value too long for type character varying(2000)" if patient instruction in consultation screen is given more then 2000 characters.
+HMS-25789|Clinical|Section with image is not showing in consultation screen
+HMS-25756|Clinical|Throwing error in logs on saving consultation screen with only weight but not height
+HMS-25612|Clinical|OP Templates: Not able to search by text for a template
+HMS-26973|Clinical|Controlled Drug Number should not be allowed to be Edited in the Management section for consultation.
+HMS-26231|Clinical|Item name is not shown in past history when generic name is set to yes
+HMS-26174|Clinical|Notes and prescriptions are showing in hospital forms master even if IP EMR is inactive
+HMS-25915|Clinical|erx : show the drug name if any item doesn't have drug code in the master
+HMS-24603|Clinical|BMI calculation is not happening while adding and editing vitals.
+HMS-26236|Clinical|If prescription by Generics is set as yes we are not able to edit the item form name.
+HMS-26199|Clinical|Clicking on add new triage is throwing timeout error.
+HMS-26055|Clinical|While prescribing the medicine's from the favorites, the medicine name is showing empty in the grid
+HMS-26208|Clinical|Consultation: Label issue for Template
+HMS-25976|Clinical|On clicking on save in Consultation screen is throwing error.
+HMS-26145|Diagnostics|Adding service duration field in service details xls.
+HMS-25958|Diagnostics|[Token] Lab Order No in Work Order print.
+HMS-26484|Diagnostics|Last visit date field is missing in Lab Test Results Report Builder in 12.0 version.
+HMS-25289|Diagnostics|Report is not getting combined for internal lab tests
+HMS-19827|Diagnostics|[Existing]Lab no is not generating based on order no when test is ordered from registration screen
+HMS-24776|Diagnostics|The attribute highlighted with green at ORC7.6 is the order priority that should be R or S
+HMS-24775|Diagnostics|HL7 Filler Order Number must have value.
+HMS-24800|Diagnostics|When we do XL import of diagnostic charges the username is not updated with the username who is doing the update.
+HMS-26099|Diagnostics|[API]Throwing Exception in Incoming Sample Registration
+HMS-25675|Diagnostics|Throwing Numberformat exception when we print outsource sample from manage reports.
+HMS-24947|Diagnostics|[Incoming sample Registration]Throwing Null Pointer exception when we finalize/close the bill from billing screen or Incoming sample pending bill screen.
+HMS-24915|Diagnostics|Not able to do test results bulk upload from Diagnostic Tests List screen
+HMS-26645|Diagnostics|In EMR Lab Reports and Radiology reports are showing under the name of Radiology Reports.
+HMS-24726|Diagnostics|Showing Result value as "-NA-" in UI and same in backend when we receive result value as "0" through HL7 LAB Interface.
+HMS-25388|Diagnostics|Print Reports(visit wise):Report is not getting combined if print is taken from conduction center
+HMS-25329|Diagnostics|Signed off Reports:Getting console error on opening the screen and Print Reports(visit wise) is not showing in toolbar
+HMS-26286|Inventory|[performance] Slowness in com.insta.hms.stores.Pharmacy Prescription List Action
+HMS-26285|Inventory|[Performance] Pharmacy Billing screen slowness
+HMS-25970|Inventory|In supplier payment, Payment amount is showing wrong
+HMS-25890|Inventory|Throwing Null pointer exception while doing sales from patient indent screen.
+HMS-24498|Inventory|[Multi Tab]Allowing to do issue from patient indent list from two users for same patient Indent.
+HMS-26445|Inventory|[Patient Issue]:On Given Discount Percentage in rate sheet and adding the item in patient issue screen throwing console erro.
+HMS-26290|Inventory|Not able to update edit prescription screen, for partial consultation patients
+HMS-26043|Inventory|Tax amount is showing wrong for serial items while doing issue returns .
+HMS-25873|Inventory|[Patient Indent] Null Pointer exception while doing issue with zero qty.
+HMS-25867|Inventory|Payments : Wrong invoice amount while processing supplier payments
+HMS-13764|Inventory|[Token] Add Mr No in the Patient Issues Return Template.
+HMS-25578|Inventory|Round off is not calculating while doing sale.
+HMS-24083|Inventory|[Existing] In GATE PASS print item record are duplicated.
+HMS-25846|Inventory|Edit icon is not working in edit sales screen .
+HMS-25783|Inventory|Patient Due is coming in bill on saving edit sales screen in below case .
+HMS-25557|Inventory|Reference number in sales screen is accepting more than 50 characters which leads to error
+HMS-25560|Inventory|Issue: Not able to add consultation for duplicated MR No patients
+HMS-26121|Masters|The consultation type duration is coming as blank when uploading consultation type as xls from consultation type master.
+HMS-25641|Masters|Not able to change the center applicability to all if any specific center is added
+HMS-25768|API|[Apps] Enhance Bills & Payment Details API to provide is_tpa and payment_by_sponsor information
+HMS-25883|API|[APPS] Enhance Get Appointment Details API to fetch appointments without mr_no and patient_phone
+HMS-25852|Integration|Etihad HRMS Sync - Remove Visit Custom Field Validations
+HMS-25851|Integration|Etihad HRMS Sync - email validation to exclude apostrophe
+HMS-25850|Integration|Etihad HRMS Sync - Additional Phone field to be updated with Employee Phone Number from Middleware to update
+HMS-17919|Common|Upload Hospital logo from UI removing Devops dependency.
+HMS-23296|Common|Live chat is creating slowness in screen if there is internet connectivity issue.
+HMS-15785|Reports|[Time out error]Throwing time out error when we generate Report from Insurance Claim Batch Report Builder.
+HMS-25217|Reports|Sample No is showing wrong in Diagnostics Report Builder
+HMS-25204|Reports|Patient Category name is fetching wrong in bill charge report builder.
+HMS-16606|Reports|Getting timed out error from bill charge report builder.
+HMS-25593|Reports|Not able to Download Doctor Appointments report from Report DashBoard.
+HMS-27399|Reports|Throwing error when we Run favorite Report directly by using run report.
+HMS-25325|Reports|duplicate Prescribing Doctor name is reports.
+HMS-23282|Reports|Bill label name is not reflecting in bills report builder filter option.
+HMS-27601|Reports|Report generation has a concurrent usage scenario fixed for cloud hosted customers.
+HMS-26074|Reports|Getting exception while opening report dashboard screen.
+HMS-20112|Reports|Showing Wrong Primary sponsor Amount in Bill Report Builder.
+HMS-24857|Reports|[Performance] Bill Charge Adjustment Report is getting timed out for one day .
+HMS-25779|Reports|Need IP Outstanding Report with Tax fields.
+
+## Features in 12.2.1 [/cig-release-01]
+
+### Accounting [GET]
+
+#### Real-Time hospital bill voucher posting and export only on bill finalization
+
+Insta had a model where the transactions such as Bills, Receipts, Inventory transactions etc. are transposed from tables → views → to a centralized accounting table into a journal entry format of accounts/ledgers which are debited and credited respectively. This model was identified to have several inconsistencies especially in the Bill vouchers created such as:
+
+-  Inconsistent reversal postings for transactions such as Cash to Insurance, Insurance to Insurance, Edit Rates, Change claim amounts, Tax amounts etc.
+
+-  As a continuation of 1, inconsistent double postings due to inconsistent reversal postings.
+
+-  Inability of the Accounting Table alone to define/differentiate events at which time a voucher can be exported necessitating database + view based integrations.
+
+-  Lack of APIs for integration based on events such as bill finalization.
+
+The new model of accounting voucher creation is such that it continues to store transactions such as Bills, Receipts, Inventory transactions etc in tables → but a real time job queue will transpose the data → to a centralized accounting table into a journal entry format of accounts/ledgers which are debited and credit respectively.
+
+In this release hospital **bill vouchers are posted realtime to the accounting table only based on bill finalization** negating the need to post noisy reversal entries for the accrual based postings which were applicable in previous releases. Reversal entries are now posted for the following transactions:
+
+Bill Now to Bill Later, Bill Open date change, Bill charge posted date change, Bill charge rate/tax/discount change, OP-IP conversion, Change Rate Plan / Bed Type, Connect/Disconnect Insurance, Change Insurance, Edit Claim Amount, and Reopen on Bill.
+
+Exporting data into an accounting system is a 2 step process within Insta.
+
+-  **Posting of vouchers** to a staging table based on the transactions that have occurred in the system. This is currently real-time for the Bill vouchers and is being extended to all other voucher types subsequently through development.
+
+-  **Exporting of Vouchers** from the staging table to the target accounting system is through published APIs.
+
+The APIs are also enhanced such that the target accounting system can import the vouchers based on the event i.e. bill finalization.
+
+### Registration [GET]
+
+#### ADT/ Registration: Gender controls for Ward/Bed allocation/shifting
+
+The Ward and Bed Details master now has an option to set the allowed gender as all or specifically male or female and this control applies across the application right from the IP Registration, ADT (Bed Allocation/Shift), OP-IP Conversion, Child Birth and Edit Visit details.
+
+#### Search by Insurance Plan Code
+
+For the purpose of ease of selection of the multiple insurance fields such as TPA/Sponsor, Insurance Co, Network Type/Plan Type, Plan etc at the time of OP Registration only. There is now a new field introduced in the Plan Master called 'Plan Code'. This can be used to select insurance plan in OP Registration screen. Only a maximum of 30 characters are allowed in the 'Plan code' field.
+
+![](media/image120201_1.png)
+
+In the Generic preferences there is a configuration 'Plan Code Search For OP Registration'. By default value is 'No'. When this preference is enabled, then in OP registration screen plan code fled will be displayed against the primary & secondary sponsor field sections.
+
+![](media/image120201_2.png)
+
+### Insurance [GET]
+
+#### PhilHealth - Additional generic document tokens for claim forms
+
+To support creation of the philhealth claim forms the following tokens are enabled:
+
+_\_admission\_date_ - this is to show admission date in following format MM-DD-YYYY
+
+_\_admission\_time_ - this is to show admission time in following format hh-mm PM
+
+_\_disch\_date_ - this is to show discharge date in following format MM-DD-YYYY
+
+_\_disch\_time_ - this is to show discharge date in following format hh-mm PM
+
+_Other available tokens_
+
+_\_primary\_caserate\_code_
+
+_\_secondary\_caserate\_code_
+
+_\_primary\_caserate\_code\_desc_
+
+_\_secondary\_caserate\_code\_desc_
+
+_\_pri\_caserate\_hospital\_fees_
+
+_\_pri\_caserate\_professional\_fees_
+
+_\_sec\_caserate\_hospital\_fees_
+
+_\_sec\_caserate\_professional\_fees_
+
+_\_ope\_order\_date\_1_
+
+_\_ope\_rate\_plan\_code\_1_
+
+_\_ope\_name\_1_
+
+_\_ope\_order\_date\_2_
+
+_\_ope\_rate\_plan\_code\_2_
+
+_\_ope\_name\_2_
+
+_\_ope\_order\_date\_3_
+
+_\_ope\_rate\_plan\_code\_3_
+
+_\_ope\_name\_3_
+
+_\_cons\_name\_1_
+
+_\_doctor\_license\_no\_1_
+
+_\_doctor\_charge\_1_
+
+_\_cons\_name\_2_
+
+_\_doctor\_license\_no\_2_
+
+_\_doctor\_charge\_2_
+
+_\_cons\_name\_3_
+
+_\_doctor\_license\_no\_3_
+
+_\_doctor\_charge\_3_
+
+
+#### Abu Dhabi - Claim submission observation to include patient share for drug items
+
+From February 1 2019, as per HAAD regulations, it was mandatory to have the 'Patient share' submitted as an observation in the claim submission(hospital and pharmacy) xml for all individual drug items.For any activity, if the code type is 5, then patient share will be shown for that particular activity as per the below format:
+
+```xml
+    <Type>Text</Type>
+    <Code>Drug patient share</Code>
+    <Value>345.32</Value>
+    <ValueType>AED</ValueType>
+```
+
+NOTE: This is applicable only for haad hospital and pharmacy claims. In case of DRG & Perdiem, it shows zero amount as patient share in the xml.
+
+### Inventory [GET]
+
+#### Additional ACL for strict Purchasing controls**
+
+There is now an action right introduced such that if the access control Apply Strict PO controls is set to Yes then in the Stock Entry screen once a PO is selected the item's respective MRP, Cost Price, Billed and Bonus Quantity fields cannot be modified. This is done such as to enforce strict PO modifications in case of any deviations during stock acceptance. This is regardless of the previous controls that apply for enforcing Stock Entry against a PO using the existing configurations.
+
+### Messaging [GET]
+
+#### New Message Types to enable External Mobile App integrations
+
+As Insta integrates with external mobile apps which enables patients to book/manage appointments and view health records through custom provider based apps, there are few minor changes included which are:
+
+-   When the module (mod_mobile) is enabled then the mobile access field is enabled in the OP/IP/Pre Registration and Edit Patient details screens. If the patient has this enabled then the user is authorized to receive mobile app login and password credentials.
+
+-   There are 2 message types available which are: 'Enable Mobile Access Email' & 'Enable Mobile Access Message' which can then be used to trigger the patient's login and password credentials over sms / email.
+
+#### New Refund SMS Message Type
+
+The new message type enhances patient experience as it provides a means to notify patients/any specified person for any bill refund done, this message is sent automatically to patients/any other specified mobile no whenever make any refund. New message type called Bill Refund is added under general message types.
+
+Steps to Configure: Activate Message: For this you can go to General Messages in Messaging Masters under Settings. There you can activate "Bill Refund" and Need to set patient_phone token/any other specific mobile no in 'To' field to send this message to patients.
+
+### Clinical [GET]
+
+#### Center-wise preferences to define configurable settings to view prescriptions from historical OP consultations
+
+The prescription section which has a link to view historical prescription details now has the center-wise preferences to define whether they should display the prescriptions across all visits, department or only where the doctor is the prescribing doctor.
+
+![](media/image120201_3.png)
+
+#### Minor IP-EMR Notes section enhancements
+
+-   The Notes section now appends a count of the total number of notes available in the section.
+
+-   An alert notifies the user if incase Notes are modified from one Note Type/Template to another.
+
+-   On creation of a new billable note and no available open bill, the creation of a new note is now restricted.
+
+### Diagnostics [GET]
+
+#### Incoming Sample Registration to allow modification of patient demographic details
+
+Patient Demographic details which are done as part of incoming sample registration are now allowed to be edited till the test results are validated. The Lab Pending Tests screen has a menu-toolbar action which invokes the details of the patient that can be modified.
+
+![](media/image120201_5.png)
+
+![](media/image120201_4.png)
+
+### Bugs/Minor Enhancements fixed in v12.2.1 [GET]
+
+Issue Type|Module|JIRA ID|Summary
+----------|------|-------|-------
+Enhancement|Registration|HMS-25338|On selecting the Govt ID Type if there is a default value then the input Govt ID field gets disabled as it is invalid for any other value to be entered.
+Enhancement|Patient Administration|HMS-25288|Patient Confidentiality: There are 2 Report Builders available to help the admin/manager to review who has requested for the Break the Glass access and viewed the patient's EMR records. The Report builder are Patient Report builders called: Break the Glass Report Builder and EMR View Access Report Builder
+Enhancement|Billing|HMS-28780|Billing Tax Report Builder (Tabular Summary) has the total tax rate % and total tax amt fields added.
+Enhancement|Billing|HMS-28590|The Order screen now differentiates the Primary and Secondary bill types in the bill selection drop-down.
+Enhancement|Clinical|HMS-28608|Discharge Summary: now has additional tokens to include the discharge medications.
+Enhancement|Clinical|HMS-28588|OP Consultation: the dynamic wide text area field if configured in the screen can now be dynamically resized.
+Enhancement|Clinical|HMS-28607|Patient Generic Forms: now has the columns last modified date/time which can be sorted.
+Enhancement|Clinical|HMS-28589|Triage and Initial Assessment activity screens now have a link in the sub-activity header which displays the patient's insurance details.
+Enhancement|Inventory|HMS-28614|Supplier Return/Replacement Prints now supports tokens for the item-wise and total amounts.
+Enhancement|Inventory|HMS-28612|Issue to Patient: now differentiates the Primary and Secondary bill types in the bill selection drop-down.
+Bug|Patient Administration|HMS-28911|Get PatientVisits API is not fetching the patient full name.
+Bug|Patient Administration|HMS-28756|Able to see patient details on re-schedule of appointment even though patient does not have access to see patient details.
+Bug|Patient Administration|HMS-28620|[Registration] Age / DOB / Gender / Patient Name are disabled when marked arrived from Scheduler in a Case
+Bug|Patient Administration|HMS-28597|Multple visits are creating while registering a patient.
+Bug|Inventory|HMS-28617|While creating GRN from PO if we pick existing batch the MRP is still same as in PO instead of Batch MRP
+Bug|Inventory|HMS-28616|Showing duplicate entries in purchase item report builder when the item is mapped to two health authority preferences.
+Bug|Inventory|HMS-28615|In Item master report builder, Field \"Value\" is showing wrong data.
+Bug|Inventory|HMS-28340|On save in Patient Issue screen is not responding.
+Bug|Inventory|HMS-17913|Newly added items through XL upload is not showing in store tariff.
+Bug|Insurance|HMS-28847|Showing success message in UI in claim Submissions screen while generating the XML but in hms logs it is showing error messsage
+Bug|Insurance|HMS-28814|XML generation is throwing error as diagnosis code not available error for visits with diagnosis code.
+Bug|Insurance|HMS-28618|While trying to edit claim amount from sale screen, getting a wrong amount in the POP-Up.
+Bug|Insurance|HMS-28605|While generating submission xml, if error is there for zero activity than, it should show hyperlink for claim not for batch id
+Bug|Insurance|HMS-28598|Throwing time out error in Insurance claim details report Builder.
+Bug|Diagnostics|HMS-28813|HL7 file in cron job is not working.
+Bug|Diagnostics|HMS-28763|Edit incoming patient details link is disabled in case of single centered schema
+Bug|Clinical|HMS-28838|Some Insta sections are not getting printed From consultation Screen.
+Bug|Clinical|HMS-28611|[Consultation] Past History Pop Up User not linked to doctor, not able to see past history of all the doctors.
+Bug|Clinical|HMS-28610|[Consultation] Add Prescription from History Should have a feasibility of cross consultation prescription's
+Bug|Clinical|HMS-27730|Throwing sql exception error "value too long for type character varying(2000)" if patient instruction in consultation screen is given more then 2000 characters.
+Bug|Clinical|HMS-26601|In Patient Ward Activities screen, Due Date is not getting updating based on Frequency selected.
+Bug|Clinical|HMS-28889|Op form are fetching for follow up visits also.
+Bug|Insurance|HMS-28795|Slowness in claim submission , claim batch submission screen and claim reconciliation screen.
+Bug|Reports|HMS-28602|If Report is failed. When we click on view error log in dashboard it is showing as generating report but not showing error.
+Bug|Billing|HMS-28603|Asst. Surgeon Fees, fetching wrong amount
+Bug|Reports|HMS-28599|While generating Insurance claim report builder throwing timed out error.
+Bug|Billing|HMS-28530|Throwing console error on editing prescribing doctor for operation.
+Bug|Billing|HMS-28440|In discount plans, if we select item then only packages connected to all centers is showing up in the list.
+Bug|Billing|HMS-28388|Surgical assistance Charge is not calculating tax in a scenario.
+Bug|Billing|HMS-25271|[Operationindex]On adding item in IP order screen for patient with operation is throwing console error.
+Bug|Billing|HMS-18584|Showing Wrong user name in bill audit log.
+Bug|Reports|HMS-18525|Not able to see data in Center Name field in payments consolidated report.
+
+## Features in 12.2.2 [/cig-release-120202]
+
+### Clinical [GET]
+
+#### New add-on clinical preferences for OP Prescriptions and IP-EMR Physician Orders
+
+The following clinical preferences have been added which are:
+
+-   Show/Hide urgent as an option against a prescribed item.
+
+-   Display the "Till Discontinue" option in IP-EMR Physician Orders
+
+![](media/image120202_2.png)
+
+![](media/image120202_1.png)
+
+#### Minor OP-Management changes
+
+In the OP consultation screen the Management section, now has the term Normal renamed as Regular and Urgent is displayed based on the above mentioned preferences.
+
+![](media/image120202_3.png)
+
+#### Minor IP-EMR Physician Order changes
+
+-   In the IP EMR the Physician order section, under Medicine Option now displays the Till Discontinued and Urgent options based on the newly introduced clinical preferences.
+
+-   The normal option is now renamed as Regular.
+
+![](media/image120202_4.png)
+
+## Registration [GET]
+
+#### Registration screen changes to allow names in foreign languages and using extended latin characters
+
+In the Registration screens, there is already a separate field called Name in Local Language. The downside of this is:
+
+-   We cannot universally search for the patient in local language.
+
+-   We cannot send notifications, generate reports or print across the application universally.
+
+The goal of this change was to allow limited entry of patient name in the local language in the OP, IP, OSP and Pre-Registration screens. This is because in the Philippines and Mexico there are patient names with extended latin characters such as: Björk Guðmundsdóttir, María-Jose Carreño Quiñones, Nguyễn Tấn Dũng etc. In addition we need to support patient names directly in Arabic or Chinese.
+
+This change has now been effected on the OP,Pre,IP,OSP Registration screens, the universal patient search, the incoming sample registration screen, the pharmacy sales and quick estimate screens.
+
+### Bugs/Minor Enhancements fixed in v12.2.2 [GET]
+
+Issue Type|Module|JIRA ID|Summary
+----------|------|-------|-------
+Enhancement|Patient Administration|HMS-26067|OP Registration: Display the invalid pattern of mobile number at the time of entry and not at the time of hitting Register.
+Enhancement|Patient Administration|HMS-28575|Today's Day/Week View displays a grey color which is now made clear.
+Enhancement|Patient Administration|HMS-27214|[Scheduler] - Display search results upto 15 on searching by mobile number.
+Enhancement|Clinical|HMS-12113|The Doctor Consultation Report Builder has additional fields such as: Doctor Apmt Booked Date and Time, Rescheduled = Yes/No and Visit Type.
+Enhancement|Inventory|HMS-13492|The following tokens are added to the Patient Issues/Returns prints: GSTIN Number, Drug License Number, Admitting Doctor Name, Drug Code, Expiry Date, Mfg Date, Control type, Patient Indent No, Center Address, pharmacy_tin_no, pri_tpa_tin_number, sec_tpa_tin_number, pri_insur_tin_number, sec_insur_tin_number, control_type_name, center_address
+Bug|Patient Administration|HMS-29483|[Consultation] If appointment status is completed - the system will not allow closing the partial/reopened consultation.
+Bug|Patient Administration|HMS-27215|Custom List master values are not reflecting in edit custom field screen.
+Bug|Patient Administration|HMS-27025|While adding operation from IP case sheet using appointments then appointment status is not getting changed.
+Bug|Patient Administration|HMS-24540|Pending Prescription > toast should disappear after 2 seconds in registration screen
+Bug|Inventory|HMS-29504|when taking print from View User/Department/Ward Returns is showing blank page.
+Bug|Inventory|HMS-28831|Showing wrong details in stock adjustment report builder.
+Bug|Insurance|HMS-29122|On opening edit Insurance Screen the insurance details like member id, employee ID and sponsor limit are not populating
+Bug|Insurance|HMS-26446|Doctor Payments are not posting through auto post payment
+Bug|Clinical|HMS-28832|Finalizing section in a generic document with fixed fields is throwing value too long error.
+Bug|Clinical|HMS-28369|Throwing error while saving the consultation if Antenatal section contains Next visit date for previous visits.
+Bug|Clinical|HMS-25830|Throwing illegalArgumentexception saying Invalid format "2018-12-05 10:53:12" when click on save in consultation screen.
+Bug|IP Services|HMS-28925|In Patient List Screen, Discharge link is disabled.
+Bug|Billing|HMS-29479|Not able to do refund/sponsor other than cash and neft
+
+## Features in 12.2.3 [/cig-release-120203]
+
+### Insurance [GET]
+
+#### Insurance Plan Applicability for Packages
+
+It is now possible to configure insurance plan wise package applicability in package master, there are 3 options available, such as
+
+-   Applicable for All(Plans & Cash) -> a package is applicable to all insurance plans and cash transactions.
+
+-   Applicable for none of the Plans(Only cash) -> a package is applicable to only cash transactions
+
+-   Applicable for the following Plans -> a package is applicable to only those selected list of insurance plans.
+
+![](media/image120203_1.png)
+
+If any selected sponsor is mapped with any insurance company in TPA-Insurance company list master, then it shows only particular insurance company's plans while applying plan applicability, otherwise it shows all the insurance plans defined in the master.
+
+If both sponsor and Insurance plan support any package, then only it would be available for billing. This change is applicable in OP reg Order, Order & Billing screens.
+
+#### Minor Changes
+
+-   Visit Level Prior Auth No is now displayed in Codification screen as part of Other Details Section
+
+![](media/image120203_2.png)
+
+### Reports [GET]
+
+#### Minor Changes
+
+-   Net Amt w/ Taxes and Net Amt w/o Taxes fields are added in Bill Charge report builder.
+
+    Net Amt w/ taxes = Total amount - Discounts + tax amount.
+
+    Net Amt w/o taxes = Total amount - Discounts
+
+### Bugs/Minor Enhancements fixed in v12.2.3 [GET]
+
+Issue Type|Module|JIRA ID|Summary
+----------|------|-------|-------
+Enhancement|Patient Administration|HMS-26686|Doctor Scheduler must display the doctors based on user's assigned 'Scheduler Department' only.
+Bug|Billing|HMS-29781|Not able to add Dynamic package in to patient Bill the dyna packages are not getting displayed.
+Bug|Patient Administration|HMS-22351|Throwing 'Please fix form error' on registering patient with package.
+Bug|Patient Administration|HMS-13214|Throwing time-out error when click on view message log.
+Bug|Clinical|HMS-29326|[Dental Consultation] Service names are not reflecting in edit dialogue box after saving any service in dental consultation screen.
+Bug|Clinical|HMS-29683|On adding vitals it is taking almost 15 secs to add to grid.
+Bug|Clinical|HMS-29461|Throwing Null Pointer exception for existing OP case form in emr screen, also while adding new forms.
+
+## Features in 12.2.4 [/cig-release-120204]
+
+### Billing [GET]
+
+#### Rate Plan Creation as Background Job
+
+Rate Sheet creation is now moved as Background job as it is to improve the system performance and doesn't hog the application resources. It maintains Rate Sheet ID, Status and Error Status while creating/editing any rate sheet. In Rate Sheet Master, there is a front end option to view the rate sheet creation status.
+
+![](media/image120204_1.png)
+
+There are 3 job status available, such as
+
+-  Processing
+
+-  Success
+
+-  Failed
+
+### Accounting [GET]
+
+#### Real-Time pharmacy bill voucher posting
+
+In continuation to the new model of the real-time job queue model, the pharmacy bill vouchers are now migrated to post real-time based on being transposed → to a centralized accounting table in a journal entry format of accounts/ledgers which are debited and credit respectively.
+
+### Reports [GET]
+
+#### Report Builder Changes
+
+New fields are added as available field in following report builders.
+
+-   Patient Category(Visit Level) in Patient Bed Occupancy Report Builder
+
+-   Patient Category(Visit Level) in Bills Report Builder
+
+-   Patient Category(Visit Level) in Bill Charge Adjustment Report Builder
+
+-   Patient Category(Visit Level) in Collections Report Builder
+
+-   Patient Category(Visit Level) in Collections Allocation Report Builder
+
+-   Patient Category(Patient Level) in Surgery Appointments Report Builder
+
+-   Patient Category(Visit Level) in Case File Report Builder
+
+-   Patient Category(Visit Level) Diagnostics Report Builder
+
+-   Next of Kin Relation in Visit Details Report Builder
+
+-   Ward in Diagnostics Report Builder
+
+### API Enhancements [GET]
+
+#### Get Patient Visits API
+
+The Get Patient Visits API now has additional attributes such as:
+
+-   Primary Member ID
+
+-   Primary Policy Number
+
+-   Primary Policy Holder
+
+-   Primary Policy Holder Relationship
+
+-   Primary Policy Start Date
+
+-   Primary Policy End Date
+
+-   Secondary Member ID
+
+-   Secondary Policy Number
+
+-   Secondary Policy Holder
+
+-   Secondary Policy Holder Relationship
+
+-   Secondary Policy Start Date
+
+-   Secondary Policy End Date
+
+-   Visit Custom Field 1
+
+-   Visit Custom Field 2
+
+### Bugs/Minor Enhancements fixed in v12.2.4 [GET]
+
+Issue Type|Module|JIRA ID|Summary
+----------|------|-------|-------
+Enhancement|Patient Administration|HMS-29484|[Registration] Registration Bar Code Print has an additional token "Admitting Doctor".
+Bug|Patient Administration|HMS-30351|[Scheduler] Appointment Status getting updated as arrived once the patient is marked as arrived if the patient has multiple appointments on the same day.
+Bug|Inventory|HMS-29991|On doing patient Issue/returns for a patient. It is throwing error in postgres 10.
+Bug|Inventory|HMS-29957|On selection of Issue number for user/department returns items are not populating.
+Bug|Insurance|HMS-29938|Not able to do OP to IP conversion for OSP Registered patient.
+Bug|Bahasa Localization|HMS-29917|Settings option is not showing the Bahasa language.
+Bug|Billing|HMS-29903|Doctor prescriptions are not coming in order screen
+Bug|Billing|HMS-29764|On trying to open bill from open bills screen it is redirecting to default list instead of the bill if bill is having '/'
+Bug|Insurance|HMS-29742|Packages is showing multiple items in claim reconciliation screen.
+Bug|Billing|HMS-29691|Taking long time to open bill.
+Bug|Billing|HMS-29667|Surgical assistance charges are not posting into bill when operation added through OT management
+Bug|Billing|HMS-28493|On Click on process payment with payment mode as 'Pine Labs' then it is giving message as cancelling transaction.
+
+
+## Features in 12.2.5 [/cig-release-120205]
+
+### Masters [GET]
+
+#### Customize MR Number pattern based on Patient Category
+
+We have introduced support for customizing MR Number generation sequence based on Patient Category.
+
+In Settings -> Admin Master -> Patient Category Master page, two fields are been added. 
+
+![](media/image120205_1.png)
+
+-  Separate Number Sequence is a dropdown with (Yes/No) option.
+
+-  MRNO Pattern is dropdown list of MRNO pattern created in Hospital ID Patterns with Transaction Type as "MR No".
+
+To Set the MRNO Pattern, select "Separate Number Sequence" as "Yes" and select Required MRNO Pattern. 
+Once the Registration is done, the MRNO Prefix will be generated as required for the respective patient category. 
+
+### Bugs/Minor Enhancements fixed in v12.2.5 [GET]
+
+Issue Type|Module|JIRA ID|Summary
+----------|------|-------|-------
+Enhancement|Patient Administration|HMS-28985|Detailed Bed Occupancy Report Builder - Add filterable fields Admitting Doctor and Admitting Department 
+Enhancement|Patient Administration|HMS-24215|OP and IP Registration to block a visit registration if there is an active IP visit. 
+Bug|Patient Administration|HMS-30870|Salutation is not picking space. 
+Bug|Patient Administration|HMS-30794|Patient phone search filter field is not available in 12.2 in patient search screen. 
+Bug|Patient Administration|HMS-30734|Signed-off report email is not getting triggered for some patients. 
+Bug|Patient Administration|HMS-30490|Require Patient Category field in 'Patient Details report builder' 
+Bug|Patient Administration|HMS-29527|Not able to add multiple Email id's in Referral Doctor master. 
+Bug|Inventory|HMS-30516|Unable to issue the particular item. Shows 500 error. 
+Bug|Inventory|HMS-30141|Throwing timeout error on opening patient indent list. 
+Bug|Insurance|HMS-30201|Discount plan is not getting applied on sale items when the sale is done from prescriptions. 
+Bug|Insurance|HMS-30038|[Performance] Performance fixes needed for IP registration screen and Edit insurance screen. 
+Bug|Clinical|HMS-30465|Laboratory/Radiology reports and signed off reports is taking long time to load. 
+Bug|Clinical|HMS-30174|Getting 'invConduction date.json error' in case of previous prescription for investigation 
+Bug|Clinical|HMS-30093|Unable to mark as completed in radiology pending test if the test does not contain any result/template just a file upload. 
+Bug|Clinical|HMS-29030|If route name in the master is null then consultation screen is breaking on clicking or prescribing medicine. 
+Bug|CIG|HMS-30419|Issue:Patient Portal not working since the upgrade 
+Bug|CIG|HMS-30411|Doctor Appointments Report Builder - Consultant column unable to filter,group,sort 
+Bug|CIG|HMS-30381|Getting blank screen when we click on next page in doctor schedular for particlar doctor and date 
+Bug|CIG|HMS-30216|Not able to edit the rate if Apply Strict PO Controls is set as 'No' 
+Bug|CIG|HMS-29755|Enter button not working while adding item in op consultation's management screen. 
+Bug|CIG|HMS-29270|Throwing Null Pointer exception when we click on service report from Patient EMR. 
+Bug|CIG|HMS-27203|While doing registration, getting error as "duplicate membership id is already exist" 
+Bug|Billing|HMS-30881|Searching MRNo in deposits collection screen is throwing timeout error. 
+Bug|Billing|HMS-30657|Not able to give 100 percent Bill level dicount even though the user as 100% Discount CAP. 
+Bug|Billing|HMS-30614|Application is not allowing to delete the discount line item in the bill 
+Bug|Billing|HMS-30533|In Billig screen dyna package category popup screen scroll bar is missing 
+Bug|Billing|HMS-30532|Unable to cancel the bills from the default centers. 
+Bug|Billing|HMS-30527|Not able to scroll when dyna package have so many categories 
+Bug|Billing|HMS-30520|Unable to do the back order time, if the user user doesn't have allow back date. 
+Bug|Billing|HMS-30515|Not able to save the bill throwing error in console. 
+Bug|Billing|HMS-30489|Require Patient Category field in 'Deposit report builder' 
+Bug|Billing|HMS-30459|Not able to order any item from Order screen it is showing blank page on clicking on save. 
+Bug|Billing|HMS-30418|Getting timeout error while open the bill 
+Bug|Billing|HMS-30285|Dyna Package charge is not getting updated as per the rate sheet. 
+Bug|Billing|HMS-29390|Not able to view full screen while editing item from bill screen. 
+
+## Features in 12.2.6 [/cig-release-120206]
+
+### Bugs/Minor Enhancements fixed in v12.2.6 [GET]
+
+Issue Type|Module|JIRA ID|Summary
+----------|------|-------|-------
+Enhancement|Reports|HMS-30538|Opening the Day Book Report in a new tab.
+Bug|Billing|HMS-31164|In edit insurance screen, Plans are not listing if user does not have access to plan master.
+Bug|Billing|HMS-31024|Day book screen taking more than 30 sec to open.
+Bug|Billing|HMS-30751|Inactive plans should not show in the package applicability master
+Bug|Payments|HMS-28295|Auto post payment is not working through corporate as well as other center also
+Bug|IP Services|HMS-31312|Throwing error while taking nurse notes print in patient emr.
+Bug|Clinical|HMS-30610|Throwing sql exception error when we add in Diag Outsource Master and click on save.
+Bug|Clinical|HMS-30644|Throwing timeout error when we save the consultation screen.
+Bug|Diagnostics|HMS-27951|Vitals.B.P token not working in service template
+Bug|Insurance|HMS-31282|previous result History in test conduction screen is not working in chrome browser but working in fire fox.
+Bug|Insurance|HMS-31265|Not able to connect Insurance to bill throwing error.
+Bug|Insurance|HMS-30855|Claim ID is not getting updated to the new claim ID in sales\_claim\_details on updating insurance details.
+Bug|Insurance|HMS-30543|Primary Sponsor amount limit is not matching with sponsor due.
+Bug|Insurance|HMS-30471|New claim batch submission screen is taking time to load.
+Bug|Insurance|HMS-30455|Dyna Package Calculation: Wrong Bill Amount When Visit Approved Amount exists
+Bug|Inventory|HMS-28210|Not able to connect insurance if the bill have operation item
+Bug|Inventory|HMS-31317|Cache store items in Process indent list
+Bug|Inventory|HMS-30889|Stock entry screen is taking more than 30 sce
+Bug|Patient Administration|HMS-28998|Prescription print is not working in sales screen.
+Bug|Patient Administration|HMS-29670|[Scheduler] Original Appointment Date & Time is not showing in doctor appointment report builder when a doctor appointment is rescheduled
+
+## Features in 12.2.7 [/cig-release-120207]
+
+### Accounting [GET]
+
+#### Minor Financial Accounting Integration enhancements
+
+-  In earlier versions only the Bill Level Discount would post as a separate discount account and for Item Level Discounts there was a discount column to determine applicable discounts. Now there is a new generic preference which gives the flexibility to determine to post only Bill Discount Accounts or both Bill and Item Level Discount accounts.
+
+-  As identification of 0 Tax items in Bill vouchers are necessary for some downstream Accounting applications, a new generic preference to determine whether Zero Tax Vouchers need to be posted or not has been added.
+
+-  Support for all Pharmacy Bill Vouchers in the new accounting real-time job posting model.
+
+-  Charge ID reference for bill voucher transactions for tracking purposes such as cancelled bill items.
+
+### Bugs/Minor Enhancements fixed in v12.2.7 [GET]
+
+Issue Type|Module|JIRA ID|Summary
+----------|------|-------|-------
+Enhancement|Clinical|HMS-25743|The universal tooth number selection option is corrected to be synonymous with the Universal and FDI tooth numbering charts.
+Enhancement|Inventory|HMS-31428|Prescription Label Print: has tokens for Batch No and GovtID.
+Enhancement|Inventory|HMS-29215|GSTR3 Report which was enabled as a custom report is now available as a product report for all customers.
+Enhancement|Diagnostics|HMS-31716|Lab Reports Search screen: has the prescribed date field restricted to 31 days.
+Bug|PADM|HMS-31372|Doctor Appointments report builder,Doctor Department is coming as blank.
+Bug|PADM|HMS-30746|Patient Search screen throws a timeout error on searching by member ID.
+Bug|Insurance|HMS-31693|valueType is not coming in xml, even though its present in codification screen against that item 
+Bug|Insurance|HMS-31680|Auto post payment is timing out even for one day.
+Bug|Insurance|HMS-31608|IP Registration and Edit Insurance: shows as "NaN-NaN-NaN" in validity start date and end date fields.
+Bug|Insurance|HMS-31597|Dynamic Package: Unable to allocate pharmacy item amounts.
+Bug|Insurance|HMS-31239|Diagnosis Codes Report Builder: if there are no codes entered under doctor diagnosis codes then the report is showing blank it is not considering the codes entered by coders.
+Bug|Insurance|HMS-31122|Prior auth screen the diagnosis details are showing from Diagnosis details entered by Doctor and not the Diagnosis details entered by coder.
+Bug|Insurance|HMS-31032|Allowing to create same insurance plans/packages multiple times thereby showing duplicate entries.
+Bug|Insurance|HMS-29488|ERx approval are not automatically downloading.
+Bug|Diagnostics|HMS-31551|SignedOffReportAction Performance Improvement.
+Bug|Clinical|HMS-31548|Patient EMR view does not open from discharge summary screen.
+Bug|Clinical|HMS-29473|Consultation screen is not uploading patient sections and are showing loading without display of sections.
+Bug|Billing|HMS-30648|Diagnostic Tests master throws an error failed to update and a backend time-out error.
+Bug|Billng|HMS-29617|Getting timeout error while creating diagnostic tests and operations.
+Bug|Billing|HMS-27487|Not able to do refund other than cash.
+
+## Features in 12.2.8 [/cig-release-120208]
+
+### Insurance [GET]
+
+#### Disable Dyna package calculation through Add/Edit Insurance Screen
+
+Dyna package rules will no longer be applying through Add/Edit Insurance screen, following actions will not apply dyna package rules in the bill.
+
+-  Updating Visit Sponsor Limit
+
+-  Updating Visit Deductible
+
+-  Updating Visit Co-pay
+
+-  Changing Insurance plan
+
+### Order [GET]
+
+#### Order Screen Improvements
+
+-  Cancelled items are now not shown in the order screen by default, two new explicit options are introduced to view cancelled items, such as ''Show Cancelled With Refund' and 'Show Cancelled Without Refund'.
+
+-  In earlier versions, Cancelled without refund items are not available, Now such cancelled items are also shown by checking 'Show Cancelled Without Refund' option.
+
+-  All cancelled items will be shown after all active items listed.
+
+-  An alert in case the item ordered is already part of a package and vice-versa.
+
+![](media/image120208_1.png)
+
+### Bugs/Minor Enhancements fixed in v12.2.8 [GET]
+
+Issue Type|Module|JIRA ID|Summary
+----------|------|-------|-------
+Enhancement|Inventory|HMS-29215|India GSTR3 Report for Tax filing purposes.
+Enhancement|Inventory|HMS-31644, HMS-31581, HMS-31579, HMS-31368, HMS-29336|PO and Stock Entry screen performance improvements.
+Bug|Billing|HMS-31316|Not allowing to select Admitting doctor in Collections Report Builder.
+Bug|Billing|HMS-30651|Medical Record charge from registration charges is not posting to bill.
+Bug|Billing|HMS-32041|While creating new plan with already existing plan name then its giving error.
+Bug|Accounting|HMS-30856|Accounting data is not posting for any vouchers other than HOSPBILLS.
+Bug|Patient Administration|HMS-31780|Patient details are getting updated to other patient in doctor appointments
+Bug|Patient Administration|HMS-31509|Patient Portal - Next available slots are not shown even if slots are available after a week
+
+## Features in 12.2.9 [/cig-release-120209]
+
+### Child Birth Registration [GET]
+
+#### Child Birth Registration now captures Delivery Type = Normal / Caesarean
+
+The Child Birth Registration screen now captures the Delivery Type = Normal or Caesarean and this field is available in the Visit Details and Birth Details Report Builders.
+
+This field is not mandatory to capture for all Child Births currently.
+
+
+### Bugs/Minor Enhancements fixed in v12.2.9 [GET]
+
+Issue Type|Module|JIRA ID|Summary
+----------|------|-------|-------
+Enhancement|Clinical|HMS-25465|OP Consultation: Diagnosis pop-up has the remarks field increased in size.
+Enhancement|Clinical|HMS-27588|Prescription Label Print Template: Add print tokens for medicine short name and dosage units
+Enhancement|Insurance|HMS-32172|Item's claim amount is now shown in the prior auth request xml.
+Bug|Billing|HMS-22755|Components of Diag Package will be available for report conduction when it is part of any other packages.
+Bug|Billing|HMS-32498|Not able to update package charges.
+Bug|Billing|HMS-32426|Timeout error for finalizing insurance bill
+Bug|Billing|HMS-32388|Getting error for action: Edit Visit Rate Plan/Bed Type : ArithmeticException: / by zero.
+Bug|Billing|HMS-32359|Tax not calculating for 100% discount in a hospital bill with pharmacy items
+Bug|Billing|HMS-32324|Throwing null pointer exception when we order Item from IP order screen.
+Bug|Billing|HMS-30205|Not able to select item in order dialog box in order(IP Flow) screen.
+Bug|Clinical|HMS-32839|Throwing timeout error when we click on sections in Consultation Sections Audit Log.
+Bug|Clinical|HMS-32638|[API]Unable to open Vital Print in Patient centric EMR API
+Bug|Clinical|HMS-32531|[OP to IP conversion][Migration]Complaints are not displaying in prints when Convert to IP and Copy charges is done and also complaint section is not displaying in IP
+Bug|Clinical|HMS-32428|vital i/o dashboard master is showing vitals also and on saving any vital it is changing to intake.
+Bug|Clinical|HMS-32325|If the existing vital parameter is inactivated, the same data in old EMR is not reflecting
+Bug|Clinical|HMS-32221|Throwing timeout error when we click on patient section audit logs in consultation screen.
+Bug|Clinical|HMS-29306|OP-IP Conversion > OP Consultation Management Data Missing
+Bug|Diagnostics|HMS-31813|ServicesAction->pending list performance
+Bug|Diagnostics|HMS-32608|Test is getting signed off after cancelling from laboratory reports screen.
+Bug|Diagnostics|HMS-32107|Radiology reports screen not showing patient details.
+Bug|Diagnostics|HMS-31702|SignedOffReportAction to use splitsearchquerybuilder for performance
+Bug|Insurance|HMS-31703|In claim submission errors are not coming at once for all the visits
+Bug|Insurance|HMS-33042|Physician is not getting selected by default in Claim Review screen when select Review type.
+Bug|Insurance|HMS-31686|For Resubmission batches, the claim generation is getting failed with Diagnosis error.
+Bug|Insurance|HMS-31555|Throwing time-out error when we generate report for one month from Referral Doctor Payments Report.
+Bug|Insurance|HMS-32235|Not able to see data in Prior Auth ID field in sales item reports.
+Bug|Inventory|HMS-32386|Item not showing in patient issue returns screen.
+Bug|Inventory|HMS-32952|Getting Timed Out Error when we click on View Stock Adjustment screen
+Bug|Inventory|HMS-32331|Not able to do stock entry through PO if the store id is 0.                              
+Bug|Inventory|HMS-31988|In bills Report builder Bill GCC VAT Tax Amt is coming blank for pharmacy cash sale bill.
+Bug|Inventory|HMS-21772|[Performance] In sales screen, Claim amount is taking long time to calculate.
+Bug|Patient Administration|HMS-32239|Showing duplicate patients in Today's appointment screen.
+Bug|Patient Administration|HMS-32162|In OP Registration screen the label Prior Auth Mode is showing Prior Auth Number.
+Bug|Patient Administration|HMS-32093|Marking 'all doctors' resource as unavailable is triggering reschedule message for other doctor resources as well.
+Bug|Patient Administration|HMS-32050|Getting error while registering patient having duplicate mr no
+Bug|Patient Administration|HMS-31695|op patient registration create performance optimization
+Bug|Patient Administration|HMS-31161|Not able to reschedule the appointments in doctor scheduler appointment screen.
+Bug|Patient Administration|HMS-30145|Throwing sql exception when we search with mr no from patient response screen.
+Bug|Patient Administration|HMS-32368|For migrated patient category, mapped mr no pattern is not reflecting after upgrade
+
+## Previous Releases [/prev-release]
+
+### 12.x [GET]
+
+[12.1](release_1201.html)
+
+[12.0](release_1200.html)
+
+### 11.x [GET]
+
+[11.0 - 11.13.0](release_notes_11xx.pdf)

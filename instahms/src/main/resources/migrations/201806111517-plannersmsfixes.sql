@@ -1,0 +1,5 @@
+-- liquibase formatted sql
+--changeset akshaySuman:plannerSmsFixes
+
+UPDATE message_types SET message_body = '[#assign appointments_date_list = appointment_date_list?split(r"\s*,\s*", "r") /][#assign appointments_time_list = appointment_time_list?split(r"\s*,\s*", "r") /][#assign complaint_types_list = complaint_type_list?split(r"\s*,\s*", "r") /][#assign n = appointments_date_list?size /] <!--[#if patient_name!=""]--> Dear ${patient_name!" "}, <!--[/#if]--> ${n?string("0")} <!--[#if n?string("0")=="1"]--> appointment <!--[/#if]--> <!--[#if n?string("0")!="1"]--> appointments <!--[/#if]--> have been planned. Plan details: [#list 1..n as i] ${i?string("0")}. On ${appointments_date_list[i-1]} at ${appointments_time_list[i-1]} <!--[#if complaint_types_list[i-1]!="N/A"]-->for ${complaint_types_list[i-1]} <!--[/#if]--> [/#list] at ${hospital_name} ${center_name!" "} .<!--[#if center_contact_phone!=""]--> For any queries please contact ${center_contact_phone!" "}. <!--[/#if]-->'
+WHERE message_type_id = 'sms_appointment_planner';

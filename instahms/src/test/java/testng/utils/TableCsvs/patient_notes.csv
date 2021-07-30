@@ -1,0 +1,4 @@
+note_id,patient_id,note_type_id,note_content,billable_consultation,consultation_type_id,charge_id,save_status,original_note_id,new_note_id,on_behalf_doctor_id,on_behalf_user,created_by,created_time,mod_user,mod_time
+1001,'IP000757',1,'<p>new patient note</p>','Y',,,'F',,1003,,,'InstaAdmin','2018-11-19 10:03:55',,'2018-11-19 10:04:33.878'
+1002,'IP000757',1,'<p>xszdfdxgfc</p>','Y',,,'D',,,,,'InstaAdmin','2018-11-19 13:18:59',,'2018-11-19 13:19:02.305'
+1003,'IP000757',1,'<p>xszdfdxgfc</p>','N',,,'F',1001,,,,'InstaAdmin','2018-11-19 13:18:59',,'2018-11-19 13:19:02.305'

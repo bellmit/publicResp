@@ -1,0 +1,314 @@
+{
+    "title": "Patient Bed Occupancy Report",
+    "reportGroup": "Bed Util Reports",
+    "dateFields": [
+        "occ_date"
+    ],
+    "allowNoDate": true,
+    "defaultOrder": "patient_id",
+    "description": "This report describes patient-bed wise occupancy details. The detailed report gives one row per patient-bed, with the number  of hours occupied by that patient in that bed within the selected period. ",
+    "queryUnits": [
+        {
+            "mainTableAlias": "mpb",
+            "mainTableName": "(SELECT bed_id, patient_id, mr_no, sum(hours) as hours FROM patient_bed_day_hours_view ${prefilter} GROUP by bed_id, patient_id, mr_no)",
+            "joinTables": [
+                {
+                    "name": "bed_names",
+                    "alias": "bn",
+                    "expression": "ON (bn.bed_id = mpb.bed_id)"
+                },
+                {
+                    "name": "patient_registration",
+                    "alias": "pr",
+                    "expression": "ON (pr.patient_id=mpb.patient_id)"
+                },
+                {
+                    "name": "patient_details",
+                    "alias": "pd",
+                    "expression": "ON (pd.mr_no=mpb.mr_no)"
+                },
+                {
+                    "name": "ward_names",
+                    "alias": "wn",
+                    "dependsOn": "bn",
+                    "expression": "ON (wn.ward_no=bn.ward_no)"
+                },
+                {
+                    "name": "admission",
+                    "alias": "adm",
+                    "expression": "ON (adm.patient_id = mpb.patient_id)"
+                },
+                {
+                    "name": "salutation_master",
+                    "alias": "sm",
+                    "dependsOn": "pd",
+                    "expression": "ON (pd.salutation = sm.salutation_id)"
+                },
+                {
+                    "name": "organization_details",
+                    "alias": "org",
+                    "dependsOn": "pr",
+                    "expression": "ON (pr.org_id = org.org_id)"
+                },
+                {
+                    "type": "CROSS",
+                    "name": "ip_pref_int_view",
+                    "alias": "pref"
+                },
+                {
+                    "name": "hospital_center_master",
+                    "alias": "hcm",
+                    "expression": "ON (wn.center_id = hcm.center_id)"
+                },
+                {
+                    "name": "department",
+                    "alias": "dep",
+                    "dependsOn": "pr",
+                    "expression": "ON (dep.dept_id = pr.dept_name)"
+                },
+                {
+                    "name": "doctors",
+                    "alias": "doc",
+                    "dependsOn": "pr",
+                    "expression": "ON (doc.doctor_id = pr.doctor)"
+                },
+                {
+                    "name": "patient_category_master",
+                    "alias": "prcm",
+                    "dependsOn": "pr",
+                    "expression": "ON (prcm.category_id = pr.patient_category_id)"
+                }
+            ]
+        }
+    ],
+    "filterOnlyFields": {
+        "occ_date": {
+            "displayName": "Date",
+            "dataType": "date",
+            "width": "60"
+        }
+    },
+    "fields": {
+        "ward_name": {
+            "displayName": "Ward",
+            "width": "120",
+            "groupable": true,
+            "filterable": true,
+            "allowedValuesQuery": "SELECT ward_name from ward_names",
+            "table": "wn"
+        },
+        "bed_name": {
+            "displayName": "Bed Name",
+            "width": "100",
+            "groupable": true,
+            "filterable": true,
+            "allowHorizGroup": false,
+            "allowedValuesQuery": "SELECT bed_name from bed_names",
+            "table": "bn"
+        },
+        "bed_type": {
+            "displayName": "Bed Type",
+            "width": "100",
+            "groupable": true,
+            "filterable": true,
+            "allowedValuesQuery": "SELECT bed_type_name from bed_types",
+            "table": "bn"
+        },
+        "daycare_status": {
+            "displayName": "Daycare",
+            "width": "45",
+            "groupable": true,
+            "filterable": true,
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "table": "adm",
+            "expression": "CASE WHEN adm.daycare_status = 'Y' THEN 'Yes' ELSE 'No' END"
+        },
+        "rate_plan": {
+            "displayName": "Rate Plan",
+            "width": "70",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT org_name FROM organization_details ORDER BY org_name",
+            "expression": "org.org_name",
+            "table": "org"
+        },
+        "mr_no": {
+            "displayName": "MR No.",
+            "width": "65",
+            "groupable": true,
+            "filterable": true,
+            "table": "mpb"
+        },
+        "patient_id": {
+            "displayName": "Patient Id",
+            "width": "65",
+            "groupable": true,
+            "filterable": true,
+            "table": "mpb"
+        },
+        "visit_status": {
+            "displayName": "Status",
+            "width": "65",
+            "groupable": true,
+            "filterable": true,
+            "allowedValues": [
+                "Active",
+                "Inactive"
+            ],
+            "expression": "CASE WHEN pr.status = 'A' THEN 'Active' ELSE 'Inactive' END",
+            "table": "pr"
+        },
+        "patient_full_name": {
+            "displayName": "Patient Name",
+            "width": "150",
+            "expressionLines": [
+                "sm.salutation || ' ' || pd.patient_name",
+                " || case when coalesce(pd.middle_name, '') = '' then '' else (' ' || pd.middle_name) end ",
+                " || case when coalesce(pd.last_name, '') = '' then '' else (' ' || pd.last_name) end"
+            ],
+            "table": "pd,sm"
+        },
+        "reg_date": {
+            "displayName": "DOA",
+            "dataType": "date",
+            "width": "60",
+            "groupable": true,
+            "table": "pr"
+        },
+        "discharge_date": {
+            "displayName": "DOD",
+            "dataType": "date",
+            "width": "60",
+            "groupable": true,
+            "table": "pr"
+        },
+        "name_local_language": {
+             "table": "pd",
+             "displayName": "Name In Local Language",
+             "width": 150,
+             "expression": "pd.name_local_language"
+        },
+        "patient_gender": {
+            "displayName": "Gender",
+            "width": "40",
+            "filterable": true,
+            "groupable": true,
+            "allowedValues": [
+                "Male",
+                "Female",
+                "Couple",
+                "Other"
+            ],
+            "expressionLines": [
+                "CASE ",
+                "WHEN pd.patient_gender = 'M' THEN 'Male'",
+                "WHEN pd.patient_gender = 'F' THEN 'Female'",
+                "WHEN pd.patient_gender = 'C' THEN 'Couple'",
+                "ELSE 'Other' END"
+            ],
+            "table": "pd"
+        },
+        "age": {
+            "displayName": "Age",
+            "width": "40",
+            "dataType": "numeric",
+            "decimalType": "integer",
+            "description": "Age in years",
+            "groupable": true,
+            "filterable": true,
+            "expression": "(floor((current_date - COALESCE(pd.dateofbirth, pd.expected_dob))/365.25))::integer",
+            "table": "pd"
+        },
+        "actual_hours": {
+            "displayName": "Hours",
+            "width": "50",
+            "dataType": "numeric",
+            "decimalType": "integer",
+            "description": "Actual number of hours occupied",
+            "aggFunction": "sum",
+            "expression": "hours::integer"
+        },
+        "actual_days": {
+            "displayName": "Days",
+            "width": "50",
+            "dataType": "numeric",
+            "decimalType": "2",
+            "description": "Actual number of days occupied",
+            "aggFunction": "sum",
+            "expression": "(hours::integer/24.0)::numeric(10,2)"
+        },
+        "billed_days": {
+            "displayName": "Billed Days",
+            "width": "50",
+            "dataType": "numeric",
+            "decimalType": "2",
+            "description": "Number of days billed",
+            "aggFunction": "sum",
+            "expressionLines": [
+                "CASE WHEN (hours::integer%24) >= fd_threshold THEN 1 ",
+                "     WHEN (hours::integer%24) >= hd_threshold THEN 0.5 ",
+                " ELSE 0 END"
+            ],
+            "table": "mpb,pref"
+        },
+        "billed_hours": {
+            "displayName": "Billed Hours",
+            "width": "50",
+            "dataType": "numeric",
+            "decimalType": "integer",
+            "description": "Over and above billed days",
+            "aggFunction": "sum",
+            "expressionLines": [
+                "CASE WHEN (hours::integer%24) >= h_threshold ",
+                "      AND (hours::integer%24) < hd_threshold THEN hours::integer%24 ",
+                " ELSE 0 END"
+            ],
+            "table": "mpb,pref"
+        },
+        "center_name": {
+            "displayName": "Center Name",
+            "width": "90",
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT center_name FROM hospital_center_master WHERE center_id != 0 ORDER BY center_name",
+            "table": "hcm"
+        },
+        "dept_name": {
+            "table": "dep",
+            "displayName": "Department",
+            "width": 120,
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT dept_name FROM department ORDER BY dept_name"
+        },
+        "doctor_name": {
+            "table": "doc",
+            "displayName": "Doctor",
+            "width": 120,
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT doctor_name FROM doctors ORDER BY doctor_name"
+        },
+        "patient_category_name": {
+            "table": "prcm",
+            "displayName": "Patient Category",
+            "width": 120,
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT category_name FROM patient_category_master ORDER BY category_name",
+            "expression": "prcm.category_name "
+        }
+    },
+    "defaultShowFields": [
+        "ward_name",
+        "bed_name",
+        "patient_full_name",
+        "actual_hours"
+    ]
+}

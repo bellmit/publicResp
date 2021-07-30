@@ -1,0 +1,491 @@
+{
+    "title": "Purchase Items (Batch-Wise) Report",
+    "defaultOrder": "invoice_date",
+    "reportGroup": "Procurement Reports",
+    "dateFields": [
+        "grn_date",
+        "exp_dt"
+    ],
+    "description": "This report builder shows all pharmacy purchases between the selected date range. This report builder is especially useful to see the quantity of items purchased. Note: The amounts reflect only the amounts for purchasing the items, it does not include any amounts at the Invoice level such as Invoice discounts, round offs and other charges.",
+    "queryUnits": [
+        {
+            "mainTableName": "rpt_pharmacy_purchase_items_view",
+            "mainTableAlias": "rppiv",
+            "joinTables": []
+        }
+    ],
+    "defaultShowFields": [
+        "dept_name",
+        "grn_no",
+        "medicine_name",
+        "batch_no",
+        "exp_dt_str",
+        "billed_qty",
+        "bonus_qty",
+        "mrp",
+        "cost_price",
+        "tax_rate",
+        "discount",
+        "net_amount"
+    ],
+    "fields": {
+        "dept_name": {
+            "displayName": "Store",
+            "width": "100",
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT dept_name FROM stores ORDER BY dept_name"
+        },
+        "center_name": {
+            "displayName": "Center Name",
+            "filterable": true,
+            "groupable": true,
+            "width": "100",
+            "allowedValuesQuery": "SELECT center_name FROM hospital_center_master WHERE center_id!=0 order by center_name"
+        },
+        "store_type_name": {
+            "displayName": "Store Type",
+            "width": "80",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT store_type_name FROM store_type_master ORDER BY store_type_name"
+        },
+        "purchase_type": {
+            "displayName": "Purchase Type",
+            "width": "80",
+            "filterable": true,
+            "groupable": true,
+            "allowedValues": [
+                "Purchase",
+                "Debit Note"
+            ]
+        },
+        "supplier_name": {
+            "displayName": "Supplier Name",
+            "width": "120",
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT supplier_name FROM supplier_master ORDER BY supplier_name"
+        },
+        "cust_supplier_code": {
+            "displayName": "Supplier Code",
+            "width": "120",
+            "filterable": true,
+            "groupable": true
+        },
+        "drug_license_no": {
+            "displayName": "Drug License No.",
+            "width": "80",
+            "filterable": false,
+            "groupable": false
+        },
+        "pan_no": {
+            "displayName": "Supplier PAN No.",
+            "width": "80",
+            "filterable": false,
+            "groupable": false
+        },
+        "cin_no": {
+            "displayName": "CIN No.",
+            "width": "80",
+            "filterable": false,
+            "groupable": false
+        },
+        "invoice_no": {
+            "displayName": "Invoice No.",
+            "width": "80",
+            "filterable": false,
+            "groupable": false
+        },
+        "po_no": {
+            "displayName": "PO No.",
+            "width": "60",
+            "filterable": false,
+            "groupable": false
+        },
+        "invoice_date": {
+            "displayName": "Invoice Date",
+            "dataType": "date",
+            "width": "70",
+            "filterable": false,
+            "groupable": false
+        },
+        "grn_no": {
+            "displayName": "GRN No.",
+            "width": "60",
+            "table": "rppiv",
+            "filterable": false,
+            "groupable": true
+        },
+        "grn_date": {
+            "displayName": "GRN Date",
+            "dataType": "date",
+            "width": "70",
+            "filterable": true,
+            "groupable": false
+        },
+        "po_date": {
+            "displayName": "PO Date",
+            "dataType": "date",
+            "width": "70",
+            "filterable": true,
+            "groupable": false
+        },
+        "tax_name": {
+            "displayName": "Tax Type",
+            "width": "40",
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": " SELECT  CASE WHEN procurement_tax_label='V' then 'VAT' else 'GST' END as procurement_tax_label FROM generic_preferences UNION SELECT 'CST'"
+        },
+        "tax_type": {
+            "displayName": "Tax Basis",
+            "width": "40",
+            "filterable": true,
+            "groupable": true,
+            "allowedValues": [
+                "MRP with bonus",
+                "MRP without bonus",
+                "Cost price with bonus",
+                "Cost price without bonus"
+            ]
+        },
+        "medicine_name": {
+            "displayName": "Item Name",
+            "width": "150",
+            "filterable": true,
+            "groupable": true
+        },
+        "cust_item_code": {
+            "displayName": "Custom Item Code",
+            "width": "150",
+            "filterable": true,
+            "groupable": true
+        },
+        "generic_name": {
+            "displayName": "Generic Name",
+            "width": "90",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT generic_name FROM generic_name GROUP BY generic_name"
+        },
+        "category_name": {
+            "displayName": "Category",
+            "width": "70",
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT category FROM store_category_master ORDER BY category"
+        },
+        "service_group_name": {
+            "displayName": "Service Group",
+            "width": "100",
+            "allowHorizGroup": false,
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT service_group_name FROM service_groups ORDER BY service_group_name"
+        },
+        "service_sub_group_name": {
+            "displayName": "Service Sub Group",
+            "width": "100",
+            "allowHorizGroup": false,
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT service_sub_group_name FROM service_sub_groups ORDER BY service_sub_group_name"
+        },
+        "control_type_name": {
+            "displayName": "Control Type",
+            "width": "65",
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT control_type_name FROM store_item_controltype ORDER BY control_type_name"
+        },
+        "manf_mnemonic": {
+            "displayName": "Mfr",
+            "filterable": true,
+            "groupable": true,
+            "width": "60",
+            "description": "Manuracturer short name",
+            "allowedValuesQuery": "SELECT manf_mnemonic FROM manf_master ORDER BY manf_mnemonic"
+        },
+        "manf_name": {
+            "displayName": "Manufacturer",
+            "filterable": true,
+            "groupable": false,
+            "width": "150",
+            "description": "Manufacturer Full Name",
+            "allowedValuesQuery": "SELECT manf_name FROM manf_master ORDER BY manf_name"
+        },
+        "grn_pkg_size": {
+            "displayName": "Pkg Size",
+            "width": "40",
+            "filterable": true,
+            "groupable": true
+        },
+        "batch_no": {
+            "displayName": "Batch",
+            "width": "60",
+            "filterable": false,
+            "groupable": false
+        },
+        "exp_dt_str": {
+            "displayName": "Expiry",
+            "width": "50",
+            "filterable": false,
+            "groupable": true,
+            "description": "Expiry Date (short form)"
+        },
+        "exp_dt": {
+            "displayName": "Expiry Date",
+            "dataType": "date",
+            "width": "70",
+            "filterable": true,
+            "groupable": false,
+            "description": "Expiry Date (full date)"
+        },
+        "billed_qty": {
+            "displayName": "Qty",
+            "dataType": "numeric",
+            "width": "100",
+            "decimalType": "quantity",
+            "filterable": true,
+            "groupable": false,
+            "aggFunction": "sum"
+        },
+        "pkg_qty": {
+            "displayName": "Pkg Qty",
+            "dataType": "numeric",
+            "width": "80",
+            "decimalType": "quantity",
+            "filterable": true,
+            "groupable": false,
+            "aggFunction": "sum"
+        },
+        "pkg_billed_qty": {
+            "displayName": "Billed Pkg Qty",
+            "dataType": "numeric",
+            "width": "80",
+            "decimalType": "quantity",
+            "filterable": true,
+            "groupable": false,
+            "aggFunction": "sum"
+        },
+        "pkg_bonus_qty": {
+            "displayName": "Bonus Pkg Qty",
+            "dataType": "numeric",
+            "width": "80",
+            "decimalType": "quantity",
+            "filterable": true,
+            "groupable": false,
+            "aggFunction": "sum"
+        },
+        "bonus_qty": {
+            "displayName": "Bonus",
+            "dataType": "numeric",
+            "width": "40",
+            "decimalType": "quantity",
+            "filterable": true,
+            "groupable": false,
+            "aggFunction": "sum"
+        },
+        "mrp": {
+            "displayName": "MRP",
+            "dataType": "numeric",
+            "width": "60",
+            "filterable": false,
+            "groupable": false
+        },
+        "cost_price": {
+            "displayName": "Rate",
+            "dataType": "numeric",
+            "width": "60",
+            "filterable": false,
+            "groupable": false
+        },
+        "margin": {
+            "displayName": "Margin(%)",
+            "dataType": "numeric",
+            "width": "60",
+            "decimalType": "percent",
+            "filterable": true,
+            "groupable": false
+        },
+        "amount": {
+            "displayName": "Amount",
+            "dataType": "numeric",
+            "width": "60",
+            "filterable": true,
+            "aggFunction": "sum"
+        },
+        "tax_rate": {
+            "displayName": "Tax %",
+            "dataType": "numeric",
+            "width": "40",
+            "table": "rppiv",
+            "decimalType": "percent",
+            "filterable": true,
+            "groupable": true
+        },
+        "orig_debit_rate": {
+            "displayName": "Orig Debit Rate",
+            "dataType": "numeric",
+            "width": "60",
+            "decimalType": "amount",
+            "filterable": true,
+            "groupable": true
+        },
+        "orig_discount": {
+            "displayName": "Orig Discount",
+            "dataType": "numeric",
+            "width": "60",
+            "decimalType": "amount",
+            "filterable": true,
+            "aggFunction": "sum"
+        },
+        "orig_tax": {
+            "displayName": "Orig Tax",
+            "dataType": "numeric",
+            "width": "40",
+            "decimalType": "amount",
+            "filterable": true,
+            "aggFunction": "sum"
+        },
+        "rate_diff": {
+            "displayName": "Rate Diff",
+            "dataType": "numeric",
+            "width": "40",
+            "decimalType": "amount",
+            "filterable": true,
+            "groupable": true
+        },
+        "tax": {
+            "displayName": "Tax",
+            "dataType": "numeric",
+            "width": "40",
+            "decimalType": "amount",
+            "filterable": true,
+            "aggFunction": "sum"
+        },
+        "item_ced": {
+            "displayName": "CED",
+            "dataType": "numeric",
+            "width": "40",
+            "decimalType": "amount",
+            "filterable": true,
+            "aggFunction": "sum"
+        },
+        "discount": {
+            "displayName": "Discount",
+            "dataType": "numeric",
+            "width": "60",
+            "decimalType": "amount",
+            "filterable": true,
+            "aggFunction": "sum"
+        },
+        "discount_per": {
+            "displayName": "Discount %",
+            "dataType": "numeric",
+            "width": "60",
+            "decimalType": "amount",
+            "filterable": true
+        },
+        "scheme_discount": {
+            "displayName": "Scheme Discount",
+            "dataType": "numeric",
+            "width": "60",
+            "decimalType": "amount",
+            "filterable": true,
+            "aggFunction": "sum"
+        },
+        "scheme_discount_per": {
+            "displayName": "Scheme Discount %",
+            "dataType": "numeric",
+            "width": "60",
+            "decimalType": "amount",
+            "filterable": true
+        },
+        "net_amount": {
+            "displayName": "Net Amt",
+            "dataType": "numeric",
+            "width": "100",
+            "filterable": true,
+            "aggFunction": "sum"
+        },
+        "purch_amt_witht_tax": {
+            "displayName": "Gross Amt",
+            "dataType": "numeric",
+            "width": "100",
+            "filterable": true,
+            "aggFunction": "sum"
+        },
+        "supplier_tin_no": {
+            "displayName": "Supplier GSTIN No.",
+            "width": "50",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true
+        },
+        "issue_units": {
+            "displayName": "Unit UOM",
+            "width": "50"
+        },
+        "grn_package_uom": {
+            "displayName": "Pkg UOM",
+            "width": "50"
+        },
+        "package_type": {
+            "displayName": "Package Type",
+            "width": "60",
+            "filterable": true,
+            "groupable": false
+        },
+        "form_8h": {
+            "allowHorizGroup": true,
+            "allowNull": false,
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "dataType": "string",
+            "displayName": "Form 8H",
+            "expression": "CASE WHEN form_8h :: boolean THEN 'Yes' ELSE 'No'  END ",
+            "filterable": true,
+            "name": "form_8h",
+            "width": 100
+        },
+        "invoice_status": {
+            "allowHorizGroup": true,
+            "allowNull": false,
+            "allowedValues": [
+                "Open",
+                "Finalized",
+                "Closed"
+            ],
+            "dataType": "string",
+            "displayName": "Invoice Status",
+            "filterable": true,
+            "groupable": true,
+            "name": "invoice_status",
+            "width": 100
+        },
+        "item_code": {
+            "displayName": "Drug Code",
+            "width": "60",
+            "filterable": true,
+            "groupable": true
+        },
+        "supplier_state": {
+            "displayName": "Supplier State",
+            "width": "60",
+            "filterable": true,
+            "groupable": false
+        },
+        "pharmacy_tin_no": {
+            "displayName": "Store GSTIN No.",
+            "width": "60",
+            "filterable": true,
+            "groupable": false
+        }
+    }
+}

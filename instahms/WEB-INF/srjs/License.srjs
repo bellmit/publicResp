@@ -1,0 +1,65 @@
+{
+  "title": "License Reports",
+  "allowNoDate": true,
+  "reportGroup": "Misc. Report",
+  "dateFields": ["license_start_date","license_end_date","license_renewal_date"],
+  "description": "This report shows the License Details.",
+  "tableName": ["license_view"],
+  "defaultShowFields": [
+    "license_id",
+    "license_desc",
+    "license_start_date",
+    "license_end_date",
+    "license_renewal_date",
+    "status"
+  ],
+  "fields": {
+    "license_id": {
+      "displayName": "License Id",
+      "dataType": "numeric",
+      "width": "60",
+      "filterable": true
+    },
+    "license_desc": {
+      "displayName": "License Desc",
+      "width": "100"
+    },
+    "license_start_date": {
+      "displayName": "License Start Date",
+      "dataType": "date",
+      "width": "80",
+      "filterable": true
+    },
+    "license_end_date": {
+      "displayName": "License End Date",
+      "dataType": "date",
+      "width": "80",
+      "filterable": true
+    },
+    "license_renewal_date": {
+      "displayName": "License Renewal Date",
+      "dataType": "date",
+      "width": "80",
+      "filterable": true
+    },
+    "status": {
+      "displayName": "Status",
+      "width": "80",
+      "filterable": true,
+      "groupable": true,
+      "allowedValues": ["Expired License","Coming for Renewal"]
+    },
+    "license_value": {
+      "displayName": "License Value",
+      "width": "60"
+    },
+    "license_note": {
+      "displayName": "License Note",
+      "width": "100"
+    },
+    "contractor_name": {
+      "displayName": "Contractor Name",
+      "width": "100"
+    }
+  }
+}

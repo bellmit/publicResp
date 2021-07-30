@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<suite name="TaxGroupTest" verbose="10" allow-return-values="true">
+	<test name="taxgroup">
+		<classes>
+			<class name="testng.com.insta.hms.mdm.taxgroups.TaxGroupServiceTest" />
+			<methods>
+				<exclude name="buildParamMap" />
+				<exclude name="getInsertParams" />
+			</methods>
+		</classes>
+	</test>
+
+</suite>

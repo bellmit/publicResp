@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="595" pageHeight="842" whenNoDataType="NoDataSection" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="40" bottomMargin="40">
+	<parameter name="fromDate" class="java.sql.Date" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new java.sql.Date(new java.util.Date().getTime())]]></defaultValueExpression>
+	</parameter>
+	<parameter name="toDate" class="java.sql.Date" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new java.sql.Date(new java.util.Date().getTime())]]></defaultValueExpression>
+	</parameter>
+	<parameter name="doctorId" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="center" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT doctor_name,a.test_name,SUM(unavbl) AS unavbl,SUM(notordred) AS notordred, SUM(ordered) AS ordered,
+	SUM(unavbl) + SUM(notordred) + SUM(ordered) AS no_of_times FROM
+		(SELECT d.doctor_name,diag.test_name,
+			case when pp.status='U' then count(*) else 0 end as unavbl,
+			case when pp.status='P' then count(*) else 0 end as notordred,
+			case when pp.status='O' then count(*) else 0 end as ordered
+			FROM patient_test_prescriptions ptp
+				JOIN patient_prescription pp ON (pp.patient_presc_id = op_test_pres_id)
+				JOIN doctor_consultation dc ON (dc.consultation_id = pp.consultation_id)
+				JOIN diagnostics diag using (test_id)
+				JOIN doctors d ON d.doctor_id = dc.doctor_name
+				LEFT JOIN patient_registration pr ON (pr.patient_id= dc.patient_id)
+			WHERE ptp.mod_time::date BETWEEN $P{fromDate} AND $P{toDate}
+			AND ($P{doctorId}= '' OR d.doctor_id = $P{doctorId})
+			AND ($P!{center}= 0 OR pr.center_id = $P!{center})
+			GROUP BY d.doctor_name,diag.test_name,pp.status
+			ORDER BY doctor_name,diag.test_name,pp.status
+		)  AS A
+	GROUP BY doctor_name, a.test_name
+	ORDER BY doctor_name, a.test_name]]>
+	</queryString>
+	<field name="doctor_name" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="test_name" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="unavbl" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="notordred" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="ordered" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="no_of_times" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<variable name="doc_presc" class="java.math.BigDecimal" resetType="Group" resetGroup="DoctorGroup" calculation="Sum">
+		<variableExpression><![CDATA[$F{no_of_times}]]></variableExpression>
+	</variable>
+	<variable name="doc_unavbl" class="java.math.BigDecimal" resetType="Group" resetGroup="DoctorGroup" calculation="Sum">
+		<variableExpression><![CDATA[$F{unavbl}]]></variableExpression>
+	</variable>
+	<variable name="doc_not_ordered" class="java.math.BigDecimal" resetType="Group" resetGroup="DoctorGroup" calculation="Sum">
+		<variableExpression><![CDATA[$F{notordred}]]></variableExpression>
+	</variable>
+	<variable name="doc_ordered" class="java.math.BigDecimal" resetType="Group" resetGroup="DoctorGroup" calculation="Sum">
+		<variableExpression><![CDATA[$F{ordered}]]></variableExpression>
+	</variable>
+	<variable name="tot_presc" class="java.math.BigDecimal" resetType="Group" resetGroup="TotalGroup" calculation="Sum">
+		<variableExpression><![CDATA[$F{no_of_times}]]></variableExpression>
+	</variable>
+	<variable name="tot_unavbl" class="java.math.BigDecimal" resetType="Group" resetGroup="TotalGroup" calculation="Sum">
+		<variableExpression><![CDATA[$F{unavbl}]]></variableExpression>
+	</variable>
+	<variable name="tot_not_ordered" class="java.math.BigDecimal" resetType="Group" resetGroup="TotalGroup" calculation="Sum">
+		<variableExpression><![CDATA[$F{notordred}]]></variableExpression>
+	</variable>
+	<variable name="tot_ordered" class="java.math.BigDecimal" resetType="Group" resetGroup="TotalGroup" calculation="Sum">
+		<variableExpression><![CDATA[$F{ordered}]]></variableExpression>
+	</variable>
+	<group name="TotalGroup">
+		<groupHeader>
+			<band/>
+		</groupHeader>
+		<groupFooter>
+			<band height="20">
+				<textField>
+					<reportElement x="191" y="4" width="89" height="15" isPrintWhenDetailOverflows="true"/>
+					<box>
+						<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#888888"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{tot_presc}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="280" y="4" width="89" height="15"/>
+					<box>
+						<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#888888"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{tot_not_ordered}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="369" y="4" width="89" height="15"/>
+					<box>
+						<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#888888"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{tot_unavbl}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="458" y="4" width="89" height="15" isPrintWhenDetailOverflows="true"/>
+					<box>
+						<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#888888"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{tot_ordered}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="4" width="191" height="15"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[Grand Total: ]]></text>
+				</staticText>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="DoctorGroup">
+		<groupExpression><![CDATA[$F{doctor_name}]]></groupExpression>
+		<groupHeader>
+			<band height="22">
+				<staticText>
+					<reportElement x="0" y="4" width="49" height="15"/>
+					<textElement/>
+					<text><![CDATA[Doctor : ]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="49" y="4" width="338" height="15"/>
+					<textElement>
+						<font isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{doctor_name}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="0" y="19" width="164" height="1"/>
+				</line>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="16">
+				<textField>
+					<reportElement x="0" y="0" width="191" height="15"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{doctor_name}+" Total:"]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="191" y="0" width="89" height="15"/>
+					<box>
+						<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#888888"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{doc_presc}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="280" y="0" width="89" height="15"/>
+					<box>
+						<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#888888"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{doc_not_ordered}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="369" y="0" width="89" height="15" isPrintWhenDetailOverflows="true"/>
+					<box>
+						<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#888888"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{doc_unavbl}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="458" y="0" width="89" height="15"/>
+					<box>
+						<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#888888"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{doc_ordered}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band/>
+	</background>
+	<title>
+		<band height="20">
+			<staticText>
+				<reportElement x="0" y="0" width="555" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Tests Prescriptions Ordered Report]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="26">
+			<textField pattern="dd-MM-yyyy">
+				<reportElement x="160" y="2" width="128" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.util.Date"><![CDATA[$P{fromDate}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd-MM-yyyy">
+				<reportElement x="333" y="2" width="130" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.util.Date"><![CDATA[$P{toDate}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="274" y="2" width="58" height="20"/>
+				<textElement/>
+				<text><![CDATA[to]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="32">
+			<staticText>
+				<reportElement x="0" y="5" width="191" height="25"/>
+				<box>
+					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#888888"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#888888"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[Test Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="191" y="5" width="89" height="25" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#888888"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#888888"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<text><![CDATA[No. of Times Prescribed]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="280" y="5" width="89" height="25" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#888888"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#888888"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top"/>
+				<text><![CDATA[No. of Times Not Ordered]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="369" y="5" width="89" height="25" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#888888"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#888888"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top"/>
+				<text><![CDATA[No. of Times Not Available]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="458" y="5" width="89" height="25" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#888888"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#888888"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top"/>
+				<text><![CDATA[No. of Times Ordered]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="14">
+			<textField>
+				<reportElement x="0" y="0" width="191" height="13"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{test_name}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="191" y="0" width="89" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{no_of_times}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="280" y="0" width="89" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{notordred}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="369" y="0" width="89" height="13" isPrintWhenDetailOverflows="true"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{unavbl}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="458" y="0" width="89" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{ordered}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band/>
+	</columnFooter>
+	<pageFooter>
+		<band height="28">
+			<textField pattern="dd-MM-yyyy">
+				<reportElement x="4" y="5" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.util.Date"><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="409" y="5" width="80" height="20"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.String"><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="489" y="5" width="40" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band/>
+	</summary>
+	<noData>
+		<band height="50">
+			<staticText>
+				<reportElement x="0" y="0" width="555" height="50"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="16" isBold="true"/>
+				</textElement>
+				<text><![CDATA[No data in given dates.]]></text>
+			</staticText>
+		</band>
+	</noData>
+</jasperReport>

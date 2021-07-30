@@ -1,0 +1,22 @@
+[Unit]
+Description=Tomcat 9 servlet container
+After=network.target
+
+[Service]
+Type=forking
+
+User=tomcat
+Group=tomcat
+
+Environment="JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64"
+Environment="JAVA_OPTS=X-Djava.security.egd=file:///dev/urandom -Djava.awt.headless=true -XX:+CMSClassUnloadingEnabled -XX:+UseCMSInitiatingOccupancyOnly -XX:CMSInitiatingOccupancyFraction=50 -XX:+ScavengeBeforeFullGC -XX:+CMSScavengeBeforeRemark -XX:+UseConcMarkSweepGC -XX:+CMSParallelRemarkEnabled"
+Environment="JAVA_OPTS=$JAVA_OPTS -Xms512m -Xmx2G -XX:MaxMetaspaceSize=512m -XX:NewRatio=1"
+Environment="CATALINA_BASE=/usr/local/tomcat-9"
+Environment="CATALINA_HOME=/usr/local/tomcat-9"
+Environment="CATALINA_PID=/var/run/tomcat-9.pid"
+
+ExecStart=/usr/local/tomcat-9/bin/startup.sh
+ExecStop=/usr/local/tomcat-9/bin/shutdown.sh
+
+[Install]
+WantedBy=multi-user.target

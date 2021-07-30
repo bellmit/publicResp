@@ -1,0 +1,2 @@
+category,identification,issue_type,billable,status,category_id,claimable,expiry_date_val,retailable,discount,purchases_cat_vat_account_prefix,purchases_cat_cst_account_prefix,sales_cat_vat_account_prefix,asset_tracking,integration_category_id
+'MEDICINE - P','B','R','t','A','15','t','t','t','10.00','Pharmacy Purchase _ MED P','Pharmacy Purchase','Pharmacy Credit Sales','N',

@@ -1,0 +1,146 @@
+<%@page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
+<%@ taglib tagdir="/WEB-INF/tags" prefix="insta" %>
+<%@ taglib uri="/WEB-INF/instafn.tld" prefix="ifn" %>
+<html>
+<head>
+	<title><insta:ltext key="salesissues.patientissuelist.list.title"/></title>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<meta name="i18nSupport" content="true"/>
+
+	<insta:js-bundle prefix="sales.issues"/>
+	<script>
+		var toolbarOptions = getToolbarBundle("js.sales.issues.toolbar");
+	</script>
+	<insta:link type="css" file="widgets.css"/>
+	<insta:link type="script" file="widgets.js"/>
+	<insta:link type="script" file="hmsvalidation.js"/>
+	<insta:link type="script" file="stores/view_stk_patient_iss.js"/>
+	<insta:link type="script" file="dashboardsearch.js"/>
+</head>
+<c:set var="cpath" value="${pageContext.request.contextPath}"/>
+<c:set var="stkList" value="${pagedList.dtoList}"/>
+<c:set var="hasResults" value="${not empty stkList}"/>
+<body onload="initForPatient(); showFilterActive(document.PatIssSearchForm)">
+<c:set var="issueno">
+<insta:ltext key="salesissues.patientissuelist.list.issueno"/>
+</c:set>
+<c:set var="issuedate">
+<insta:ltext key="salesissues.patientissuelist.list.issuedate"/>
+</c:set>
+<c:set var="all">
+<insta:ltext key="salesissues.patientissuelist.list.all.in.brackets"/>
+</c:set>
+<h1><insta:ltext key="salesissues.patientissuelist.list.patientissuelist"/></h1>
+
+<insta:feedback-panel/>
+
+<form name="PatIssSearchForm" method="GET">
+	<input type="hidden" name="_method" value="getStkIssForPat">
+	<input type="hidden" name="_searchMethod" value="getStkIssForPatient"/>
+
+	<input type="hidden" name="sortOrder" value="${ifn:cleanHtmlAttribute(param.sortOrder)}"/>
+	<input type="hidden" name="sortReverse" value="${ifn:cleanHtmlAttribute(param.sortReverse)}"/>
+
+	<insta:search form="PatIssSearchForm" optionsId="optionalFilter" closed="${hasResults}" >
+	  <div class="searchBasicOpts" >
+	  	<div class="sboField">
+				<div class="sboFieldLabel"><insta:ltext key="salesissues.patientissuelist.list.mrno.or.patientname"/>:</div>
+				<div class="sboFieldInput">
+					<div id="mrnoAutoComplete">
+						<input type="text" name="mr_no" id="mrno" value="${ifn:cleanHtmlAttribute(param.mr_no)}" />
+						<input type="hidden" name="mr_no@op" value="ilike" />
+						<div id="mrnoContainer"></div>
+					</div>
+				</div>
+			</div>
+	  	<div class="sboField">
+			<div class="sboFieldLabel"><insta:ltext key="salesissues.patientissuelist.list.issueno"/></div>
+				<div class="sboFieldInput">
+					<input type="text" name="user_issue_no" value="${ifn:cleanHtmlAttribute(param.user_issue_no)}" onkeypress="return enterNumOnlyzeroToNine(event);">
+					<input type="hidden" name="user_issue_no@type" value="integer"/>
+				</div>
+	    </div>
+	  </div>
+	  <div id="optionalFilter" style="clear: both; display: ${hasResults ? 'none' : 'block'}" >
+	  	<table class="searchFormTable">
+				<tr>
+					<td>
+						<div class="sfLabel"><insta:ltext key="salesissues.patientissuelist.list.fromdate"/></div>
+						<div class="sfField">
+							<insta:datewidget name="issue_date" id="issue_date0" value="${paramValues.issue_date[0]}"/>
+					    </div>
+					</td>
+					<td>
+						<div class="sfLabel"><insta:ltext key="salesissues.patientissuelist.list.todate"/></div>
+						<div class="sfField">
+							<insta:datewidget name="issue_date" id="issue_date1" value="${paramValues.issue_date[1]}"/>
+							<input type="hidden" name="issue_date@op" value="ge,le"/>
+							<input type="hidden" name="issue_date@type" value="date"/>
+							<input type="hidden" name="issue_date@cast" value="y"/>
+					    </div>
+					</td>
+					<td>
+						<div class="sfLabel"><insta:ltext key="salesissues.patientissuelist.list.fromstore"/></div>
+						<div class="sfField">
+							<insta:selectdb name="from_store" table="stores" valuecol="dept_name" class="dropdown"
+								displaycol="dept_name" value="${param.from_store}" dummyvalue="${all}" orderby="dept_name"/>
+						</div>
+					</td>
+					<td>
+						<div class="sfLabel"><insta:ltext key="salesissues.patientissuelist.list.patientindentno"/></div>
+						<div class="sfField">
+							<input type="text" name="patient_indent_no" id="patient_indent_no" value="${ifn:cleanHtmlAttribute(param.patient_indent_no)}"/>
+						</div>
+					</td>
+				</tr>
+		</table>
+	  </div>
+	</insta:search>
+
+	<insta:paginate curPage="${pagedList.pageNumber}" numPages="${pagedList.numPages}" totalRecords="${pagedList.totalRecords}"/>
+
+	<div class="resultList">
+		<table class="resultList" cellspacing="0" cellpadding="0" id="resultTable" onmouseover="hideToolBar('');">
+			<tr onmouseover="hideToolBar();">
+				<insta:sortablecolumn name="user_issue_no" title="${issueno}"/>
+				<insta:sortablecolumn name="issue_date" title="${issuedate}"/>
+			    <th><insta:ltext key="salesissues.patientissuelist.list.fromstore"/></th>
+			    <th><insta:ltext key="ui.label.mrno"/></th>
+			    <th><insta:ltext key="salesissues.patientissuelist.list.visitid"/></th>
+			    <th><insta:ltext key="ui.label.patient.name"/></th>
+			    <th><insta:ltext key="salesissues.patientissuelist.list.user"/></th>
+			</tr>
+
+			<c:forEach var="iss" items="${stkList}" varStatus="st">
+				<tr class="${st.index == 0 ? 'firstRow' : ''} ${st.index % 2 == 0 ? 'even' : 'odd'}"
+					onclick="showToolbar(${st.index}, event, 'resultTable',
+						{issNo: '${iss.user_issue_no}'},
+						[true]);"
+					onmouseover="hideToolBar(${st.index})" id="toolbarRow${st.index}"	>
+
+					<td>${iss.user_issue_no}</td>
+					<td><fmt:formatDate value="${iss.issue_date}" pattern="dd-MM-yyyy HH:mm:ss"/></td>
+					<td>${iss.from_store}</td>
+					<td>${iss.mr_no}</td>
+					<td>${iss.issued_to}</td>
+					<td>${iss.patient_name}</td>
+					<td>${iss.username}</td>
+				</tr>
+			</c:forEach>
+		</table>
+
+		<c:if test="${param._method == 'stkList'}">
+			<insta:noresults hasResults="${hasResults}"/>
+		</c:if>
+
+    </div>
+
+
+</form>
+</body>
+</html>

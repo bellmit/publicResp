@@ -1,0 +1,76 @@
+{
+    "title": "Item Master Report",
+    "description": "This report builder gives the details of the store Item Master.",
+    "reportGroup": "Store Mgmt Reports",
+    "defaultOrder": "item_name",
+    "includes": [
+        "StoreItemFields.srjs"
+    ],
+    "queryUnits": [
+        {
+            "mainTableName": "store_item_details",
+            "mainTableAlias": "sid",
+            "joinTables": [
+                {
+                    "name": "ha_item_code_type",
+                    "alias": "hict",
+                    "type": "LEFT",
+                    "dependsOn": "sid",
+                    "expression": "ON (sid.medicine_id=hict.medicine_id)"
+                },
+                {
+                    "name": "store_item_codes",
+                    "alias": "sic",
+                    "type": "LEFT",
+                    "dependsOn": "hict",
+                    "expression": "ON (sic.medicine_id = hict.medicine_id AND hict.code_type=sic.code_type)"
+                }
+            ]
+        }
+    ],
+    "fields": {
+        "item_strength": {
+            "table": "sid",
+            "displayName": "Strength",
+            "width": 80,
+            "dataType": "string",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true
+        },
+        "item_code": {
+            "table": "sic",
+            "displayName": "Item Code",
+            "width": 50,
+            "filterable": true,
+            "groupable": true,
+            "description": "Item Code of the item as per the master"
+        },
+        "code_type": {
+            "table": "hict",
+            "displayName": "Code Type",
+            "width": 40,
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT msc.code_type FROM mrd_supported_codes msc JOIN (select regexp_split_to_table(drug_code_type,E',') as drug_code_type,health_authority FROM health_authority_preferences) as hap ON(msc.code_type = hap.drug_code_type) JOIN health_authority_master ham ON(hap.health_authority=ham.health_authority) WHERE msc.code_category = 'Drug' order by drug_code_type"
+        },
+        "health_authority": {
+            "table": "hict",
+            "displayName": "Health Authority",
+            "width": 40,
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT health_authority FROM health_authority_master"
+        },
+        "tax_rate": {}
+    },
+    "defaultShowFields": [
+        "item_name",
+        "manf_name",
+        "generic_name",
+        "category_name",
+        "insurance_category_name",
+        "issue_type",
+        "billable"
+    ]
+}

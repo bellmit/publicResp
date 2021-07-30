@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  <patient_record xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xsi:noNamespaceSchemaLocation='insta-patient-sync.xsd'>
+    <schema>etihad</schema>
+    
+    <patient_details>
+        <old_mr_no>emp123123123</old_mr_no>
+        <first_name>First Name</first_name>
+        <middle_name>Middle Name</middle_name>
+        <last_name>Last Name</last_name>
+        <gender>
+            <code>1</code>
+            <description>M</description>
+        </gender>
+        <date_of_birth>1987-09-01</date_of_birth>
+        <nationality_id>
+            <code>1</code>
+            <description>ER</description>
+        </nationality_id>
+        <government_identifier>7000-1000-3000000-0</government_identifier>
+        <mobile_number>+919999999999</mobile_number>
+        <email>test@test.com</email>
+        <custom_list2_value>
+            <code>1</code>
+            <description>Active</description>
+        </custom_list2_value>
+        <custom_list3_value>
+            <code>1</code>
+            <description>Single</description>
+        </custom_list3_value>
+        <custom_field15>2018-04-01</custom_field15>
+        <passport_number>abcd1234</passport_number>
+        
+    </patient_details>
+    <prepopulate_visit_info>
+        <visit_custom_list1>
+            <code>Etihad Guest LLC</code>
+            <description>Etihad Guest LLC</description>
+        </visit_custom_list1>
+        <visit_custom_list2>
+            <code>Abu Dhani</code>
+            <description>Abu Dhani</description>
+        </visit_custom_list2>
+        <visit_custom_field1>Cost Center example</visit_custom_field1>
+        <visit_custom_field2>Department example</visit_custom_field2>
+        <visit_custom_field3>Job Title example</visit_custom_field3>
+    </prepopulate_visit_info>
+</patient_record>
+

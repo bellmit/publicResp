@@ -1,0 +1,241 @@
+{
+    "title": "Purchase Order",
+    "reportGroup": "Procurement Reports",
+    "dateFields": [
+        "po_date",
+        "approved_date",
+        "delivery_date"
+    ],
+    "description": "This report shows the list of Open, Approved and Cancelled POs.",
+    "tableName": [
+        "rpt_purchase_order_view"
+    ],
+    "defaultShowFields": [
+        "po_no",
+        "supplier_name",
+        "status",
+        "dept_name",
+        "store_type_name",
+        "user_id",
+        "discount",
+        "po_total",
+        "approved_by",
+        "po_date"
+    ],
+    "fields": {
+        "po_no": {
+            "displayName": "PO No",
+            "width": "60"
+        },
+        "supplier_name": {
+            "displayName": "Supplier Name",
+            "width": "120",
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT supplier_name FROM supplier_master ORDER BY supplier_name"
+        },
+        "cust_supplier_code": {
+            "displayName": "Supplier Code",
+            "width": "120",
+            "filterable": true,
+            "groupable": true
+        },
+        "drug_license_no": {
+            "displayName": "Drug License No.",
+            "width": "80",
+            "filterable": false,
+            "groupable": false
+        },
+        "pan_no": {
+            "displayName": "PAN No.",
+            "width": "80",
+            "filterable": false,
+            "groupable": false
+        },
+        "cin_no": {
+            "displayName": "CIN No.",
+            "width": "80",
+            "filterable": false,
+            "groupable": false
+        },
+        "status": {
+            "displayName": "Status",
+            "width": "60",
+            "filterable": true,
+            "groupable": true,
+            "allowedValues": [
+                "Open",
+                "Approved",
+                "Amended Open",
+                "Amended Approved",
+                "Closed",
+                "Cancelled",
+                "Force Closed",
+                "Validated",
+                "Amended Validated"
+            ]
+        },
+        "dept_name": {
+            "displayName": "Store Name",
+            "width": "100",
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT dept_name FROM stores ORDER BY dept_name"
+        },
+        "center_name": {
+            "displayName": "Center Name",
+            "filterable": true,
+            "groupable": true,
+            "width": "100",
+            "allowedValuesQuery": "SELECT center_name FROM hospital_center_master  order by center_name"
+        },
+        "store_type_name": {
+            "displayName": "Store Type",
+            "filterable": true,
+            "groupable": true,
+            "width": "70",
+            "allowedValuesQuery": "SELECT store_type_name from store_type_master ORDER BY store_type_name"
+        },
+        "user_id": {
+            "displayName": "Raised By",
+            "dataType": "string",
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT emp_username FROM u_user ORDER BY emp_username ",
+            "width": "100"
+        },
+        "discount": {
+            "displayName": "Discount",
+            "width": "60",
+            "decimalType": "amount"
+        },
+        "po_total": {
+            "displayName": "PO Total",
+            "width": "50",
+            "aggFunction": "sum",
+            "decimalType": "amount"
+        },
+        "tcs_amount": {
+          "displayName": "TCS Amount",
+          "width": "50",
+          "aggFunction": "sum",
+          "decimalType": "amount"
+        },
+        "approved_by": {
+            "displayName": "Approved By",
+            "width": "90"
+        },
+        "po_date": {
+            "displayName": "PO Date",
+            "dataType": "date",
+            "width": "60"
+        },
+        "approved_date": {
+            "displayName": "Approved Date",
+            "dataType": "date",
+            "width": "60"
+        },
+        "delivery_date": {
+            "displayName": "Delivery Date",
+            "dataType": "date",
+            "width": "60"
+        },
+        "validated_by": {
+            "displayName": "Validated By",
+            "width": "100"
+        },
+        "validated_time": {
+            "displayName": "Validated Time",
+            "dataType": "timestamp",
+            "width": "100"
+        },
+        "po_alloted_to": {
+            "displayName": "PO Alloted To",
+            "width": "100"
+        },
+        "vat_type": {
+            "displayName": "Tax Type",
+            "width": "40",
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": " SELECT  CASE WHEN procurement_tax_label='V' then 'VAT' else 'GST' END as procurement_tax_label FROM generic_preferences UNION SELECT 'CST'"
+        },
+        "amended_reason": {
+            "displayName": "Amended Reason",
+            "width": "100"
+        },
+        "amendment_time": {
+            "displayName": "Amended Time",
+            "dataType": "timestamp",
+            "width": "100"
+        },
+        "amendment_validated_time": {
+            "displayName": "Amended Validated Time",
+            "dataType": "timestamp",
+            "width": "100"
+        },
+        "amendment_approved_time": {
+            "displayName": "Amended Approved Time",
+            "dataType": "timestamp",
+            "width": "100"
+        },
+        "amended_by": {
+            "displayName": "Amended By",
+            "dataType": "string",
+            "filterable": true,
+            "allowedValuesQuery": "SELECT emp_username FROM u_user ORDER BY emp_username ",
+            "width": "100"
+        },
+        "amendment_validated_by": {
+            "displayName": "Amended Validated By",
+            "dataType": "string",
+            "filterable": true,
+            "allowedValuesQuery": "SELECT emp_username FROM u_user ORDER BY emp_username ",
+            "width": "100"
+        },
+        "amendment_approved_by": {
+            "displayName": "Amended Approved By",
+            "dataType": "string",
+            "filterable": true,
+            "allowedValuesQuery": "SELECT emp_username FROM u_user ORDER BY emp_username ",
+            "width": "100"
+        },
+        "amendment_validator_remarks": {
+            "displayName": "Amended Validator Remarks",
+            "width": "100"
+        },
+        "amendment_approver_remarks": {
+            "displayName": "Amended Approver Remarks",
+            "width": "100"
+        },
+        "form_8h": {
+            "allowHorizGroup": true,
+            "allowNull": false,
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "dataType": "string",
+            "displayName": "Form 8H",
+            "expression": "form_8h",
+            "filterable": true,
+            "width": 100
+        },
+        "transportation_charges": {
+            "allowHorizGroup": false,
+            "allowNull": false,
+            "dataType": "numeric",
+            "displayName": "Transportation Charges",
+            "filterable": false,
+            "width": 100
+        },
+        "remarks": {
+            "displayName": "Remarks",
+            "width": "100"
+        },
+        "purpose_of_purchase": {
+            "displayName": "Purpose Of Purchase",
+            "width": "100"
+        }
+    }
+}

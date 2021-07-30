@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suite name="MasterdataServiceTest" verbose="1" allow-return-values="true">
+ 	<test name="masterdata">
+ 		<classes>
+ 			<class
+ 				name="testng.com.insta.hms.core.masterdata.MasterdataServiceTest" >
+ 			</class>
+ 		</classes>
+ 	</test>
+ </suite>

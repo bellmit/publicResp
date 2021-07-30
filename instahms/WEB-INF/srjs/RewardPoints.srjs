@@ -1,0 +1,171 @@
+{
+    "title": "Reward Points Report",
+    "description": "This report shows reward point details per patient with opening and closing balance in the chosen period.",
+    "reportGroup": "Billing Reports",
+    "dateFields": [
+        "txn_date"
+    ],
+    "defaultDate": "txn_date",
+    "comment": [
+        "This report needs to show the balance reward points AS OF the from and to dates. We only have",
+        "the current total and the transactions between two dates. So the logic used is:",
+        " earned_in, redeemed_in : points earned/redeemed in the given period",
+        " earned, redeemed : points earned/redeemed from fromDate till TODAY",
+        " points_today: balance as of TODAY",
+        "Based on these, we can back-calculate the other numbers, the opening and closing balance",
+        "as of fromDate and toDate"
+    ],
+    "queryLines": [
+        [
+            " SELECT patient_points.*, ",
+            "   sm.salutation || ' ' || patient_name ",
+            "     || case when coalesce(middle_name, '') = '' then '' else (' ' || middle_name) end ",
+            "     || case when coalesce(last_name, '') = '' then '' else (' ' || last_name) end  as full_name,",
+            "   CASE WHEN pd.patient_gender = 'M' THEN 'Male' WHEN pd.patient_gender = 'F' THEN 'Female' WHEN pd.patient_gender = 'C' THEN 'Couple' ",
+            "     ELSE 'Other' END AS patient_gender,pd.name_local_language,",
+            "   pcm.category_name, pd.first_visit_reg_date",
+            " ",
+            " FROM (",
+            " SELECT mr_no,",
+            "   sum(points_today - (earned - redeemed)) as opening_balance,",
+            "   sum(earned_in) as earned_in, sum(redeemed_in) as redeemed_in,",
+            "   sum(eligible_value_in) as eligible_value_in, sum(redeemed_amt_in) as redeemed_amt_in, ",
+            " ",
+            "   sum(points_today - (earned - redeemed) + (earned_in -redeemed_in)) as closing_balance",
+            " ",
+            " FROM (",
+            "   SELECT pr.mr_no, ",
+            "     0 as earned_in, 0 as earned, 0 as eligible_value_in, 0 as eligible_value,",
+            "     sum(CASE WHEN date(b.finalized_date) <= ${toDate} THEN points_redeemed ELSE 0 END) as redeemed_in,",
+            "     sum(points_redeemed) AS redeemed,",
+            "     sum(CASE WHEN date(b.finalized_date) <= ${toDate} THEN points_redeemed_amt ELSE 0 END) as redeemed_amt_in,",
+            "     sum(points_redeemed_amt) AS redeemed_amt,",
+            "     0 as points_today",
+            "   FROM bill b",
+            "    JOIN patient_registration pr ON (pr.patient_id = b.visit_id) ",
+            "   WHERE b.status in ('F','C') and points_redeemed != 0",
+            "    AND date(b.finalized_date) >= ${fromDate}",
+            "   GROUP BY mr_no",
+            " ",
+            "   UNION ALL",
+            "   SELECT mr_no,",
+            "     sum(CASE WHEN date(e.date) <= ${toDate} THEN points ELSE 0 END) as earned_in,",
+            "     sum(points) AS earned,",
+            "     sum(CASE WHEN date(e.date) <= ${toDate} THEN eligible_value ELSE 0 END) as eligible_value_in,",
+            "     sum(eligible_value) AS eligible_value,",
+            "     0 as redeemed_in, 0 as redeemed, 0 as redeemed_amt_in, 0 as redeemed_amt,",
+            "     0 as points_today",
+            "   FROM reward_points_earnings e",
+            "   WHERE date(e.date) >= ${fromDate}",
+            "   GROUP BY mr_no",
+            " ",
+            "   UNION ALL",
+            "   SELECT mr_no,",
+            "     0 as earned_in, 0 as earned, 0 as eligible_value_in, 0 as eligible_value,",
+            "     0 as redeemed_in, 0 as redeemed, 0 as redeemed_amt_in, 0 as redeemed_amt,",
+            "     points_earned - points_redeemed as points_today",
+            "   FROM reward_points_status",
+            " ) as indiv_points",
+            " ",
+            " GROUP BY mr_no",
+            " ) AS patient_points",
+            " ",
+            "   JOIN patient_details pd USING (mr_no)",
+            "   JOIN patient_category_master pcm ON (pcm.category_id = pd.patient_category_id)",
+            "   JOIN salutation_master sm ON (pd.salutation = sm.salutation_id)"
+        ]
+    ],
+    "useQueryAsIs": true,
+    "defaultShowFields": [
+        "mr_no",
+        "full_name",
+        "opening_balance",
+        "earned_in",
+        "redeemed_in",
+        "closing_balance"
+    ],
+    "filterOnlyFields": {
+        "txn_date": {
+            "displayName": "Date",
+            "dataType": "date"
+        }
+    },
+    "fields": {
+        "mr_no": {
+            "displayName": "MR No.",
+            "width": 65,
+            "filterable": true
+        },
+        "full_name": {
+            "displayName": "Patient Name",
+            "width": 150
+        },
+        "patient_gender": {
+            "displayName": "Gender",
+            "width": 40,
+            "allowedValues": [
+                "Male",
+                "Female",
+                "Couple",
+                "Other"
+            ]
+        },
+        "first_visit_reg_date": {
+            "displayName": "First Visit Date",
+            "dataType": "date"
+        },
+        "category_name": {
+            "displayName": "Category",
+            "width": 120,
+            "filterable": true,
+            "groupable": true
+        },
+        "opening_balance": {
+            "displayName": "Opening Balance",
+            "width": 70,
+            "dataType": "numeric",
+            "decimalType": "integer",
+            "filterable": true
+        },
+        "closing_balance": {
+            "displayName": "Closing Balance",
+            "width": 70,
+            "dataType": "numeric",
+            "decimalType": "integer",
+            "filterable": true
+        },
+        "earned_in": {
+            "displayName": "Points Earned",
+            "dataType": "numeric",
+            "decimalType": "integer",
+            "aggFunction": "sum",
+            "filterable": true
+        },
+        "eligible_value_in": {
+            "displayName": "Eligible Value",
+            "description": "Amount for which points earned",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "aggFunction": "sum",
+            "filterable": true
+        },
+        "redeemed_in": {
+            "displayName": "Points Redeemed",
+            "dataType": "numeric",
+            "decimalType": "integer",
+            "aggFunction": "sum",
+            "filterable": true
+        },
+        "redeemed_amt_in": {
+            "displayName": "Redeemed Amount",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "aggFunction": "sum",
+            "filterable": true
+        },
+       "name_local_language": {
+            "displayName": "Name In Local Language",
+            "width": 150
+      }
+    }
+}

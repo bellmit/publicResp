@@ -1,0 +1,2 @@
+orderable_item_id,entity,entity_id,item_name,item_codes,module_id,orderable,operation_applicable,package_applicable,is_multi_visit_package,service_group_id,service_sub_group_id,insurance_category_id,visit_type,direct_billing,status,valid_from_date,valid_to_date
+'1934','Service','SERV0088','epo inj service [cresp 40]-pfs','76','mod_basic','Y','N','Y','Y','24','125','-1','*','N','A',,

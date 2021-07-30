@@ -1,0 +1,1230 @@
+{
+  "genInfoClassification": {
+    "key": "genInfoClassification",
+    "label": "General Information - Classification",
+    "representation": "simple",
+    "uploadable": "never",
+    "group_by": null,
+    "fields": [
+      {
+        "key": "servicecapability",
+        "label": "Service Capability",
+        "data_type": "string_lookup"
+      },
+      {
+        "key": "general",
+        "label": "Service Capability - Sub Type (General)",
+        "data_type": "string_lookup"
+      },
+      {
+        "key": "specialty",
+        "label": "Service Capability - Sub Type (Specialty)",
+        "data_type": "string_lookup"
+      },
+      {
+        "key": "specialtyspecify",
+        "label": "Service Capability - Sub Type (Specialty - specify)",
+        "data_type": "string"
+      },
+      {
+        "key": "traumacapability",
+        "label": "Trauma capability",
+        "data_type": "string_lookup"
+      },
+      {
+        "key": "natureofownership",
+        "label": "Nature of Ownership",
+        "data_type": "string_lookup"
+      },
+      {
+        "key": "government",
+        "label": "Nature of Ownership - Sub Type (Government)",
+        "data_type": "string_lookup"
+      },
+      {
+        "key": "national",
+        "label": "Nature of Ownership - Sub Type (Government - National)",
+        "data_type": "string_lookup"
+      },
+      {
+        "key": "local",
+        "label": "Nature of Ownership - Sub Type (Government - Local)",
+        "data_type": "string_lookup"
+      },
+      {
+        "key": "private",
+        "label": "Nature of Ownership - Sub Type (Private)",
+        "data_type": "string_lookup"
+      },
+      {
+        "key": "ownershipothers",
+        "label": "Nature of Ownership (specify if others)",
+        "data_type": "string"
+      }
+    ]
+  },
+  "genInfoQualityManagement": {
+    "key": "genInfoQualityManagement",
+    "label": "General Information - Quality Management",
+    "representation": "table",
+    "uploadable": "always",
+    "group_by": "description",
+    "fields": [
+      {
+        "key": "qualitymgmttype",
+        "label": "Type",
+        "data_type": "string_lookup"
+      },
+      {
+        "key": "certifyingbody",
+        "label": "Certifying Body",
+        "data_type": "string"
+      },
+      {
+        "key": "description",
+        "label": "Description",
+        "data_type": "string"
+      },
+      {
+        "key": "philhealthaccreditation",
+        "label": "PhilHealth Accreditation",
+        "data_type": "string_lookup"
+      },
+      {
+        "key": "validityfrom",
+        "label": "Validity From",
+        "data_type": "date"
+      },
+      {
+        "key": "validityto",
+        "label": "Validity To",
+        "data_type": "date"
+      }
+    ]
+  },
+  "genInfoBedCapacity": {
+    "key": "genInfoBedCapacity",
+    "label": "General Information - Bed Capacity/Occupancy",
+    "representation": "simple",
+    "uploadable": "never",
+    "group_by": null,
+    "fields": [
+      {
+        "key": "abc",
+        "label": "Authorized Bed Capacity",
+        "data_type": "integer"
+      },
+      {
+        "key": "implementingbeds",
+        "label": "Implementing Beds",
+        "data_type": "integer"
+      }
+    ]
+  },
+  "hospOptSummaryOfPatients": {
+    "key": "hospOptSummaryOfPatients",
+    "label": "Hospital Operations - Summary of Patient in the Hospital",
+    "representation": "simple",
+    "uploadable": "firstyear",
+    "group_by" : null,
+    "fields": [
+      {
+        "key": "totalinpatients",
+        "label": "Total Number of Inpatients",
+        "data_type": "integer"
+      },
+      {
+        "key": "totalnewborn",
+        "label": "Total Newborn (In facility deliveries)",
+        "data_type": "integer"
+      },
+      {
+        "key": "totaldischarges",
+        "label": "Total Discharges (Alive)",
+        "data_type": "integer"
+      },
+      {
+        "key": "totalpad",
+        "label": "Total patients admitted and discharged on the same day",
+        "data_type": "integer"
+      },
+      {
+        "key": "totalibd",
+        "label": "Total number of inpatient bed days (service days)",
+        "data_type": "integer"
+      },
+      {
+        "key": "totalinpatienttransto",
+        "label": "Total number of inpatients transferred TO THIS FACILITY from another facility for inpatient care",
+        "data_type": "integer"
+      },
+      {
+        "key": "totalinpatienttransfrom",
+        "label": "Total number of inpatients transferred FROM THIS FACILITY to another facility for inpatient care",
+        "data_type": "integer"
+      },
+      {
+        "key": "totalpatientsremaining",
+        "label": "Total number of patients remaining in the hospital as of midnight last day of previous year",
+        "data_type": "integer"
+      }
+    ]
+  },
+  "hospOptDischargesSpecialty": {
+    "key": "hospOptDischargesSpecialty",
+    "label": "Hospital Operations - Discharges",
+    "representation": "table",
+    "uploadable": "firstyear",
+    "group_by": "typeofservice",
+    "fields": [
+      {
+        "key": "typeofservice",
+        "label": "Type of Service",
+        "data_type": "string_lookup"
+      },
+      {
+        "key": "nopatients",
+        "label": "No. of Patients",
+        "data_type": "integer"
+      },
+      {
+        "key": "totallengthstay",
+        "label": "Total Length of Stay/Total No. of Days Stay",
+        "data_type": "integer"
+      },
+      {
+        "key": "nppay",
+        "label": "Non-Philhealth: Pay",
+        "data_type": "integer"
+      },
+      {
+        "key": "npservice",
+        "label": "Non-Philhealth: Service/Charity",
+        "data_type": "integer"
+      },
+      {
+        "key": "phpay",
+        "label": "Philhealth: Pay",
+        "data_type": "integer"
+      },
+      {
+        "key": "phservice",
+        "label": "Philhealth: Service",
+        "data_type": "integer"
+      },
+      {
+        "key": "hmo",
+        "label": "HMO",
+        "data_type": "integer"
+      },
+      {
+        "key": "owwa",
+        "label": "OWWA",
+        "data_type": "integer"
+      },
+      {
+        "key": "recoveredimproved",
+        "label": "Recovered/Improved",
+        "data_type": "integer"
+      },
+      {
+        "key": "transferred",
+        "label": "Transferred",
+        "data_type": "integer"
+      },
+      {
+        "key": "hama",
+        "label": "Home Against Medical Advice",
+        "data_type": "integer"
+      },
+      {
+        "key": "absconded",
+        "label": "Absconded",
+        "data_type": "integer"
+      },
+      {
+        "key": "unimproved",
+        "label": "Unimproved",
+        "data_type": "integer"
+      },
+      {
+        "key": "deathsbelow48",
+        "label": "Deaths below 48 hours",
+        "data_type": "integer"
+      },
+      {
+        "key": "deathsover48",
+        "label": "Deaths on or over 48 hours",
+        "data_type": "integer"
+      },
+      {
+        "key": "remarks",
+        "label": "Remarks",
+        "data_type": "string"
+      }
+    ]
+  },
+  "hospOptDischargesSpecialtyOthers": {
+    "key": "hospOptDischargesSpecialtyOthers",
+    "label": "Hospital Operations - Discharges - Other Specialties",
+    "representation": "table",
+    "uploadable": "firstyear",
+    "group_by": "othertypeofservicespecify",
+    "fields": [
+      {
+        "key": "othertypeofservicespecify",
+        "label": "Type of Service: Others, specify",
+        "data_type": "string"
+      },
+      {
+        "key": "nopatients",
+        "label": "No. of Patients",
+        "data_type": "integer"
+      },
+      {
+        "key": "totallengthstay",
+        "label": "Total Length of Stay/Total No. of Days Stay",
+        "data_type": "integer"
+      },
+      {
+        "key": "nppay",
+        "label": "Non-Philhealth: Pay",
+        "data_type": "integer"
+      },
+      {
+        "key": "npservice",
+        "label": "Non-Philhealth: Service/Charity",
+        "data_type": "integer"
+      },
+      {
+        "key": "phpay",
+        "label": "Philhealth: Pay",
+        "data_type": "integer"
+      },
+      {
+        "key": "phservice",
+        "label": "Philhealth: Service",
+        "data_type": "integer"
+      },
+      {
+        "key": "hmo",
+        "label": "HMO",
+        "data_type": "integer"
+      },
+      {
+        "key": "owwa",
+        "label": "OWWA",
+        "data_type": "integer"
+      },
+      {
+        "key": "recoveredimproved",
+        "label": "Recovered/Improved",
+        "data_type": "integer"
+      },
+      {
+        "key": "transferred",
+        "label": "Transferred",
+        "data_type": "integer"
+      },
+      {
+        "key": "hama",
+        "label": "Home Against Medical Advice",
+        "data_type": "integer"
+      },
+      {
+        "key": "absconded",
+        "label": "Absconded",
+        "data_type": "integer"
+      },
+      {
+        "key": "unimproved",
+        "label": "Unimproved",
+        "data_type": "integer"
+      },
+      {
+        "key": "deathsbelow48",
+        "label": "Deaths below 48 hours",
+        "data_type": "integer"
+      },
+      {
+        "key": "deathsover48",
+        "label": "Deaths on or over 48 hours",
+        "data_type": "integer"
+      },
+      {
+        "key": "remarks",
+        "label": "Remarks",
+        "data_type": "string"
+      }
+    ]
+  },
+  "hospOptDischargesMorbidity": {
+    "key": "hospOptDischargesMorbidity",
+    "label": "Hospital Operations - Discharges - Morbidity",
+    "representation": "table",
+    "uploadable": "firstyear",
+    "group_by": "icd10code",
+    "fields": [
+      {
+        "key": "icd10code",
+        "label": "ICD 10 Code",
+        "data_type": "string"
+      },
+      {
+        "key": "munder1",
+        "label": "Male under 1",
+        "data_type": "integer"
+      },
+      {
+        "key": "funder1",
+        "label": "Female under 1",
+        "data_type": "integer"
+      },
+      {
+        "key": "m1to4",
+        "label": "Male 1 - 4",
+        "data_type": "integer"
+      },
+      {
+        "key": "f1to4",
+        "label": "Female 1 - 4",
+        "data_type": "integer"
+      },
+      {
+        "key": "m5to9",
+        "label": "Male 5 - 9",
+        "data_type": "integer"
+      },
+      {
+        "key": "f5to9",
+        "label": "Female 5 - 9",
+        "data_type": "integer"
+      },
+      {
+        "key": "m10to14",
+        "label": "Male 10 - 14",
+        "data_type": "integer"
+      },
+      {
+        "key": "f10to14",
+        "label": "Female 10 - 14",
+        "data_type": "integer"
+      },
+      {
+        "key": "m15to19",
+        "label": "Male 15 - 19",
+        "data_type": "integer"
+      },
+      {
+        "key": "f15to19",
+        "label": "Female 15 - 19",
+        "data_type": "integer"
+      },
+      {
+        "key": "m20to24",
+        "label": "Male 20 - 24",
+        "data_type": "integer"
+      },
+      {
+        "key": "f20to24",
+        "label": "Female 20 - 24",
+        "data_type": "integer"
+      },
+      {
+        "key": "m25to29",
+        "label": "Male 25 - 29",
+        "data_type": "integer"
+      },
+      {
+        "key": "f25to29",
+        "label": "Female 25 - 29",
+        "data_type": "integer"
+      },
+      {
+        "key": "m30to34",
+        "label": "Male 30 - 34",
+        "data_type": "integer"
+      },
+      {
+        "key": "f30to34",
+        "label": "Female 30 - 34",
+        "data_type": "integer"
+      },
+      {
+        "key": "m35to39",
+        "label": "Male 35 - 39",
+        "data_type": "integer"
+      },
+      {
+        "key": "f35to39",
+        "label": "Female 35 - 39",
+        "data_type": "integer"
+      },
+      {
+        "key": "m40to44",
+        "label": "Male 40 - 44",
+        "data_type": "integer"
+      },
+      {
+        "key": "f40to44",
+        "label": "Female 40 - 44",
+        "data_type": "integer"
+      },
+      {
+        "key": "m45to49",
+        "label": "Male 45 - 49",
+        "data_type": "integer"
+      },
+      {
+        "key": "f45to49",
+        "label": "Female 45 - 49",
+        "data_type": "integer"
+      },
+      {
+        "key": "m50to54",
+        "label": "Male 50 - 54",
+        "data_type": "integer"
+      },
+      {
+        "key": "f50to54",
+        "label": "Female 50 - 54",
+        "data_type": "integer"
+      },
+      {
+        "key": "m55to59",
+        "label": "Male 55 - 59",
+        "data_type": "integer"
+      },
+      {
+        "key": "f55to59",
+        "label": "Female 55 - 59",
+        "data_type": "integer"
+      },
+      {
+        "key": "m60to64",
+        "label": "Male 60 - 64",
+        "data_type": "integer"
+      },
+      {
+        "key": "f60to64",
+        "label": "Female 60 - 64",
+        "data_type": "integer"
+      },
+      {
+        "key": "m65to69",
+        "label": "Male 65 - 69",
+        "data_type": "integer"
+      },
+      {
+        "key": "f65to69",
+        "label": "Female 65 - 69",
+        "data_type": "integer"
+      },
+      {
+        "key": "m70over",
+        "label": "Male 70 over",
+        "data_type": "integer"
+      },
+      {
+        "key": "f70over",
+        "label": "Female 70 over",
+        "data_type": "integer"
+      }
+    ]
+  },
+  "hospOptDischargesNumberDeliveries": {
+    "key": "hospOptDischargesNumberDeliveries",
+    "label": "Hospital Operations - Discharges - Total Number of Deliveries",
+    "representation": "simple",
+    "uploadable": "firstyear",
+    "group_by": null,
+    "fields": [
+      {
+        "key": "totalifdelivery",
+        "label": "Total number of in-facility deliveries",
+        "data_type": "integer"
+      },
+      {
+        "key": "totallbvdelivery",
+        "label": "Total number of live-birth vaginal deliveries (normal)",
+        "data_type": "integer"
+      },
+      {
+        "key": "totallbcdelivery",
+        "label": "Total number of live-birth C-section deliveries (Caesarians)",
+        "data_type": "integer"
+      },
+      {
+        "key": "totalotherdelivery",
+        "label": "Total number of other deliveries",
+        "data_type": "integer"
+      }
+    ]
+  },
+  "hospOptDischargesOPV": {
+    "key": "hospOptDischargesOPV",
+    "label": "Hospital Operations - Discharges - Outpatient Visits, including Emergency Care, Testing and Other Services",
+    "representation": "simple",
+    "uploadable": "firstyear",
+    "group_by": null,
+    "fields": [
+      {
+        "key": "newpatient",
+        "label": "Number of outpatient visits, new patient",
+        "data_type": "integer"
+      },
+      {
+        "key": "revisit",
+        "label": "Number of outpatient visits, re-visit",
+        "data_type": "integer"
+      },
+      {
+        "key": "adult",
+        "label": "Number of outpatient visits, adult",
+        "data_type": "integer"
+      },
+      {
+        "key": "pediatric",
+        "label": "Number of outpatient visits, pediatric",
+        "data_type": "integer"
+      },
+      {
+        "key": "adultgeneralmedicine",
+        "label": "Number of adult general medicine outpatient visits",
+        "data_type": "integer"
+      },
+      {
+        "key": "specialtynonsurgical",
+        "label": "Number of special (non-surgical) outpatient visits",
+        "data_type": "integer"
+      },
+      {
+        "key": "surgical",
+        "label": "Number of surgical outpatient visits",
+        "data_type": "integer"
+      },
+      {
+        "key": "antenatal",
+        "label": "Number of antenatal care visits",
+        "data_type": "integer"
+      },
+      {
+        "key": "postnatal",
+        "label": "Number of postnatal care visits",
+        "data_type": "integer"
+      }
+    ]
+  },
+  "hospOptDischargesOPD": {
+    "key": "hospOptDischargesOPD",
+    "label": "Hospital Operations - Discharges - Ten Leading Causes of OPD Consultation",
+    "representation": "table",
+    "uploadable": "firstyear",
+    "group_by": "icd10code",
+    "fields": [
+      {
+        "key": "icd10code",
+        "label": "ICD10 Code",
+        "data_type": "string"
+      },
+      {
+        "key": "number",
+        "label": "Number",
+        "data_type": "integer"
+      }
+    ]
+  },
+  "hospOptDischargesER": {
+    "key": "hospOptDischargesER",
+    "label": "Hospital Operations - Discharges - Ten Leading Causes of ER Consultation",
+    "representation": "table",
+    "uploadable": "firstyear",
+    "group_by": "icd10code",
+    "fields": [
+      {
+        "key": "icd10code",
+        "label": "ICD10 Code",
+        "data_type": "string"
+      },
+      {
+        "key": "number",
+        "label": "Number",
+        "data_type": "integer"
+      }
+    ]
+  },
+  "hospOptDischargesTesting": {
+    "key": "hospOptDischargesTesting",
+    "label": "Hospital Operations - Discharges - Testing and other services",
+    "representation": "table",
+    "uploadable": "firstyear",
+    "group_by": "testing",
+    "fields": [
+      {
+        "key": "testing",
+        "label": "Test / Service",
+        "data_type": "string_lookup"
+      },
+      {
+        "key": "number",
+        "label": "Number",
+        "data_type": "integer"
+      }
+    ]
+  },
+  "hospOptDischargesEV": {
+    "key": "hospOptDischargesEV",
+    "label": "Hospital Operations - Discharges - Emergency Visits",
+    "representation": "simple",
+    "uploadable": "firstyear",
+    "group_by": null,
+    "fields": [
+      {
+        "key": "emergencyvisits",
+        "label": "Total number of emergency deparment visits",
+        "data_type": "integer"
+      },
+      {
+        "key": "emergencyvisitsadult",
+        "label": "Total number of emergency deparment visits, adult",
+        "data_type": "integer"
+      },
+      {
+        "key": "emergencyvisitspediatric",
+        "label": "Total number of emergency deparment visits, pediatric",
+        "data_type": "integer"
+      },
+      {
+        "key": "evfromfacilitytoanother",
+        "label": "Total number of patients transported FROM THIS FACILITY's EMERGENCY DEPARTMENT to another facility for inpatient care",
+        "data_type": "integer"
+      }
+    ]
+  },
+  "hospitalOperationsDeaths": {
+    "key": "hospitalOperationsDeaths",
+    "label": "Hospital Operations - Deaths",
+    "representation": "simple",
+    "uploadable": "firstyear",
+    "group_by": null,
+    "fields": [
+      {
+        "key": "totaldeaths48down",
+        "label" : "Total deaths < 48 hours",
+        "data_type" : "integer"
+      },
+      {
+        "key": "totaldeaths48up",
+        "label" : "Total deaths > 48 hours",
+        "data_type" : "integer"
+      },
+      {
+        "key": "totalerdeaths",
+        "label" : "Total number of emergency room deaths",
+        "data_type" : "integer"
+      },
+      {
+        "key": "totaldoa",
+        "label" : "Total number of cases declared 'dead on arrival'",
+        "data_type" : "integer"
+      },
+      {
+        "key": "totalstillbirths",
+        "label" : "Total number of stillbirths",
+        "data_type" : "integer"
+      },
+      {
+        "key": "totalneonataldeaths",
+        "label" : "Total number of neonatal deaths",
+        "data_type" : "integer"
+      },
+      {
+        "key": "totalmaternaldeaths",
+        "label" : "Total number of maternal deaths",
+        "data_type" : "integer"
+      },
+      {
+        "key": "totaldischargedeaths",
+        "label" : "Total Discharges and Deaths for the same period",
+        "data_type" : "integer"
+      }   
+    ]
+  },
+  "hospitalOperationsMortalityDeaths": {
+    "key": "hospitalOperationsMortalityDeaths",
+    "label": "Hospital Operations - Deaths - Leading Causes of Mortality/Deaths Agewise",
+    "representation": "table",
+    "uploadable": "firstyear",
+    "group_by": "icd10code",
+    "fields": [
+      {
+        "key": "icd10code",
+        "label": "ICD 10 Code",
+        "data_type": "string"
+      },
+      {
+        "key": "munder1",
+        "label": "Male under 1",
+        "data_type": "integer"
+      },
+      {
+        "key": "funder1",
+        "label": "Female under 1",
+        "data_type": "integer"
+      },
+      {
+        "key": "m1to4",
+        "label": "Male 1 - 4",
+        "data_type": "integer"
+      },
+      {
+        "key": "f1to4",
+        "label": "Female 1 - 4",
+        "data_type": "integer"
+      },
+      {
+        "key": "m5to9",
+        "label": "Male 5 - 9",
+        "data_type": "integer"
+      },
+      {
+        "key": "f5to9",
+        "label": "Female 5 - 9",
+        "data_type": "integer"
+      },
+      {
+        "key": "m10to14",
+        "label": "Male 10 - 14",
+        "data_type": "integer"
+      },
+      {
+        "key": "f10to14",
+        "label": "Female 10 - 14",
+        "data_type": "integer"
+      },
+      {
+        "key": "m15to19",
+        "label": "Male 15 - 19",
+        "data_type": "integer"
+      },
+      {
+        "key": "f15to19",
+        "label": "Female 15 - 19",
+        "data_type": "integer"
+      },
+      {
+        "key": "m20to24",
+        "label": "Male 20 - 24",
+        "data_type": "integer"
+      },
+      {
+        "key": "f20to24",
+        "label": "Female 20 - 24",
+        "data_type": "integer"
+      },
+      {
+        "key": "m25to29",
+        "label": "Male 25 - 29",
+        "data_type": "integer"
+      },
+      {
+        "key": "f25to29",
+        "label": "Female 25 - 29",
+        "data_type": "integer"
+      },
+      {
+        "key": "m30to34",
+        "label": "Male 30 - 34",
+        "data_type": "integer"
+      },
+      {
+        "key": "f30to34",
+        "label": "Female 30 - 34",
+        "data_type": "integer"
+      },
+      {
+        "key": "m35to39",
+        "label": "Male 35 - 39",
+        "data_type": "integer"
+      },
+      {
+        "key": "f35to39",
+        "label": "Female 35 - 39",
+        "data_type": "integer"
+      },
+      {
+        "key": "m40to44",
+        "label": "Male 40 - 44",
+        "data_type": "integer"
+      },
+      {
+        "key": "f40to44",
+        "label": "Female 40 - 44",
+        "data_type": "integer"
+      },
+      {
+        "key": "m45to49",
+        "label": "Male 45 - 49",
+        "data_type": "integer"
+      },
+      {
+        "key": "f45to49",
+        "label": "Female 45 - 49",
+        "data_type": "integer"
+      },
+      {
+        "key": "m50to54",
+        "label": "Male 50 - 54",
+        "data_type": "integer"
+      },
+      {
+        "key": "f50to54",
+        "label": "Female 50 - 54",
+        "data_type": "integer"
+      },
+      {
+        "key": "m55to59",
+        "label": "Male 55 - 59",
+        "data_type": "integer"
+      },
+      {
+        "key": "f55to59",
+        "label": "Female 55 - 59",
+        "data_type": "integer"
+      },
+      {
+        "key": "m60to64",
+        "label": "Male 60 - 64",
+        "data_type": "integer"
+      },
+      {
+        "key": "f60to64",
+        "label": "Female 60 - 64",
+        "data_type": "integer"
+      },
+      {
+        "key": "m65to69",
+        "label": "Male 65 - 69",
+        "data_type": "integer"
+      },
+      {
+        "key": "f65to69",
+        "label": "Female 65 - 69",
+        "data_type": "integer"
+      },
+      {
+        "key": "m70over",
+        "label": "Male 70 over",
+        "data_type": "integer"
+      },
+      {
+        "key": "f70over",
+        "label": "Female 70 over",
+        "data_type": "integer"
+      }
+    ]
+  },
+  "hospitalOperationsHAI": {
+    "key": "hospitalOperationsHAI",
+    "label": "Hospital Operations - Healthcare Associated Infections (HAI)",
+    "representation": "simple",
+    "uploadable": "always",
+    "group_by": null,
+    "fields": [
+      {
+        "key": "numhai",
+        "label": "Number of Healthcare Associated Infections",
+        "data_type": "integer"
+      },
+      {
+        "key": "numdischarges",
+        "label": "Total Number of Discharges",
+        "data_type": "integer"
+      },
+      {
+        "key": "patientnumvap",
+        "label": "Number of Patients with VAP",
+        "data_type": "integer"
+      },
+      {
+        "key": "totalventilatordays",
+        "label": "Total Number of Ventilator Days",
+        "data_type": "integer"
+      },
+      {
+        "key": "patientnumbsi",
+        "label": "Number of Patients with BSI",
+        "data_type": "integer"
+      },
+      {
+        "key": "totalnumcentralline",
+        "label": "Total Number of Central Line (pheripheral lines not included)",
+        "data_type": "integer"
+      },
+      {
+        "key": "patientnumuti",
+        "label": "Number of Patients with UTI",
+        "data_type": "integer"
+      },
+      {
+        "key": "totalcatheterdays",
+        "label": "Total Number of Catheter Days",
+        "data_type": "integer"
+      },
+      {
+        "key": "numssi",
+        "label": "Number of Surgical Site Infections (Clean Cases)",
+        "data_type": "integer"
+      },
+      {
+        "key": "totalproceduresdone",
+        "label": "Total number of Procedures done",
+        "data_type": "integer"
+      }
+    ]
+  },
+  "hospitalOperationsMajorOpt": {
+    "key": "hospitalOperationsMajorOpt",
+    "label": "Hospital Operations - Surgical Operations - Major Operations(excluding Cesarian Section)",
+    "representation": "table",
+    "uploadable": "firstyear",
+    "group_by": "operationcode",
+    "fields": [
+      {
+        "key": "operationcode",
+        "label": "Major Surgical Operation Code",
+        "data_type": "string"
+      },
+      {
+        "key": "number",
+        "label": "Number",
+        "data_type": "integer"
+      }
+    ]
+  },
+  "hospitalOperationsMinorOpt": {
+    "key": "hospitalOperationsMinorOpt",
+    "label": "Hospital Operations - Surgical Operations - Minor Operations",
+    "representation": "table",
+    "uploadable": "firstyear",
+    "group_by": "operationcode",
+    "fields": [
+      {
+        "key": "operationcode",
+        "label": "Minor Surgical Operation Code",
+        "data_type": "string"
+      },
+      {
+        "key": "number",
+        "label": "Number",
+        "data_type": "integer"
+      }
+    ]
+  },
+  "staffingPattern": {
+    "key": "staffingPattern",
+    "label": "Staffing Pattern",
+    "representation": "table",
+    "uploadable": "always",
+    "group_by": "professiondesignation",
+    "fields": [
+      {
+        "key": "professiondesignation",
+        "label": "Profession/Position/Designation",
+        "data_type": "string_lookup"
+      },
+      {
+        "key": "specialtyboardcertified",
+        "label": "SpecialtyBoardCertified",
+        "data_type": "integer"
+      },
+      {
+        "key": "fulltime40permanent",
+        "label": "Total staff working full-time (at least 40 hours/week) - Permanent",
+        "data_type": "integer"
+      },
+      {
+        "key": "fulltime40contractual",
+        "label": "Total staff working full-time (at least 40 hours/week) - Contractual",
+        "data_type": "integer"
+      },
+      {
+        "key": "parttimepermanent",
+        "label": "Total staff working part-time (at least 20 hours/week) - Permanent",
+        "data_type": "integer"
+      },
+      {
+        "key": "parttimecontractual",
+        "label": "Total staff working part-time (at least 20 hours/week) - Contractual",
+        "data_type": "integer"
+      },
+      {
+        "key": "activerotatingaffiliate",
+        "label": "Active Rotating or Visiting Affiliate",
+        "data_type": "integer"
+      },
+      {
+        "key": "outsourced",
+        "label": "Out-sourced",
+        "data_type": "integer"
+      }
+    ]
+  },
+  "staffingPatternOthers": {
+    "key": "staffingPatternOthers",
+    "label": "Staffing Pattern - Others",
+    "representation": "table",
+    "uploadable": "always",
+    "group_by": "professiondesignation",
+    "fields": [
+      {
+        "key": "parent",
+        "label": "Profession/Position/Designation Parent",
+        "data_type": "string_lookup"
+      },
+      {
+        "key": "professiondesignation",
+        "label": "Others",
+        "data_type": "string"
+      },
+      {
+        "key": "specialtyboardcertified",
+        "label": "SpecialtyBoardCertified",
+        "data_type": "integer"
+      },
+      {
+        "key": "fulltime40permanent",
+        "label": "Total staff working full-time (at least 40 hours/week) - Permanent",
+        "data_type": "integer"
+      },
+      {
+        "key": "fulltime40contractual",
+        "label": "Total staff working full-time (at least 40 hours/week) - Contractual",
+        "data_type": "integer"
+      },
+      {
+        "key": "parttimepermanent",
+        "label": "Total staff working part-time (at least 20 hours/week) - Permanent",
+        "data_type": "integer"
+      },
+      {
+        "key": "parttimecontractual",
+        "label": "Total staff working part-time (at least 20 hours/week) - Contractual",
+        "data_type": "integer"
+      },
+      {
+        "key": "activerotatingaffiliate",
+        "label": "Active Rotating or Visiting Affiliate",
+        "data_type": "integer"
+      },
+      {
+        "key": "outsourced",
+        "label": "Out-sourced",
+        "data_type": "integer"
+      }
+    ]
+  },
+  "expenses": {
+    "key": "expenses",
+    "label": "Expenses",
+    "representation": "simple",
+    "uploadable": "always",
+    "group_by": null,
+    "fields": [
+      {
+        "key": "salarieswages",
+        "label": "Amount spent on personnel salaries and wages",
+        "data_type": "amount"
+      },
+      {
+        "key": "employeebenefits",
+        "label": "Amount spent on benefits for employees (benefits are in addition to wages/salaries. Benefits include for example: social security contributions, health insurance)",
+        "data_type": "amount"
+      },
+      {
+        "key": "allowances",
+        "label": "Allowances provided to employees at this facility (Allowances are in addition to wages/salaries. Allowances include for example: clothing allowance, PERA, vehicle maintenance allowance and hazard pay.)",
+        "data_type": "amount"
+      },
+      {
+        "key": "totalamountmedicine",
+        "label": "Total amount spent on medicines",
+        "data_type": "amount"
+      },
+      {
+        "key": "totalamountmedicalsupplies",
+        "label": "Total amount spent on medical supplies (i.e. syringe, gauze, etc.; exclude pharmaceuticals)",
+        "data_type": "amount"
+      },
+      {
+        "key": "totalamountutilities",
+        "label": "Total amount spent on utilities",
+        "data_type": "amount"
+      },
+      {
+        "key": "totalamountnonmedicalservice",
+        "label": "Total amount spent on non-medical services (For example: security, food service, laundry, waste management)",
+        "data_type": "amount"
+      },
+      {
+        "key": "amountinfrastructure",
+        "label": "Amount spent on infrastructure (i.e., new hospital wing, installation of ramps)",
+        "data_type": "amount"
+      },
+      {
+        "key": "amountequipment",
+        "label": "Amount spent on equipment (i.e. x-ray machine, CT scan)",
+        "data_type": "amount"
+      }
+    ]
+  },
+  "revenues": {
+    "key": "revenues",
+    "label": "Revenues",
+    "representation": "simple",
+    "uploadable": "always",
+    "group_by": null,
+    "fields": [
+      {
+        "key": "amountfromdoh",
+        "label": "Total amount of money received from the Department of Health",
+        "data_type": "amount"
+      },
+      {
+        "key": "amountfromlgu",
+        "label": "Total amount of money received from the local government",
+        "data_type": "amount"
+      },
+      {
+        "key": "amountfromdonor",
+        "label": "Total amount of money received from donor agencies (for example JICA, USAID, and others)",
+        "data_type": "amount"
+      },
+      {
+        "key": "amountfromprivateorg",
+        "label": "Total amount of money received from private organizations (donations from businesses, NGOs, etc.)",
+        "data_type": "amount"
+      },
+      {
+        "key": "amountfromphilhealth",
+        "label": "Total amount of money received from Phil Health",
+        "data_type": "amount"
+      },
+      {
+        "key": "amountfrompatient",
+        "label": "Total amount of money received from direct patient/out-of-pocket charges/fees",
+        "data_type": "amount"
+      },
+      {
+        "key": "amountfromreimbursement",
+        "label": "Total amount of money received from reimbursement from private insurance/HMOs",
+        "data_type": "amount"
+      },
+      {
+        "key": "amountfromothersources",
+        "label": "Total amount of money received from other sources (PAGCOR, PCSO, etc.)",
+        "data_type": "amount"
+      }
+    ]
+  }
+}

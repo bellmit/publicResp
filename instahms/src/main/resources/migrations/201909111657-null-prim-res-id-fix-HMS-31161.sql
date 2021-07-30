@@ -1,0 +1,10 @@
+-- liquibase formatted sql
+-- changeset sanjana.goyal:HMS-31161-null-prim-res-id-fix
+
+UPDATE scheduler_appointments SET prim_res_id = scheduler_appointment_items.resource_id FROM scheduler_appointment_items WHERE scheduler_appointments.appointment_id = scheduler_appointment_items.appointment_id  AND scheduler_appointment_items.resource_type = 'OPDOC' AND scheduler_appointments.prim_res_id is null and scheduler_appointments.res_sch_id =1 and scheduler_appointments.appointment_status in ('Booked','Confirmed', 'confirmed');
+
+UPDATE scheduler_appointments SET prim_res_id = scheduler_appointment_items.resource_id FROM scheduler_appointment_items WHERE scheduler_appointments.appointment_id = scheduler_appointment_items.appointment_id  AND scheduler_appointment_items.resource_type = 'THID' AND scheduler_appointments.prim_res_id is null and scheduler_appointments.res_sch_id =2 and scheduler_appointments.appointment_status in ('Booked','Confirmed', 'confirmed');
+
+UPDATE scheduler_appointments SET prim_res_id = scheduler_appointment_items.resource_id FROM scheduler_appointment_items WHERE scheduler_appointments.appointment_id = scheduler_appointment_items.appointment_id  AND scheduler_appointment_items.resource_type = 'SRID' AND scheduler_appointments.prim_res_id is null and scheduler_appointments.res_sch_id =3 and scheduler_appointments.appointment_status in ('Booked','Confirmed', 'confirmed');
+
+UPDATE scheduler_appointments SET prim_res_id = scheduler_appointment_items.resource_id FROM scheduler_appointment_items WHERE scheduler_appointments.appointment_id = scheduler_appointment_items.appointment_id  AND scheduler_appointment_items.resource_type = 'EQID' AND scheduler_appointments.prim_res_id is null and scheduler_appointments.res_sch_id =4 and scheduler_appointments.appointment_status in ('Booked','Confirmed', 'confirmed');

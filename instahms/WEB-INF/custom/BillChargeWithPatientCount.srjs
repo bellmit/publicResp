@@ -1,0 +1,655 @@
+{
+	reportGroup: "Billing Reports",
+	title: "Bill Charge Report",
+	comment: "Custom report used by RSV-Kolkata, for new field visit_id_unique. From 8.4 onwards, we can use the aggFunction as count distinct, and the engine will automatically make it work",
+
+	allowNoDate: false,
+	dateFields: [
+	  "finalized_date",
+	  "posted_date",
+	  "open_date",
+	  "closed_date"
+	],
+	defaultOrder: "bill_no",
+	defaultShowFields: [
+	  "bill_no",
+	  "posted_date",
+	  "chargehead_name",
+	  "act_description",
+	  "amount",
+	  "discount",
+	  "net_amount"
+	],
+
+	description: "This report is a minimal Bill Charge Report builder with a one Unique Visits added for the purpose of counting unique number of visits.",
+
+	queryUnits: [{
+		joinTables: [
+		{
+			alias: "b",
+			dependsOn: "bc",
+			expression: "ON (bc.bill_no = b.bill_no)",
+			name: "bill",
+			type: "JOIN"
+		},
+		{
+			alias: "chc",
+			dependsOn: "bc",
+			expression: "ON (chc.chargehead_id = bc.charge_head)",
+			name: "chargehead_constants",
+			type: "JOIN"
+		},
+		{
+			alias: "cgc",
+			dependsOn: "chc",
+			expression: "ON (cgc.chargegroup_id = chc.chargegroup_id)",
+			name: "chargegroup_constants",
+			type: "JOIN"
+		},
+		{
+			alias: "ct",
+			dependsOn: "bc",
+			expression: "on (bc.consultation_type_id=ct.consultation_type_id )",
+			name: "consultation_types",
+			type: "LEFT"
+		},
+		{
+			alias: "ssg",
+			dependsOn: "bc",
+			expression: "ON (ssg.service_sub_group_id = bc.service_sub_group_id)",
+			name: "service_sub_groups",
+			type: "LEFT"
+		},
+		{
+			alias: "sg",
+			dependsOn: "bc,ssg",
+			expression: "ON (sg.service_group_id = ssg.service_group_id)",
+			name: "service_groups",
+			type: "LEFT"
+		},
+		{
+			alias: "bahc",
+			dependsOn: "chc",
+			expression: "ON (bahc.account_head_id = chc.account_head_id)",
+			name: "bill_account_heads",
+			type: "JOIN"
+		},
+		{
+			alias: "sbah",
+			dependsOn: "ssg",
+			expression: "ON (sbah.account_head_id = ssg.account_head_id)",
+			name: "bill_account_heads",
+		},
+		{
+			alias: "tdep",
+			dependsOn: "bc",
+			expression: "ON (tdep.dept_id = bc.act_department_id)",
+			name: "treating_departments_view",
+			type: "LEFT"
+		},
+		{
+			alias: "cdoc",
+			dependsOn: "bc",
+			expression: "ON(cdoc.doctor_id=bc.payee_doctor_id)",
+			name: "doctors",
+			type: "LEFT"
+		},
+		{
+			alias: "predoc",
+			dependsOn: "bc",
+			expression: "ON(predoc.doctor_id=bc.prescribing_dr_id)",
+			name: "doctors",
+			type: "LEFT"
+		},
+		{
+			alias: "bvn",
+			dependsOn: "b",
+			expression: "ON (bvn.visit_type = b.visit_type)",
+			name: "visit_type_names",
+			type: "JOIN"
+		},
+		{
+			alias: "pr",
+			dependsOn: "b",
+			expression: "ON (pr.patient_id = b.visit_id)",
+			name: "patient_registration",
+			type: "LEFT"
+		},
+		{
+			alias: "pd",
+			dependsOn: "pr",
+			expression: "ON (pd.mr_no = pr.mr_no)",
+			name: "patient_details",
+			type: "LEFT"
+		},
+		{
+			name: "department", alias: "admdep", dependsOn: "pr",
+			expression: "ON pr.admitted_dept = admdep.dept_id",
+		},
+		{
+			name: "organization_details", alias: "od", dependsOn: "pr",
+			expression: "ON pr.org_id = od.org_id",
+		},
+		{
+			name: "salutation_master", alias: "sm", dependsOn: "pd",
+			expression: "ON pd.salutation= sm.salutation_id"
+		},
+		],
+		mainTableAlias: "bc",
+		mainTableName: "bill_charge",
+		whereExpression: "b.status != 'X' AND bc.status != 'X'",
+		whereTable: "b"
+	}],
+
+	fields: {
+		  patient_amount: {
+			      aggFunction: "sum",
+			      allowHorizGroup: true,
+			      allowNull: false,
+			      dataType: "numeric",
+			      displayName: "Patient Amt.",
+			      expression: "CASE WHEN b.is_tpa THEN (COALESCE(bc.amount,0)-COALESCE(bc.insurance_claim_amount,0))::NUMERIC ELSE bc.amount END ",
+			      filterable: true,
+			      groupable: false,
+			      name: "patient_amount",
+			      table: "bc",
+			      width: 70
+			  },
+			  conducting_doctor: {
+			      allowHorizGroup: true,
+			      allowNull: true,
+			      allowedValuesQuery: "SELECT doctor_name FROM doctors ORDER BY doctor_name",
+			      dataType: "string",
+			      displayName: "Conducting Doctor",
+			      expression: "cdoc.doctor_name ",
+			      filterable: true,
+			      groupable: true,
+			      name: "conducting_doctor",
+			      table: "cdoc",
+			      width: 110
+			  },
+			  amount: {
+			      aggFunction: "sum",
+			      allowHorizGroup: true,
+			      allowNull: false,
+			      dataType: "numeric",
+			      decimalType: "amount",
+			      displayName: "Amount",
+			      expression: "(bc.discount+bc.amount) ",
+			      filterable: true,
+			      groupable: false,
+			      name: "amount",
+			      table: "bc",
+			      width: 60
+			  },
+			  treating_dept: {
+			      allowHorizGroup: true,
+			      allowNull: true,
+			      allowedValuesQuery: "SELECT dept_name AS treating_dept FROM treating_departments_view ORDER BY dept_name",
+			      dataType: "string",
+			      displayName: "Treating Department",
+			      expression: "tdep.dept_name ",
+			      filterable: true,
+			      groupable: true,
+			      name: "treating_dept",
+			      table: "tdep",
+			      width: 120
+			  },
+			  quantity: {
+			      allowHorizGroup: true,
+			      allowNull: false,
+			      dataType: "numeric",
+			      decimalType: "quantity",
+			      displayName: "Qty",
+			      expression: "bc.act_quantity ",
+			      filterable: true,
+			      groupable: false,
+			      name: "quantity",
+			      aggFunction: "sum",
+			      table: "bc",
+			      width: 40
+			  },
+			  orig_rate: {
+			      allowHorizGroup: true,
+			      allowNull: false,
+			      dataType: "numeric",
+			      decimalType: "amount",
+			                 description: "Original Rate ",
+			      displayName: "Original Rate",
+			      filterable: true,
+			      groupable: false,
+			      name: "orig_rate",
+			      table: "bc",
+			      width: 60
+			  },
+			  posted_date_time: {
+			      allowHorizGroup: true,
+			      allowNull: false,
+			      dataType: "timestamp",
+			      displayName: "Posted Date Time",
+			      expression: "bc.posted_date ",
+			      filterable: true,
+			      groupable: false,
+			      name: "posted_date_time",
+			      table: "bc",
+			      width: 100
+			  },
+			  pres_doc_name: {
+			      allowHorizGroup: true,
+			      allowNull: true,
+			      allowedValuesQuery: "SELECT doctor_name FROM doctors ORDER BY doctor_name",
+			      dataType: "string",
+			      displayName: "Pres. Doctor",
+			      expression: "predoc.doctor_name ",
+			      filterable: true,
+			      groupable: true,
+			      name: "pres_doc_name",
+			      table: "predoc",
+			      width: 110
+			  },
+			  posted_date: {
+			      allowHorizGroup: true,
+			      allowNull: false,
+			      dataType: "date",
+			      displayName: "Posted Date",
+			      expression: "DATE(bc.posted_date) ",
+			      filterable: true,
+			      groupable: true,
+			      name: "posted_date",
+			      table: "bc",
+			      width: 70
+			  },
+			  chargehead_name: {
+			      allowHorizGroup: true,
+			      allowNull: true,
+			      allowedValuesQuery: "SELECT chargehead_name FROM chargehead_constants  ORDER BY chargehead_name",
+			      dataType: "string",
+			      displayName: "Charge Head",
+			      filterable: true,
+			      groupable: true,
+			      name: "chargehead_name",
+			      table: "chc",
+			      width: 100
+			  },
+			  discount: {
+			      aggFunction: "sum",
+			      allowHorizGroup: true,
+			      allowNull: false,
+			      dataType: "numeric",
+			      decimalType: "amount",
+			      displayName: "Discount",
+			      filterable: true,
+			      groupable: false,
+			      name: "discount",
+			      table: "bc",
+			      width: 60
+			  },
+			  ac_head: {
+			      allowHorizGroup: true,
+			      allowNull: true,
+			      allowedValuesQuery: "SELECT account_head_name AS ac_head FROM bill_account_heads ORDER BY account_head_name",
+			      dataType: "string",
+			      displayName: "Account Head",
+			      expression: "coalesce(sbah.account_head_name, bahc.account_head_name)",
+			      filterable: true,
+			      groupable: true,
+			      name: "ac_head",
+			      table: "bahc,sbah",
+			      width: 75
+			  },
+			  net_amount: {
+			      aggFunction: "sum",
+			      allowHorizGroup: true,
+			      allowNull: false,
+			      dataType: "numeric",
+			      decimalType: "amount",
+			      displayName: "Net Amount",
+			      expression: "bc.amount ",
+			      filterable: true,
+			      groupable: false,
+			      name: "net_amount",
+			      table: "bc",
+			      width: 65
+			  },
+			  charge_id: {
+			      allowHorizGroup: true,
+			      allowNull: false,
+			      dataType: "string",
+			      displayName: "Charge ID",
+			      filterable: false,
+			      groupable: false,
+			      name: "charge_id",
+			      table: "bc",
+			      width: 60
+			  },
+			  ch_username: {
+			      allowHorizGroup: true,
+			      allowNull: true,
+			      allowedValuesQuery: "SELECT emp_username AS username FROM u_user JOIN u_role USING(role_id)\n\t\t\t\tWHERE  portal_id='N'  ORDER BY username",
+			      dataType: "string",
+			      displayName: "User",
+			      expression: "bc.username",
+			      filterable: true,
+			      groupable: true,
+			      name: "ch_username",
+			      table: "bc",
+			      width: 70
+			  },
+			  user_remarks: {
+			      allowHorizGroup: true,
+			      allowNull: false,
+			      dataType: "string",
+			      displayName: "Remarks",
+			      filterable: true,
+			      groupable: true,
+			      name: "user_remarks",
+			      table: "bc",
+			      width: 150
+			  },
+			  act_remarks: {
+			      allowHorizGroup: true,
+			      allowNull: false,
+			      dataType: "string",
+			      displayName: "Item Details",
+			      filterable: true,
+			      groupable: true,
+			      name: "act_remarks",
+			      table: "bc",
+			      width: 150
+			  },
+			  rate: {
+			      allowHorizGroup: true,
+			      allowNull: false,
+			      dataType: "numeric",
+			      decimalType: "amount",
+			      displayName: "Rate",
+			      expression: "bc.act_rate ",
+			      filterable: true,
+			      groupable: false,
+			      name: "rate",
+			      table: "bc",
+			      width: 60
+			  },
+			  chargegroup_name: {
+			      allowHorizGroup: true,
+			      allowNull: true,
+			      allowedValuesQuery: "SELECT chargegroup_name FROM chargegroup_constants  ORDER BY chargegroup_name",
+			      dataType: "string",
+			      displayName: "Charge Group",
+			      filterable: true,
+			      groupable: true,
+			      name: "chargegroup_name",
+			      table: "cgc",
+			      width: 75
+			  },
+			  insurance_claim_amount: {
+			      aggFunction: "sum",
+			      allowHorizGroup: true,
+			      allowNull: false,
+			      dataType: "numeric",
+			      decimalType: "amount",
+			      displayName: "Insurance Claim Amt.",
+			      filterable: true,
+			      groupable: false,
+			      name: "insurance_claim_amount",
+			      table: "bc,b",
+			expression: "CASE WHEN b.is_tpa THEN insurance_claim_amount ELSE 0 END",
+			      width: 70
+			  },
+			  service_sub_group_name: {
+			      allowHorizGroup: true,
+			      allowNull: true,
+			      allowedValuesQuery: "SELECT service_sub_group_name FROM service_sub_groups ORDER BY service_sub_group_name",
+			      dataType: "string",
+			      displayName: "Service Sub Group",
+			      filterable: true,
+			      groupable: true,
+			      name: "service_sub_group_name",
+			      table: "ssg",
+			      width: 90
+			  },
+			  act_description: {
+			      allowHorizGroup: true,
+			      allowNull: false,
+			      dataType: "string",
+			      displayName: "Item Description",
+			      filterable: true,
+			      groupable: true,
+			      name: "act_description",
+			      table: "bc",
+			      width: 150
+			  },
+			  service_group_name: {
+			      allowHorizGroup: true,
+			      allowNull: true,
+			      allowedValuesQuery: "SELECT service_group_name FROM service_groups ORDER BY service_group_name",
+			      dataType: "string",
+			      displayName: "Service Group",
+			      filterable: true,
+			      groupable: true,
+			      name: "service_group_name",
+			      table: "sg",
+			      width: 80
+			  },
+			  bill_remarks: {
+			      dataType: "string",
+			      displayName: "Bill Remarks",
+			      expression: "b.remarks ",
+			      filterable: false,
+			      groupable: false,
+			      table: "b",
+			      width: 150
+			  },
+			  closed_date: {
+			      dataType: "date",
+			      displayName: "Closed Date",
+			      expression: "date(b.closed_date) ",
+			      filterable: true,
+			      groupable: true,
+			      table: "b",
+			      width: 60
+			  },
+			  open_date: {
+			      dataType: "date",
+			      displayName: "Open Date",
+			      expression: " date(open_date) ",
+			      filterable: true,
+			      groupable: true,
+			      table: "b",
+			      width: 60
+			  },
+			  finalized_by: {
+			      allowNull: true,
+			      allowedValuesQuery: "SELECT emp_username FROM u_user JOIN u_role USING(role_id)\n\t\t\t\tWHERE portal_id='N' ORDER BY emp_username",
+			      dataType: "string",
+			      displayName: "Finalized by",
+			      filterable: true,
+			      groupable: true,
+			      table: "b",
+			      width: 100
+			  },
+			  payment_status: {
+			     allowedValues: [
+			          "Paid",
+			          "Unpaid"
+			      ],
+			      dataType: "string",
+			      displayName: "Payment Status",
+			      expression: " CASE WHEN b.payment_status = 'P' THEN 'Paid' ELSE 'Unpaid' END ",
+			      filterable: true,
+			      groupable: true,
+			      table: "b",
+			      width: 70
+			  },
+			  visit_type_name: {
+			      allowedValues: [
+			          "IP",
+			          "OP",
+			          "Retail",
+			          "Test"
+			      ],
+			      dataType: "string",
+			      displayName: "Visit Type",
+			      filterable: true,
+			      groupable: true,
+			      table: "bvn",
+			      width: 40
+			  },
+			  bill_no: {
+			      dataType: "string",
+			      displayName: "Bill No.",
+			      filterable: false,
+			      groupable: true,
+			      table: "b",
+			      width: 65
+			  },
+			  insurance_bill: {
+			      allowedValues: [
+			          "Yes",
+			          "No"
+			      ],
+			      dataType: "string",
+			                 description: "Is the bill an insurance bill (Yes/No)",
+			      displayName: "Ins. Bill",
+			      expression: "CASE WHEN b.is_tpa THEN 'Yes' ELSE 'No' END ",
+			      filterable: true,
+			      groupable: true,
+			      table: "b",
+			      width: 45
+			  },
+			  bill_status: {
+			      allowedValues: ["Open","Finalized","Closed"],
+			      dataType: "string",
+			      displayName: "Bill Status",
+			      expression: "CASE WHEN b.status = 'A' THEN 'Open'        WHEN b.status = 'F' THEN 'Finalized'        WHEN b.status = 'C' THEN 'Closed'        ELSE 'Cancelled' END ",
+			      filterable: true,
+			groupable: true,
+			      table: "b",
+			      width: 50
+			  },
+			  bill_usage_type: {
+			      allowedValues: [
+			          "Hospital",
+			          "Pharmacy",
+			          "Test"
+			      ],
+			      dataType: "string",
+			      displayName: "Usage Type",
+			      expression: "CASE WHEN b.restriction_type = 'T' THEN 'Test'       WHEN b.restriction_type = 'P' THEN 'Pharmacy'       ELSE 'Hospital'      END ",
+			      filterable: true,
+			      groupable: true,
+			      table: "b",
+			      width: 50
+			  },
+			  closed_by: {
+			      allowNull: true,
+			      allowedValuesQuery: "SELECT emp_username FROM u_user JOIN u_role USING(role_id)\n\t\t\t\tWHERE portal_id='N' ORDER BY emp_username",
+			      dataType: "string",
+			      displayName: "Closed by",
+			      filterable: true,
+			      groupable: true,
+			      table: "b",
+			      width: 100
+			  },
+			  bill_type: {
+			      allowedValues: [
+			          "Bill Now",
+			          "Bill Later"
+			      ],
+			      dataType: "string",
+			      displayName: "Bill Type",
+			      expression: "CASE WHEN b.bill_type='P' THEN 'Bill Now' ELSE 'Bill Later' END ",
+			      filterable: true,
+			      groupable: true,
+			      table: "b",
+			      width: 50
+			  },
+			  opened_by: {
+			      allowNull: true,
+			      allowedValuesQuery: "SELECT emp_username FROM u_user JOIN u_role USING(role_id)\n\t\t\t\tWHERE portal_id='N' ORDER BY emp_username",
+			      dataType: "string",
+			      displayName: "Opened by",
+			      filterable: true,
+			      groupable: true,
+			      table: "b",
+			      width: 100
+			  },
+			  visit_id: {
+			     dataType: "string",
+			      displayName: "Visit Id",
+			      filterable: false,
+			      groupable: false,
+			      table: "b",
+			      width: 65
+			  },
+			  visit_id_unique: { table: "b",
+			      dataType: "string",
+			      displayName: "Unique Visits",
+			      filterable: false,
+			      groupable: false,
+			      width: 50,
+			expression: "b.visit_id",
+			aggFunction: "distinct_count"
+			  },
+			  finalized_date: {
+			      dataType: "date",
+			      displayName: "Finalized Date",
+			      expression: " date(b.finalized_date) ",
+			      filterable: true,
+			      groupable: true,
+			      table: "b",
+			      width: 60
+			  },
+			  cancel_reason: {
+			      dataType: "string",
+			      displayName: "Cancel Reason",
+			      expression: " b.cancel_reason ",
+			      filterable: true,
+			      groupable: false,
+			      table: "b",
+			      width: 60
+			  },
+			  reopen_reason: {
+			      dataType: "string",
+			      displayName: "Reopen Reason",
+			      expression: " b.reopen_reason ",
+			      filterable: true,
+			      groupable: false,
+			      table: "b",
+			      width: 60,
+			  },
+			  reg_date: { table: "pr",
+			      displayName: "Adm/Reg. Date", width: 60, dataType: "date",
+			      groupable: true
+			  },
+			  admitted_dept_name: { table: "admdep",
+			      displayName: "Admitting Department", width: 120,
+			      filterable: true, groupable: true, allowNull: true,
+			      allowedValuesQuery: "SELECT dept_name FROM department ORDER BY dept_name",
+			      expression: "admdep.dept_name "
+			  },
+			  rate_plan: { table: "od",
+			      displayName: "Rate Plan", width: 70,
+			      filterable: true, groupable: true, allowNull: true,
+			      allowedValuesQuery: "SELECT org_name FROM organization_details ORDER BY org_name",
+			      expression: "od.org_name "
+			  },
+			  patient_gender: { table: "pd",
+			      displayName: "Gender", width: 40,
+			      allowedValues: [ "Male", "Female","Couple", "Other" ],
+			      filterable: true, groupable: true,
+			      expression: "CASE WHEN pd.patient_gender = 'M' THEN 'Male' WHEN pd.patient_gender = 'F' THEN 'Female' WHEN pd.patient_gender = 'C' THEN 'Couple' ELSE 'Other' END "
+			  },
+			  mr_no: { table: "pd",
+			      displayName: "MR No.", width: 65, filterable: true, groupable: true
+			  },
+			  full_name: { table: "pd,sm",
+			      displayName: "Patient Name", width: 150,
+			      expressionLines: [
+				"sm.salutation || ' ' || pd.patient_name || ",
+				"CASE WHEN coalesce(pd.middle_name, '') = '' THEN '' ELSE (' ' || pd.middle_name) END ",
+				" || CASE WHEN coalesce(pd.last_name, '') = '' THEN '' ELSE (' ' || pd.last_name) END ",
+			]
+			  }
+		}
+}

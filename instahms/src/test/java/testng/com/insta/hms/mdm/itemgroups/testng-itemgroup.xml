@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<suite name="ItemGroupTest" verbose="10" allow-return-values="true">
+	<test name="itemgroup">
+		<classes>
+			<class name="testng.com.insta.hms.mdm.itemgroups.ItemGroupsServiceTest" />
+			<methods>
+				<exclude name="buildParamMap" />
+				<exclude name="getInsertParams" />
+				<exclude name="getUpdateParams" />
+			</methods>
+		</classes>
+	</test>
+
+</suite>

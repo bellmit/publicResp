@@ -1,0 +1,632 @@
+{
+    "title": "Doctor Consultation Report",
+    "reportGroup": "Consultation Reports",
+    "dateFields": [
+        "visited_date",
+        "presc_date"
+    ],
+    "description": "This report builder gives a detailed description of all consultations scheduled between the chosen date range. (Note: The builder includes only consultations which were ordered from the Order screen, that is, those that are directly added to the bill are excluded.)",
+    "defaultShowFields": [
+        "mr_no",
+        "patient_id",
+        "full_name",
+        "cons_doctor_name",
+        "visited_date",
+        "visited_time"
+    ],
+    "includes": [
+        "PatientDetailFields.srjs",
+        "PatientVisitFields.srjs"
+    ],
+    "queryUnits": [
+        {
+            "mainTableAlias": "dc",
+            "mainTableName": "doctor_consultation",
+            "joinTables": [
+                {
+                    "name": "patient_registration",
+                    "alias": "pr",
+                    "expression": "ON (pr.patient_id = dc.patient_id)",
+                    "dependsOn": "dc",
+                    "type": "JOIN"
+                },
+                {
+                    "name": "patient_details",
+                    "alias": "pd",
+                    "expression": "ON (pd.mr_no = dc.mr_no)",
+                    "dependsOn": "dc",
+                    "type": "JOIN"
+                },
+                {
+                    "name": "consultation_types",
+                    "alias": "ct",
+                    "expression": "ON (ct.consultation_type_id::text=dc.head AND (dc.ot_doc_role = '' OR dc.ot_doc_role IS NULL))",
+                    "dependsOn": "dc",
+                    "type": "JOIN"
+                },
+                {
+                    "name": "service_sub_groups",
+                    "alias": "ssg",
+                    "expression": "ON (ssg.service_sub_group_id = ct.service_sub_group_id)",
+                    "dependsOn": "ct"
+                },
+                {
+                    "name": "service_groups",
+                    "alias": "sg",
+                    "expression": "ON (sg.service_group_id = ssg.service_group_id)",
+                    "dependsOn": "ssg"
+                },
+                {
+                    "name": "package_prescribed",
+                    "alias": "pp",
+                    "expression": "ON (dc.package_ref=pp.prescription_id)",
+                    "dependsOn": "dc"
+                },
+                {
+                    "name": "packages",
+                    "alias": "pm",
+                    "expression": "ON (pm.package_id=pp.package_id)",
+                    "dependsOn": "pp"
+                },
+                {
+                    "name": "doctors",
+                    "alias": "doc",
+                    "expression": "ON (doc.doctor_id= dc.doctor_name)",
+                    "dependsOn": "dc"
+                },
+                {
+                    "name": "department",
+                    "alias": "condep",
+                    "dependsOn": "doc",
+                    "expression": "ON doc.dept_id = condep.dept_id"
+                },
+                {
+                    "name": "doctors",
+                    "alias": "pdoc",
+                    "expression": "ON (pdoc.doctor_id= dc.presc_doctor_id)",
+                    "dependsOn": "dc"
+                },
+                {
+                    "name": "mrd_diagnosis",
+                    "alias": "pmd",
+                    "expression": "ON (pmd.visit_id = pr.main_visit_id AND pmd.diag_type = 'P')",
+                    "dependsOn": "pr"
+                },
+                {
+                    "name": "diagnosis_statuses",
+                    "alias": "pds",
+                    "expression": " ON (pds.diagnosis_status_id=pmd.diagnosis_status_id)",
+                    "dependsOn": "pmd",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "mrd_diagnosis",
+                    "alias": "amd",
+                    "expression": " ON (amd.visit_id = pr.main_visit_id AND amd.diag_type = 'A')",
+                    "dependsOn": "pr"
+                },
+                {
+                    "name": "diagnosis_statuses",
+                    "alias": "ads",
+                    "expression": " ON (ads.diagnosis_status_id=amd.diagnosis_status_id)",
+                    "dependsOn": "amd",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "mrd_diagnosis",
+                    "alias": "vmd",
+                    "expression": " ON (vmd.visit_id = pr.main_visit_id AND vmd.diag_type = 'V')",
+                    "dependsOn": "pr"
+                },
+                {
+                    "name": "diagnosis_statuses",
+                    "alias": "vds",
+                    "expression": " ON (vds.diagnosis_status_id=vmd.diagnosis_status_id)",
+                    "dependsOn": "vmd",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "(SELECT visit_id, textcat_linecat(description) AS secondary_diagnosis, textcat_linecat(icd_code) AS secondary_diag_icd_code, textcat_linecat(remarks) as secondary_diag_remarks, textcat_linecat(diagnosis_status_name) as secondary_diag_status_names FROM mrd_diagnosis md LEFT JOIN diagnosis_statuses ds ON (md.diagnosis_status_id=ds.diagnosis_status_id) WHERE diag_type = 'S' GROUP BY visit_id)",
+                    "alias": "smd",
+                    "dependsOn": "pr",
+                    "expression": "ON (smd.visit_id = pr.patient_id)"
+                },
+                {
+                    "name": "(SELECT erx_consultation_id, max(pbm_presc_id) AS pbm_presc_id FROM pbm_prescription GROUP BY erx_consultation_id)",
+                    "alias": "perx",
+                    "dependsOn": "dc",
+                    "expression": "ON (perx.erx_consultation_id = dc.consultation_id)",
+                    "type": " LEFT"
+                },
+                {
+                    "name": "pbm_prescription",
+                    "alias": "pbmp",
+                    "dependsOn": "perx",
+                    "expression": "ON (pbmp.pbm_presc_id = perx.pbm_presc_id)",
+                    "type": " LEFT"
+                },
+                {
+                    "name": "scheduler_appointments",
+                    "alias": "sa",
+                    "dependsOn": "dc",
+                    "expression": "ON (sa.appointment_id = dc.appointment_id)",
+                    "type": " LEFT"
+                }
+            ]
+        }
+    ],
+    "fields": {
+        "previous_visit_id": {},
+        "cur_visit_id": {},
+        "mr_no": {
+            "table": "dc",
+            "displayName": "MR No.",
+            "width": 65,
+            "filterable": true,
+            "groupable": true,
+            "allowNull": false,
+            "expression": "dc.mr_no"
+        },
+        "cons_doctor_name": {
+            "table": "doc",
+            "displayName": "Consulting Doctor",
+            "width": 100,
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT doctor_name FROM doctors ORDER BY doctor_name",
+            "expression": "doc.doctor_name"
+        },
+        "cons_doctor_department": {
+            "table": "condep",
+            "displayName": "Consulting Department",
+            "width": 120,
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT dept_name FROM department ORDER BY dept_name",
+            "expression": "condep.dept_name"
+        },
+        "visited_date": {
+            "table": "sa",
+            "displayName": "Cons. Aptmt Date",
+            "description": "Consultation Aptmt Date",
+            "width": 70,
+            "dataType": "date",
+            "expression": "date(sa.appointment_time)"
+        },
+        "visited_time": {
+            "table": "sa",
+            "displayName": "Cons. Aptmt Time",
+            "expression": "to_char(sa.appointment_time,'hh24:mi')",
+            "width": 70
+        },
+        "consult_start_date": {
+            "displayName": "Cons. Start Date",
+            "description": "Consultation Date",
+            "width": 70,
+            "dataType": "date",
+            "expression": "date(dc.start_datetime)"
+        },
+        "consult_start_time": {
+            "displayName": "Cons. Start Time",
+            "expression": "to_char(dc.start_datetime,'hh24:mi')",
+            "width": 70
+        },
+        "consul_end_date": {
+            "displayName": "Cons. End Date",
+            "description": "Consultation End Date",
+            "width": 70,
+            "dataType": "date",
+            "expression": "date(dc.end_datetime)"
+        },
+        "consul_end_time": {
+            "displayName": "Cons. End Time",
+            "width": 70,
+            "expression": "to_char(dc.end_datetime, 'hh24:mi')"
+        },
+        "presc_date": {
+            "displayName": "Ordered Date",
+            "description": "Prescribed Date",
+            "width": 70,
+            "dataType": "date",
+            "expression": "date(dc.presc_date)"
+        },
+        "presc_time": {
+            "displayName": "Ordered Time",
+            "width": 70,
+            "expression": "to_char(dc.presc_date, 'hh24:mi')"
+        },
+        "closed_date": {
+            "displayName": "Closed Date",
+            "description": "Closed Date",
+            "width": 70,
+            "dataType": "date",
+            "expression": "date(dc.consultation_complete_time)"
+        },
+        "closed_time": {
+            "displayName": "Closed Time",
+            "description": "Consultation Closed Time",
+            "width": 70,
+            "expression": "to_char(dc.consultation_complete_time, 'hh24:mi')"
+        },
+        "waiting_time": {
+            "displayName": "Waiting Time",
+            "width": 70,
+            "description": "Order Time to Consultation Start Time",
+            "expression": "to_char(coalesce(dc.start_datetime, localtimestamp) - dc.visited_date, 'HH24:MI')",
+            "filterable": true
+        },
+        "waiting_time_minutes": {
+            "displayName": "Waiting Minutes",
+            "width": 70,
+            "dataType": "numeric",
+            "description": "Order Time to Consultation Start Time",
+            "expression": "(extract(epoch from coalesce(dc.start_datetime, localtimestamp) - dc.visited_date)/60)::integer"
+        },
+        "cons_time": {
+            "displayName": "Cons. Duration",
+            "width": 70,
+            "description": "Consultation Start Time to Consultation End Time (HH24:MI)",
+            "expression": "to_char(end_datetime - start_datetime, 'HH24:MI')"
+        },
+        "cons_time_minutes": {
+            "displayName": "Cons. Duration Minutes",
+            "width": 70,
+            "dataType": "numeric",
+            "description": "Consultation Start Time to Consultation End Time",
+            "expression": "(extract(epoch from end_datetime - start_datetime)/60)::integer"
+        },
+        "consultation_token": {
+            "table": "dc",
+            "displayName": "Consultation Token",
+            "width": 70,
+            "dataType": "numeric",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "expression": "dc.consultation_token"
+        },
+        "presc_doct_name": {
+            "displayName": "Presc. Doctor",
+            "description": "Presc. Doctor",
+            "width": 100,
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT doctor_name AS presc_doct_name FROM doctors ORDER BY doctor_name",
+            "expression": "pdoc.doctor_name",
+            "table": "pdoc",
+            "name": "presc_doct_name"
+        },
+        "cond_status": {
+            "displayName": "Status",
+            "width": 60,
+            "groupable": true,
+            "filterable": true,
+            "allowNull": false,
+            "allowedValues": [
+                "Active",
+                "Partial",
+                "Completed",
+                "Not Applicable",
+                "Cancelled"
+            ],
+            "expressionLines": [
+                "CASE ",
+                "WHEN dc.cancel_status='C' THEN 'Cancelled' ",
+                "WHEN dc.status='A' THEN 'Active' ",
+                "WHEN dc.status='P' THEN 'Partial' ",
+                "WHEN dc.status='C' THEN 'Completed' ",
+                "WHEN dc.status='U' THEN 'Not Applicable' ",
+                "END"
+            ]
+        },
+        "consultation_type": {
+            "displayName": "Consultation Type",
+            "width": 100,
+            "groupable": true,
+            "filterable": true,
+            "allowNull": false,
+            "allowedValuesQuery": "SELECT consultation_type FROM consultation_types",
+            "expression": "ct.consultation_type",
+            "table": "ct",
+            "name": "consultation_type"
+        },
+        "package_name": {
+            "displayName": "Package",
+            "width": 80,
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT package_name FROM packages GROUP BY package_name",
+            "expression": "pm.package_name",
+            "table": "pm",
+            "name": "package_name"
+        },
+        "service_group_name": {
+            "displayName": "Service Group",
+            "width": 80,
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT service_group_name FROM service_groups ORDER BY service_group_name",
+            "expression": "sg.service_group_name",
+            "table": "sg",
+            "name": "service_group_name"
+        },
+        "service_sub_group_name": {
+            "displayName": "Service Sub Group",
+            "width": 90,
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT service_sub_group_name FROM service_sub_groups ORDER BY service_sub_group_name",
+            "expression": "ssg.service_sub_group_name",
+            "table": "ssg",
+            "name": "service_sub_group_name"
+        },
+        "primary_diagnosis_description": {
+            "table": "pmd",
+            "displayName": "Primary Diagnosis",
+            "width": 150,
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "expression": "pmd.description"
+        },
+        "primary_diag_icd_code": {
+            "table": "pmd",
+            "displayName": "Primary Diag. Code",
+            "width": 40,
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "expression": "pmd.icd_code"
+        },
+        "admitting_diagnosis_description": {
+            "table": "amd",
+            "displayName": "Admitting Diagnosis",
+            "width": 150,
+            "groupable": true,
+            "filterable": true,
+            "expression": "amd.description"
+        },
+        "admitting_diag_icd_code": {
+            "table": "amd",
+            "displayName": "Admitting Diag. Code",
+            "width": 40,
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "expression": "amd.icd_code"
+        },
+        "secondary_diagnosis": {
+            "table": "smd",
+            "displayName": "Secondary Diagnosis",
+            "width": 150,
+            "filterable": true
+        },
+        "secondary_diag_icd_code": {
+            "table": "smd",
+            "displayName": "Sec. Codes",
+            "width": 40,
+            "description": "Secondary Diagnosis Codes",
+            "allowNull": true
+        },
+        "primary_diag_remarks": {
+            "table": "pmd",
+            "displayName": "Primary Diag. Remarks",
+            "width": 60,
+            "allowNull": true,
+            "expression": "pmd.remarks"
+        },
+        "primary_diag_status_name": {
+            "table": "pds",
+            "displayName": "Primary Diag. Status ",
+            "width": 60,
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "expression": "pds.diagnosis_status_name",
+            "allowedValuesQuery": "select diagnosis_status_name from diagnosis_statuses order by diagnosis_status_name"
+        },
+        "admitting_diag_remarks": {
+            "table": "amd",
+            "displayName": "Admitting Diag. Remarks",
+            "width": 60,
+            "allowNull": true,
+            "expression": "amd.remarks"
+        },
+        "admitting_diag_status_name": {
+            "table": "ads",
+            "displayName": "Admitting Diag. Status ",
+            "width": 60,
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "expression": "ads.diagnosis_status_name",
+            "allowedValuesQuery": "select diagnosis_status_name from diagnosis_statuses order by diagnosis_status_name"
+        },
+        "secondary_diag_remarks": {
+            "table": "smd",
+            "displayName": "Secondary Diag. Remarks",
+            "width": 60,
+            "allowNull": true,
+            "expression": "smd.secondary_diag_remarks"
+        },
+        "secodary_diag_status_name": {
+            "table": "smd",
+            "displayName": "Secondary Diag. Status ",
+            "width": 60,
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "expression": "smd.secondary_diag_status_names",
+            "allowedValuesQuery": "select diagnosis_status_name from diagnosis_statuses order by diagnosis_status_name"
+        },
+        "rvf_diagnosis_description": {
+            "table": "vmd",
+            "displayName": "Reason For Visit Diagnosis",
+            "width": 150,
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "expression": "vmd.description"
+        },
+        "rvf_diag_icd_code": {
+            "table": "vmd",
+            "displayName": "Reason For Visit Diag. Code",
+            "width": 40,
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "expression": "vmd.icd_code"
+        },
+        "rvf_diag_remarks": {
+            "table": "vmd",
+            "displayName": "Reason For Visit Diag. Remarks",
+            "width": 60,
+            "allowNull": true,
+            "expression": "vmd.remarks"
+        },
+        "rvf_diag_status_name": {
+            "table": "vds",
+            "displayName": "Reason For Visit Diag. Status ",
+            "width": 60,
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "expression": "vds.diagnosis_status_name",
+            "allowedValuesQuery": "select diagnosis_status_name from diagnosis_statuses order by diagnosis_status_name"
+        },
+        "reg_time": {
+            "displayName": "Adm/Reg. Time",
+            "width": 50,
+            "groupable": true,
+            "allowNull": true,
+            "expression": "to_char(pr.reg_time, 'hh24:mi')",
+            "table": "pr",
+            "name": "reg_time"
+        },
+        "patient_wait_time": {
+            "displayName": "Patient Wait Time (HH:MM)",
+            "width": 50,
+            "groupable": true,
+            "allowNull": true,
+            "expressionLines": [
+                " (EXTRACT(days FROM (dc.consultation_complete_time-dc.visited_date))*24) ",
+                " +(EXTRACT(hours FROM (dc.consultation_complete_time-dc.visited_date)))||':'|| ",
+                " to_char(EXTRACT(minutes FROM (dc.consultation_complete_time-dc.visited_date))+ ",
+                " (EXTRACT(seconds FROM (dc.consultation_complete_time-dc.visited_date))/60),'00')"
+            ]
+        },
+        "patient_wait_time_hours": {
+            "displayName": "Patient Wait Time (MM)",
+            "width": 50,
+            "allowNull": true,
+            "dataType": "integer",
+            "aggFunction": "sum",
+            "filterable": true,
+            "expressionLines": [
+                "(extract(epoch from dc.consultation_complete_time - dc.visited_date)/60)::integer "
+            ],
+            "table": "pr",
+            "name": "patient_wait_time_hours"
+        },
+        "erx_approval_status": {
+            "displayName": "ERx Approval Status",
+            "width": 60,
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValues": [
+                "Fully Approved",
+                "Fully Rejected"
+            ],
+            "expressionLines": [
+                "CASE ",
+                "WHEN pbmp.erx_approval_status='F' THEN 'Fully Approved' ",
+                "WHEN pbmp.erx_approval_status='R' THEN 'Fully Rejected' ",
+                "WHEN pbmp.erx_approval_status='P' THEN 'Partially Approved' ",
+                "END"
+            ]
+        },
+        "erx_reference_no": {
+            "table": "pbmp",
+            "displayName": "ERx Reference No.",
+            "width": 60,
+            "allowNull": true,
+            "expression": "pbmp.erx_reference_no"
+        },
+        "erx_presc_id": {
+            "table": "pbmp",
+            "displayName": "ERx Presc. ID",
+            "width": 120,
+            "allowNull": true,
+            "expression": "pbmp.erx_presc_id"
+        },
+        "erx_request_type": {
+            "table": "pbmp",
+            "displayName": "ERx Request Type",
+            "width": 60,
+            "allowNull": true,
+            "groupable": true,
+            "filterable": true,
+            "allowedValues": [
+                "Request",
+                "Cancellation"
+            ],
+            "expressionLines": [
+                "(substring(erx_request_type,4,length(erx_request_type)))"
+            ],
+            "name": "erx_request_type"
+        },
+        "aptmt_booked_date": {
+            "table": "sa",
+            "displayName": "Aptmt Booked Date",
+            "description": "Appointment Booked Date",
+            "width": 70,
+            "dataType": "date",
+            "expression": "date(sa.booked_time)"
+        },
+        "aptmt_booked_time": {
+            "table": "sa",
+            "displayName": "Aptmt Booked Time",
+            "description": "Appointment Booked Time",
+            "width": 70,
+            "expression": "to_char(sa.booked_time, 'hh24:mi')"
+        },
+        "scheduler_visit_type": {
+            "table": "sa",
+            "displayName": "Scheduler Visit Type",
+            "width": 100,
+            "groupable": true,
+            "filterable": true,
+            "allowedValues": [
+                "Main",
+                "Follow Up"
+            ],
+            "expression": "case when sa.scheduler_visit_type='M' then 'Main' when sa.scheduler_visit_type='F' then 'Follow Up' else NULL end"
+        },
+        "rescheduled": {
+            "table": "sa",
+            "displayName": "Rescheduled",
+            "width": 65,
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "groupable": true,
+            "filterable": true,
+            "expression": "case when sa.rescheduled='Y' then 'Yes' when sa.rescheduled='N' then 'No' else NULL end"
+        },
+        "reopen_remarks": {
+            "table": "dc",
+            "displayName": "Consultation Re-Open Reason",
+            "width": 100,
+            "allowNull": true,
+            "expression": "dc.reopen_remarks"
+        }
+    }
+}

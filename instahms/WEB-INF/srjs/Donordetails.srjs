@@ -1,0 +1,127 @@
+{
+    "title": "Donor Details Report",
+    "reportGroup": "IVF Reports",
+    "description": "This report shows all details of donor.",
+    "dateFields": [
+        "donation_date"
+    ],
+    "allowNoDate": true,
+    "defaultOrder": "donor_mr_no",
+    "defaultShowFields": [
+        "donor_mr_no",
+        "donation_date",
+        "donor_status",
+        "recipient_mr_no",
+        "donation_type",
+        "donation_status"
+    ],
+    "fields": {
+        "donor_mr_no": {
+            "table": "dh",
+            "displayName": "Donor MR No.",
+            "width": 65,
+            "filterable": true,
+            "groupable": true,
+            "expression": "dh.mr_no"
+        },
+        "donation_date": {
+            "displayName": "Donation Date",
+            "dataType": "date",
+            "width": "60",
+            "groupable": true,
+            "expression": "dd.donation_date",
+            "table": "dd"
+        },
+        "donor_status": {
+            "allowedValues": [
+                "Active",
+                "InActive"
+            ],
+            "dataType": "string",
+            "displayName": "Donor Status",
+            "expression": "CASE WHEN dh.donor_status = 'A' THEN 'Active'  ELSE 'InActive' END ",
+            "filterable": true,
+            "groupable": true,
+            "table": "dh",
+            "width": 50
+        },
+        "recipient_mr_no": {
+            "table": "dd",
+            "displayName": "Recipient MR No.",
+            "width": 65,
+            "filterable": true,
+            "groupable": true,
+            "expression": "dd.recipient_mr_no"
+        },
+        "donation_type": {
+            "allowedValues": [
+                "Sperm",
+                "Egg",
+                "Womb"
+            ],
+            "dataType": "string",
+            "displayName": "Donation Type",
+            "expressionLines": [
+                " CASE WHEN dd.donation_type = 'S' THEN 'Sperm' ",
+                " WHEN dd.donation_type = 'E' THEN 'Egg' ",
+                " WHEN dd.donation_type = 'W' THEN 'Womb' END "
+            ],
+            "filterable": true,
+            "groupable": true,
+            "table": "dd",
+            "width": 50
+        },
+        "donation_status": {
+            "allowedValues": [
+                "Success",
+                "Failure",
+                "Dont Know"
+            ],
+            "dataType": "string",
+            "displayName": "Donation Status",
+            "expressionLines": [
+                " CASE WHEN dd.donation_status = 'S' THEN 'Success' ",
+                " WHEN dd.donation_status = 'F' THEN 'Failure' ",
+                " WHEN  dd.donation_status = 'D' THEN 'Dont Know' END "
+            ],
+            "filterable": true,
+            "groupable": true,
+            "table": "dd",
+            "width": 50
+        },
+        "remarks": {
+            "dataType": "string",
+            "displayName": "Remarks",
+            "expression": "dd.remarks ",
+            "filterable": false,
+            "groupable": false,
+            "table": "dd",
+            "width": 150
+        },
+        "referral_details": {
+            "dataType": "string",
+            "displayName": "Referral Details",
+            "expression": "dh.referral_details",
+            "filterable": false,
+            "groupable": false,
+            "table": "dh",
+            "width": 150
+        }
+    },
+    "queryUnits": [
+        {
+            "mainTableAlias": "dh",
+            "mainTableName": "ivf_donor_header",
+            "groupBy": false,
+            "joinTables": [
+                {
+                    "name": "ivf_donor_details",
+                    "alias": "dd",
+                    "type": "LEFT",
+                    "expression": "ON (dd.donor_mr_no = dh.mr_no)",
+                    "dependsOn": "dh"
+                }
+            ]
+        }
+    ]
+}

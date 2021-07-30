@@ -1,0 +1,573 @@
+FORMAT: 1A
+HOST: http://blog.acme.com
+
+# Financial Accounting Documentation 12.2
+
+## Accounting Companies/Entities [/]
+
+### Accounting Companies/Entities [GET]
+
+Accounting Company is the fundamental business unit which maintains or supposed to maintain its own book of accounts separate from the rest of the business entities / units. Accounting Companies can be configured in two ways in Insta HMS.
+
+1.  All centers together can be treated as one single accounting company and pharmacies can be grouped into their own accounting groups.
+
+2.  Each center can be treated as a separate accounting company and pharmacies can be grouped into their own accounting groups.
+
+The above two models are realized through a combination of a backend preference, all_centers_same_accounting_company and store to account group mapping.
+
+Each accounting company / group is represented as such in the target financial system. Say each account group will be a separate organization in ZohoBooks and a separate accounting company in Tally.
+
+The following diagram represents the two models. Each customer / business should setup the correct model for their operations as a first step in accounting integration.
+
+![](media/fa_image55.png)
+
+
+## Ledger and Account Names [/]
+
+### Ledger and Account Names [GET]
+
+Typically every business has its own set of ledger accounts / account names to sub-categorize its major heads of account. However, since Insta is not an accounting system, per se, but only helps export the transactions into a full-fledged accounting system, it facilitates mapping of vouchers to the sub-heads through various means. Insta supports 3 ways of mapping vouchers to ledger accounts or account names
+
+-  Through charge heads for revenue transactions -- Every billable item or bill charge in Insta has a pre-defined charge head. The charge head associated with a charge in itself cannot be changed by the user. However, each of these charge heads can be grouped / mapped to account heads in the application. The account heads, so mapped will be considered as ledger/account names for these items for accounting purposes.
+
+    -  It is possible to use charge head route for some items / charge heads while we use the service subgroup route for some others. However, it is recommended to evaluate the 2 approaches and go with the approach that can cover most uses cases, to keep the mapping simple.
+
+    -  Once an approach is decided, user should set up the account head mappings as per their ledgers before rolling out the accounting integration / export through Insta.
+
+-  Through Service Sub Groups -- Each of the billable item in the system can be mapped to a Service Group and a Service Sub-group. The list of such service groups and sub-groups are also determined by the business users. Each of the service subgroup in turn can be mapped to an account head. The account head, so mapped will be considered as ledger account for accounting purposes. This mapping takes precedence over any other mappings discussed below.
+
+    -   Service Sub-Groups are a generic mechanism available to business users for ad-hoc grouping of items for reporting purposes.
+
+    -   If the hospital is not using item subgrouping for reporting purposes, OR the groups for reporting and accounting are perfectly aligned, then customer can take this route to ledger mapping for revenue transactions.
+
+-  Pre-defined system account names -- These are, as the name suggests, pre-defined within the Insta Accounting Integration layer. Examples of such names are Counter Receipts, Write-Off A/C, Deposit Liability A/C etc. These are typically a place-holder ledgers which can be allocated as per each business' requirements in the target accounting system. Typically these are accounts:
+
+    -   for a specific transaction type rather than individual transaction (as in Deposit Liability A/C) OR
+
+    -   an intermediate virtual ledger account which will be further allocated based on subsequent transactions or accounting events (Counter Receipts)
+
+    -   These are pre-defined and *not configurable* to keep the mapping system simple and aligned with most commonly used model.
+
+    -   More sophisticated mapping for these can be achieved through mapping within the target accounting system.
+
+## Accounting Export [/]
+
+Exporting data into an accounting system is a 2 step process within Insta.
+
+1.  **Posting of vouchers** to a staging table based on the transactions that have occurred in the system.
+
+2.  **Exporting of Vouchers** from the staging table to the target accounting system.
+
+### Posting of Vouchers [GET]
+
+#### Voucher Attributes
+
+1.  The vouchers in the staging table are typically one or more per transaction, but are not consolidated across transactions. This is to make sure there is transaction traceability for vouchers. Any consolidation required, may be done during export or within the target accounting system after export.
+
+2.  Depending on the transaction, every transaction is time-stamped with a voucher date. Say for e.g, charge posted date may be the voucher date for a billed item whereas invoice date (printed) may be the voucher date for a supplier invoice. In any case, the voucher date is the reference date for determining the accounting timelines.
+
+3.  Additionally every voucher also has a modified time (mod_time) which indicates exactly when the transaction occurred (new charge posted) or modified (rate changed for an item).
+
+4.  Each voucher entry will have a voucher number which may or may not be unique for each voucher, but uniquely identifies a financial document / transaction within the Insta application. For e.g., bill no tagged to each billed item, supplier invoice number tagged to stock inward. However many items may carry the same bill no or invoice number.
+
+5.  Each voucher has a GUID, which universally unique id to identify an accounting entry. This is a system generated at the time of posting to the staging table and hence is not tied to any entity, financial or otherwise within the insta application. The same GUID serves a unique voucher identifier in the importing accounting system and can be used as required. However this cannot be modified once set.
+
+6.  Each voucher is immutable. Once a voucher is created in the staging table it will not be modified in anyway. Any changes to the underlying transaction or financial document will only be posted as a reversal or additional voucher as the case may be.
+
+#### Posting Time
+
+1.  Vouchers are posted once per day, typically at 1:00 AM (past midnight).
+
+2.  This is done through an automatic job. Each time the job runs, it sets 00:00 hours of the current date as the cut-off time for all vouchers to be posted.
+
+3.  All transactions which have mod_time (not voucher_date) earlier to cut-off time will be posted to the staging table.
+
+4.  Only those transactions that are modified after the last posting will be considered for posting.
+
+#### Transaction Status
+
+Transaction status has a bearing on whether a transaction is posted to accounting staging table. Each business may have its own set of rules as to when a financial transaction is considered ready to be posted into financial accounting.
+
+Businesses that use very stringent accounting practices, typically follow
+
+1. an accrual system of posting -- which means that transactions are posted as soon as they happen or as early as possible.
+
+2. any change to the transaction will always be recorded as a change / delta to the previously recorded values.
+
+Businesses that are not very stringent and / or have the need to support many changes to the transactions, either because of the complex workflows or evolving processes, prefer to leave a time window for corrections and modifications, before the export. This avoids unnecessary clutter in the accounting system.
+
+Recognizing the need for both mechanisms, Insta takes a mid-ground approach. Billing vouchers which form the bulk of the accounting vouchers from Insta and which are the most used by customers of Insta, are posted on accrual basis. All the other vouchers are posted based on the finalization basis.
+
+Note : Finalization is any event or change in the status of a transaction, which indicates that there would be no more changes to this financial transaction.
+
+### Export of Vouchers [GET]
+
+Once the vouchers are posted to the staging table, the user can choose to export the vouchers from the staging table to the target system. There are 2 types of data export supported currently.
+
+#### PUSH based out-of-the-box integration
+
+Insta HMS provides a UI screen from which the vouchers from the staging table can be explicitly filtered and selected and pushed to the target accounting system. This screen can be used for any out of the box integrations supported by Insta. This scheme of export uses a PUSH model in that vouchers move from Insta into the target system and the initiation happens within Insta.
+
+Currently out-of-the-box support is provided for ZohoBooks only. More out-of-the-box integrations are planned and in the pipeline.
+
+The UI provides the user, the ability
+
+1. to add additional layers of timeline -- while vouchers are posted to the staging every night, the user may choose to export into the actual accounting system, only at the end of the month. User may choose to export different accounting groups on different timelines, say (center 1 -- once a week and center 2 -- once a month).
+
+2. to verify and cross check the transactions before it reflects in the accounting system.
+
+#### PULL based custom integration
+
+For customers that use accounting applications that are not supported out-of-the-box, Insta provides a set of API, which can be used to pull the vouchers from the staging table and update the target accounting system. The protocol of exchange and mapping between Insta API and the target system, is the responsibility of the customer.
+
+For backward compatibility reasons, Insta also provides read / update access to the staging tables directly, which the customers and their partners may use to develop custom integration solutions. This usage, is however, deprecated as of Insta HMS Ver 12.0. Thereby customers are discouraged from using this option, in future. Customers who use this option currently should plan to migrate to the API model.
+
+![](media/fa_image57.png)
+
+
+### Transactions and Accounting Events Supported in Insta [GET]
+
+For the purpose of Accounting Integrations, Insta is concerned with three types of transactions:
+
+-   Direct Income Transactions
+
+-   Direct Expense Transactions
+
+-   Inter-company transfers for direct expense/income
+
+-   Inventory based Cost Accounting Transactions
+
+In particular, Insta doesn't deal with transactions like Capital, Depreciation, Payroll processing, etc as the HMS is not concerned with those.
+
+#### Billing:
+
+-   The hospital or pharmacy bill/invoice is created in Insta for patient transactions when a service is availed. The bill is a recognition of Direct Income/Revenue as well as a statement of how the revenue has been/is to be paid.
+
+-   Every charge element in the bill is revenue such as Doctor Consultations, Diagnostics, Services, Procedures, Surgeon Fees etc. Many charge elements can be grouped into the same account as well. (For example all Registration Charges related charges such as, General Registration Charges, OP Visit Charges, MLC Charges etc. may be accounted under Registration Charges account).
+
+-   Insta has a temporary account (Accounts Receivable/Asset Account) for holding all the money that is to be received from the patient. The billing voucher entries debit the current liability account called 'Counter Receipts' and credit the respective Revenue Accounts.
+
+-   The income (less of discounts) when recognized, must be apportioned into the following:
+
+    -   Money that has been / is to be received in the counter.
+
+    -   Money that someone will pay (claims made to TPA, patient payables)
+
+    -   Money that is to be written off.
+
+-   Only when this is done, can Insta create a voucher for a bill. When a voucher is created, the net effect is that Counter Receipts / Receivables / Write offs / Discounts is Debited and one or more Revenue Accounts are credited. In the balance sheet the Receivables appears as an Asset and the Revenue less write-offs appears as profits in the P&L Account.
+
+-   Bill Later, Status = Finalized suggests that no more charge modifications/additions can be done to the bill. Additional receipts / claims may be entered. Normally, the patient is not allowed to discharge till the patient settles his portion, but you can forcefully discharge the patient despite not settling his amount.
+
+-   Bill Now/Later Status = Closed suggests that no more activities are valid for the bill. There are validations to ensure that the Paid Amounts matches all the receipts + claims. The difference of paid and billed is the write-off amount.
+
+-   Insta follows a principle of accrual based accounting for all billing related voucher entries only. i.e. the moment a charge is added to the bill it can be posted to the accounting system almost real-time. It doesn't depend on certain events such as Bill Finalization or Bill Closure to suggest that the voucher can be posted for accounting. All modifications to the charge, such as edit amount, edit tax amount, claim amount modification etc. are then posted as adjustment entries. Although the Insta Financial Accounting-APIs do allow for an event based (bill finalized/closed/claim status) export to accounting as well based on the need of custom integrations for customers.
+
+-   Pharmacy Sales bills and Returns
+
+    -   Sales is part of Billing. Transactions will be exported from billing as usual and will contain Pharmacy entries as well. The difference with the Pharmacy Sales transactions is the impact on the Inventory Asset account which decreases/increases in value based on the stock levels.
+
+#### Receipts:
+
+-   Insta creates a voucher entry where the Cash / Credit card / other modes of payments, etc is credited and the Counter Receipts is Debited.
+
+-   The net effect is that the Counter Receipts cancel out and we will be left with a debit in Cash or equivalent and a Credit in many Revenue accounts. This two step process of Receipts and Bill allocation need not necessarily be at the same time. Only over a period of time will the Counter Receipts cancel out, we will have interim balances in the Counter Receipts which are yet to be allocated, or income that is yet to be paid for. This is due to the lag between billing and receipts.
+
+#### Credit Notes:
+
+-   Insta has a feature called Credit Notes that can be created to facilitate refunds or adjustments. There are 2 types of Credit Notes that can be created and they are a. Patient Credit Note or b. a Sponsor Credit Note.
+
+    -   The credit note follows the exact same principle for billing/receipt vouchers and post the respective reversal entries for the revenue accounts.
+
+#### Discounts:
+
+-   Discounts are to be specially handled, as it depends on how the client would like to consider the discounts to be posted. As of now Insta has two types of discounts 'Bill Level Discounts' and 'Item Level Discounts'. The Bill Level Discounts which are posted as a charge element in a bill is posted as a Discount Account/Expense account.
+
+-   The Item Level Discounts are not posted as a separate Discount Account as the net amount.
+
+-   Insta considers the charge element's gross amount, discount and net amount and posts the net amounts as Revenue amounts.
+
+-   If a custom integration is being done, Insta APIs can be used to extract the discount amounts against each charge element as a separate account and gross amounts to be considered as revenue.
+
+#### Payments
+
+-   The current Payments module is designed for two actions:
+
+    -   Calculations and approval of amounts that needs to be paid.
+
+    -   Making payments from the counter.
+
+-   For the Payments posted the Expense Accounts such as Doctor Payments, Outhouse Expenses, Misc Payments are debited. The individual Doctor, Outhouse and Misc Payee accounts are credited.
+
+-   Actual Payments are usually done on the Financial Accounting application but if done on Insta then the individual Doctor, Outhouse and Misc. Payee Accounts are credited and the corresponding Cash/Bank accounts are debited.
+
+#### Pharmacy and Inventory
+
+-   The treatment of Pharmacy and Inventory are identical when Pharmacy is part of the hospital and not mapped as a separate entity or group for accounting purposes.
+
+#### Inventory based Cost Accounting Transactions
+
+-   Purchases (or Stock Entry)
+
+    -   Purchases result in Payments and there are two scenarios to be handled:
+
+        -   Pharmacist makes the payment for cash purchases out of the cash box. These can be managed using the Payments module where Supplier Payments can be done.
+
+        -   Pharmacist acknowledges the invoice and completes acceptance of the stock. Accounts generates the Payments either using Insta's payments module or directly from the Accounting application in a consolidated manner.
+
+    -   The receipt of goods is a journal entry that debits the Inventory Account (Asset) and credits the Individual Suppliers (Liability - Accounts Payable). The second entry will be the Payment Voucher that debits the Supplier and credits the Cash/Cheque etc.
+
+-   Purchase Returns (or Supplier Returns with Debit Notes)
+
+    -   For purchase returns, the above Purchase /Stock entry transaction is reversed. The net result should be a voucher that debits the supplier and credits the inventory account.
+
+-   Stock Transfers
+
+    -   Stock Transfers happen within a center/cross center, resulting in a movement of goods and respective increase/decrease of Inventory value. The respective cost accounting transactions/vouchers are available as part of the Accounting exports.
+
+-   Stock Consumptions
+
+    -   Stock Consumptions happen via various transactions such as Issue to User or Reagent/Consumable usage in the Diagnostics/Services modules.
+
+    -   These result in a decrease in Item-stock/Inventory Account and the transactions are reflected for Accounting as well.
+
+-   Stock Adjustments
+
+    -   Insta has Stock Adjustment transactions which allow for the item-stock (Inventory Account) to be increased/decreased.
+
+    -   Currently these transactions are not available for accounting but are to be taken up in an upcoming release.
+
+-   Separate Pharmacy
+
+    -   In case the Pharmacy is a separate entity or group for accounting purposes, the same can be mapped in Insta as an Account Group = a\>Hospital b\> Pharmacy. The individual stores (Settings \> Stores Masters) created can then be mapped to the appropriate Account Group. The following are the repercussions:
+
+        -   While exporting Hospital data, Pharmacy bills and receipts are to be excluded from the list of bills / receipts being exported.
+
+        -   While exporting Pharmacy data, the pharmacy bills and receipts will need to be selected and included in the exported list.
+
+        -   If credit sales are added to the Hospital Bills, then the appropriate payments need to be made from the Hospital to the Pharmacy.
+
+#### Accounting Transaction Rules for Export
+
+-   Insta has transaction tables and periodically transform and load a table with all the respective Accounting voucher entries.
+
+-   These accounting voucher entries are created based on times when a cron-job is scheduled at the server. Insta suggests that it be set to run once every night though it can be run much more frequently, even every hour or shorter though not recommended due to the support of accrual based voucher entries.
+
+-   The accounting entries are created for the time interval between last successful run and the latest cut-off time.
+
+-   As mentioned already, the voucher creation for bills has nothing to do with the bill status being finalized and closed as we follow an accrual based accounting method. If it is so happens that the customer would like custom rules for revenue recognition the Insta Financial Accounting APIs can be used to apply export rules based on bill finalization, claims sent etc.
+
+Transaction|Accounting Event|Voucher Number|What kind of Voucher|Debit Account|Debit Amount|Credit Account|Credit Amount
+-----------|----------------|--------------|--------------------|-------------|------------|--------------|-------------
+**Receipts from Patients / Sponsors**|Patient Payment of Type = Advance|Receipt Number|Receipt|Cash/Credit Card/..|-|Counter Receipts|-
+ |Patient Payment of Type = Deposit|Receipt Number|Receipt|Cash/Credit Card/..|-|Counter Receipts|-
+ |Patient Payment of Type = Settlement|Receipt Number|Receipt|Cash/Credit Card/..|-|Counter Receipts|-
+ |Sponsor Payment of Type = Settlement|Receipt Number|Receipt|Cash/Credit Card/..|-|Counter Receipts|-
+ | | |Journal|Counter Receipts| |Individual Sponsor Account|
+ |Refund|Receipt Number|Receipt|Counter Receipts|-|Cash/Credit Card/..|-
+ |e-Claim Remittance or TPA payments|Receipt Number|Receipt|Cash/Credit Card/..|-|Counter Receipts|-
+ | | |Journal|Counter Receipts|-|Sponsor Account|-
+ |Incoming Samples|Receipt Number|Receipt|Cash/Credit Card/..|-|Incoming Hospital Name|-
+ |Spending Reward Points|Receipt Number|Receipt|Reward Points|-|Counter Receipts|-
+**Bills**|Hospital Bill|Bill Number|Journal|Counter Receipts|Net Amount after Discount|Account Name (Charge Head-wise)|Gross Amount
+ | | | |Discount Account|Discount Amount| |
+ | | | |Sponsor Account|Claim Amount| |
+ |Bill Adjustment|Bill Number|Journal|Account Name (Charge Head-wise)|Gross Amount|Counter Receipts|Net Amount after Discount
+ | | | | | |Discount Account|Discount Amount
+ | | | | | |Sponsor Account|Claim Amount
+ |Earning Reward Points|Bill Number|Journal|Counter Receipts|Amount of Reward Points|Reward Points Account|Amount
+ |Incoming Sample Bills|Bill Number|Journal|Incoming Hospital Name| |Account Name (Charge Head-wise)|
+**Pharmacy Sales / Returns**|Pharmacy Sales Bill (Cash)|Pharmacy Bill Number|Journal|Counter Receipts|Net Amount after discount|Pharmacy Sales|Gross Amount
+ | | | |Discount Account|Discount Amount| |                                                                   
+ | | | |Cost of Goods Sold Account|Cost Price of Item|Inventory Account|Cost Price of Item
+ |Pharmacy Returns|Pharmacy Bill Number|Journal|Pharmacy Sales|Gross Amount|Counter Receipts|Net amount after discount
+ | | | | | |Discount Account|Discount Amount
+ | | | |Inventory Account|Cost Price of Item|Cost of Goods Sold Account|Cost Price of Item
+**Doctor Payments**|Doctor Payments Due|Bill Number|Journal| |Doctor Commissions / Incentive Payout Account|Individual Doctor Account|
+ |Doctor Payments Paid|Payment number|Payment|Individual Doctor Account|Payment Amount|Cash/Bank Account|Payment Amount
+**Other Payments**|Misc Payment|Payment Number|Payment|Misc Payment Account|Payment Amount|Cash/Bank Account|Payment Amount
+ |Misc Payment Reversal|Payment Number|Receipt|Cash/Bank Account|Payment Amount|Misc Payment Account|Payment Amount
+ |Outhouse Payment Due|Bill Number|Journal|Outhouse Expense Account|Outhouse Payment Amount|Individual Outhouse Account|Payment Amount
+ |Outhouse Payment Paid|Payment Number|Payment|Individual Outhouse Account|-|Cash/Bank Account|-
+**Stock Entry**|GRN Entry|Invoice Number|Journal|Inventory Account|Invoice Amount|Individual Supplier Account|Invoice Amount
+**Supplier Returns with Debit Notes**|Debit Note|Debit Note Number|Journal|Individual Supplier account|Debit Note|Inventory Account|Debit Note
+**Stock Consumptions**|Consumption|Consumption No.|Journal|Consumption Account|Cost Price of Item|Inventory Account|Cost Price of Item
+**Stock Transfers**|Transfers within one Company|Transfer No|Journal|Inventory Account-Receiving Store Name|Cost Price of Item|Inventory Account-Transferring Store Name|Cost Price of Item
+ |Transfers across centers where each center is a different store|Transfer No|Journal|Inventory Account-Receiving Store Name(Center)|Cost Price of Item|Inventory Account-Transferring Store Name(Center)|Cost Price of Item
+**~~Stock Adjustments~~**|~~Stock Decrease~~|~~Adjustment No~~|~~Journal~~|~~Stock Adjustment Account~~|~~Cost Price of Item~~|~~Inventory Account~~|~~Cost Price of Item~~
+**~~Currently not supported~~**|~~Stock Increase~~|~~Adjustment No~~|~~Journal~~|~~Inventory Account~~|~~Cost Price of Item~~|~~Stock Adjustment Account~~|~~Cost Price of Item~~
+**Consignment Stock**|Consignment Issue|Issue No|Journal|Inventory Account|Cost Price of Item|Individual Supplier Account|Cost Price of Item
+ |Consignment Issue Returns|Issue No|Journal|Individual Supplier Account|Cost Price of Item|Inventory Account|Cost Price of Item
+
+## Integration with Zoho Books [/]
+
+Insta has integrated with Zoho Books to provide an out-of-the-box seamless integration option where transactions after they are performed on Insta can be periodically extracted, transformed and loaded in the form of vouchers to the Financial Accounting software.
+
+### Integration Setup: [GET]
+
+-   Once the Zoho Books Account is setup, notice that each account is assigned an Organization ID.
+
+![](media/fa_image35.png) 
+
+-   Generate the Authtoken for the Zoho Books account by going to this[Link](https://accounts.zoho.com/apiauthtoken/create?SCOPE=ZohoBooks/booksapi) and confirming the validation pop-up which shows up and copy-paste the auth token.
+
+![](media/fa_image12.png) 
+
+-   Connect with Insta-Support to ensure the module for zoho integration is enabled, if enabled then the following screen "Export to Zoho" shows in the menu via hamburger.
+
+![](media/fa_image33.png)
+ 
+
+-   Insta-Support will configure the back-end only configuration for the Insta Integration Table.
+
+    -   where integration name = zohobooks, center_id=0 for a single center schema or center id for a multi-center schema (one row each for each center), establishment key = zoho auth code token, integration_id and merchant_id = zoho organization id.
+
+### Mapping Account Heads on Insta to Zoho Chart of Accounts [GET]
+
+-   One of the pre-requisites for the export of data from Insta to Zoho is the mapping of each and every account as it exists in Insta and on Zoho. On Insta there is an Accounting Heads master which can be accessed from Settings \> Billing Preferences \> Accounting Heads. There are system default Accounting Heads, but they can be modified or new ones added as well.
+
+![](media/fa_image39.png)
+
+-   On Insta, there is a concept of Charge Heads (Settings \> Billing Preferences) which are used in the Billing/Insurance module and for Reporting purposes. Each Charge Head such as OP Consultation, Lab Charges, Radiology Charges, Services & Procedures etc. can then be individually mapped to one Account Head. For Example the OP Consultation billed in Insta is mapped to an Account Head called Doctor Consultation Charges as a Revenue Account.
+
+![](media/fa_image34.png)
+
+
+-   On Zoho the corresponding Accounting Heads need to be created as Accounts (Accountant \> Chart of Accounts).
+
+![](media/fa_image52.png)
+
+
+-   Click on the gear icon to bulk export and import the Chart of Accounts.
+
+![](media/fa_image30.png)
+
+
+-   Export the chart of accounts in CSV/XLS formats and define a password as well.
+
+![](media/fa_image58.png)
+
+
+-   The csv option allows definitions of all attributes of the account such as Account Code, Description, Account Type, etc.
+
+![](media/fa_image31.png)
+
+
+-   On Zoho it is mandatory for each Account created to map to an Account Type.
+
+-   The Account Types are: Asset, Liability, Expense, Income and Equity.
+
+-   Below is an example of the same manual creation of an Account by name Doctor Consultation Charges on Zoho as a Type = Income.
+
+![](media/fa_image37.png)
+
+
+### Exporting Voucher Entries from Insta to Zoho Manual Journals [GET]
+
+-   All transactions from Insta can be exported by accessing the Export to Zoho Screen. The process of exporting can be done every day / week, depending on convenience. The user can input a date range of transactions to be exported.
+
+-   To take a specific hospital billing voucher example, let us say there is one bill created which has the following Revenue/Income Charge Heads created as a result with no discounts/taxes. Here the Charge Heads are General Registration, OP Visit Registration, OP Consultation and Lab Tests each priced at 150, 200, 45 and 40 respectively.
+
+![](media/fa_image48.png)
+
+
+-   Based on how often you would like to schedule the export, say once in a day which can be configured by Insta-Support. The vouchers eligible for export will be available in the Export to Zoho Accounting screen. Access the screen from the menu (Accounting \> Export to Zoho).
+
+![](media/fa_image51.png)
+
+
+-   Search for the date range for vouchers, center (if multiple/account groups=one or multiple), voucher types such as All, Hospital Bills, Pharmacy Bills, Receipts etc and Export Status (Open, Failed, Exported).
+
+    -   Do note that the example as cited above is available for viewing as voucher entries where the respective Account Heads are debited/credited respectively.
+
+    -   There is a Voucher-wise detailed view and a Summary view across all vouchers and the accounts impacted with a display of the monetary value debited/credited.
+
+![](media/fa_image47.png)
+
+
+-   Hitting the Export action will post all the Voucher Entries from Insta to Zoho as Manual Journals.
+
+![](media/fa_image29.png)
+
+
+-   If the export fails to post the vouchers in Zoho there is a toast which displays the details of the error.
+
+![](media/fa_image36.png)
+
+
+-   The details of the vouchers which failed to export can be viewed by hovering over the failed label of each voucher.
+
+![](media/fa_image50.png)
+
+
+![](media/fa_image53.png)
+
+
+-   The successful vouchers are labelled in green and the hover of the same provides additional details.
+
+![](media/fa_image40.png)
+
+-   The corresponding Manual Journals created on Zoho is as below for the Bill (Accountant \> Manual Journals):
+
+![](media/fa_image32.png) 
+
+![](media/fa_image43.png) 
+
+![](media/fa_image41.png)
+
+![](media/fa_image38.png)
+
+
+-   You can then use Zoho for generating Reports from the respective section:
+
+![](media/fa_image56.png)
+
+
+## Appendix [/]
+
+### Basics of Accounting [GET]
+
+#### What is Financial Accounting?
+
+Accounting is the recording of all business transactions to provide a financial picture of an organization.
+
+#### What do Accounts Record?
+
+-   What we own?
+
+-   What we owe?
+
+-   What we've paid?
+
+-   What we are owed?
+
+-   What we have bought?
+
+#### What is a General Ledger?
+
+A General Ledger is a record of a company's entire financial history.
+
+#### What are accounts in a General Ledger? What are the types of accounts?
+
+Below is an illustration of a Copier - its monetary value can be found in the account called "Copiers".
+
+![](media/fa_image54.png)
+
+
+Below is an illustration of Cash - its value can be found in the account called "Cash".
+
+![](media/fa_image49.png)
+
+Below is an illustration of a Bill for Rent - its value owed by the business can be found in the account called "Rent Expenses".
+
+![](media/fa_image46.png)
+
+
+The amount in a particular account can increase or decrease, depending on the business transaction that affected it.
+
+#### Types of Accounts include:
+
+-   Assets: things of value an organization owns.
+
+-   Liabilities: obligations an organization owes to someone else.
+
+-   Expenses: the cost of doing business.
+
+-   Revenues: income an organization has earned.
+
+At least 2 of these account types are involved in any transaction.They can be 2 of the same or two different account types.
+
+#### What is Double-Entry Accounting?
+
+Double-Entry Accounting is governed by the accounting equation:
+
+*assets = liabilities + equity*
+
+For the accounts to remain in balance a change in one balance must be matched by a change in another account. These changes are made by debits and credits to the accounts.
+
+Debits and Credits are numbers recorded as follows:
+
+-   Debits are recorded on the left side of a T-Account ledger.
+
+-   Credits are recorded on the right side of a T-Account ledger.
+
+![](media/fa_image11.png)
+
+
+Type of Account|Debit|Credit
+---|---|---
+Assets|Increase|Decrease
+Liabilities|Decrease|Increase
+Expenses|Increase|Decrease
+Revenues|Decrease|Increase
+
+#### What is a Voucher?
+
+Each Voucher is a transaction indicating a set of Debit and Credit
+entries on various accounts. For an individual voucher, the sum of all
+Credit entries should be equal to the sum of Debit entries.
+
+The following are standard type of vouchers in Tally:
+
+-   Receipt: Getting cash in can only happen as a Receipt voucher.
+
+-   Payment: Opposite of Receipt
+
+-   Purchase
+
+-   Sales
+
+-   Journal: all other transactions should be entered as either Journal vouchers or User created.
+
+-   User Created
+
+#### Examples to understand the principles:
+
+##### What type of Account is "Accounts Receivable"?
+
+Accounts Receivable is an Asset. When there is an increase of the asset i.e. when the organization is owed money debit the account and credit the account when the organization gets paid.
+
+-   Hospital renders a service of Rs 9500, patient owes 500 and sponsor payable is 9000. What is the corresponding accounting entry?
+
+Account|Debit|Credit
+----------------|---|---
+Patient (Accounts Receivable)|500|
+Sponsor (Accounts Receivable)|9000|
+IP Bill (Revenue)| |9500
+
+-   Hospital gets paid by the Sponsor and Patient the 9000 and 500 respectively in cash. What is the corresponding accounting entry?
+
+Account|Debit|Credit
+----------------|---|--- 
+Cash (Asset)|9500|
+Patient (Accounts Receivable)| | 500
+Sponsor (Accounts Receivable)| |9000
+
+
+##### What type of Account is "Accounts Payable"?
+
+Accounts Payable is a Liability. When there is a decrease in the
+liability i.e. when the organization pays a debt for goods / services
+rendered at an earlier date and credit the account when the organization
+owes money for goods / services performed.
+
+-   Hospital buys medicines from GP Pharma worth 50,000. What is the corresponding accounting entry?
+
+Account|Debit|Credit
+----------------|---|--- 
+Inventory (Asset)|50000|
+GP Pharma (Accounts Payable)| |50000
+
+-   Hospital pays GP Pharma in cash for medicines. What is the corresponding accounting entry?
+
+Account|Debit|Credit
+----------------|---|--- 
+GP Pharma (Accounts Payable)|50000| 
+Cash (Asset)| |50000
+
+## Reference [/]
+
+### References [GET]
+
+[FA Integration - Interface Table Structure and Sample Data - Dec
+2017](insta_fa_ref_122017.xlsx)

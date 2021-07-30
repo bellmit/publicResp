@@ -1,0 +1,301 @@
+{
+    "title": "Diagnostics Revenue Report",
+    "reportGroup": "Diagnostics Reports",
+    "description": "This report shows all revenue from diagnostic charges within the given date range.",
+    "defaultOrder": "bill_no",
+    "dateFields": [
+        "posted_date",
+        "finalized_date",
+        "open_date",
+        "closed_date"
+    ],
+    "includes": [
+        "BillCharge.srjs"
+    ],
+    "queryUnits": [
+        {
+            "joinTables": [
+                {
+                    "includeName": "BillCharge.srjs"
+                },
+                {
+                    "alias": "ddep",
+                    "dependsOn": "bc",
+                    "expression": "ON (ddep.ddept_id = bc.act_department_id)",
+                    "name": "diagnostics_departments"
+                },
+                {
+                    "alias": "pm",
+                    "dependsOn": "bc",
+                    "expression": "ON (pm.package_id::text = bc.act_description_id)",
+                    "name": "packages"
+                },
+                {
+                    "alias": "bac",
+                    "dependsOn": "bc",
+                    "expression": "ON (bac.charge_id=bc.charge_id AND bac.activity_code='DIA')",
+                    "name": "bill_activity_charge"
+                },
+                {
+                    "alias": "tp",
+                    "dependsOn": "bac",
+                    "expression": "ON (bac.activity_id::integer= tp.prescribed_id::integer)",
+                    "name": "tests_prescribed"
+                },
+                {
+                    "alias": "tpr",
+                    "dependsOn": "bc,isr",
+                    "expression": "ON(tpr.test_id::text = bc.act_description_id and tpr.pat_id = isr.incoming_visit_id) ",
+                    "name": "tests_prescribed"
+                },
+                {
+                    "alias": "dom",
+                    "dependsOn": "tp,tpr",
+                    "expression": "ON (dom.outsource_dest_id = tp.outsource_dest_id or dom.outsource_dest_id = tpr.outsource_dest_id )",
+                    "name": "diag_outsource_master"
+                },
+                {
+                    "alias": "om",
+                    "dependsOn": "dom",
+                    "expression": "ON (om.oh_id = dom.outsource_dest)",
+                    "name": "outhouse_master"
+                },
+                {
+                    "alias": "hcmo",
+                    "dependsOn": "dom",
+                    "expression": "ON (hcmo.center_id::text = dom.outsource_dest)",
+                    "name": "hospital_center_master"
+                },
+                {
+                    "alias": "dod",
+                    "dependsOn": "tp,pr",
+                    "expression": "ON (dod.test_id = tp.test_id and dod.outsource_dest_id = tp.outsource_dest_id and dod.source_center_id = pr.center_id)",
+                    "name": "diag_outsource_detail"
+                },
+                {
+                    "alias": "dodr",
+                    "dependsOn": "tpr,isr",
+                    "expression": "ON (dodr.test_id = tpr.test_id and dodr.outsource_dest_id = tpr.outsource_dest_id and dodr.source_center_id = isr.center_id)",
+                    "name": "diag_outsource_detail"
+                },
+                {
+                    "alias": "dsm",
+                    "dependsOn": "tp",
+                    "expression": "ON tp.conducted = dsm.value",
+                    "name": "diag_states_master"
+                },
+                {
+                    "name": "mrd_diagnosis",
+                    "alias": "pdiag",
+                    "dependsOn": "tp",
+                    "expression": "ON (pdiag.diag_type = 'P' AND pdiag.visit_id = tp.pat_id)"
+                },
+                {
+                    "name": "referral",
+                    "alias": "isrref",
+                    "dependsOn": "pr",
+                    "expression": "ON isr.referring_doctor = isrref.referal_no"
+                },
+                {
+                    "name": "area_master",
+                    "alias": "isrrefar",
+                    "dependsOn": "isrref",
+                    "expression": " ON isrrefar.area_id = isrref.referal_doctor_area_id"
+                },
+                {
+                    "name": "city",
+                    "alias": "isrrefci",
+                    "dependsOn": "isrref",
+                    "expression": " ON isrrefci.city_id = isrref.referal_doctor_city_id"
+                },
+                {
+                    "name": "state_master",
+                    "alias": "isrrefst",
+                    "dependsOn": "isrrefci",
+                    "expression": " ON isrrefst.state_id = refci.state_id"
+                },
+                {
+                    "name": "district_master",
+                    "alias": "isrrefdi",
+                    "dependsOn": "isrrefci,refst",
+                    "expression": " ON isrrefdi.district_id = isrrefci.district_id AND isrrefdi.state_id = isrrefst.state_id"
+                },
+                {
+                    "name": "country_master",
+                    "alias": "isrrefc",
+                    "dependsOn": "isrrefst",
+                    "expression": " ON isrrefc.country_id = isrrefst.country_id"
+                }
+            ],
+            "mainTableAlias": "bc",
+            "mainTableName": "bill_charge",
+            "whereExpression": "b.status != 'X' AND bc.status != 'X' AND (bc.charge_group='DIA' OR (bc.charge_group='PKG' AND pm.type='D')) ",
+            "whereTable": "b,pm"
+        }
+    ],
+    "fields": {
+        "treating_dept": {
+            "table": "tdep",
+            "displayName": "Diagnostic Department",
+            "width": "120",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "expression": "tdep.dept_name ",
+            "allowedValuesQuery": "SELECT ddept_name from diagnostics_departments ORDER BY ddept_name"
+        },
+        "diag_dept_type": {
+            "table": "ddep",
+            "displayName": "Dept Type",
+            "width": "70",
+            "description": "Lab/Radiology",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "expression": "CASE WHEN ddep.category='DEP_LAB' THEN 'Lab' ELSE 'Radiology' END",
+            "allowedValues": [
+                "Lab",
+                "Radiology"
+            ]
+        },
+        "conducted": {
+            "table": "dsm",
+            "displayName": "Test Status",
+            "width": "120",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT display_name FROM diag_states_master",
+            "expression": "dsm.display_name"
+        },
+        "oh_name": {
+            "table": "om,dom,hcmo",
+            "displayName": "Out Source Name",
+            "width": "120",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "expression": " CASE WHEN dom.outsource_dest_type IN('O','IO') THEN om.oh_name ELSE hcmo.center_name END ",
+            "allowedValuesQuery": "SELECT oh_name from diag_outsource_view"
+        },
+        "charge": {
+            "table": "dod,dodr",
+            "displayName": "Out Source Amount",
+            "width": "120",
+            "filterable": true,
+            "allowNull": true,
+            "allowHorizGroup": true,
+            "dataType": "numeric",
+            "expression": "coalesce(dod.charge,dodr.charge) ",
+            "aggFunction": "sum"
+        },
+        "age": {
+            "table": "pd,isr",
+            "displayName": "Age",
+            "width": "50",
+            "filterable": true,
+            "dataType": "numeric",
+            "decimalType": "integer",
+            "expression": "get_patient_age(pd.dateofbirth, pd.expected_dob,isr.isr_dateofbirth,isr.patient_age)"
+        },
+        "age_in": {
+            "displayName": "Age In",
+            "expression": "get_patient_age_in(pd.dateofbirth, pd.expected_dob,isr.isr_dateofbirth,isr.age_unit)",
+            "width": "50"
+        },
+        "primary_diagnosis": {
+            "table": "pdiag",
+            "displayName": "Pri. Diagnosis Description",
+            "width": 150,
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "expression": "pdiag.description"
+        },
+        "primary_diag_icd_code": {
+            "table": "pdiag",
+            "displayName": "Pri. Diagnosis Code",
+            "width": 150,
+            "description": "Primary Diagnosis Code",
+            "expression": "pdiag.icd_code"
+        },
+        "primary_code_type": {
+            "table": "pdiag",
+            "displayName": "Pri. Diagnosis Code Type",
+            "width": 150,
+            "description": "Primary Diagnosis Code Type",
+            "expression": "pdiag.code_type"
+        },
+        "test_referer": {
+            "table": "rdoc,ref,isrref",
+            "displayName": "Test Ref. Doctor",
+            "width": 120,
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT referal_name as test_referer FROM referral UNION ALL SELECT doctor_name as test_referer FROM doctors ORDER BY test_referer",
+            "expression": "COALESCE(rdoc.doctor_name, ref.referal_name, isrref.referal_name) "
+        },
+        "test_referer_area": {
+            "table": "refar,isrrefar",
+            "displayName": "Test Ref. Doc. Area",
+            "width": 120,
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT area_name as test_referer_area FROM area_master ORDER BY test_referer_area",
+            "expression": "COALESCE(refar.area_name, isrrefar.area_name) "
+        },
+        "test_referer_city": {
+            "table": "refci,isrrefci",
+            "displayName": "Test Ref. Doc. City",
+            "width": 120,
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT city_name as test_referer_city FROM city ORDER BY test_referer_city",
+            "expression": "COALESCE(refci.city_name, isrrefci.city_name) "
+        },
+        "test_referer_district": {
+            "table": "refdi,isrrefdi",
+            "displayName": "Test Ref. Doc. District",
+            "width": 120,
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT district_name as test_referer_district FROM district_master ORDER BY test_referer_district",
+            "expression": "COALESCE(refdi.district_name,isrrefdi.district_name) "
+        },
+        "test_referer_state": {
+            "table": "refst,isrrefst",
+            "displayName": "Test Ref. Doc. State",
+            "width": 120,
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT state_name as test_referer_state FROM state_master ORDER BY test_referer_state",
+            "expression": "COALESCE(refst.state_name,isrrefst.state_name) "
+        },
+        "test_referer_country": {
+            "table": "refc,isrrefc",
+            "displayName": "Test Ref. Doc. Country",
+            "width": 120,
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT country_name as test_referer_country FROM country_master ORDER BY test_referer_country",
+            "expression": "COALESCE(refc.country_name,isrrefc.country_name) "
+        }
+    },
+    "defaultShowFields": [
+        "bill_no",
+        "finalized_date",
+        "bill_patient_full_name",
+        "chargehead_name",
+        "act_description",
+        "treating_dept",
+        "amount",
+        "discount",
+        "net_amount"
+    ]
+}

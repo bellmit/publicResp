@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PaymentVoucher" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="515" leftMargin="30" rightMargin="30" topMargin="40" bottomMargin="40" scriptletClass="com.insta.hms.common.JRCommonScriptlet">
+	<property name="ireport.scriptlethandling" value="2"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="hospid" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="printmasterheader" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="voucherNo" class="java.lang.String"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="center_id" class="java.lang.Integer" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new Integer(0)]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT pd.payment_type,
+(CASE WHEN  pd.payment_type in ('D','P') THEN  (SELECT doctor_name FROM doctors WHERE  doctor_id=pd.payee_name)
+WHEN pd.payment_type='R' THEN (SELECT doctor_name FROM  doctors WHERE doctor_id=pd.payee_name) WHEN
+pd.payment_type= 'F' THEN (SELECT referal_name FROM  referral where referal_no=pd.payee_name)
+WHEN pd.payment_type='O' THEN (SELECT oh_name FROM  outhouse_master where oh_id=pd.payee_name)
+WHEN pd.payment_type='S' THEN (SELECT supplier_name FROM  supplier_master where supplier_code=pd.payee_name)
+ WHEN pd.payment_type='C' THEN pd.payee_name ELSE pd.payee_name END ) as  payee_name,
+CASE WHEN p.mode='C' THEN 'CASH' WHEN p.mode='R' THEN 'Credit Card' WHEN p.mode='B'
+THEN 'Debit Card' WHEN p.mode='Q' THEN 'Cheque' ELSE 'Demand Draft' END as mode,
+ pd.category, p.voucher_no, p.date, p.tax_amount,
+ p.tds_amount, p.bank, p.reference_no, sum(pd.amount) as amount,(p.amount)  as totalamount,
+ count(p.voucher_no) as count,voucher_category,CASE WHEN voucher_category='R' THEN 'Receipt Voucher'else 'Payment Voucher' end as form_title
+ FROM  payments p JOIN payments_details pd ON (pd.voucher_no=p.voucher_no and
+ pd.payee_name=p.payee_name) where p.voucher_no='$P!{voucherNo}'
+ group by p.voucher_no,p.date,p.tax_amount,pd.category,p.mode,pd.payee_name,p.bank,p.reference_no,pd.payment_type  ,p.tds_amount,p.amount,voucher_category]]>
+	</queryString>
+	<field name="payment_type" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="payee_name" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="mode" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="category" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="voucher_no" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="date" class="java.sql.Timestamp">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="tax_amount" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="tds_amount" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="bank" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="reference_no" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="totalamount" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="amount" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="count" class="java.lang.Integer"/>
+	<field name="voucher_category" class="java.lang.String"/>
+	<field name="form_title" class="java.lang.String"/>
+	<group name="total">
+		<groupExpression><![CDATA[]]></groupExpression>
+		<groupHeader>
+			<band height="57">
+				<staticText>
+					<reportElement key="staticText-3" x="441" y="40" width="93" height="14"/>
+					<textElement textAlignment="Right"/>
+					<text><![CDATA[Amount]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-2" x="0" y="19" width="70" height="14"/>
+					<textElement/>
+					<text><![CDATA[Pay to           :]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-11" x="0" y="0" width="70" height="15"/>
+					<textElement/>
+					<text><![CDATA[Voucher No   :]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-12" x="369" y="0" width="62" height="14"/>
+					<textElement/>
+					<text><![CDATA[Date :]]></text>
+				</staticText>
+				<textField isBlankWhenNull="false">
+					<reportElement key="textField" x="69" y="0" width="100" height="15"/>
+					<textElement verticalAlignment="Middle">
+						<font isUnderline="false"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{voucher_no}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="false">
+					<reportElement key="textField-1" x="69" y="19" width="459" height="15"/>
+					<textElement verticalAlignment="Middle"/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{payee_name}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
+					<reportElement key="textField-2" x="434" y="0" width="100" height="15"/>
+					<textElement verticalAlignment="Middle"/>
+					<textFieldExpression class="java.util.Date"><![CDATA[$F{date}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement key="line-2" x="0" y="36" width="535" height="1"/>
+				</line>
+				<staticText>
+					<reportElement key="staticText-17" x="361" y="40" width="80" height="15"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<text><![CDATA[Count]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-17" x="0" y="40" width="361" height="15"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle"/>
+					<text><![CDATA[Category]]></text>
+				</staticText>
+				<line>
+					<reportElement key="line-2" x="0" y="56" width="535" height="1"/>
+				</line>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="103">
+				<staticText>
+					<reportElement key="staticText-4" x="6" y="89" width="113" height="14"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<text><![CDATA[Prepared By]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-6" x="398" y="89" width="113" height="14"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<text><![CDATA[Receiver's Signature]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-13" x="1" y="9" width="78" height="15"/>
+					<textElement/>
+					<text><![CDATA[Tax Amount  :]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-15" x="382" y="9" width="78" height="15"/>
+					<textElement/>
+					<text><![CDATA[Total Amount :]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement key="textField-7" x="79" y="9" width="70" height="15"/>
+					<textElement verticalAlignment="Middle"/>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{tax_amount}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement key="textField-8" x="234" y="9" width="90" height="15"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle"/>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{tds_amount}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement key="textField-9" x="460" y="9" width="74" height="15"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{voucher_category}.equals("P")?$F{totalamount}:BigDecimal.ZERO.subtract($F{totalamount})]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement key="staticText-16" x="0" y="27" width="98" height="14"/>
+					<textElement/>
+					<text><![CDATA[Rupees In Words :]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement key="textField-10" x="98" y="27" width="421" height="15"/>
+					<textElement verticalAlignment="Middle"/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{voucher_category}.equals("P")?$P{REPORT_SCRIPTLET}.toWords($F{totalamount}) +" only ":" Return "+$P{REPORT_SCRIPTLET}.toWords($F{totalamount}) +" only "]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement key="line-1" x="0" y="1" width="535" height="1"/>
+				</line>
+				<staticText>
+					<reportElement key="staticText-16" x="1" y="50" width="85" height="14"/>
+					<textElement/>
+					<text><![CDATA[Payment Mode :]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="85" y="50" width="71" height="14"/>
+					<textElement/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{mode}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement key="staticText-16" x="156" y="50" width="65" height="14"/>
+					<textElement>
+						<font pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[Bank Name:]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement x="221" y="50" width="119" height="14"/>
+					<textElement/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{bank}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement key="staticText-13" x="156" y="9" width="78" height="15"/>
+					<textElement/>
+					<text><![CDATA[TDS Amount :  ]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-16" x="342" y="50" width="77" height="14"/>
+					<textElement>
+						<font pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[Reference No :]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="419" y="50" width="115" height="14"/>
+					<textElement/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{reference_no}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement key="staticText-4" x="208" y="89" width="113" height="14"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<text><![CDATA[Authorized By]]></text>
+				</staticText>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band/>
+	</background>
+	<title>
+		<band height="94"/>
+	</title>
+	<pageHeader>
+		<band height="20">
+			<staticText>
+				<reportElement key="staticText-1" x="1" y="1" width="535" height="19">
+					<printWhenExpression><![CDATA[]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<subreport isUsingCache="true">
+				<reportElement key="subreport-1" x="-26" y="-110" width="589" height="111"/>
+				<subreportParameter name="type">
+					<subreportParameterExpression><![CDATA["bill"]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="center_id">
+					<subreportParameterExpression><![CDATA[$P{center_id}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR}+"/PrintmasterHeader.jasper"]]></subreportExpression>
+			</subreport>
+			<textField>
+				<reportElement x="0" y="3" width="535" height="17"/>
+				<textElement textAlignment="Center">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{form_title}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band/>
+	</columnHeader>
+	<detail>
+		<band height="15">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField-3" x="441" y="0" width="93" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{voucher_category}.equals("P")?$F{amount}:BigDecimal.ZERO.subtract($F{amount})]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-11" x="0" y="0" width="361" height="15"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{category}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField-3" x="361" y="0" width="80" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.Integer"><![CDATA[$F{count}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band/>
+	</columnFooter>
+	<pageFooter>
+		<band/>
+	</pageFooter>
+	<summary>
+		<band/>
+	</summary>
+</jasperReport>

@@ -1,0 +1,169 @@
+{
+    "title": "Services Report",
+    "defaultOrder": "department",
+    "reportGroup": "Services Reports",
+    "dateFields": [
+        "presc_date",
+        "conducteddate",
+        "cancel_date"
+    ],
+    "description": "This report builder gives a detailed description of all services within the selected date range. (Note: The builder describes only those services, which were prescribed from the Prescribe Services screen. )",
+    "tableName": [
+        "rpt_services_view"
+    ],
+    "defaultShowFields": [
+        "mr_no",
+        "patient_id",
+        "patient_name",
+        "service_name",
+        "presc_date",
+        "pres_doctor",
+        "conducted",
+        "conducteddate",
+        "quantity"
+    ],
+    "fields": {
+        "mr_no": {
+            "displayName": "MR No.",
+            "width": "65"
+        },
+        "patient_id": {
+            "displayName": "Patient ID",
+            "width": "65"
+        },
+        "patient_name": {
+            "displayName": "Patient Name",
+            "width": "130"
+        },
+        "service_name": {
+            "displayName": "Service Name",
+            "width": "100",
+            "allowNull": true,
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT service_name FROM services GROUP BY service_name ORDER BY service_name"
+        },
+        "patient_type": {
+            "displayName": "Patient Type",
+            "width": "60",
+            "filterable": true,
+            "groupable": true,
+            "allowedValues": [
+                "In-Patient",
+                "Out-Patient"
+            ]
+        },
+        "department": {
+            "displayName": "Department",
+            "width": "100",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT department FROM services_departments ORDER BY department"
+        },
+        "age": {
+            "displayName": "Age",
+            "width": "50"
+        },
+        "gender": {
+            "displayName": "Gender",
+            "width": "50",
+            "filterable": true,
+            "groupable": true,
+            "allowedValues": [
+                "Male",
+                "Female",
+                "Couple",
+                "Others"
+            ]
+        },
+         "name_local_language": {
+                    "displayName": "Name In Local Language",
+                    "width": 150
+          },
+        "op_type_name": {
+            "displayName": "Visit/OP Type",
+            "width": "80",
+            "groupable": true,
+            "filterable": true,
+            "allowedValuesQuery": "SELECT op_type_name FROM op_type_names"
+        },
+        "presc_date": {
+            "displayName": "Presc. Date",
+            "width": "70",
+            "dataType": "date"
+        },
+        "presc_time": {
+            "displayName": "Presc. Time",
+            "width": "60"
+        },
+        "pres_doctor": {
+            "displayName": "Presc. Doctor",
+            "width": "100",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT doctor_name AS pres_doctor FROM doctors ORDER BY doctor_name"
+        },
+        "condby": {
+            "displayName": "Cond. Doctor",
+            "width": "100",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT doctor_name AS condby FROM doctors ORDER BY doctor_name"
+        },
+        "conducted": {
+            "displayName": "Service Conducted Status",
+            "width": "85",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValues": [
+                "Conducted",
+                "Not Conducted",
+                "Partially Conducted",
+                "Cancelled",
+                "Condn. Unnecessary"
+            ]
+        },
+        "conducteddate": {
+            "displayName": "Conducted Dt.",
+            "width": "70",
+            "dataType": "date"
+        },
+        "cond_time": {
+            "displayName": "Conducted Time",
+            "width": "60"
+        },
+        "cancel_date": {
+            "displayName": "Cancelled Dt.",
+            "width": "70",
+            "dataType": "date"
+        },
+        "cancelled_by": {
+            "displayName": "Cancelled By",
+            "width": "70"
+        },
+        "center_name": {
+            "displayName": "Center Name",
+            "width": "100",
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT center_name FROM hospital_center_master WHERE center_id!=0"
+        },
+        "quantity": {
+            "displayName": "Qty Ordered",
+            "width": "65"
+        },
+        "tooth_number": {
+            "displayName": "Tooth Number",
+            "width": "42",
+            "filterable": true
+        },
+        "remarks": {
+            "displayName": "Remarks",
+            "width": "70"
+        }
+    }
+}

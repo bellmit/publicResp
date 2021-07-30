@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+		xmlns:p="http://www.springframework.org/schema/p"
+		xmlns:context="http://www.springframework.org/schema/context"
+		xmlns:mvc="http://www.springframework.org/schema/mvc" 
+		xmlns:tx="http://www.springframework.org/schema/tx"
+		xmlns:jpa="http://www.springframework.org/schema/data/jpa" xmlns:aop="http://www.springframework.org/schema/aop"
+		xsi:schemaLocation="http://www.springframework.org/schema/beans  
+		http://www.springframework.org/schema/beans/spring-beans.xsd  
+		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/mvc
+		http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/tx
+	    http://www.springframework.org/schema/tx/spring-tx.xsd">
+	    
+	    
+	<!-- ==================================== -->
+	<!-- 								  	  -->
+	<!-- ==================================== -->
+	
+	
+	<bean id="registrationDocumentsController" class="com.insta.hms.documents.RegistrationDocumentsController">
+		<property name = "actionId" value = "reg_generic_docs"/>
+		<property name = "screenId" value = "edit_visit_details"/>
+	</bean>
+	<bean id="registrationDocumentsPrintController" class="com.insta.hms.documents.RegistrationDocumentsPrintController">
+		<property name = "actionId" value = "reg_card_print"/>
+		<property name = "authMode" value = "passthru"/>
+	</bean>
+	<bean id="generateRegistrationCardController" class="com.insta.hms.documents.GenerateRegistrationCardController">
+		<property name = "authMode" value = "passthru"/>
+	</bean>        
+	<bean id="generateBarCodeController" class="com.insta.hms.documents.GenerateBarCodeController">
+		<property name = "authMode" value = "passthru"/>
+	</bean>        
+	<!-- <bean id="insuranceDocumentsController" class="com.insta.hms.documents.InsuranceDocumentsController">
+		<property name = "actionId" value = "ins_generic_docs"/>
+		<property name = "screenId" value = "ins_generic_docs"/>
+	</bean> -->
+	<bean id="planCardDocumentsController" class="com.insta.hms.documents.PlanCardDocumentsController">
+		<property name = "authMode" value = "passthru"/>
+	</bean>
+	<bean id="uploadDocumentsController" class="com.insta.hms.documents.UploadDocumentsController">
+		<property name = "authMode" value = "passthru"/>
+	</bean>
+	<bean id="labTestDocumentController" class="com.insta.hms.documents.LabTestDocumentController">
+		<property name="authMode" value="passthru" />
+	</bean>
+	<bean id="radTestDocumentController" class="com.insta.hms.documents.RadTestDocumentController">
+		<property name="authMode" value="passthru" />
+	</bean>
+	<bean id="labTestDocumentPrintController" class="com.insta.hms.documents.LabTestDocumentPrintController">
+		<property name="authMode" value="passthru" />
+	</bean>
+	<bean id="radTestDocumentPrintController" class="com.insta.hms.documents.RadTestDocumentPrintController">
+		<property name="authMode" value="passthru" />
+	</bean>
+	<bean id="genericDocumentsController" class="com.insta.hms.documents.GenericDocumentsController">
+		<property name="authMode" value="passthru" />
+	</bean>
+	<bean id="genericFormController" class="com.insta.hms.forms.genericforms.GenericFormController">
+		<property name="authMode" value="passthru" />
+	</bean>
+</beans>

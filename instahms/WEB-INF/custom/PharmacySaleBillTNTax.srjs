@@ -1,0 +1,290 @@
+{
+  "comment": "Customized for TN hospitals by adding 4,5,12.5,14.5 tax amount split",
+  "title": "Sales Bills Report",
+  "defaultOrder": "sale_id",
+  "reportGroup": "Sales/Issues Reports",
+  "dateFields": ["sale_date"],
+  "description": "This report shows all Sales Bills within the given date range, the value of the sale and various components (amount, tax and discount) in that sale.",
+
+  "queryUnits": [
+  	{
+		"mainTableAlias": "ssm", "mainTableName": "store_sales_main", "groupBy": false,
+		"joinTables": [
+   			{
+				"type": "JOIN", "name": "stores", "alias": "s",
+				"expression": "ON (s.dept_id = ssm.store_id)"
+			},
+			{
+				"type": "JOIN", "name": "bill", "alias": "b",
+				"expression": "ON (b.bill_no = ssm.bill_no)"
+			},
+			{
+				"type": "JOIN", "name": "hospital_center_master", "alias": "hcm",
+				"expression": "ON (hcm.center_id=s.center_id)", "dependsOn": "s"
+			},
+			{
+				"type": "JOIN", "name": "bill_charge", "alias": "bc",
+				"expression": "ON (bc.charge_id = ssm.charge_id)",
+			},
+			{
+				"type": "JOIN", "name": "organization_details", "alias": "od",
+				"expression": "ON (b.bill_rate_plan_id = od.org_id)", "dependsOn": "b"
+			},
+			{
+				"type": "JOIN", "name": "visit_type_names", "alias": "vn",
+				"expression": "ON (vn.visit_type = b.visit_type)"
+			},
+			{
+				"name": "bill_receipts", "alias": "br",
+				"expression": "ON (b.no_of_receipts+b.primary_no_of_sponsor_receipts+b.secondary_no_of_sponsor = 1 AND r.bill_no = b.bill_no)",
+				"dependsOn": "b"
+			},
+      {
+        "name": "receipts", "alias": "r",
+        "expression": "ON (br.receipt_no=r.receipt_id)", "dependsOn": "br"
+      },
+			{
+				"name": "payment_mode_master", "alias": "pmn",
+				"expression": "ON (r.payment_mode_id = pmn.mode_id)", "dependsOn": "r"
+			},
+			{
+				"name": "card_type_master", "alias": "ctm",
+				"expression": "ON (r.card_type_id = ctm.card_type_id)", "dependsOn": "r"
+			},
+			{
+				"name": "store_retail_customers", "alias": "src",
+				"expression": "ON (src.customer_id = b.visit_id)", "dependsOn": "b"
+			},
+			{
+				"name": "store_retail_sponsors", "alias": "srs",
+				"expression": "ON (srs.sponsor_id = src.sponsor_name)", "dependsOn": "src"
+			},
+			{
+				"name": "patient_registration", "alias": "pr",
+				"expression": "ON (pr.patient_id = b.visit_id)", "dependsOn": "b"
+			},
+			{
+				"name": "op_type_names", "alias": "otn",
+				"expression": "ON (otn.op_type = pr.op_type)", "dependsOn": "pr"
+			},
+			{
+				"name": "patient_details", "alias": "pd",
+				"expression": "USING (mr_no)", "dependsOn": "pr"
+			},
+			{
+				"name": "salutation_master", "alias": "sm",
+				"expression": "ON (sm.salutation_id = pd.salutation)", "dependsOn": "pd"
+			},
+			{
+				name: "patient_category_master", "alias": "pcm",
+				"expression": "ON (pcm.category_id = pd.patient_category_id)", "dependsOn": "pd"
+			},
+			{
+				name: "tpa_master", "alias": "ptpa",
+				"expression": "ON (ptpa.tpa_id = pr.primary_sponsor_id)"
+			},
+			{
+				name: "tpa_master", "alias": "stpa",
+				"expression": "ON (stpa.tpa_id = pr.secondary_sponsor_id)"
+			},
+			{
+				name: "store_type_master", "alias": "stm",
+				"expression": "ON (stm.store_type_id = s.store_type_id)"
+			}
+		]
+	}
+  ],
+
+  "defaultShowFields": [
+    "sale_id", "sale_date", "sale_type", "bill_type", "visit_type_name",
+    "patient_full_name", "doctor_name", "all_discount", "total_item_tax",
+    "bill_amount"
+  ],
+
+  "fields": {
+    "sale_id": {
+	  "table": "ssm",
+      "displayName": "Sale Bill", "width": "65", "filterable": true
+    },
+    "bill_no": {
+	  "table": "ssm",
+      "displayName": "Hosp. Bill No.", "width": "65"
+    },
+    "return_bill_no": {
+	  "table": "ssm",
+      "displayName": "Orig Bill No.", "width": "65",
+      "description": "Bill number, if any, against which the return was made"
+    },
+    "visit_id": {
+	  "table": "b",
+      "displayName": "Visit ID", "width": "65", "groupable": true, "filterable": true
+    },
+    "cust_id": {
+	  "table": "pr,src",
+      "displayName": "MR No.", "width": "65", "groupable": true, "filterable": true,
+	  "expression": "COALESCE(pr.mr_no,src.customer_id)"
+    },
+    "sale_date": {
+	  "table": "ssm",
+      "displayName": "Sale Date", "dataType": "date", "width": "60", "groupable": true, "filterable": true,
+	  "expression": "date(sale_date)"
+    },
+    "user_remarks": {
+	  "table": "bc",
+      "displayName": "Remarks", "width": "150", "groupable": true, "filterable": true
+    },
+    "username": {
+	  "table": "ssm",
+      "displayName": "User", "width": "70", "groupable": true, "filterable": true,
+      "allowedValuesQuery": "SELECT emp_username FROM u_user JOIN u_role USING(role_id) WHERE hosp_user='Y' and portal_id='N' and emp_status='A' ORDER BY emp_username"
+    },
+    "visit_type_name": {
+	  "table": "b,vn",
+      "displayName": "Patient Type", "width": "80", "groupable": true, "filterable": true,
+      "allowedValues": ["IP","OP","Retail","Retail Credit"],
+	  "expression": "CASE WHEN b.visit_type='r' AND bill_type='C' THEN 'Retail Credit' ELSE vn.visit_type_name END"
+    },
+    "op_type_name": {
+	  "table": "otn",
+      "displayName": "Visit/OP Type", "width": "80", "groupable": true, "filterable": true,
+      "allowedValuesQuery": "SELECT op_type_name FROM op_type_names"
+    },
+    "patient_category_name": {
+	  "table": "pcm",
+      "displayName": "Patient Category", "width": "120", "groupable": true, "filterable": true,
+      "allowNull": true,
+      "allowedValuesQuery": "SELECT category_name FROM patient_category_master ORDER BY category_name",
+	  "expression": "pcm.category_name"
+    },
+    "patient_full_name": {
+	  "table": "sm,pd,src",
+      "displayName": "Patient Name", "width": "120", "groupable": true, "filterable": true,
+	  "expression": "COALESCE(get_patient_full_name(sm.salutation, pd.patient_name, pd.middle_name, pd.last_name), src.customer_name)"
+    },
+    "family_id": {
+	  "table": "pd",
+      "displayName": "Family Id", "width": "80", "groupable": true, "filterable": true
+    },
+    "doctor_name": {
+	  "table": "ssm",
+      "displayName": "Doctor Name", "width": "120", "groupable": true, "filterable": true,
+      "allowedValuesQuery": "SELECT * FROM (SELECT doctor_name FROM store_retail_doctor WHERE status = 'A' UNION ALL SELECT doctor_name FROM doctors WHERE status = 'A') as foo ORDER BY doctor_name"
+    },
+    "primary_sponsor_name": {
+	  "table": "ptpa,srs",
+      "displayName": "Primary Sponsor", "width": "120", "groupable": true, "filterable": true,
+      "allowedValuesQuery": "SELECT sponsor_name FROM store_retail_sponsors WHERE status = 'A' ORDER BY sponsor_name",
+	  "expression": "COALESCE(ptpa.tpa_name,srs.sponsor_name)"
+    },
+    "secondary_sponsor_name": {
+	  "table": "stpa",
+      "displayName": "Secondary Sponsor", "width": "120", "groupable": true, "filterable": true,
+      "allowedValuesQuery": "SELECT sponsor_name FROM store_retail_sponsors WHERE status = 'A' ORDER BY sponsor_name",
+	  "expression": "stpa.tpa_name"
+    },
+    "rate_plan": {
+	  "table": "od",
+      "displayName": "Rate Plan", "width": "70", "groupable": true, "filterable": true,
+      "allowedValuesQuery": "SELECT org_name FROM organization_details ORDER BY org_name",
+	  "expression": "od.org_name"
+    },
+    "payment_mode": {
+	  "table": "pmn,b",
+      "displayName": "Payment Mode", "width": "50", "groupable": true, "filterable": true,
+      "allowedValuesQuery": "SELECT '(None)' UNION ALL SELECT '(Add to Bill)' UNION ALL SELECT payment_mode FROM (SELECT payment_mode FROM payment_mode_master ORDER BY payment_mode) as f UNION ALL SELECT '(Multiple)'",
+	  "expression": "CASE WHEN bill_type ='C' THEN '(Add to Bill)' WHEN (no_of_receipts = 0) THEN '(None)' WHEN (no_of_receipts > 1) THEN '(Multiple)' ELSE pmn.payment_mode END"
+    },
+    "card_type": {
+	  "table": "ctm",
+      "displayName": "Card Type", "width": "75", "groupable": true, "filterable": true, "allowNull": true,
+      "allowedValuesQuery": "SELECT card_type FROM card_type_master ORDER BY card_type"
+    },
+    "store_name": {
+	  "table": "s",
+      "displayName": "Store Name", "width": "100", "groupable": true, "filterable": true,
+      "allowedValuesQuery": "SELECT dept_name FROM stores ORDER by dept_name",
+	  "expression": "s.dept_name"
+    },
+    "center_name": {
+	  "table": "hcm",
+      "displayName": "Center Name", "width": "100", "groupable": true, "filterable": true,
+      "allowedValuesQuery": "SELECT center_name FROM hospital_center_master WHERE center_id!=0 ORDER by center_name"
+    },
+    "store_type_name": {
+	  "table": "stm",
+      "displayName": "Store Type", "width": "80", "filterable": true, "groupable": true, "allowNull": true,
+      "allowedValuesQuery": "SELECT store_type_name FROM store_type_master ORDER BY store_type_name"
+    },
+    "discount": {
+	  "table": "ssm",
+      "displayName": "Bill Discount", "width": "60", "filterable": true, "groupable": false,
+      "dataType": "numeric", "decimalType": "amount", "aggFunction": "sum"
+    },
+    "round_off": {
+	  "table": "ssm",
+      "displayName": "Round Off", "width": "60", "dataType": "numeric", "aggFunction": "sum"
+    },
+    "total_item_tax": {
+	  "table": "ssm",
+      "displayName": "Total Tax", "width": "60", "filterable": true,
+      "dataType": "numeric", "aggFunction": "sum", "decimalType": "amount"
+    },
+    "total_item_amount": {
+	  "table": "ssm",
+      "displayName": "Total Item Amt", "width": "60",
+      "dataType": "numeric", "aggFunction": "sum", "decimalType": "amount"
+    },
+    "tax_excluded_bill_amount": {
+      "displayName": "Pre-Tax Amt", "width": "60",
+      "description": "Bill Amount excluding tax",
+      "dataType": "numeric", "aggFunction": "sum", "decimalType": "amount",
+	  "expression": "(total_item_amount - ssm.discount - total_item_tax  + round_off)"
+    },
+    "total_item_discount": {
+	  "table": "ssm",
+      "displayName": "Total Discount", "width": "60", "filterable": true, "groupable": false,
+      "description": "Total of all item-level discounts (excludes bill discounts)",
+      "dataType": "numeric", "aggFunction": "sum", "decimalType": "amount"
+    },
+    "bill_amount": {
+      "displayName": "Bill Amt", "width": "60",
+      "dataType": "numeric", "aggFunction": "sum",
+	  "expression": "(total_item_amount - ssm.discount + round_off)"
+    },
+    "all_discount": {
+      "displayName": "Total Discount", "width": "60", "filterable": true,
+      "dataType": "numeric", "aggFunction": "sum", "decimalType": "amount",
+	  "expression": "(ssm.discount + total_item_discount)"
+    },
+    "bill_type": {
+	  "table": "b",
+      "displayName": "Bill Type", "width": "45",
+      "groupable": true, "filterable": true,
+      "allowedValues": ["Bill Now","Bill Later"],
+	  "expression": "CASE WHEN bill_type ='P' then 'Bill Now' else 'Bill Later' END"
+    },
+    "sale_type": {
+      "displayName": "Type", "width": "45", "groupable": true, "filterable": true,
+      "description": "Whether Sale or Return",
+      "allowedValues": ["Return","Sale"],
+	  "expression": "CASE WHEN type = 'S' THEN 'Sale' ELSE 'Return' END"
+    },
+	"tax4": {
+	  "displayName": "4% VAT", width:"60", dataType: "numeric", aggFunction: "sum",
+	  "expression": "COALESCE((SELECT sum(tax) FROM store_sales_details WHERE tax_rate = 4 AND sale_id = ssm.sale_id), 0)"
+	  },
+	"tax5": {
+	  "displayName": "5% VAT", width:"60", dataType: "numeric", aggFunction: "sum",
+	  "expression": "COALESCE((SELECT sum(tax) FROM store_sales_details WHERE tax_rate = 5 AND sale_id = ssm.sale_id), 0)"
+	  },
+	"tax125": {
+	  "displayName": "12.5% VAT", width:"60", dataType: "numeric", aggFunction: "sum",
+	  "expression": "COALESCE((SELECT sum(tax) FROM store_sales_details WHERE tax_rate = 12.5 AND sale_id = ssm.sale_id), 0)"
+	  },
+	"tax145": {
+	  "displayName": "14.5% VAT", width:"60", dataType: "numeric", aggFunction: "sum",
+	  "expression": "COALESCE((SELECT sum(tax) FROM store_sales_details WHERE tax_rate = 14.5 AND sale_id = ssm.sale_id), 0)"
+	  }
+  }
+}
+

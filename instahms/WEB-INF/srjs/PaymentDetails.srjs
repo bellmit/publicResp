@@ -1,0 +1,1353 @@
+{
+    "title": "Payment Details Report",
+    "defaultOrder": "payee_name",
+    "reportGroup": "Financial Reports",
+    "dateFields": [
+        "posted_date",
+        "finalized_date"
+    ],
+    "description": "This report builder gives a detailed description of all payments posted between the given date range.",
+    "defaultShowFields": [
+        "payee_name",
+        "payment_type",
+        "posted_date",
+        "description",
+        "payment_category",
+        "amount"
+    ],
+    "fields": {
+        "payee_name": {
+            "displayName": "Payee Name",
+            "width": "110",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT payee_name FROM payeenames_view ORDER BY payee_name"
+        },
+        "voucher_no": {
+            "displayName": "Voucher No.",
+            "width": "60",
+            "allowNull": true,
+            "filterable": true,
+            "groupable": false,
+            "dataType": "string"
+        },
+        "payment_id": {
+            "displayName": "Payment ID",
+            "width": "60",
+            "filterable": false,
+            "groupable": false
+        },
+        "payment_type": {
+            "displayName": "Payment Type",
+            "width": "150",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValues": [
+                "Conducting Doctor Payments",
+                "Miscellaneous Payments",
+                "Referral Doctor Payments",
+                "Prescribed Doctor Payments",
+                "Supplier Payments",
+                "OutHouse Payments"
+            ]
+        },
+        "posted_date": {
+            "displayName": "Posted Date",
+            "dataType": "date",
+            "width": "75"
+        },
+        "finalized_date": {
+            "displayName": "Finalized Date",
+            "dataType": "date",
+            "width": "75"
+        },
+        "description": {
+            "displayName": "Payment Description",
+            "width": "95"
+        },
+        "payment_category": {
+            "displayName": "Category",
+            "width": "95"
+        },
+        "username": {
+            "displayName": "User",
+            "width": "80",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT emp_username AS username FROM u_user JOIN u_role USING(role_id) WHERE portal_id='N' GROUP BY emp_username"
+        },
+        "account_head_name": {
+            "displayName": "Account Head",
+            "width": "130",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT account_head_name FROM bill_account_heads ORDER BY account_head_name"
+        },
+        "account_group_name": {
+            "displayName": "Account Group",
+            "width": "70",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT account_group_name FROM account_group_master ORDER BY account_group_name"
+        },
+        "activity_conducted": {
+            "displayName": "Activity Conducted",
+            "width": "60",
+            "filterable": true,
+            "groupable": true,
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "bill_no": {
+            "displayName": "Bill No.",
+            "width": "65",
+            "filterable": true,
+            "groupable": true
+        },
+        "charge_id": {
+            "displayName": "Charge ID",
+            "width": "60",
+            "filterable": false,
+            "groupable": false
+        },
+        "chargehead_name": {
+            "displayName": "Charge Head",
+            "width": "100",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT chargehead_name FROM chargehead_constants ORDER BY chargehead_name"
+        },
+        "chargegroup_name": {
+            "displayName": "Charge Group",
+            "width": "80",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT chargegroup_name FROM chargegroup_constants ORDER BY chargegroup_name"
+        },
+        "charge_amt": {
+            "dataType": "numeric",
+            "displayName": "Bill Amount",
+            "aggFunction": "sum",
+            "width": "60",
+            "filterable": true,
+            "decimalType": "amount"
+        },
+        "charge_discount": {
+            "dataType": "numeric",
+            "displayName": "Bill Discount",
+            "aggFunction": "sum",
+            "width": "60",
+            "filterable": true,
+            "decimalType": "amount"
+        },
+        "amount": {
+            "displayName": "Payment Amt.",
+            "dataType": "numeric",
+            "aggFunction": "sum",
+            "width": "70",
+            "filterable": true,
+            "decimalType": "amount"
+        },
+        "act_description": {
+            "displayName": "Item Description",
+            "width": "100",
+            "groupable": false
+        },
+        "bill_type": {
+            "displayName": "Bill Type",
+            "width": "50",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValues": [
+                "Bill Now",
+                "Bill Later"
+            ]
+        },
+        "bill_status": {
+            "displayName": "Bill Status",
+            "width": "50",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValues": [
+                "Open",
+                "Finalized",
+                "Closed",
+                "Cancelled"
+            ]
+        },
+        "payment_status": {
+            "displayName": "Payment Status",
+            "width": "70",
+            "groupable": true,
+            "filterable": true,
+            "allowedValues": [
+                "Paid",
+                "Unpaid"
+            ]
+        },
+        "claim_status": {
+            "displayName": "Claim Status",
+            "width": "70",
+            "groupable": true,
+            "filterable": true,
+            "allowedValues": [
+                "Closed",
+                "Sent",
+                "Open"
+            ]
+        },
+        "visit_type_name": {
+            "displayName": "Visit Type",
+            "width": "60",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValues": [
+                "IP",
+                "OP",
+                "Retail",
+                "Test"
+            ]
+        },
+        "op_type_name": {
+            "displayName": "Visit/OP Type",
+            "width": "80",
+            "groupable": true,
+            "filterable": true,
+            "allowedValuesQuery": "SELECT op_type_name FROM op_type_names"
+        },
+        "mr_no": {
+            "displayName": "MR No.",
+            "width": "65",
+            "groupable": true,
+            "filterable": true
+        },
+        "patient_gender": {
+            "displayName": "Gender",
+            "width": "40",
+            "filterable": true,
+            "groupable": true,
+            "allowedValues": [
+                "Male",
+                "Female",
+                "Couple",
+                "Other"
+            ]
+        },
+        "patient_full_name": {
+            "displayName": "Patient Name",
+            "width": "130",
+            "groupable": true,
+            "filterable": true
+        },
+       "name_local_language": {
+            "displayName": "Name In Local Language",
+            "width": "150"
+        },
+        "treating_dept": {
+            "displayName": "Treating Department",
+            "width": "120",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT dept_name AS treating_dept FROM department GROUP BY dept_name"
+        },
+        "admit_dept": {
+            "displayName": "Admitting Department",
+            "width": "120",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT dept_name AS admit_dept FROM department GROUP BY dept_name"
+        },
+        "doctor_name": {
+            "displayName": "Doctor",
+            "width": "110",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT doctor_name FROM doctors ORDER BY doctor_name"
+        },
+        "referer": {
+            "displayName": "Referer",
+            "width": "110",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT referal_name AS referer FROM referral UNION ALL SELECT doctor_name AS referer FROM doctors ORDER BY referer"
+        },
+        "conducting_doctor": {
+            "displayName": "Conducting Doctor",
+            "width": "110",
+            "groupable": true,
+            "allowNull": true,
+            "filterable": true,
+            "allowedValuesQuery": "SELECT doctor_name FROM doctors ORDER BY doctor_name"
+        },
+        "prescribing_doctor_name": {
+            "displayName": "Prescribing Doctor",
+            "width": "110",
+            "groupable": true,
+            "allowNull": true,
+            "filterable": true,
+            "allowedValuesQuery": "SELECT doctor_name FROM doctors ORDER BY doctor_name"
+        },
+        "org_name": {
+            "displayName": "Rate Plan",
+            "width": "70",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT org_name FROM organization_details ORDER BY org_name"
+        },
+        "primary_tpa_name": {
+            "displayName": "Primary Sponsor",
+            "width": "80",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT tpa_name FROM tpa_master ORDER BY tpa_name"
+        },
+        "secondary_tpa_name": {
+            "displayName": "Secondary Sponsor",
+            "width": "80",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT tpa_name FROM tpa_master ORDER BY tpa_name"
+        },
+        "plan_name": {
+            "displayName": "Plan Name",
+            "width": "100",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT plan_name FROM insurance_plan_main ORDER BY plan_name"
+        },
+        "plan_type": {
+            "displayName": "Plan Type",
+            "width": "80",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT category_name FROM insurance_category_master ORDER BY category_name"
+        },
+        "primary_insurance_co_name": {
+            "displayName": "Primary Insurance Company",
+            "width": "100",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT insurance_co_name FROM insurance_company_master ORDER BY insurance_co_name"
+        },
+        "secondary_insurance_co_name": {
+            "displayName": "Secondary Insurance Company",
+            "width": "100",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT insurance_co_name FROM insurance_company_master ORDER BY insurance_co_name"
+        },
+        "patient_category": {
+            "displayName": "Patient Category",
+            "width": "120",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT category_name FROM patient_category_master ORDER BY category_name"
+        },
+        "store_name": {
+            "displayName": "Store Name",
+            "width": "120",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT dept_name AS store_name FROM stores WHERE status='A' ORDER BY dept_name"
+        },
+        "referal_amount": {
+            "dataType": "numeric",
+            "displayName": "Referral Amt.",
+            "aggFunction": "sum",
+            "width": "60",
+            "filterable": true
+        },
+        "prescribing_dr_amount": {
+            "dataType": "numeric",
+            "displayName": "Presc. Dr. Amt.",
+            "description": "Prescribing Doctor Amount",
+            "aggFunction": "sum",
+            "width": "60",
+            "filterable": true
+        },
+        "conducting_doctor_amount": {
+            "dataType": "numeric",
+            "displayName": "Cond. Dr. Amt.",
+            "description": "Conducting Doctor Amount",
+            "aggFunction": "sum",
+            "width": "60",
+            "filterable": true
+        },
+        "center_name": {
+            "displayName": "Center Name",
+            "width": 100,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT center_name FROM hospital_center_master WHERE center_id!=0",
+            "filterable": true,
+            "groupable": true,
+            "dataType": "string"
+        },
+        "dr_custom1": {
+            "displayName": "Dr Custom1",
+            "width": 100,
+            "allowHorizGroup": true,
+            "filterable": true,
+            "groupable": true
+        },
+        "dr_custom2": {
+            "displayName": "Dr Custom2",
+            "width": 100,
+            "allowHorizGroup": true,
+            "filterable": true,
+            "groupable": true
+        },
+        "dr_custom3": {
+            "displayName": "Dr Custom3",
+            "width": 100,
+            "allowHorizGroup": true,
+            "filterable": true,
+            "groupable": true
+        },
+        "dr_custom4": {
+            "displayName": "Dr Custom4",
+            "width": 100,
+            "allowHorizGroup": true,
+            "filterable": true,
+            "groupable": true
+        },
+        "dr_custom5": {
+            "displayName": "Dr Custom5",
+            "width": 100,
+            "allowHorizGroup": true,
+            "filterable": true,
+            "groupable": true
+        },
+        "cond_doc_custom1": {
+            "displayName": "Cond Custom1",
+            "width": 100,
+            "allowHorizGroup": true,
+            "filterable": true,
+            "groupable": true
+        },
+        "cond_doc_custom2": {
+            "displayName": "Cond Custom2",
+            "width": 100,
+            "allowHorizGroup": true,
+            "filterable": true,
+            "groupable": true
+        },
+        "cond_doc_custom3": {
+            "displayName": "Cond Custom3",
+            "width": 100,
+            "allowHorizGroup": true,
+            "filterable": true,
+            "groupable": true
+        },
+        "cond_doc_custom4": {
+            "displayName": "Cond Custom4",
+            "width": 100,
+            "allowHorizGroup": true,
+            "filterable": true,
+            "groupable": true
+        },
+        "cond_doc_custom5": {
+            "displayName": "Cond Custom5",
+            "width": 100,
+            "allowHorizGroup": true,
+            "filterable": true,
+            "groupable": true
+        },
+        "ref_custom1": {
+            "displayName": "Ref Custom1",
+            "width": 100,
+            "allowHorizGroup": true,
+            "filterable": true,
+            "groupable": true
+        },
+        "ref_custom2": {
+            "displayName": "Ref Custom2",
+            "width": 100,
+            "allowHorizGroup": true,
+            "filterable": true,
+            "groupable": true
+        },
+        "ref_custom3": {
+            "displayName": "Ref Custom3",
+            "width": 100,
+            "allowHorizGroup": true,
+            "filterable": true,
+            "groupable": true
+        },
+        "ref_custom4": {
+            "displayName": "Ref Custom4",
+            "width": 100,
+            "allowHorizGroup": true,
+            "filterable": true,
+            "groupable": true
+        },
+        "ref_custom5": {
+            "displayName": "Ref Custom5",
+            "width": 100,
+            "allowHorizGroup": true,
+            "filterable": true,
+            "groupable": true
+        },
+        "pres_doc_custom1": {
+            "displayName": "Pres Custom1",
+            "width": 100,
+            "allowHorizGroup": true,
+            "filterable": true,
+            "groupable": true
+        },
+        "pres_doc_custom2": {
+            "displayName": "Pres Custom2",
+            "width": 100,
+            "allowHorizGroup": true,
+            "filterable": true,
+            "groupable": true
+        },
+        "pres_doc_custom3": {
+            "displayName": "Pres Custom3",
+            "width": 100,
+            "allowHorizGroup": true,
+            "filterable": true,
+            "groupable": true
+        },
+        "pres_doc_custom4": {
+            "displayName": "Pres Custom4",
+            "width": 100,
+            "allowHorizGroup": true,
+            "filterable": true,
+            "groupable": true
+        },
+        "pres_doc_custom5": {
+            "displayName": "Pres Custom5",
+            "width": 100,
+            "allowHorizGroup": true,
+            "filterable": true,
+            "groupable": true
+        }
+    },
+    "queryUnits": [
+        {
+            "mainTableName": "payments_details",
+            "mainTableAlias": "pd",
+            "joinTables": [
+                {
+                    "name": "bill_charge",
+                    "alias": "bc",
+                    "type": "LEFT",
+                    "expression": "ON (bc.charge_id = pd.charge_id)",
+                    "dependsOn": "pd"
+                },
+                {
+                    "name": "chargehead_constants",
+                    "alias": "chc",
+                    "type": "JOIN",
+                    "expression": "ON (chc.chargehead_id = bc.charge_head)",
+                    "dependsOn": "pd,bc"
+                },
+                {
+                    "name": "chargegroup_constants",
+                    "alias": "cgc",
+                    "type": "JOIN",
+                    "expression": "ON (cgc.chargegroup_id = chc.chargegroup_id)",
+                    "dependsOn": "pd,chc"
+                },
+                {
+                    "name": "bill",
+                    "alias": "b",
+                    "type": "JOIN",
+                    "expression": "ON (b.bill_no = bc.bill_no)",
+                    "dependsOn": "bc"
+                },
+                {
+                    "name": "visit_type_names",
+                    "alias": "vtn",
+                    "type": "JOIN",
+                    "expression": "ON (vtn.visit_type = b.visit_type)",
+                    "dependsOn": "b"
+                },
+                {
+                    "name": "hospital_center_master",
+                    "alias": "hcm",
+                    "type": "JOIN",
+                    "expression": "ON (hcm.center_id = pd.expense_center_id)",
+                    "dependsOn": "pd"
+                },
+                {
+                    "name": "patient_registration",
+                    "alias": "pr",
+                    "type": "LEFT",
+                    "expression": "ON (pr.patient_id = b.visit_id)",
+                    "dependsOn": "b"
+                },
+                {
+                    "name": "op_type_names",
+                    "alias": "otn",
+                    "type": "LEFT",
+                    "expression": "ON (otn.op_type = pr.op_type)",
+                    "dependsOn": "pr"
+                },
+                {
+                    "name": "store_retail_customers",
+                    "alias": "prc",
+                    "type": "LEFT",
+                    "expression": "ON (prc.customer_id = b.visit_id)",
+                    "dependsOn": "b"
+                },
+                {
+                    "name": "incoming_sample_registration",
+                    "alias": "isr",
+                    "type": "LEFT",
+                    "expression": "ON (isr.incoming_visit_id = b.visit_id)",
+                    "dependsOn": "b"
+                },
+                {
+                    "name": "patient_details",
+                    "alias": "patd",
+                    "type": "LEFT",
+                    "expression": "ON (patd.mr_no = pr.mr_no)",
+                    "dependsOn": "pr"
+                },
+                {
+                    "name": "salutation_master",
+                    "alias": "sm",
+                    "type": "LEFT",
+                    "expression": "ON (sm.salutation_id = patd.salutation)",
+                    "dependsOn": "patd"
+                },
+                {
+                    "name": "department",
+                    "alias": "dep",
+                    "type": "LEFT",
+                    "expression": "ON (dep.dept_id = pr.dept_name)",
+                    "dependsOn": "pr"
+                },
+                {
+                    "name": "treating_departments_view",
+                    "alias": "tdep",
+                    "type": "LEFT",
+                    "expression": "ON (tdep.dept_id = bc.act_department_id)",
+                    "dependsOn": "bc"
+                },
+                {
+                    "name": "doctors",
+                    "alias": "doc",
+                    "type": "LEFT",
+                    "expression": "ON (doc.doctor_id = pr.doctor)",
+                    "dependsOn": "pr"
+                },
+                {
+                    "name": "doctors",
+                    "alias": "cdoc",
+                    "type": "LEFT",
+                    "expression": "ON(cdoc.doctor_id=bc.payee_doctor_id)",
+                    "dependsOn": "bc"
+                },
+                {
+                    "name": "doctors",
+                    "alias": "rdoc",
+                    "type": "LEFT",
+                    "expression": "ON (rdoc.doctor_id = pr.reference_docto_id )",
+                    "dependsOn": "pr"
+                },
+                {
+                    "name": "doctors",
+                    "alias": "pdoc",
+                    "type": "LEFT",
+                    "expression": "ON (pdoc.doctor_id =bc.prescribing_dr_id)",
+                    "dependsOn": "bc"
+                },
+                {
+                    "name": "referral",
+                    "alias": "ref",
+                    "type": "LEFT",
+                    "expression": "ON (ref.referal_no = pr.reference_docto_id )",
+                    "dependsOn": "pr"
+                },
+                {
+                    "name": "organization_details",
+                    "alias": "od",
+                    "type": "LEFT",
+                    "expression": "ON (od.org_id = pr.org_id)",
+                    "dependsOn": "pr"
+                },
+                {
+                    "name": "tpa_master",
+                    "alias": "ptm",
+                    "type": "LEFT",
+                    "expression": "ON (ptm.tpa_id = pr.primary_sponsor_id)",
+                    "dependsOn": "pr"
+                },
+                {
+                    "name": "tpa_master",
+                    "alias": "stm",
+                    "type": "LEFT",
+                    "expression": "ON (stm.tpa_id = pr.secondary_sponsor_id)",
+                    "dependsOn": "pr"
+                },
+                {
+                    "name": "insurance_plan_main",
+                    "alias": "ipm",
+                    "type": "LEFT",
+                    "expression": "ON (ipm.plan_id = pr.plan_id)",
+                    "dependsOn": "pr"
+                },
+                {
+                    "name": "insurance_category_master",
+                    "alias": "in_cat",
+                    "type": "LEFT",
+                    "expression": "ON (in_cat.category_id = ipm.category_id)",
+                    "dependsOn": "ipm"
+                },
+                {
+                    "name": "insurance_company_master",
+                    "alias": "picm",
+                    "type": "LEFT",
+                    "expression": "ON (picm.insurance_co_id = pr.primary_insurance_co)",
+                    "dependsOn": "pr"
+                },
+                {
+                    "name": "insurance_company_master",
+                    "alias": "sicm",
+                    "type": "LEFT",
+                    "expression": "ON (sicm.insurance_co_id = pr.secondary_sponsor_id)",
+                    "dependsOn": "pr"
+                },
+                {
+                    "name": "patient_category_master",
+                    "alias": "pcm",
+                    "type": "LEFT",
+                    "expression": "ON (pcm.category_id = pr.patient_category_id)",
+                    "dependsOn": "pr"
+                },
+                {
+                    "name": "store_sales_main",
+                    "alias": "pm",
+                    "type": "LEFT",
+                    "expression": "ON (bc.charge_id = pm.charge_id)",
+                    "dependsOn": "bc"
+                },
+                {
+                    "name": "stores",
+                    "alias": "gd",
+                    "type": "LEFT",
+                    "expression": "ON (gd.dept_id = pm.store_id)",
+                    "dependsOn": "gd"
+                },
+                {
+                    "name": "account_group_master",
+                    "alias": "agm",
+                    "type": "LEFT",
+                    "expression": "ON (agm.account_group_id = bc.account_group)",
+                    "dependsOn": "bc"
+                },
+                {
+                    "name": "payee_names_view_for_voucher",
+                    "alias": "pv",
+                    "type": "LEFT",
+                    "expression": "ON (pv.payee_id=pd.payee_name)",
+                    "dependsOn": "pd"
+                },
+                {
+                    "name": "bill_account_heads",
+                    "alias": "bah",
+                    "type": "LEFT",
+                    "expression": " ON (pd.account_head= bah.account_head_id)",
+                    "dependsOn": "pd"
+                },
+                {
+                    "name": "bill_activity_charge",
+                    "alias": "bac",
+                    "type": "LEFT",
+                    "expression": " ON (pd.payment_id=bac.doctor_payment_id and pd.payment_type='D' )",
+                    "dependsOn": "pd"
+                }
+            ],
+            "fieldExpressions": {
+                "payment_id": {
+                    "table": "pd"
+                },
+                "payment_type": {
+                    "table": "pd",
+                    "expressionLines": [
+                        " CASE WHEN payment_type='D' THEN 'Conducting Doctor Payments' ",
+                        " WHEN payment_type='C' THEN 'Miscellaneous Payments' ",
+                        " WHEN payment_type in ('R','F') THEN 'Referral Doctor Payments' ",
+                        " WHEN payment_type='P' THEN 'Prescribed Doctor Payments' ",
+                        " WHEN payment_type='S' THEN 'Supplier Payments' ",
+                        " WHEN payment_type='O' THEN 'OutHouse Payments' ",
+                        " END "
+                    ]
+                },
+                "activity_conducted": {
+                    "table": "bc",
+                    "expression": " CASE WHEN bc.activity_conducted='Y' THEN 'Yes' ELSE 'No' END "
+                },
+                "voucher_no": {
+                    "table": "pd"
+                },
+                "amount": {
+                    "table": "pd"
+                },
+                "description": {
+                    "table": "pd"
+                },
+                "payment_category": {
+                    "table": "pd",
+                    "expression": "pd.category"
+                },
+                "patient_category": {
+                    "table": "pcm",
+                    "expression": "pcm.category_name"
+                },
+                "posted_date": {
+                    "table": "pd",
+                    "expression": "DATE(pd.posted_date)"
+                },
+                "finalized_date": {
+                    "table": "b",
+                    "expression": "DATE(b.finalized_date)"
+                },
+                "username": {
+                    "table": "pd"
+                },
+                "payee_name": {
+                    "table": "pv"
+                },
+                "charge_id": {
+                    "table": "pd"
+                },
+                "account_head_name": {
+                    "table": "bah"
+                },
+                "account_group_name": {
+                    "table": "agm"
+                },
+                "chargehead_name": {
+                    "table": "chc"
+                },
+                "chargegroup_name": {
+                    "table": "cgc"
+                },
+                "charge_amt": {
+                    "table": "bc",
+                    "expression": "bc.amount"
+                },
+                "charge_discount": {
+                    "table": "bc",
+                    "expression": "bc.discount"
+                },
+                "bill_no": {
+                    "table": "bc",
+                    "expression": "bc.bill_no"
+                },
+                "act_description": {
+                    "table": "bc",
+                    "expression": "bc.act_description"
+                },
+                "bill_type": {
+                    "table": "b",
+                    "expressionLines": [
+                        " CASE WHEN b.bill_type = 'C' THEN 'Bill Later' ",
+                        " ELSE 'Bill Now' END "
+                    ]
+                },
+                "bill_status": {
+                    "table": "b",
+                    "expressionLines": [
+                        " CASE WHEN b.status = 'A' THEN 'Open' ",
+                        " WHEN b.status = 'F' THEN 'Finalized' ",
+                        " WHEN b.status = 'C' THEN 'Closed' ",
+                        " WHEN b.status ='X' THEN 'Cancelled' ELSE NULL ",
+                        " END "
+                    ]
+                },
+                "payment_status": {
+                    "table": "b",
+                    "expression": " CASE WHEN b.payment_status = 'P' THEN 'Paid' ELSE 'Unpaid' END "
+                },
+                "claim_status": {
+                    "table": "b",
+                    "expressionLines": [
+                        "CASE WHEN b.primary_claim_status = 'O' THEN 'Open' ",
+                        " WHEN b.primary_claim_status = 'S' THEN 'Sent' ",
+                        " ELSE 'Closed' END "
+                    ]
+                },
+                "visit_type_name": {
+                    "table": "vtn"
+                },
+                "mr_no": {
+                    "table": "pr"
+                },
+                "op_type": {
+                    "table": "pr"
+                },
+                "op_type_name": {
+                    "table": "otn"
+                },
+                "patient_gender": {
+                    "table": "patd,isr",
+                    "expressionLines": [
+                        " CASE WHEN COALESCE(patd.patient_gender,isr.patient_gender)='M' THEN 'Male' ",
+                        " WHEN COALESCE(patd.patient_gender,isr.patient_gender)='F' THEN 'Female' ",
+                        " WHEN COALESCE(patd.patient_gender,isr.patient_gender)='C' THEN 'Couple' ",
+                        " ELSE 'Other' END "
+                    ]
+                },
+                "patient_full_name": {
+                    "table": "sm,patd,prc,isr",
+                    "expressionLines": [
+                        " COALESCE (get_patient_full_name(sm.salutation, patd.patient_name, ",
+                        " patd.middle_name, patd.last_name),prc.customer_name, isr.patient_name) "
+                    ]
+                },
+                 "name_local_language": {
+                        "table":"patd",
+                        "expression":"patd.name_local_language"
+                  },
+                "admit_dept": {
+                    "table": "dep",
+                    "expression": "dep.dept_name"
+                },
+                "treating_dept": {
+                    "table": "tdep",
+                    "expression": "tdep.dept_name"
+                },
+                "doctor_name": {
+                    "table": "doc",
+                    "expression": "doc.doctor_name"
+                },
+                "conducting_doctor": {
+                    "table": "cdoc",
+                    "expression": "(cdoc.doctor_name)"
+                },
+                "referer": {
+                    "table": "rdoc,ref",
+                    "expression": "coalesce(rdoc.doctor_name, ref.referal_name)"
+                },
+                "prescribing_doctor_name": {
+                    "table": "pdoc",
+                    "expression": "pdoc.doctor_name"
+                },
+                "primary_tpa_name": {
+                    "table": "ptm",
+                    "expression": "ptm.tpa_name"
+                },
+                "secondary_tpa_name": {
+                    "table": "stm",
+                    "expression": "stm.tpa_name"
+                },
+                "plan_name": {
+                    "table": "ipm"
+                },
+                "plan_type": {
+                    "table": "in_cat",
+                    "expression": "in_cat.category_name"
+                },
+                "primary_insurance_co_name": {
+                    "table": "picm",
+                    "expression": "picm.insurance_co_name"
+                },
+                "secondary_insurance_co_name": {
+                    "table": "sicm",
+                    "expression": "sicm.insurance_co_name "
+                },
+                "store_name": {
+                    "table": "gd,pm",
+                    "expression": "gd.dept_name"
+                },
+                "referal_amount": {
+                    "table": "bc",
+                    "expression": "COALESCE (bc.referal_amount,0.00)"
+                },
+                "prescribing_dr_amount": {
+                    "table": "bc",
+                    "expression": "COALESCE (bc.prescribing_dr_amount,0.00)"
+                },
+                "conducting_doctor_amount": {
+                    "table": "bc,bac",
+                    "expressionLines": [
+                        " CASE  WHEN bc.charge_head='PKGPKG' THEN COALESCE (bac.doctor_amount,0.00) ELSE COALESCE (bc.doctor_amount,0.00) END "
+                    ]
+                },
+                "org_name": {
+                    "table": "od"
+                },
+                "charge_status": {
+                    "table": "bc",
+                    "expression": "bc.status"
+                },
+                "center_name": {
+                    "table": "hcm"
+                },
+                "dr_custom1": {
+                    "table": "doc",
+                    "expression": "doc.custom_field1_value"
+                },
+                "dr_custom2": {
+                    "table": "doc",
+                    "expression": "doc.custom_field2_value"
+                },
+                "dr_custom3": {
+                    "table": "doc",
+                    "expression": "doc.custom_field3_value"
+                },
+                "dr_custom4": {
+                    "table": "doc",
+                    "expression": "doc.custom_field4_value"
+                },
+                "dr_custom5": {
+                    "table": "doc",
+                    "expression": "doc.custom_field5_value"
+                },
+                "cond_doc_custom1": {
+                    "table": "cdoc",
+                    "expression": "cdoc.custom_field1_value"
+                },
+                "cond_doc_custom2": {
+                    "table": "cdoc",
+                    "expression": "cdoc.custom_field2_value"
+                },
+                "cond_doc_custom3": {
+                    "table": "cdoc",
+                    "expression": "cdoc.custom_field3_value"
+                },
+                "cond_doc_custom4": {
+                    "table": "cdoc",
+                    "expression": "cdoc.custom_field4_value"
+                },
+                "cond_doc_custom5": {
+                    "table": "cdoc",
+                    "expression": "cdoc.custom_field5_value"
+                },
+                "ref_custom1": {
+                    "table": "rdoc",
+                    "expression": "rdoc.custom_field1_value"
+                },
+                "ref_custom2": {
+                    "table": "rdoc",
+                    "expression": "rdoc.custom_field2_value"
+                },
+                "ref_custom3": {
+                    "table": "rdoc",
+                    "expression": "rdoc.custom_field3_value"
+                },
+                "ref_custom4": {
+                    "table": "rdoc",
+                    "expression": "rdoc.custom_field4_value"
+                },
+                "ref_custom5": {
+                    "table": "rdoc",
+                    "expression": "rdoc.custom_field5_value"
+                },
+                "pres_doc_custom1": {
+                    "table": "pdoc",
+                    "expression": "pdoc.custom_field1_value"
+                },
+                "pres_doc_custom2": {
+                    "table": "pdoc",
+                    "expression": "pdoc.custom_field2_value"
+                },
+                "pres_doc_custom3": {
+                    "table": "pdoc",
+                    "expression": "pdoc.custom_field3_value"
+                },
+                "pres_doc_custom4": {
+                    "table": "pdoc",
+                    "expression": "pdoc.custom_field4_value"
+                },
+                "pres_doc_custom5": {
+                    "table": "pdoc",
+                    "expression": "pdoc.custom_field5_value"
+                }
+            },
+            "whereExpression": "(b.status IN ('F','C','S') AND bc.status!='X' AND pd.payment_type in ('D','P','R','F','O') )",
+            "whereTable": "b,bc,pd"
+        },
+        {
+            "mainTableName": "payments_details",
+            "mainTableAlias": "pd",
+            "joinTables": [
+                {
+                    "name": "account_group_master",
+                    "alias": "agm",
+                    "type": "LEFT",
+                    "expression": "ON (agm.account_group_id = pd.account_group)",
+                    "dependsOn": "pd"
+                },
+                {
+                    "name": "payee_names_view_for_voucher",
+                    "alias": "pv",
+                    "type": "LEFT",
+                    "expression": "ON (pv.payee_id=pd.payee_name)",
+                    "dependsOn": "pd"
+                },
+                {
+                    "name": "bill_account_heads",
+                    "alias": "bah",
+                    "type": "LEFT",
+                    "expression": "ON (pd.account_head= bah.account_head_id)",
+                    "dependsOn": "pd"
+                },
+                {
+                    "name": "hospital_center_master",
+                    "alias": "hcm",
+                    "type": "JOIN",
+                    "expression": "ON (hcm.center_id = pd.expense_center_id)",
+                    "dependsOn": "pd"
+                }
+            ],
+            "fieldExpressions": {
+                "payment_id": {
+                    "table": "pd"
+                },
+                "payment_type": {
+                    "table": "pd",
+                    "expressionLines": [
+                        " CASE WHEN payment_type='D' THEN 'Conducting Doctor Payments' ",
+                        " WHEN payment_type='C' THEN 'Miscellaneous Payments' ",
+                        " WHEN payment_type in ('R','F') THEN 'Referral Doctor Payments' ",
+                        " WHEN payment_type='P' THEN 'Prescribed Doctor Payments' ",
+                        " WHEN payment_type='S' THEN 'Supplier Payments' ",
+                        " WHEN payment_type='O' THEN 'OutHouse Payments' ",
+                        " END "
+                    ]
+                },
+                "activity_conducted": {
+                    "expression": "NULL::text"
+                },
+                "voucher_no": {
+                    "table": "pd"
+                },
+                "amount": {
+                    "table": "pd"
+                },
+                "description": {
+                    "table": "pd"
+                },
+                "payment_category": {
+                    "table": "pd",
+                    "expression": "pd.category"
+                },
+                "patient_category": {
+                    "expression": "NULL::text"
+                },
+                "posted_date": {
+                    "table": "pd",
+                    "expression": "DATE(pd.posted_date)"
+                },
+                "finalized_date": {
+                    "expression": "NULL::date"
+                },
+                "username": {
+                    "table": "pd"
+                },
+                "payee_name": {
+                    "table": "pv"
+                },
+                "charge_id": {
+                    "table": "pd"
+                },
+                "account_head_name": {
+                    "table": "bah"
+                },
+                "account_group_name": {
+                    "table": "agm"
+                },
+                "chargehead_name": {
+                    "expression": "NULL::text"
+                },
+                "chargegroup_name": {
+                    "expression": "NULL::text"
+                },
+                "charge_amt": {
+                    "expression": "0.00::numeric"
+                },
+                "charge_discount": {
+                    "expression": "0.00::numeric"
+                },
+                "bill_no": {
+                    "expression": "NULL::text"
+                },
+                "act_description": {
+                    "expression": "NULL::text"
+                },
+                "bill_type": {
+                    "expression": "NULL::text"
+                },
+                "bill_status": {
+                    "expression": "NULL::text"
+                },
+                "payment_status": {
+                    "expression": "NULL::text"
+                },
+                "claim_status": {
+                    "expression": "NULL::text"
+                },
+                "visit_type_name": {
+                    "expression": "NULL::text"
+                },
+                "mr_no": {
+                    "expression": "NULL::text"
+                },
+                "op_type": {
+                    "expression": "NULL::text"
+                },
+                "op_type_name": {
+                    "expression": "NULL::text"
+                },
+                "patient_gender": {
+                    "expression": "NULL::text"
+                },
+                "patient_full_name": {
+                    "expression": "NULL::text"
+                },
+                "name_local_language": {
+                  "expression": "NULL::text"
+                },
+                "admit_dept": {
+                    "expression": "NULL::text"
+                },
+                "treating_dept": {
+                    "expression": "NULL::text"
+                },
+                "doctor_name": {
+                    "expression": "NULL::text"
+                },
+                "conducting_doctor": {
+                    "expression": "NULL::text"
+                },
+                "referer": {
+                    "expression": "NULL::text"
+                },
+                "prescribing_doctor_name": {
+                    "expression": "NULL::text"
+                },
+                "primary_tpa_name": {
+                    "expression": "NULL::text"
+                },
+                "secondary_tpa_name": {
+                    "expression": "NULL::text"
+                },
+                "plan_name": {
+                    "expression": "NULL::text"
+                },
+                "plan_type": {
+                    "expression": "NULL::text"
+                },
+                "primary_insurance_co_name": {
+                    "expression": "NULL::text"
+                },
+                "secondary_insurance_co_name": {
+                    "expression": "NULL::text"
+                },
+                "store_name": {
+                    "expression": "NULL::text"
+                },
+                "referal_amount": {
+                    "expression": "0.00::numeric"
+                },
+                "prescribing_dr_amount": {
+                    "expression": "0.00::numeric"
+                },
+                "conducting_doctor_amount": {
+                    "expression": "0.00::numeric"
+                },
+                "org_name": {
+                    "expression": "NULL::text"
+                },
+                "charge_status": {
+                    "expression": "NULL::text"
+                },
+                "center_name": {
+                    "table": "hcm"
+                },
+                "dr_custom1": {
+                    "expression": "NULL::text"
+                },
+                "dr_custom2": {
+                    "expression": "NULL::text"
+                },
+                "dr_custom3": {
+                    "expression": "NULL::text"
+                },
+                "dr_custom4": {
+                    "expression": "NULL::text"
+                },
+                "dr_custom5": {
+                    "expression": "NULL::text"
+                },
+                "cond_doc_custom1": {
+                    "expression": "NULL::text"
+                },
+                "cond_doc_custom2": {
+                    "expression": "NULL::text"
+                },
+                "cond_doc_custom3": {
+                    "expression": "NULL::text"
+                },
+                "cond_doc_custom4": {
+                    "expression": "NULL::text"
+                },
+                "cond_doc_custom5": {
+                    "expression": "NULL::text"
+                },
+                "ref_custom1": {
+                    "expression": "NULL::text"
+                },
+                "ref_custom2": {
+                    "expression": "NULL::text"
+                },
+                "ref_custom3": {
+                    "expression": "NULL::text"
+                },
+                "ref_custom4": {
+                    "expression": "NULL::text"
+                },
+                "ref_custom5": {
+                    "expression": "NULL::text"
+                },
+                "pres_doc_custom1": {
+                    "expression": "NULL::text"
+                },
+                "pres_doc_custom2": {
+                    "expression": "NULL::text"
+                },
+                "pres_doc_custom3": {
+                    "expression": "NULL::text"
+                },
+                "pres_doc_custom4": {
+                    "expression": "NULL::text"
+                },
+                "pres_doc_custom5": {
+                    "expression": "NULL::text"
+                }
+            },
+            "whereExpression": "(pd.payment_type in ('C','S') OR (pd.payment_type in ('D','P','R','F','S','O') and charge_id is null))",
+            "whereTable": "pd"
+        }
+    ]
+}

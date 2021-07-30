@@ -1,0 +1,39 @@
+/*
+fix for a cssjanus bug. x% is converted to (100-x)% which is
+right for background positioning. But it is wrongly applied to
+font % in this case, which makes the fonts size 0 and collapses
+the calendar control
+*/
+
+.yui-skin-sam .yui-calcontainer .title{
+/*    background:url(sprite.png) repeat-x 0 0;
+    border-bottom:1px solid #ccc; */
+    font:100% sans-serif;
+/*    color:#000;font-weight:bold;
+    height:auto;
+    padding:.4em;
+    margin:0 -10px 10px -10px;
+    top:0;
+    right:0;
+    text-align:right; */
+}
+
+.yui-skin-sam .yui-calendar{
+/*    border-spacing:0;
+    border-collapse:collapse; */
+    font:100% sans-serif;
+/*    text-align:center;
+    margin:0; */
+}
+
+/*
+yui menu sets the left at -999em and calculates the actual left at the time of rendering the menu.
+The css converter changes this to right which is incorrect. we set both left and right to auto.
+*/
+
+.yuimenu {
+	left : auto;
+	right : auto;
+	/*right : auto;*/
+}
+

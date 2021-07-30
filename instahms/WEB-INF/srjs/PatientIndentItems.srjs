@@ -1,0 +1,261 @@
+{
+    "title": "Patient Indent Items",
+    "reportGroup": "Sales/Issues Reports",
+    "description": "This report will list all the fields of the indent items and indent main.",
+    "dateFields": [
+        "expected_date",
+        "mod_time"
+    ],
+    "allowNoDate": true,
+    "defaultOrder": "patient_indent_no",
+    "defaultShowFields": [
+        "mr_no",
+        "patient_id",
+        "full_name",
+        "patient_indent_no",
+        "indent_type",
+        "dispense_status",
+        "item_name"
+    ],
+    "includes": [
+        "StoreItemFields.srjs",
+        "PatientVisitFields.srjs",
+        "PatientDetailFields.srjs",
+        "StoreItemCodeFields.srjs"
+    ],
+    "fields": {
+        "patient_indent_no": {
+            "displayName": "Patient Indent No",
+            "width": "150",
+            "table": "pim",
+            "groupable": true
+        },
+        "indent_type": {
+            "displayName": "Indent Type",
+            "width": "50",
+            "allowedValues": [
+                "Indent",
+                "Returns"
+            ],
+            "expression": "CASE WHEN indent_type = 'I' THEN 'Indent' ELSE 'Returns' END ",
+            "table": "pim",
+            "filterable": true,
+            "groupable": true
+        },
+        "dept_name": {
+            "displayName": "Indent Store",
+            "width": "150",
+            "table": "s"
+        },
+        "expected_date": {
+            "displayName": "Indent Expected Date",
+            "width": "150",
+            "dataType": "date",
+            "filterable": true,
+            "expression": " date(expected_date) ",
+            "table": "pim",
+            "groupable": true
+        },
+        "status": {
+            "displayName": "Indent Status",
+            "width": "150",
+            "allowNull": false,
+            "allowedValues": [
+                "Open",
+                "Finalized",
+                "Cancelled"
+            ],
+            "expression": " CASE WHEN pim.status = 'F' THEN 'Finalized' WHEN pim.status = 'O' THEN 'Open' ELSE 'Cancelled' END",
+            "filterable": true,
+            "table": "pim"
+        },
+        "dispense_status": {
+            "displayName": "Indent Dispense Status",
+            "width": "150",
+            "allowNull": false,
+            "allowedValues": [
+                "Open",
+                "Partial",
+                "Closed"
+            ],
+            "expression": " CASE WHEN pim.dispense_status = 'O' THEN 'Open' WHEN pim.dispense_status = 'P' THEN 'Partial' ELSE 'Closed' END",
+            "filterable": true,
+            "table": "pim"
+        },
+        "dispense_type": {
+            "displayName": "Dispense Type",
+            "width": "150",
+            "allowNull": true,
+            "allowedValues": [
+                "Sold",
+                "Issued",
+                "Sold/Issued"
+            ],
+            "filterable": true,
+            "table": "idt"
+        },
+        "remarks": {
+            "displayName": "Indent Remarks",
+            "width": "150",
+            "table": "pim"
+        },
+        "username": {
+            "displayName": "User Name",
+            "width": "150",
+            "filterable": true,
+            "table": "pim"
+        },
+        "mod_time": {
+            "displayName": "Indent Modified Time",
+            "width": "150",
+            "dataType": "date",
+            "filterable": true,
+            "expression": " date(pim.mod_time) ",
+            "table": "pim"
+        },
+        "qty_required": {
+            "displayName": "Quantity Required",
+            "width": "50",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "table": "pid"
+        },
+        "qty_received": {
+            "displayName": "Quantity Received",
+            "width": "50",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "table": "pid"
+        },
+        "qty_unit": {
+            "displayName": "Quantity Unit",
+            "width": "80",
+            "expression": "CASE WHEN pid.qty_unit = 'I' THEN sid.issue_units ELSE sid.package_uom END",
+            "table": "pid"
+        },
+        "item_dispense_status": {
+            "displayName": "Indent Item Dispense Status",
+            "width": "150",
+            "allowNull": false,
+            "allowedValues": [
+                "Open",
+                "Closed"
+            ],
+            "expression": " CASE WHEN pid.dispense_status = 'O' THEN 'Open' ELSE 'Closed' END",
+            "filterable": true,
+            "table": "pid"
+        },
+        "finalized_date": {
+            "displayName": "Finalized Date Time",
+            "width": "105",
+            "dataType": "timestamp",
+            "expression": " pim.finalized_date",
+            "table": "pim"
+        },
+        "finalized_user": {
+            "displayName": "Finalized User Name",
+            "width": "105",
+            "table": "pim"
+        },
+        "item_code": {
+            "table": "sic",
+            "displayName": "Item Code",
+            "width": 50,
+            "filterable": true,
+            "groupable": true,
+            "description": "Item Code of the item as per the master"
+        },
+        "code_type": {
+            "table": "hict",
+            "displayName": "Code Type",
+            "width": 40,
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT msc.code_type FROM mrd_supported_codes msc JOIN (select regexp_split_to_table(drug_code_type,E',') as drug_code_type,health_authority FROM health_authority_preferences) as hap ON(msc.code_type = hap.drug_code_type) JOIN health_authority_master ham ON(hap.health_authority=ham.health_authority) WHERE msc.code_category = 'Drug' order by drug_code_type"
+        },
+        "prescribing_doctor_name": {
+            "displayName": "Prescribing Doctor Name",
+            "width": "125",
+            "filterable": true,
+            "groupable": true,
+            "table": "pim"
+        },
+        "batch_no": {
+            "table": "sibd",
+            "displayName": "Batch",
+            "width": 60,
+            "filterable": true,
+            "groupable": true,
+            "expression": "sibd.batch_no"
+        }
+    },
+    "queryUnits": [
+        {
+            "mainTableAlias": "pim",
+            "mainTableName": "store_patient_indent_main",
+            "groupBy": false,
+            "joinTables": [
+                {
+                    "name": "store_patient_indent_details",
+                    "alias": "pid",
+                    "expression": "USING ( patient_indent_no ) ",
+                    "dependsOn": "pim"
+                },
+                {
+                    "alias": "s",
+                    "dependsOn": "pim",
+                    "expression": "ON ( pim.indent_store=s.dept_id )",
+                    "name": "stores",
+                    "type": "JOIN"
+                },
+                {
+                    "name": "store_item_details",
+                    "alias": "sid",
+                    "expression": "USING ( medicine_id ) ",
+                    "dependsOn": "pid"
+                },
+                {
+                    "alias": "pr",
+                    "dependsOn": "pim",
+                    "expression": "ON (pr.patient_id = pim.visit_id)",
+                    "name": "patient_registration",
+                    "type": "JOIN"
+                },
+                {
+                    "alias": "pd",
+                    "dependsOn": "pr",
+                    "expression": "ON (pd.mr_no = pr.mr_no)",
+                    "name": "patient_details",
+                    "type": "LEFT"
+                },
+                {
+                    "alias": "smb",
+                    "dependsOn": "pd",
+                    "expression": "ON (smb.salutation_id = pd.salutation)",
+                    "name": "salutation_master",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "indent_dispense_type_view",
+                    "alias": "idt",
+                    "expression": "USING ( patient_indent_no ) ",
+                    "dependsOn": "pim",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "store_item_batch_details",
+                    "alias": "sibd",
+                    "type": "LEFT",
+                    "dependsOn": "pid",
+                    "expression": "ON (sibd.item_batch_id = pid.item_batch_id)"
+                },
+                {
+                    "includeName": "PatientVisitFields.srjs"
+                },
+                {
+                    "includeName": "StoreItemCodeFields.srjs"
+                }
+            ]
+        }
+    ]
+}

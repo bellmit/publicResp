@@ -1,0 +1,189 @@
+FORMAT: 1A
+HOST: http://polls.apiblueprint.org/
+
+# WiringOldBilling
+
+WiringOldBilling is an sample API for Billing screen in OpFlow
+
+## Initial data Collection [/billing/getopenfinalizedbilldetails.json?mr_no=SG20000084]
+
+### Initial data for billing screen [GET]
+
++ Response 200 (application/json)
+
+        {
+            "printer_definition": [
+                {
+                    "print_mode": "P",
+                    "printer_definition_name": "Bill Print Settings",
+                    "printer_id": 1
+                },
+                {
+                    "print_mode": "P",
+                    "printer_definition_name": "Default Template Settings",
+                    "printer_id": 7
+                },
+                {
+                    "printer_id": 2,
+                    "print_mode": "P",
+                    "printer_definition_name": "Diagnostic Report Settings"
+                },
+                {
+                    "printer_id": 6,
+                    "print_mode": "P",
+                    "printer_definition_name": "Insurance Template Settings"
+                },
+                {
+                    "printer_id": 10,
+                    "print_mode": "P",
+                    "printer_definition_name": "New Bill print setting"
+                },
+                {
+                    "print_mode": "T",
+                    "printer_id": 11,
+                    "printer_definition_name": "Op Bill Print"
+                },
+                {
+                    "print_mode": "P",
+                    "printer_definition_name": "Patient Document Printer Settings",
+                    "printer_id": 4
+                },
+                {
+                    "printer_definition_name": "Pharmacy Print Settings",
+                    "print_mode": "T",
+                    "printer_id": 3
+                },
+                {
+                    "print_mode": "P",
+                    "printer_definition_name": "Radiology Report Settings",
+                    "printer_id": 9
+                },
+                {
+                    "print_mode": "T",
+                    "printer_id": 8,
+                    "printer_definition_name": "Store Print Settings"
+                },
+                {
+                    "printer_definition_name": "Test-web",
+                    "printer_id": 14,
+                    "print_mode": "T"
+                },
+                {
+                    "print_mode": "P",
+                    "printer_id": 12,
+                    "printer_definition_name": "new ruchi print"
+                },
+                {
+                    "print_mode": "P",
+                    "printer_id": 15,
+                    "printer_definition_name": "shilpi"
+                }
+            ],
+            "open_bills": [
+                {
+                    "tpa_name": "Shweta Tpa1",
+                    "bill_no": "BC18000064",
+                    "patient_id": "OPAS1800129",
+                    "status": "A",
+                    "bill_type": "C",
+                    "finalized_date": null,
+                    "open_date": "18-01-2019 10:25:00",
+                    "payment_status": "U",
+                    "dept_name": "CARDIOLOGY",
+                    "insurance_co_name": "Shweta company1",
+                    "doctor_name": "DR RAMESH D",
+                    "visit_status": "A"
+                }
+            ],
+            "bill_print_template_list": {
+                "CUSTOM-TDS Amount": "TDS Amount",
+                "CUSTOM-LOYALITY POINT TEMPLATE": "LOYALITY POINT TEMPLATE",
+                "CUSTOM-Web Based Bill Now Print Template": "Web Based Bill Now Print Template",
+                "CUSTOM-Dnlsh Bill Print": "Dnlsh Bill Print",
+                "CUSTOM-New Bill Print": "New Bill Print",
+                "CUSTOM-Web Based Bill Later Print Template": "Web Based Bill Later Print Template",
+                "CUSTOM-Insurance Bill": "Insurance Bill",
+                "CUSTOM-TEMP KILPAUK": "TEMP KILPAUK",
+                "CUSTOM-DOT MATRIX": "DOT MATRIX",
+                "CUSTOM-Bill_Rate_Plan_code": "Bill_Rate_Plan_code",
+                "CUSTOM-BUILTIN_TEXT": "Built-in Default Text template",
+                "CUSTOM-OP Bill Print(text)": "OP Bill Print(text)",
+                "CUSTOM-Reciept bill print without bill no": "Reciept bill print without bill no",
+                "CUSTOM-snhrc": "snhrc",
+                "CUSTOM-Detail Bill Print(Merge)": "Detail Bill Print(Merge)",
+                "BILL-DET-ALL": "Bill - Detailed",
+                "CUSTOM-testing": "testing",
+                "CUSTOM-BUILTIN_HTML": "Built-in Default HTML template"
+            },
+            "finalized_closed_bills": [
+                {
+                    "tpa_name": "Shweta Tpa1",
+                    "bill_no": "BC18000064",
+                    "patient_id": "OPAS1800129",
+                    "status": "F",
+                    "bill_type": "C",
+                    "finalized_date": null,
+                    "open_date": "18-01-2019 10:25:00",
+                    "payment_status": "P",
+                    "dept_name": "CARDIOLOGY",
+                    "insurance_co_name": "Shweta company1",
+                    "doctor_name": "DR RAMESH D",
+                    "visit_status": "A"
+                }
+            ]
+        }
+        
+## CSS Collection [/css/billing/newBillingUX.css]
+
+### CSS overrides for old billing screen [GET]
+
++ Response 200 (text/css)
+
+        /* Hide the top bar */
+        #tblMain > tbody > tr:first-child {
+            display: none;
+        }
+        
+        /* Hide the side bar */
+        .fa-zero-width { display: none; }
+        
+        /* Remove padding and border from content area */
+        .whitebg.contentarea { padding: 0px; border: none; }
+        
+        /* Hide the bill form */
+        form[name="billNoForm"] { display: none; }
+        
+        /* Apply margin for the first block from the top */
+        #content > div:nth-child(3) { margin-top: 10px; }
+        
+        /* Hide the image on the the first block */
+        #content > div:nth-child(3) > .fieldSetBorder > .fieldSetLabel { display: none; }
+        
+        /* Hide the first row of the first block containing patient details */
+        .patientdetails > tbody > tr:first-child { display: none; }
+        
+        /* Hide screen action button */
+        /* Uncomment for 12.2.2 */ 
+        /* #txx { display: none; } */
+        /* Remove for 12.2.2 */
+        /* Styles to show bill template & printer settings dropdown to download bill */
+        #txx > tbody > tr > td { display: none; }
+        #txx > tbody > tr:first-child > td:first-child { display: none; }
+        #txx > tbody > tr:first-child > td:nth-child(2) { display: table-cell; }
+        
+        /* Hide status flags row */
+        #content > table:nth-child(9) > tbody > tr > td { display: none; }
+        
+        /* Expand Order list table to full width */
+        form[name="mainform"] .resultList { width: 100%; }
+        
+        .foottertxt { display: none; }
+        
+        body {
+            overflow-y: hidden !important;
+            padding-bottom : 10px;
+        }
+        #content {
+            height: 100vh;
+            overflow: scroll;
+        }

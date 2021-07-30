@@ -1,0 +1,802 @@
+{
+    "title": "Diagnostics Report",
+    "defaultOrder": "ddept_name",
+    "reportGroup": "Diagnostics Reports",
+    "dateFields": [
+        "pres_date",
+        "conducted_date",
+        "sample_date",
+        "cancel_date",
+        "handed_over_date",
+        "signed_off_date"
+    ],
+    "description": "This report builder gives a detailed description of all diagnostic tests within the selected date range. (Note: The builder describes only those tests, which were prescribed from the Prescribe Tests screen. )",
+    "queryUnits": [
+        {
+            "mainTableName": "tests_prescribed",
+            "mainTableAlias": "tp",
+            "joinTables": [
+                {
+                    "type": "LEFT",
+                    "name": "tests_conducted",
+                    "alias": "tc",
+                    "dependsOn": "tp",
+                    "expression": "ON tp.prescribed_id = tc.prescribed_id"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "test_visit_reports",
+                    "alias": "tvr",
+                    "dependsOn": "tp",
+                    "expression": "ON tp.report_id=tvr.report_id"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "sample_collection",
+                    "alias": "sc",
+                    "dependsOn": "tp",
+                    "expression": "ON (sc.sample_collection_id = tp.sample_collection_id)"
+                },
+                {
+                    "type": "JOIN",
+                    "name": "diagnostics",
+                    "alias": "diag",
+                    "dependsOn": "tp",
+                    "expression": "ON (tp.test_id=diag.test_id)"
+                },
+                {
+                    "type": "JOIN",
+                    "name": "diagnostics_departments",
+                    "alias": "ddep",
+                    "dependsOn": "diag",
+                    "expression": "ON (ddep.ddept_id = diag.ddept_id)"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "patient_registration",
+                    "alias": "pr",
+                    "dependsOn": "tp",
+                    "expression": "ON pr.patient_id = tp.pat_id"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "department",
+                    "alias": "admdep",
+                    "dependsOn": "pr",
+                    "expression": "ON pr.admitted_dept = admdep.dept_id"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "patient_details",
+                    "alias": "pd",
+                    "dependsOn": "pr",
+                    "expression": "ON pr.mr_no=pd.mr_no"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "salutation_master",
+                    "alias": "sm",
+                    "dependsOn": "pd",
+                    "expression": "ON sm.salutation_id = pd.salutation"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "op_type_names",
+                    "alias": "otn",
+                    "dependsOn": "pr",
+                    "expression": "ON otn.op_type = pr.op_type"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "incoming_sample_registration",
+                    "alias": "isr",
+                    "dependsOn": "tp",
+                    "expression": "ON isr.incoming_visit_id = tp.pat_id"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "hospital_center_master",
+                    "alias": "hcm",
+                    "dependsOn": "pr,isr",
+                    "expression": "ON pr.center_id = hcm.center_id or isr.center_id=hcm.center_id"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "sample_sources",
+                    "alias": "ss",
+                    "dependsOn": "sc",
+                    "expression": "ON ss.source_id = sc.sample_source_id"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "sample_type",
+                    "alias": "sac",
+                    "dependsOn": "sc",
+                    "expression": "ON sac.sample_type_id = sc.sample_type_id"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "doctors",
+                    "alias": "doc",
+                    "dependsOn": "tp",
+                    "expression": "ON doc.doctor_id=tp.pres_doctor"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "doctors",
+                    "alias": "cdoc",
+                    "dependsOn": "tc",
+                    "expression": "ON cdoc.doctor_id=tc.conducted_by"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "sample_collection_centers",
+                    "alias": "scc",
+                    "dependsOn": "pr",
+                    "expression": "ON pr.collection_center_id = scc.collection_center_id"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "diag_states_master",
+                    "alias": "dsm",
+                    "dependsOn": "tp",
+                    "expression": "ON tp.conducted = dsm.value"
+                },
+                {
+                    "name": "patient_category_master",
+                    "alias": "prcm",
+                    "dependsOn": "pr",
+                    "type": "LEFT",
+                    "expression": "on prcm.category_id = pr.patient_category_id"
+                },
+                {
+                    "name": "admission",
+                    "alias": "ad",
+                    "dependsOn": "pr",
+                    "type": "LEFT",
+                    "expression": "ON ad.patient_id = pr.patient_id"
+                },
+                {
+                    "name": "bed_names",
+                    "alias": "bn",
+                    "dependsOn": "ad",
+                    "type": "LEFT",
+                    "expression": "ON bn.bed_id = ad.bed_id"
+                },
+                {
+                    "name": "ward_names",
+                    "alias": "wn",
+                    "dependsOn": "bn",
+                    "type": "LEFT",
+                    "expression": "ON wn.ward_no = bn.ward_no"
+                },
+                {
+                    "name": "mrd_diagnosis",
+                    "alias": "pdiag",
+                    "dependsOn": "pr",
+                    "expression": "ON (pdiag.diag_type = 'P' AND pdiag.visit_id = pr.patient_id)"
+                },
+                {
+                    "name": "service_sub_groups",
+                    "alias": "ssg",
+                    "dependsOn": "diag",
+                    "expression": "ON (ssg.service_sub_group_id = diag.service_sub_group_id)"
+                },
+                {
+                    "name": "service_groups",
+                    "alias": "sg",
+                    "dependsOn": "ssg",
+                    "expression": "ON (sg.service_group_id = ssg.service_group_id)"
+                }
+            ]
+        }
+    ],
+    "fields": {
+        "transfer_batch_id": {
+            "displayName": "Transfer Batch Id",
+            "width": "120",
+            "description": "Transfer Batch Id",
+            "filterable": true,
+            "groupable": true,
+            "expression": "sc.transfer_batch_id"
+        },
+        "presc_dr": {
+            "table": "doc",
+            "displayName": "Presc. Doctor",
+            "width": "120",
+            "description": "Prescribing Doctor",
+            "filterable": true,
+            "groupable": true,
+            "expression": "doc.doctor_name"
+        },
+        "cond_dr": {
+            "table": "cdoc",
+            "displayName": "Cond. Doctor",
+            "width": "120",
+            "description": "Conducting Doctor",
+            "filterable": true,
+            "groupable": true,
+            "expression": "cdoc.doctor_name"
+        },
+        "test_name": {
+            "table": "diag",
+            "displayName": "Test Name",
+            "width": "150",
+            "groupable": true,
+            "filterable": true,
+            "expression": "diag.test_name"
+        },
+        "type_of_specimen": {
+            "table": "diag",
+            "displayName": "Specimen Type",
+            "width": "60",
+            "expression": "diag.type_of_specimen"
+        },
+        "cust_id": {
+            "table": "pd,isr",
+            "displayName": "Patient ID",
+            "width": "60",
+            "expression": "COALESCE (pd.mr_no, isr.incoming_visit_id)"
+        },
+        "pres_datetime": {
+            "table": "tp",
+            "displayName": "Ordered Date Time",
+            "width": "60",
+            "dataType": "timestamp",
+            "expression": "tp.pres_date"
+        },
+        "sample_no": {
+            "table": "tp",
+            "displayName": "Sample No",
+            "width": "60",
+            "filterable": true,
+            "expression": "CASE WHEN coll_prescribed_id is null THEN tp.sample_no ELSE (select sample_no from tests_prescribed where prescribed_id =tp.coll_prescribed_id) END"
+        },
+        "sample_qty": {
+            "table": "sc",
+            "displayName": "Sample Qty",
+            "width": "60",
+            "expression": "sc.sample_qty"
+        },
+        "collected_by": {
+            "table": "sc",
+            "displayName": "Sample Collected By",
+            "width": "60",
+            "expression": "sc.user_name"
+        },
+        "pres_date": {
+            "displayName": "Ordered Date",
+            "width": "60",
+            "dataType": "date",
+            "description": "Prescribed Date",
+            "filterable": true,
+            "expression": "DATE(tp.pres_date)"
+        },
+        "pres_time": {
+            "displayName": "Ordered Time",
+            "width": "70",
+            "expression": "to_char(pres_date,'HH24:MI')"
+        },
+        "ddept_name": {
+            "table": "ddep",
+            "displayName": "Department",
+            "width": "100",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "expression": "ddep.ddept_name",
+            "allowedValuesQuery": "SELECT ddept_name FROM diagnostics_departments ORDER BY ddept_name"
+        },
+        "conducted_datetime": {
+            "table": "tc",
+            "displayName": "Conducted Date Time",
+            "width": "70",
+            "expression": "to_char(tc.conducted_date,'DD-MM-YYYY hh24:mi:ss')"
+        },
+        "conducted_date": {
+            "table": "tc",
+            "displayName": "Conducted Date",
+            "width": "60",
+            "dataType": "date",
+            "filterable": true,
+            "expression": "DATE(tc.conducted_date)"
+        },
+        "conducted_time": {
+            "table": "tc",
+            "displayName": "Conducted Time",
+            "width": "60",
+            "expression": "(to_char(conducted_date, 'hh24:mi'))"
+        },
+        "conducted": {
+            "table": "dsm",
+            "displayName": "Test Conducted Status",
+            "width": "100",
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT display_name FROM diag_states_master",
+            "expression": "dsm.display_name"
+        },
+        "sample_needed": {
+            "table": "diag",
+            "displayName": "Sample Needed",
+            "width": "60",
+            "filterable": true,
+            "groupable": true,
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "expression": "CASE WHEN diag.sample_needed='n' THEN 'No' ELSE 'Yes' END"
+        },
+        "cancelled_by": {
+            "table": "tp",
+            "displayName": "Cancelled By",
+            "width": "70"
+        },
+        "cancel_date": {
+            "displayName": "Cancelled Date",
+            "width": "80",
+            "dataType": "date",
+            "expression": "DATE(tp.cancel_date)"
+        },
+        "sflag": {
+            "table": "tp,diag,sc",
+            "filterable": true,
+            "groupable": true,
+            "displayName": "Sample Status",
+            "width": "60",
+            "allowedValues": [
+                "Collection Pending",
+                "Collection Completed",
+                "Collection Not Required",
+                "Sample Asserted"
+            ],
+            "expressionLines": [
+                "CASE ",
+                " WHEN sflag = '0' AND diag.sample_needed='y' AND (tp.conducted='N' OR tp.conducted='NRN') THEN 'Collection Pending'  ",
+                " WHEN sflag = '1' AND diag.sample_needed='y' AND sc.sample_status='C' THEN 'Collection Completed'  ",
+                " WHEN sflag = '0' AND diag.sample_needed='n' THEN 'Collection Not Required' ",
+                " WHEN sflag = '1' AND diag.sample_needed='y' AND sc.sample_status='A' THEN 'Sample Asserted'  ",
+                " END "
+            ]
+        },
+        "labno": {
+            "displayName": "Lab No.",
+            "width": "60"
+        },
+        "re_conduction": {
+            "displayName": "Reconducted",
+            "width": "70",
+            "filterable": true,
+            "groupable": true,
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "expression": "CASE WHEN re_conduction='f' THEN 'No' ELSE 'Yes' END"
+        },
+        "patient_name": {
+            "table": "sm,pd,isr",
+            "displayName": "Patient Name",
+            "expression": "COALESCE(get_patient_full_name(sm.salutation, pd.patient_name, pd.middle_name, pd.last_name),isr.patient_name)",
+            "width": "150",
+            "groupable": true
+        },
+         "name_local_language": {
+                    "table": "pd",
+                    "displayName": "Name In Local Language",
+                    "width": 150,
+                    "expression": "pd.name_local_language"
+          },
+        "gender": {
+            "table": "pd,isr",
+            "displayName": "Gender",
+            "width": "50",
+            "filterable": true,
+            "groupable": true,
+            "expression": "CASE WHEN COALESCE(pd.patient_gender,isr.patient_gender)='M' THEN 'Male' WHEN COALESCE(pd.patient_gender,isr.patient_gender)='F' THEN 'Female' WHEN COALESCE(pd.patient_gender,isr.patient_gender)='C' THEN 'Couple' ELSE 'Others' END",
+            "allowedValues": [
+                "Male",
+                "Female",
+                "Couple",
+                "Others"
+            ]
+        },
+        "patient_type": {
+            "table": "pr",
+            "displayName": "Patient Type",
+            "width": "50",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValues": [
+                "In-Patient",
+                "Out-Patient",
+                "Incoming Sample"
+            ],
+            "expression": "CASE WHEN pr.visit_type='i' THEN 'In-Patient' WHEN pr.visit_type='o' THEN 'Out-Patient' ELSE 'Incoming Sample' END"
+        },
+        "op_type_name": {
+            "table": "otn",
+            "displayName": "Visit/OP Type",
+            "width": "80",
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT op_type_name FROM op_type_names"
+        },
+        "sample_datetime": {
+            "table": "sc",
+            "displayName": "Sample Date Time",
+            "width": "80",
+            "allowNull": true,
+            "dataType": "timestamp",
+            "expression": "sc.sample_date"
+        },
+        "sample_date": {
+            "table": "sc",
+            "displayName": "Sample Date",
+            "width": "80",
+            "dataType": "date",
+            "expression": "DATE(sc.sample_date)"
+        },
+        "sample_type": {
+            "table": "sac",
+            "displayName": "Sample Type",
+            "width": "70",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT sample_type FROM sample_type ORDER BY sample_type"
+        },
+        "dept_category": {
+            "table": "ddep",
+            "displayName": "Department Type",
+            "width": "70",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "expression": "CASE WHEN ddep.category='DEP_LAB' THEN 'Lab' ELSE 'Radiology'END",
+            "allowedValues": [
+                "Lab",
+                "Radiology"
+            ]
+        },
+        "admitted_dept_name": {
+            "table": "admdep",
+            "displayName": "Admitting Department",
+            "width": 120,
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT dept_name FROM department ORDER BY dept_name",
+            "expression": "admdep.dept_name"
+        },
+        "report_name": {
+            "table": "tvr",
+            "displayName": "Report Name",
+            "width": "100",
+            "allowNull": true
+        },
+        "report_user": {
+            "table": "tvr",
+            "displayName": "Report User",
+            "width": "100",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "expression": "tvr.user_name"
+        },
+        "report_datetime": {
+            "table": "tvr",
+            "displayName": "Report Date Time",
+            "width": "70",
+            "allowNull": true,
+            "dataType": "timestamp",
+            "expression": "tvr.report_date"
+        },
+        "pres_turn_around_time": {
+            "table": "tvr",
+            "displayName": "Prescription TAT",
+            "width": "70",
+            "allowNull": true,
+            "filterable": true,
+            "expression": "CASE WHEN (extract ('day' from report_date-pres_date) > 0 ) THEN to_char(tvr.report_date-tp.pres_date,'DD' ) || ' Days ' || to_char(tvr.report_date-tp.pres_date,'HH24:MI:SS') ELSE to_char(tvr.report_date-tp.pres_date,'HH24:MI:SS') END"
+        },
+        "specimen_condition": {
+            "table": "sc",
+            "displayName": "Specimen Condition",
+            "width": "100"
+        },
+        "handed_over": {
+            "table": "tvr",
+            "displayName": "Report Handed Over",
+            "width": "30",
+            "groupable": true,
+            "filterable": true,
+            "allowedValues": [
+                "Y",
+                "N"
+            ],
+            "expression": "COALESCE(tvr.handed_over,'N')"
+        },
+        "handed_over_to": {
+            "table": "tvr",
+            "displayName": "Handed Over To",
+            "width": "70"
+        },
+        "hand_over_time": {
+            "table": "tvr",
+            "displayName": "Handed Over Time",
+            "width": "70",
+            "dataType": "timestamp"
+        },
+        "handed_over_date": {
+            "table": "tvr",
+            "displayName": "Handed Over Date",
+            "width": "70",
+            "expression": "DATE(tvr.hand_over_time)",
+            "dataType": "date"
+        },
+        "assertion_time": {
+            "table": "sc",
+            "displayName": "Sample Assertion Date",
+            "width": "70",
+            "dataType": "timestamp"
+        },
+        "conduction_turn_around_time": {
+            "table": "tc,sc,tvr",
+            "displayName": "Conduction TAT",
+            "width": "70",
+            "allowNull": true,
+            "filterable": true,
+            "expression": "CASE WHEN (extract ('day' from conducted_date-sample_date) > 0 ) THEN  to_char(conducted_date-sc.sample_date,'DD' ) || ' Days ' || to_char(conducted_date-sc.sample_date,'HH24:MI:SS') ELSE to_char(conducted_date-sc.sample_date,'HH24:MI:SS') END"
+        },
+        "handover_turn_around_time": {
+            "table": "sc,tvr",
+            "displayName": "HandOver TAT",
+            "width": "70",
+            "allowNull": true,
+            "filterable": true,
+            "expression": "CASE WHEN (extract ('day' from hand_over_time-sample_date) > 0 ) THEN to_char(hand_over_time-sc.sample_date,'DD' ) || ' Days ' || to_char(hand_over_time-sc.sample_date,'HH24:MI:SS') ELSE to_char(hand_over_time-sc.sample_date,'HH24:MI:SS') END"
+        },
+        "report_turn_around_time": {
+            "table": "sc,tvr",
+            "displayName": "Report TAT",
+            "width": "70",
+            "allowNull": true,
+            "filterable": true,
+            "expression": "CASE WHEN (extract ('day' from tvr.report_date-sample_date) > 0 ) THEN to_char(tvr.report_date-sc.sample_date,'DD' ) || ' Days ' || to_char(tvr.report_date-sc.sample_date,'HH24:MI:SS') ELSE to_char(tvr.report_date-sc.sample_date,'HH24:MI:SS') END"
+        },
+        "assertion_turn_around_time": {
+            "table": "sc,tvr",
+            "displayName": "Assertion TAT",
+            "width": "70",
+            "allowNull": true,
+            "filterable": true,
+            "expression": "CASE WHEN (extract ('day' from assertion_time-sample_date) > 0 ) THEN to_char(assertion_time-sc.sample_date,'DD' ) || ' Days ' || to_char(assertion_time-sc.sample_date,'HH24:MI:SS') ELSE to_char(assertion_time-sc.sample_date,'HH24:MI:SS') END"
+        },
+        "source_name": {
+            "table": "ss",
+            "displayName": "Sample Source",
+            "width": "70"
+        },
+        "handover_by": {
+            "table": "sc",
+            "displayName": "Sample Handover By",
+            "width": "70"
+        },
+        "received_by": {
+            "table": "sc",
+            "displayName": "Sample Received By",
+            "width": "70"
+        },
+        "center_name": {
+            "table": "hcm",
+            "displayName": "Center Name",
+            "width": "100",
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT center_name FROM hospital_center_master WHERE center_id!=0"
+        },
+        "hasamended": {
+            "displayName": "Has Amended",
+            "width": "70",
+            "filterable": true,
+            "groupable": true,
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "expression": "CASE WHEN exists (select * from test_details td where original_test_details_id != 0 and td.prescribed_id = tp.prescribed_id) THEN 'Yes' ELSE 'No' END"
+        },
+        "collection_center": {
+            "table": "scc",
+            "displayName": "Collection Center",
+            "width": "70",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT collection_center FROM sample_collection_centers"
+        },
+        "signed_off": {
+            "table": "tvr",
+            "displayName": "Report Signoff",
+            "width": "30",
+            "groupable": true,
+            "filterable": true,
+            "allowedValues": [
+                "Y",
+                "N"
+            ],
+            "expression": "COALESCE(tvr.signed_off,'N')"
+        },
+        "age": {
+            "table": "pd,isr",
+            "displayName": "Age",
+            "width": "50",
+            "filterable": true,
+            "dataType": "numeric",
+            "decimalType": "integer",
+            "expression": "get_patient_age(pd.dateofbirth, pd.expected_dob,isr.isr_dateofbirth,isr.patient_age)"
+        },
+        "age_in": {
+            "displayName": "Age In",
+            "expression": "get_patient_age_in(pd.dateofbirth, pd.expected_dob,isr.isr_dateofbirth,isr.age_unit)",
+            "width": "50"
+        },
+        "priority": {
+            "table": "tp",
+            "displayName": "Priority",
+            "width": "60",
+            "groupable": true,
+            "filterable": true,
+            "allowedValues": [
+                "Stat",
+                "Regular"
+            ],
+            "expression": "CASE WHEN tp.priority='S' THEN 'Stat' ELSE 'Regular' END"
+        },
+        "completed_by": {
+            "table": "tc",
+            "displayName": "Completed By",
+            "width": "100",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "expression": "tc.completed_by"
+        },
+        "validated_by": {
+            "table": "tc",
+            "displayName": "Validated By",
+            "width": "100",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "expression": "tc.validated_by"
+        },
+        "signedoff_by": {
+            "table": "tvr",
+            "displayName": "Signedoff By",
+            "width": "100",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "expression": "tvr.signedoff_by"
+        },
+        "mr_no": {
+            "table": "pr",
+            "displayName": "MR No.",
+            "width": "150",
+            "groupable": true
+        },
+        "patient_category_name": {
+            "table": "prcm",
+            "displayName": "Patient Category",
+            "width": 120,
+            "allowedValuesQuery": "SELECT category_name FROM patient_category_master ORDER BY category_name",
+            "filterable": true,
+            "groupable": true,
+            "expression": "prcm.category_name "
+        },
+        "ward_name": {
+            "table": "wn",
+            "displayName": "Ward",
+            "width": 100,
+            "allowedValuesQuery": "SELECT ward_name FROM ward_names ORDER BY ward_name",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true
+        },
+        "signed_off_date": {
+            "table": "tvr",
+            "displayName": "Signed Off Date",
+            "width": "100",
+            "dataType": "date",
+            "filterable": true,
+            "allowNull": true,
+            "expression": "CASE WHEN tvr.signed_off='Y' THEN DATE(tvr.report_date) ELSE NULL END"
+        },
+        "signed_off_time": {
+            "table": "tvr",
+            "displayName": "Signed Off Time",
+            "width": "100",
+            "allowNull": true,
+            "expression": "CASE WHEN tvr.signed_off='Y' THEN (to_char(tvr.report_date, 'hh24:mi')) ELSE NULL END"
+        },
+        "common_order_id": {
+            "table": "tp",
+            "displayName": "Order Number",
+            "width": "100",
+            "filterable": true,
+            "groupable": true,
+            "dataType": "integer",
+            "expression": "tp.common_order_id"
+        },
+        "primary_diagnosis": {
+            "table": "pdiag",
+            "displayName": "Pri. Diagnosis Description",
+            "width": 150,
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "expression": "pdiag.description"
+        },
+        "primary_diag_icd_code": {
+            "table": "pdiag",
+            "displayName": "Pri. Diagnosis Code",
+            "width": 150,
+            "description": "Primary Diagnosis Code",
+            "expression": "pdiag.icd_code"
+        },
+        "primary_code_type": {
+            "table": "pdiag",
+            "displayName": "Pri. Diagnosis Code Type",
+            "width": 150,
+            "description": "Primary Diagnosis Code Type",
+            "expression": "pdiag.code_type"
+        },
+        "complaint": {
+            "table": "pr",
+            "displayName": "Complaints",
+            "width": 100,
+            "description": "Complaints",
+            "expression": "pr.complaint"
+        },
+        "service_group_name": {
+            "allowHorizGroup": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT service_group_name FROM service_groups ORDER BY service_group_name",
+            "dataType": "string",
+            "displayName": "Service Group",
+            "filterable": true,
+            "groupable": true,
+            "name": "service_group_name",
+            "table": "sg",
+            "width": 80
+        },
+        "service_sub_group_name": {
+            "allowHorizGroup": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT service_sub_group_name FROM service_sub_groups ORDER BY service_sub_group_name",
+            "dataType": "string",
+            "displayName": "Service Sub Group",
+            "filterable": true,
+            "groupable": true,
+            "name": "service_sub_group_name",
+            "table": "ssg",
+            "width": 90
+        }
+    },
+    "defaultShowFields": [
+        "cust_id",
+        "test_name",
+        "patient_name",
+        "pres_date",
+        "presc_dr",
+        "conducted",
+        "labno",
+        "conducted_date",
+        "sample_type",
+        "sample_no"
+    ]
+}

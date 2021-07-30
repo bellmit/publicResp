@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="DashboardCollectionSubReport" pageWidth="450" pageHeight="842" columnWidth="450" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<parameter name="fromdate" class="java.util.Date" isForPrompting="false"/>
+	<parameter name="todate" class="java.util.Date" isForPrompting="false"/>
+	<queryString>
+		<![CDATA[SELECT  CASE WHEN charge_head IN('OPDOC', 'ROPDOC', 'LTDIA', 'RTDIA', 'PHMED')THEN charge_head
+ELSE 'O' END as charge_type, sum(act_quantity) as activities, count(distinct bill_no) as bills,
+sum(amount) as amount,'Bill Now' as billType  FROM bill_charge bc JOIN bill b using(bill_no)  WHERE b.bill_type != 'C' 
+AND b.status = 'C' AND bc.status != 'X'  AND date_trunc('day',bc.posted_date) 
+BETWEEN  '$P!{fromdate}' and '$P!{todate}' GROUP BY charge_type 
+
+UNION 
+
+SELECT 'adv' as charge_type, count(patient_id) as activities, 0 as bills, 
+coalesce((SELECT coalesce(sum(amount) ,0)as amount  FROM bill_receipts r JOIN bill b using(bill_no) 
+WHERE r.recpt_type = 'A' AND b.bill_type = 'C' AND r.display_date BETWEEN  '$P!{fromdate}' and '$P!{todate}')
+- (SELECT coalesce(sum(amount) ,0) as amount  FROM bill_refunds r JOIN bill b using(bill_no)  WHERE b.bill_type = 'C' AND
+r.display_date BETWEEN  '$P!{fromdate}' and '$P!{todate}') ,0) as amount ,'Bill Later' as billType 
+FROM patient_registration WHERE reg_date BETWEEN  '$P!{fromdate}' and '$P!{todate}' and visit_type='i' 
+
+UNION 
+
+SELECT 'Dis' as charge_type, count(patient_id) as activities, 0 as bills,
+ coalesce((SELECT coalesce(sum(amount),0) as amount  FROM bill_receipts r JOIN bill b using(bill_no)  WHERE r.recpt_type = 'S' AND b.bill_type = 'C' AND r.display_date BETWEEN  '$P!{fromdate}' and '$P!{todate}' )
++ 
+  (SELECT coalesce(sum(amount),0) as amount  FROM bill_thirdparty_receipts tpa JOIN bill b using(bill_no)  WHERE b.bill_type='C' AND tpa.display_date BETWEEN   '$P!{fromdate}' and '$P!{todate}' )  ,0)  as amount,'Bill Later' as billType 
+FROM patient_discharge WHERE discharge_date BETWEEN  '$P!{fromdate}' and '$P!{todate}' order by billType,charge_type]]>
+	</queryString>
+	<field name="charge_type" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="activities" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="bills" class="java.lang.Long">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="amount" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="billType" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<variable name="countsubtotal" class="java.math.BigDecimal" resetType="Group" resetGroup="bill_type" calculation="Sum">
+		<variableExpression><![CDATA[$F{activities}]]></variableExpression>
+	</variable>
+	<variable name="amountsubtotal" class="java.math.BigDecimal" resetType="Group" resetGroup="bill_type" calculation="Sum">
+		<variableExpression><![CDATA[$F{amount}]]></variableExpression>
+	</variable>
+	<variable name="totalcount" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{activities}]]></variableExpression>
+	</variable>
+	<variable name="totalamount" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{amount}]]></variableExpression>
+	</variable>
+	<group name="bill_type">
+		<groupExpression><![CDATA[$F{billType}]]></groupExpression>
+		<groupHeader>
+			<band height="15">
+				<textField>
+					<reportElement mode="Opaque" x="0" y="0" width="449" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+					<box>
+						<pen lineWidth="0.5" lineColor="#000000"/>
+					</box>
+					<textElement>
+						<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{billType}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="20">
+				<textField>
+					<reportElement x="0" y="0" width="260" height="20"/>
+					<box>
+						<pen lineWidth="0.5" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="9" pdfFontName="Helvetica"/>	
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{billType} +" Sub total"]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="bill_type">
+					<reportElement x="260" y="0" width="85" height="20"/>
+					<box>
+						<pen lineWidth="0.5" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="9" pdfFontName="Helvetica"/>	
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{countsubtotal}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="345" y="0" width="104" height="20"/>
+					<box>
+						<pen lineWidth="0.5" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="9" pdfFontName="Helvetica"/>	
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{amountsubtotal}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band/>
+	</background>
+	<title>
+		<band height="22">
+			<staticText>
+				<reportElement x="0" y="0" width="450" height="22"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true" isUnderline="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Charge Wise Collection]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band/>
+	</pageHeader>
+	<columnHeader>
+		<band height="15">
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="0" width="260" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box>
+					<pen lineWidth="0.5" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" pdfFontName="Helvetica"/>	
+				</textElement>
+				<text><![CDATA[Charge Type]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="260" y="0" width="85" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box>
+					<pen lineWidth="0.5" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" pdfFontName="Helvetica"/>	
+				</textElement>
+				<text><![CDATA[Count]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="345" y="0" width="104" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box>
+					<pen lineWidth="0.5" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" pdfFontName="Helvetica"/>	
+				</textElement>
+				<text><![CDATA[Amount]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="15">
+			<textField>
+				<reportElement x="0" y="0" width="260" height="15"/>
+				<box>
+					<pen lineWidth="0.5" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="9" pdfFontName="Helvetica"/>	
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{charge_type}.equals("adv")?"Advances (Admissions)":
+$F{charge_type}.equals("Dis")? "Settlements (Discharges)" :
+$F{charge_type}.equals("OPDOC")?"OP Consultations (new)" : 
+$F{charge_type}.equals("ROPDOC")?"OP Consultations (revisit)":
+$F{charge_type}.equals("LTDIA")?"Lab Tests":
+$F{charge_type}.equals("RTDIA")?"Radiology Tests":
+$F{charge_type}.equals("PHMED")?"Pharmacy ": "Other Services"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="260" y="0" width="85" height="15"/>
+				<box>
+					<pen lineWidth="0.5" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9" pdfFontName="Helvetica"/>	
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{activities}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="345" y="0" width="104" height="15"/>
+				<box>
+					<pen lineWidth="0.5" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9" pdfFontName="Helvetica"/>	
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{amount}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band/>
+	</columnFooter>
+	<pageFooter>
+		<band height="20">
+			<textField>
+				<reportElement x="260" y="0" width="85" height="20"/>
+				<box>
+					<pen lineWidth="0.5" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9" pdfFontName="Helvetica"/>	
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{totalcount}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="345" y="0" width="104" height="20"/>
+				<box>
+					<pen lineWidth="0.5" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9" pdfFontName="Helvetica"/>	
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{totalamount}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="0" width="260" height="20"/>
+				<box>
+					<pen lineWidth="0.5" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<text><![CDATA[Total]]></text>
+			</staticText>
+		</band>
+	</pageFooter>
+	<summary>
+		<band/>
+	</summary>
+</jasperReport>

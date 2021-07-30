@@ -1,0 +1,113 @@
+{
+  "title": "Indent Flow Report",
+  "reportGroup": "Store Mgmt Reports",
+  "dateFields": ["date_time"],
+  "description": "This report shows the Indent Process Flow.",
+  "tableName": ["rpt_indent_flow_view"],
+  "defaultShowFields": [
+    "indent_no",
+    "date_time",
+    "requester_name",
+    "requesting_dept",
+    "requesting_ward",
+    "requesting_store",
+    "to_dept"
+  ],
+  "fields": {
+    "indent_no": {
+      "displayName": "Indent No",
+      "width": "60"
+    },
+    "date_time": {
+      "displayName": "Date",
+      "dataType": "date",
+      "width": "60"
+    },
+    "approved_by": {
+      "displayName": "Approved/Rejected By",
+      "width": "60"
+    },
+    "approved_date": {
+      "displayName": "Approved/Rejected Date",
+      "dataType": "timestamp",
+      "width": "60"
+    },
+    "processed_by": {
+      "displayName": "Last Processed By",
+      "width": "60"
+    },
+    "processed_date": {
+      "displayName": "Last Processed Date",
+      "dataType": "timestamp",
+      "width": "60"
+    },
+    "received_by": {
+      "displayName": "Last Received/Rejected By",
+      "width": "60"
+    },
+    "received_date": {
+      "displayName": "Last Received/Rejected Date",
+      "dataType": "timestamp",
+      "width": "60"
+    },
+    "indent_type": {
+      "displayName": "Indent Type",
+      "width": "70",
+      "filterable": true,
+      "groupable": true,
+      "allowedValues": ["Stock transfer","Dept / Ward Issue","Request for new Items"]
+    },
+    "requester_name": {
+      "displayName": "Raised By",
+      "width": "60"
+    },
+    "status": {
+      "displayName": "Indent Status",
+      "width": "60",
+      "filterable": true,
+      "groupable": true,
+      "allowedValues": ["Open","Approved","Closed"]
+    },
+    "requesting_dept": {
+      "displayName": "Requesting Dept",
+      "groupable": true,
+      "filterable": true,
+      "width": "80",
+      "allowedValuesQuery": "SELECT dept_name FROM department WHERE status = 'A'"
+    },
+    "requesting_ward": {
+      "displayName": "Requesting Ward",
+      "groupable": true,
+      "filterable": true,
+      "allowedValuesQuery": "SELECT ward_name FROM ward_names WHERE status = 'A'",
+      "width": "80"
+    },
+    "requesting_store": {
+      "displayName": "Requesting Store",
+      "groupable": true,
+      "filterable": true,
+      "allowedValuesQuery": "SELECT dept_name FROM stores WHERE status = 'A'",
+      "width": "80"
+    },
+    "to_dept": {
+      "displayName": "Indent To",
+      "groupable": true, "filterable": true,
+      "allowedValuesQuery": "SELECT dept_name FROM stores WHERE status = 'A'",
+      "width": "80"
+    },
+    "from_center_name": {
+      "displayName": "Requesting center",
+      "width": "100",
+      "filterable": true,
+      "groupable": true,
+      "allowedValuesQuery": "SELECT center_name FROM hospital_center_master WHERE center_id!=0 ORDER BY center_name"
+    },
+    "to_center_name": {
+      "displayName": "Indent To Center",
+      "width": "100",
+      "filterable": true,
+      "groupable": true,
+      "allowedValuesQuery": "SELECT center_name FROM hospital_center_master WHERE center_id!=0 ORDER BY center_name"
+    }
+  }
+}

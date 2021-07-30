@@ -1,0 +1,131 @@
+{
+  "title": "Stock Issues Report",
+  "defaultOrder": "transfer_no",
+  "reportGroup": "Stores Reports",
+  "dateFields": ["issue_date"],
+  "description": "This report builder describes the store to store movement of stock within the selected date range.",
+  "tableName": ["rpt_store_stock_issue_view"],
+  "defaultShowFields": [
+    "transfer_no",
+    "from_store",
+    "to_store",
+    "medicine_name",
+    "batch_no",
+    "issue_date",
+    "qty",
+    "amt",
+    "reason"
+  ],
+  "fields": {
+    "transfer_no": {
+      "displayName": "Issue No.",
+      "filterable": false,
+      "groupable": false,
+      "allowNull": true,
+      "width": "60",
+      "allowedValuesQuery": "SELECT transfer_no FROM store_transfer_main ORDER BY transfer_no"
+    },
+    "from_store": {
+      "displayName": "From Store",
+      "filterable": true,
+      "groupable": true,
+      "width": "100",
+      "allowedValuesQuery": "SELECT dept_name AS from_store FROM general_departments ORDER BY dept_name"
+    },
+    "to_store": {
+      "displayName": "To Store",
+      "filterable": true,
+      "groupable": true,
+      "width": "100",
+      "allowedValuesQuery": "SELECT dept_name AS to_store FROM general_departments ORDER BY dept_name"
+    },
+    "medicine_name": {
+      "displayName": "Item",
+      "filterable": true,
+      "allowNull": true,
+      "groupable": true,
+      "width": "80"
+    },
+    "batch_no": {
+      "displayName": "Batch No.",
+      "filterable": false,
+      "groupable": false,
+      "width": "60"
+    },
+    "issue_date": {
+      "displayName": "Issue Date",
+      "filterable": false,
+      "dataType": "date",
+      "groupable": false,
+      "width": "70"
+    },
+    "username": {
+      "displayName": "User",
+      "width": "80",
+      "filterable": true,
+      "groupable": true,
+      "allowNull": true,
+      "allowedValuesQuery": "SELECT emp_username AS username FROM u_user ORDER BY username"
+    },
+    "control_type_name": {
+      "displayName": "Control Type",
+      "filterable": true,
+      "groupable": true,
+      "width": "55",
+      "allowedValuesQuery": "SELECT control_type_name FROM store_item_controltype ORDER BY control_type_name"
+    },
+    "issue_base_unit": {
+      "displayName": "Pack Size",
+      "filterable": true,
+      "numeric": true,
+      "dataType": "numeric",
+      "groupable": false,
+      "width": "60"
+    },
+    "qty": {
+      "displayName": "Qty.",
+      "filterable": true,
+      "groupable": false,
+      "width": "60",
+      "dataType": "numeric",
+      "decimalType": "quantity"
+    },
+    "amt": {
+      "displayName": "Value",
+      "aggFunction": "sum",
+      "filterable": true,
+      "groupable": false,
+      "width": "60",
+      "dataType": "numeric",
+      "decimalType": "amount"
+    },
+    "reason": {
+      "displayName": "Reason",
+      "filterable": false,
+      "groupable": false,
+      "width": "75"
+    },
+    "exp_dt": {
+      "displayName": "Expiry Date",
+      "dataType": "date",
+      "filterable": false,
+      "groupable": false,
+      "width": "70"
+    },
+    "bin": {
+      "displayName": "Bin/Rack",
+      "filterable": true,
+      "groupable": true,
+      "width": "60"
+    },
+    "tax": {
+      "displayName": "Tax",
+      "aggFunction": "sum",
+      "filterable": true,
+      "groupable": false,
+      "width": "60",
+      "dataType": "numeric",
+      "decimalType": "amount"
+    }
+  }
+}

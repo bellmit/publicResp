@@ -1,0 +1,3 @@
+-- liquibase formatted sql
+-- changeset SirishaRL:prescribing_doctor_dept_name_in_accounting_table failOnError:false
+ALTER TABLE hms_accounting_info RENAME COLUMN prescribing_doctor_dept_id TO prescribing_doctor_dept_name;

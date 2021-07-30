@@ -1,0 +1,3025 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Insta Patient Issues API</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.4/semantic.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/themes/prism-okaidia.min.css" />
+    <style>
+      blockquote {
+        border-left: solid 4px #eee;
+        padding-left: 8px;
+        font-style: italic;
+        margin-left: 0;
+        padding: 8px;
+      }
+
+      .ui.micro.label {
+        font-size: .25rem;
+      }
+
+      .ui.transaction.accordion .title {
+        text-align: center;
+      }
+
+      .ui.transaction.accordion .content {
+        border-top: solid 1px #ddd !important;
+        border-bottom: solid 1px #ddd !important;
+        background-color: rgba(0,0,0,.03);
+        padding: 0.5em 1em !important;
+      }
+
+      .ui.transaction.accordion .content.active {
+        margin-top: 0.5em;
+      }
+
+      .ui.basic.label {
+        text-align: left;
+        overflow: auto;
+      }
+      
+      .ui.basic.label.request-url {
+        user-select: text;
+      }
+
+      .resource .ui.sub.header {
+        text-transform: none;
+      }
+
+      .sidenav .ui.fluid.accordion .title {
+        padding-left: 0.5rem;
+      }
+      .sidenav .ui.fluid.accordion .title:not(:first-child) {
+        border-top: 1px solid #e0e0ec;        
+      }
+
+      .sidenav .ui.fluid.accordion .content {
+        padding: 0 0 0 2rem !important;
+        margin: 0;
+      }
+
+      .sidenav .ui.fluid.accordion .content .ui.secondary.menu {
+        margin: 0;
+      }
+
+      .sidenav .ui.fluid.accordion .content .ui.secondary.menu a.item{
+        margin: 0 0.75rem 0.5rem 0;
+      }
+      .sidenav .ui.fluid.accordion .content a.item > .label{
+        margin-top: 0.1rem;
+      }
+
+      @media only screen and (min-width: 768px) {
+        .sidewrap {
+          margin-right: 2rem;
+          border-right: 1px solid #b4b4be;
+          background-color: #f7f7fa;
+        }
+
+        .sidenav {
+          left: 0;
+          top: 0;
+          width: inherit;
+          position: fixed !important;
+          height: 100% !important;
+          overflow-y: auto !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="ui padded grid">
+      <div class="sidewrap four wide computer five wide tablet sixteen wide mobile column">
+        <div class="sidenav">
+          
+<a href="#introduction">
+  <h3 class="ui header centered" style="margin: 0;padding: 1rem 0;border-bottom: solid 1px #b4b4be;">
+    <img class="ui tiny image" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHgAAAAqCAYAAAB4Ip8uAAAAAXNSR0IArs4c6QAADUlJREFUeAHtWw10VMUVnnlv80Plx6Ig0Yj1FFSyScgmIGLVhmMPlRSLFVGxauvRY/XUQ0+zCfhLV6EISTYetf4VtK2KVlItKgon+BMRRAzZxJCNRaEHQSWKVglIkt33ZvrN2523bzeb3c1uqGGbObBzZ+bOnZn7zdyZuW9C7UXO/xDCKTECXe1tcd8SoId+00EDNk748RiIAbBCyPfSYVBDYwhpAJgOhXTWwBDA6YwuxmZL8/H1Gl7+tNtP4n7ffLMga/iT3q0unEPSM/zfAcx7esbj3HGfhDND69oIOm0BHjLREuk0jYcATlNg5bCGAJaaSNN4COA0BVYOawhgqYk0jYcATlNg5bCOuWtSQYnzLMZ4GeU0n1E+Gj7WLzGYj1VFqW9tqtkmBzYUBzSQEMBnn33bCUe0np9IpSknKuta62u+lWkZFzgqpuuczaSUnAr3di7hJAtebgDAO5B+h9iUN72N1aD7HwrPrjhd9/EHdZ3/TNTGXVb8iH9G0HR2j91RvoMqakVbU3V9MDtupPv9s+yOioK4jBaGeXOGr3G5XMyS1SdZOGXhmbquoc/KBM55DvQxGp3uIArdSzjfq1D6VpunpjWaADGZUWeyKONEOeL11Lws6JKSxzK6+UfnC1oEhfCDNJvu0/30ZOi3ReQVnlsxVu9ScxICuFvTJzJG/i4qimDrtJ2OyADYPs+VSXd3VnJGrwe4Ih/9Nn7FTwgBwm8hfp3bHc51KlWXtXqq3g0wxP/NLyo/F+CuA6jfj8WNdgu4rm8A0FXz5oy8PREQgFI14QlhZTZd5yUvIOEzMyKIAAA7b4ROFmiadkagONiGnJEsQDB0GjppBPCrRmad8tTWreVdUhxYfo6urRBpSvk+RAbAY8f2KHv3cywiPgcFLYQr2/Uu8gNC9EdKShZNbGpacVA/wpZyysamtAfnF1cUkl2HGgH+UijfAFd0JkagmJEXa0zbmucov18oIgavUTR5+h2nMEpfDAOX0m5K6VYwPI0Bvk4JtVoTtEEW1b14uDqe7KNRbi+uvKib7WwHMH8CAEFwY7cEnUzljD92sOuTxslTF9ljcxOyfv2CHnzW/RsmRTOs4ks7WqpfDdZ5qZvpNxVOW5gLK8rwFZgntIKjNVjgcF6AvXAjFJ8pyykhn6LR1zHf9kDxX3PGRimU5HBCz8cg8iSfEXOyoFv/sBAW4KfeOlefq0Hv6l4CRZ0o6wLMBjT46+Zm98cyD7N2VDfzL0C7i9GOMSbOWTlWxnZvs/tZyRc1pgSWJGyCRGWzZo45AOVFCXkOpxNjrkJR+MKh9Cvoph4K/zdKOmAxMjlVcihn+ZiMM8CfFRRn1zR/I77R32wAGKWNWFmUKg2Ms8t0HwPAtvsJ15clBbDe4x8P81EnwYXSNxNVXextqnqzrw4ED0d3YUBXSR7UL6W7Dq1C+lqZZ40LZ1Ycp33BTH5Mnv3Ziu0SYYKsfMH0EvuUyjeIxtZjQoxAn9apY+hLVr5odIYt44b3G1d4o5X1ldcepQCgVGFyVVqLAOp76MedkyZMe6Ou7nLdWiZpe6lrOOk8PB91XdjbToZ+hqHsiYKiygMs+jySVaPGWFCrIOOSNk/VB3lFzuS+JmHtP4UdZCxmPmYyvbOtuXo5TKbcXaI2vKPJ/S8U/DKv2PkqYfxx0MasxcCugVl7xuup3hBZkX1FfyT5RBmU9XAkuNY63u3VW/KLnHPRkbK8idMq+lKqtc5A0NiqrmaMmeDCPPphwW5pa6pZKfTSZhx7orfkbXAdRsnKkhLX6m7W+QDAuR4TVNGp/ixuCv+MXiuQa7NlvECPG/apSKmZdJvqY2pzc62wbOtEHlWJO6kVjE6MNwQofIHX436I0hqRTCi0e9yrMduHYfWulBVg1paB7gUwYXqu5AnEPOpp08rT1uIWX4c2emMo1cqfKl1UVDnRz/U/SzkAt4tQZTZOvG9Q6pbZceOmJtcRMN2AbWUPJv0SHJtHQke/ilXRanlat1V9EsnrbXJvDt8rIjlipDEzn/V6ah+KwdJnEfaXVagvgAgG7oh2uOBE1SRHIFbF86JBFfyU3R00q8F+qTcJcJPtJM4MS6Gbp5KtH1kvKYBhKn046NwWKaw/aZVw4/gv6+i6XiZpGaNzwtyYgRP9CjMxCIjCKRU4JPErQ12ha7zN1U+G0slR2cqIm7B/G6Y3OQmhWkkBjOr11lNsSFzi1JkTzmnALnHIrMECF3ozDSJ33KnvYi8TnqpA4KQMd9y7ZPK7jnWNX4s+AAsRKFMU1WWQKf4Y5loh96YoxqieFMA4N8h7V9J9MA5AlJiuRTzcxaEtPIj7HrR3vzUX5hAeK+fzwlNjzf9OaEoMr5poG3vvRnFyHah+jMzKfcLYz1MUmBzARPkoxXYD1blwYQZJwk+QtDXOmzDtXmgPd+tQgFm8VO9ie4SzRLgwQyX/O0o4YNCP0N2e0t6HxBS6Izxa8B80pCDCqJoUwERRP0+1YVEfftivpRxcCaL2Raz0saNGzAbf05JXxMbBBs4Szcd34VT+svAgQeFBc2nlPDq05usOm1jwB7890C0pnGxOVWZUpcYXqvnj88TnABwsPhchDQ2u7vaW2mtUSn+ME2ZTeB0OPfDZnOnrcR/dJvzW4eVHKcXIOKtkG1f3W9MDQTOFpiwzSYAHovv9l7Gj2b0JX16moublOMk3RErACp6KGbMFe/QzBefdGvPDRGTd/qZhKkz3qag7blzuV/2VEY8frsyUZR5TAAuFYAVzrOY63KVnqCqdBDP/IMD+1qosAD2ffevbUlJye441fyBpeMvC3KUdHftHDqR8IQu+5ZRlHnMAW5Uo3J9tze4FZNiI8bisPGAtwx49qVvvWTNv3hrVmj9gtKKaB0QhU1NYmMkeiHbwKfGkVOUc0wDLwYu/TGhvrv2dotC5uFqYTn3szee172q8RPINZGxTtTBHBGd+sXUMaMA2UJKqwLQAWCqhzeN+AWZtqUwHYsvXqPCClFLvv1f7IQAwQcbXtYtSEhhRGY8VcHgkMyOy+50c1ADPmvVAlt1RObc/o+JZw4Wphm7MMMGkQKg22mVN61wfY033i6Z0veSH5Zhtn1o5YGb6+bWHL8ZdMKpvQLaZSDwoARb7Zl5xxXV7O/Z8yLn+DyiuKJHBCB5hrqHsfSF+nhGicXDJyDLv3iIfLy8mWsv7QyuEPif5jXu5zm6V6VRicZ/HJ1lXKjJk3UEJ8M7djecSxp6A0saLjnK/7pQdjheLyYF65uEESznky0ZlLTfjACZA6B7PeNIA72iueQ0n+JAzgpPfipcu8foYrzy/uHIhzg8JT+pY8gYlwK2e6retDg3QVxYWV54fayCy7IPd288AnSXT2Cffl7SIxfMgLBCPzIOz5fLp02uHyXR/Y7yguEPWwcqz4eS7Jr+k8ocyr79xfkkF/Nvsj/2t1xf/oAQ42Fnza7lQnMb15xLZ42DS74kY7MaItLhL15t5nJ92qOezRWY6DpE/tfxUK4twvkDecpkHi3ESXne8ay9xnifzEo2xLf0Gj+/WwgLBaUd0yO3V90RlSb5BC/CYUSPqwj4ycJJD/OwdvFXq9d1YDEY8380rKv8DJsNlcnBQ0O68Cee8ItMyzlYyHxHftGUaSr0Nb6MXlZa6bDIvMnY4nKfhUd3jXCM77cW3hh3c5s0ZcQcA2WDW4XgkyHgDPGorHY6FJ5v5fRCTp5Q7IHsjtqVHxWQ22CitxN3+tT6qJJzd54ASlnCUGOF/1vBacm6Xrm3GLpwvmsG+dLpO9FegjE14G+shitKOFaNQxs4iHx2aBZYzLd2Bk5o6o73Lampath/KXw6Bi4NyM3FiXX7gYOd8+LPXIq8dL8z2cYWMxsvRs5C+0Ef4TPCr4niOLfwxkYf/RhDvr2HmL+3s/vQvAOgKkSlWIX5v8FHtOnwMeZsqFJ9Y+W4A30GpmoFDVA7k5RPKL/ZrvFCMzgxw2uAp1H32YudCMy9JYtACLMYjHtjBJJZxP31LgGuOkfMLoI4LMOONrIBqLApCLlbvYhyCXjTrRBBYdXfXre0sQK1fyCKAMhnPbY2/JDDyTJdJmPoFeF9itWeLjyCybvDB+pV49NfKKLkLTNmiLAh0KaxEqeTFc1aTtOKKmdOJPf3GNk+teToPMSZHDVoTLYfT1li77/jj1MlA7FGrWZXlkTEOVZ8D3KvE26bIMmtarDq4OYXna3GkL9vKF07TZuEta29xX2EF18qDR3/LFBs/AzL/in5EvCmzcoZo9PkweFfZMpSigQRXtGCD4BWYZ2jDmKXbRRwZsNt/hg6LB91GsLHMlL9yBCSJv0ogPYJG/Fkgr/fvli1Vh5B7M/azJT6qX41lMQMfwyfBjOKLDtYIIV9gArTg/4ZsOnx18IVib0ERORi7qLsEf3v18BGf72r8MdsM9CQP5l84GGDh6QHQn1BF2QRrUQ/w3okQETUpJiUKrisqdf3e/83hMkp4GSzQRAxyHFbsaPTzc3R7L+K9KNukjFGei/a3XgpXtuFttKF3nPy/idpYnMz/AkWIIZ8N4GHaAAAAAElFTkSuQmCC"/>
+    <div class="content" style="padding:0;">
+      &nbsp;
+      <div class="sub header">Hospital Management System</div>
+    </div>
+  </h3>
+</a>
+
+
+<div class="ui accordion fluid">
+  
+    
+    <div class="title active">
+      <i class="dropdown icon"></i>
+      
+        <strong>PATIENT ISSUE</strong>
+      
+    </div>
+    <div class="content active">
+      <div class="ui fluid secondary vertical menu">
+      
+        <a class="item green" href="#patient-issue-get-patient-issue-screen">
+          <i class="ui green empty circular label"></i>
+          
+            <span>GET PATIENT ISSUE SCREEN</span>
+          
+        </a>
+      
+        <a class="item green" href="#patient-issue-get-find-patient">
+          <i class="ui green empty circular label"></i>
+          
+            <span>GET FIND PATIENT</span>
+          
+        </a>
+      
+        <a class="item green" href="#patient-issue-get-patient-details">
+          <i class="ui green empty circular label"></i>
+          
+            <span>GET PATIENT DETAILS</span>
+          
+        </a>
+      
+        <a class="item green" href="#patient-issue-get-item-list">
+          <i class="ui green empty circular label"></i>
+          
+            <span>GET ITEM LIST</span>
+          
+        </a>
+      
+        <a class="item green" href="#patient-issue-get-item-batch-details">
+          <i class="ui green empty circular label"></i>
+          
+            <span>GET ITEM BATCH DETAILS</span>
+          
+        </a>
+      
+        <a class="item green" href="#patient-issue-get-item-amounts">
+          <i class="ui green empty circular label"></i>
+          
+            <span>GET ITEM AMOUNTS</span>
+          
+        </a>
+      
+        <a class="item blue" href="#patient-issue-post-issue-details">
+          <i class="ui blue empty circular label"></i>
+          
+            <span>POST ISSUE DETAILS</span>
+          
+        </a>
+      
+      </div>
+    </div>
+    
+  
+</div>
+
+
+        </div>
+      </div>
+      <div class="eleven wide computer ten wide tablet sixteen wide mobile column">
+        
+<div class="ui hidden divider header"></div>
+<h1 class="ui huge header" id="introduction">Insta Patient Issues API</h1>
+<hr class="ui divider">
+<div class="description">
+  <p>API documentation for Patient Issue screen.</p>
+
+</div>
+
+        <div class="ui hidden divider"></div>
+        
+
+  <div class="ui horizontal divider" >
+    
+  </div>
+  <div class="ui header center aligned">
+    <div class="ui header">
+      <div class="sub header">
+        
+      </div>
+    </div>
+  </div>
+  
+    
+      <div class="ui segments">
+        <div class="ui basic segment resource">
+          <div class="ui black huge ribbon label">
+            PATIENT ISSUE
+          </div>
+          
+        </div>
+
+        
+          
+<div class="ui grey horizontal small divider header" style="margin-top:0">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui orange micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block inverted center aligned header" id="patient-issue-get-patient-issue-screen">
+              GET PATIENT ISSUE SCREEN
+            </h3>
+            <div class="description"></div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui green large button">
+                  <h3>GET</h3>
+                </div>
+                <a class="ui basic fluid request-url green label">
+                  <code>http://localhost:8080/instahms/inventory/patientissues/add.json?store_id=0</code>
+                </a>
+              </div>
+              
+              
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>application/json</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui blue segment">
+                  <div class="title" style="margin-bottom: 1rem;">
+                    <a class="ui blue circular label">
+                      200
+                    </a>
+                    <code>application/json</code>
+                  </div>
+                  <div class="content tabbed active">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-json">{  
+  &#34;order_kits&#34;:[  
+    {  
+      &#34;order_kit_name&#34;:&#34;test&#34;,
+      &#34;order_kit_id&#34;:1
+    },
+    {  
+      &#34;order_kit_name&#34;:&#34;test2&#34;,
+      &#34;order_kit_id&#34;:2
+    }
+  ],
+  &#34;discount_plans&#34;:[  
+    {  
+      &#34;applicable_to_id_subgroup&#34;:&#34;&#34;,
+      &#34;applicable_to_id&#34;:&#34;ANAOPE&#34;,
+      &#34;discount_plan_detail_id&#34;:2,
+      &#34;discount_value&#34;:12.00,
+      &#34;priority&#34;:1,
+      &#34;discount_type&#34;:&#34;P&#34;,
+      &#34;discount_plan_id&#34;:2,
+      &#34;applicable_type&#34;:&#34;C&#34;
+    },
+    {  
+      &#34;applicable_to_id_subgroup&#34;:&#34;&#34;,
+      &#34;applicable_to_id&#34;:&#34;3&#34;,
+      &#34;discount_plan_detail_id&#34;:1,
+      &#34;discount_value&#34;:30.00,
+      &#34;priority&#34;:1,
+      &#34;discount_type&#34;:&#34;P&#34;,
+      &#34;discount_plan_id&#34;:1,
+      &#34;applicable_type&#34;:&#34;N&#34;
+    },
+    {  
+      &#34;applicable_to_id_subgroup&#34;:&#34;&#34;,
+      &#34;applicable_to_id&#34;:&#34;7&#34;,
+      &#34;discount_plan_detail_id&#34;:3,
+      &#34;discount_value&#34;:12.00,
+      &#34;priority&#34;:1,
+      &#34;discount_type&#34;:&#34;P&#34;,
+      &#34;discount_plan_id&#34;:3,
+      &#34;applicable_type&#34;:&#34;N&#34;
+    },
+    {  
+      &#34;applicable_to_id_subgroup&#34;:&#34;&#34;,
+      &#34;applicable_to_id&#34;:&#34;CSTAX&#34;,
+      &#34;discount_plan_detail_id&#34;:4,
+      &#34;discount_value&#34;:11.00,
+      &#34;priority&#34;:1,
+      &#34;discount_type&#34;:&#34;P&#34;,
+      &#34;discount_plan_id&#34;:4,
+      &#34;applicable_type&#34;:&#34;C&#34;
+    },
+    {  
+      &#34;applicable_to_id_subgroup&#34;:&#34;&#34;,
+      &#34;applicable_to_id&#34;:&#34;7&#34;,
+      &#34;discount_plan_detail_id&#34;:5,
+      &#34;discount_value&#34;:11.00,
+      &#34;priority&#34;:1,
+      &#34;discount_type&#34;:&#34;P&#34;,
+      &#34;discount_plan_id&#34;:5,
+      &#34;applicable_type&#34;:&#34;N&#34;
+    }
+  ],
+  &#34;operation_details_id&#34;:&#34;1&#34;,
+  &#34;store_id&#34;:&#34;10&#34;,
+  &#34;generic_prefs&#34;:{  
+      &#34;points_earning_points&#34;:1,
+      &#34;after_decimal_digits&#34;:2,
+      &#34;points_earning_amt&#34;:100.00,
+      &#34;sample_no_generation&#34;:&#34;P&#34;,
+      &#34;warn_expiry&#34;:30,
+      &#34;username&#34;:&#34;&#34;,
+      &#34;email_bill_printer&#34;:1,
+      &#34;domain_name&#34;:&#34;&#34;,
+      &#34;sampleflow_required&#34;:&#34;Y&#34;,
+      &#34;aggregate_amt_on_remittance&#34;:&#34;N&#34;,
+      &#34;default_voucher_print&#34;:&#34;summary&#34;,
+      &#34;luxary_tax_applicable_on&#34;:&#34;B&#34;,
+      &#34;ip_cases_across_doctors&#34;:&#34;Y&#34;,
+      &#34;allow_all_cons_types_in_reg&#34;:&#34;N&#34;,
+      &#34;stock_inc&#34;:&#34;M&#34;,
+      &#34;pharma_return_restricted&#34;:&#34;N&#34;,
+      &#34;cess_applicable&#34;:&#34;Y&#34;,
+      &#34;default_po_print_template&#34;:&#34;PO New&#34;,
+      &#34;allow_cons_qty_incr&#34;:&#34;N&#34;,
+      &#34;appointment_name_order&#34;:&#34;FML&#34;,
+      &#34;allow_consumable_stock_negative&#34;:&#34;Y&#34;,
+      &#34;upload_limit_in_mb&#34;:10,
+      &#34;operation_apllicable_for&#34;:&#34;b&#34;,
+      &#34;max_collection_centers_count&#34;:null,
+      &#34;show_hosp_amts_pharmasales&#34;:&#34;N&#34;,
+      &#34;qty_default_to_issue_unit&#34;:&#34;N&#34;,
+      &#34;allow_decimals_for_qty&#34;:&#34;Y&#34;,
+      &#34;hospital_tin&#34;:&#34;&#34;,
+      &#34;surgery_name_required&#34;:&#34;O&#34;,
+      &#34;critical_color_code&#34;:&#34;#FFB6B9&#34;,
+      &#34;default_printer_for_bill_now&#34;:1,
+      &#34;enable_sms&#34;:&#34;Y&#34;,
+      &#34;validate_cost_price&#34;:&#34;Y&#34;,
+      &#34;indent_approval_by&#34;:&#34;I&#34;,
+      &#34;improbable_color_code&#34;:&#34;#E18EF3&#34;,
+      &#34;auth_required&#34;:false,
+      &#34;bill_service_charge_percent&#34;:0.00,
+      &#34;currency_symbol&#34;:&#34;Rs&#34;,
+      &#34;no_of_credit_debit_card_digits&#34;:10,
+      &#34;fixed_ot_charges&#34;:&#34;N&#34;,
+      &#34;fin_year_end_month&#34;:3,
+      &#34;scheduler_generate_order&#34;:&#34;Y&#34;,
+      &#34;check_insu_card_exp_in_sales&#34;:&#34;Y&#34;,
+      &#34;cfd_max_count&#34;:4,
+      &#34;doctors_custom_field1&#34;:&#34;&#34;,
+      &#34;doctors_custom_field2&#34;:&#34;&#34;,
+      &#34;host_name&#34;:&#34;mail1.insta.lan&#34;,
+      &#34;hospital_mail_id&#34;:&#34;customer-support@instahealthsolutions.com&#34;,
+      &#34;doctors_custom_field5&#34;:&#34;&#34;,
+      &#34;mobile_number_validation&#34;:&#34;Y&#34;,
+      &#34;doctors_custom_field3&#34;:&#34;&#34;,
+      &#34;restrict_inactive_visits&#34;:&#34;B&#34;,
+      &#34;doctors_custom_field4&#34;:&#34;&#34;,
+      &#34;obsolete_eclaim_xml_schema&#34;:&#34;&#34;,
+      &#34;fp_authentication_url&#34;:&#34;&#34;,
+      &#34;package_size&#34;:1,
+      &#34;menu_background_color&#34;:&#34;&#34;,
+      &#34;show_central_excise_duty&#34;:&#34;Y&#34;,
+      &#34;receipt_refund_print_default&#34;:&#34;BUILTIN_HTML&#34;,
+      &#34;obsolete_pharmacy_defalut_vat_rate&#34;:5,
+      &#34;slida_mailslot_path&#34;:&#34;&#34;,
+      &#34;sample_collection_print_type&#34;:&#34;SB&#34;,
+      &#34;pharmacy_schedule_h_alert&#34;:&#34;Y&#34;,
+      &#34;hijricalendar&#34;:&#34;Y&#34;,
+      &#34;blood_exp&#34;:90,
+      &#34;barcode_for_item&#34;:&#34;N&#34;,
+      &#34;obsolete_default_diagnosis_code_type&#34;:&#34;&#34;,
+      &#34;is_return_against_grnno&#34;:false,
+      &#34;default_prescription_print_template&#34;:&#34;Customized Case Sheet Print Template&#34;,
+      &#34;enable_nestloop&#34;:&#34;Y&#34;,
+      &#34;autogenerate_labno&#34;:&#34;Y&#34;,
+      &#34;pharmacy_patient_type&#34;:&#34;R&#34;,
+      &#34;po_approval_reqd_more_than_amt&#34;:0,
+      &#34;auto_close_nocharge_op_bills&#34;:&#34;A&#34;,
+      &#34;go_live_date&#34;:&#34;07-12-2009&#34;,
+      &#34;default_prescribe_doctor&#34;:&#34;Y&#34;,
+      &#34;consultation_reopen_time_limit&#34;:10000,
+      &#34;auto_close_indented_casefiles&#34;:&#34;N&#34;,
+      &#34;mobile_starting_pattern&#34;:&#34;50,52,54,55,56,58&#34;,
+      &#34;force_remarks_po_item_reject&#34;:&#34;Y&#34;,
+      &#34;stock_negative_sale&#34;:&#34;D&#34;,
+      &#34;gen_token_for_rad&#34;:&#34;Y&#34;,
+      &#34;autogenerate_sampleid&#34;:&#34;Y&#34;,
+      &#34;sale_expiry&#34;:&#34;N&#34;,
+      &#34;enable_force_selection_for_mrno_search&#34;:&#34;N&#34;,
+      &#34;auto_mail_po_to_sup&#34;:false,
+      &#34;points_redemption_rate&#34;:1.20,
+      &#34;allow_zero_claim_amount_for_op&#34;:&#34;Y&#34;,
+      &#34;op_one_presc_doc&#34;:&#34;Y&#34;,
+      &#34;deposit_cheque_realization_flow&#34;:&#34;Y&#34;,
+      &#34;return_validity&#34;:4,
+      &#34;max_centers_inc_default&#34;:25,
+      &#34;allow_only_indent_based_issue&#34;:&#34;N&#34;,
+      &#34;receive_transfer_indent&#34;:&#34;Y&#34;,
+      &#34;protocol&#34;:&#34;smtp&#34;,
+      &#34;issue_to_dept_only&#34;:&#34;N&#34;,
+      &#34;user_name_in_bill_print&#34;:&#34;Y&#34;,
+      &#34;abnormal_color_code&#34;:&#34;#FFF3B6&#34;,
+      &#34;consultation_validity_units&#34;:&#34;D&#34;,
+      &#34;port_no&#34;:25,
+      &#34;returns_against_specific_supplier&#34;:&#34;N&#34;,
+      &#34;shafafiya_preauth_user_id_obsolete&#34;:null,
+      &#34;stock_entry_agnst_do&#34;:&#34;N&#34;,
+      &#34;calendar_start_day&#34;:0,
+      &#34;sms_username&#34;:&#34;.instahms@smscountry.net&#34;,
+      &#34;patient_name_match_distance&#34;:0,
+      &#34;dental_chart&#34;:&#34;Y&#34;,
+      &#34;currency_format&#34;:&#34;Lakhs&#34;,
+      &#34;allow_zero_claim_amount_for_ip&#34;:&#34;Y&#34;,
+      &#34;default_consultation_print_template&#34;:&#34;BUILTIN_HTML&#34;,
+      &#34;claim_service_tax&#34;:10.30,
+      &#34;sales_returns_print_type&#34;:&#34;R&#34;,
+      &#34;email_bill_now_template&#34;:&#34;CUSTOM-Web Based Bill Now Print Template&#34;,
+      &#34;hospital_name&#34;:&#34;Davita Nephrolife India Pvt. Ltd.&#34;,
+      &#34;pharma_allow_cp_sale&#34;:&#34;N&#34;,
+      &#34;po_to_be_validated&#34;:&#34;Y&#34;,
+      &#34;google_analytics_key&#34;:&#34;&#34;,
+      &#34;diag_images&#34;:&#34;T,P,G&#34;,
+      &#34;apply_supplier_tax_rules&#34;:false,
+      &#34;gen_token_for_lab&#34;:&#34;Y&#34;,
+      &#34;default_prescription_web_printer&#34;:4,
+      &#34;pharma_auto_roundoff&#34;:&#34;Y&#34;,
+      &#34;prescribing_doctor_required&#34;:&#34;N&#34;,
+      &#34;bill_now_print_default&#34;:&#34;BILL-DET-ALL&#34;,
+      &#34;op_consultation_edit_across_doctors&#34;:&#34;Y&#34;,
+      &#34;shafafiya_user_id_obsolete&#34;:null,
+      &#34;sales_print_items&#34;:&#34;BILLPRESC&#34;,
+      &#34;default_emr_print_template&#34;:&#34;BUILTIN_HTML&#34;,
+      &#34;allow_bill_reopen&#34;:&#34;Y&#34;,
+      &#34;hosp_uses_dynamic_addresses&#34;:&#34;N&#34;,
+      &#34;default_dental_cons_print_template&#34;:&#34;BUILTIN_HTML&#34;,
+      &#34;default_prescription_web_template&#34;:&#34;Web Based Prescription Template&#34;,
+      &#34;package_uom&#34;:&#34;Numbers&#34;,
+      &#34;pharmacy_sale_margin_in_per&#34;:0.00,
+      &#34;deposit_receipt_print_default&#34;:&#34;BUILTIN_HTML&#34;,
+      &#34;issue_uom&#34;:&#34;Numbers&#34;,
+      &#34;default_printer_for_bill_later&#34;:1,
+      &#34;daily_checkpoint2&#34;:&#34;20:00:00&#34;,
+      &#34;daily_checkpoint1&#34;:&#34;08:00:00&#34;,
+      &#34;separator_type&#34;:&#34;&#34;,
+      &#34;shafafiya_preauth_active_obsolete&#34;:&#34;N&#34;,
+      &#34;obsolete_vat_type&#34;:&#34;C&#34;,
+      &#34;fin_year_start_month&#34;:4,
+      &#34;procurement_expiry_days&#34;:0,
+      &#34;bill_later_print_default&#34;:&#34;CUSTOM-Detail Bill Print(Merge)&#34;,
+      &#34;mod_username&#34;:&#34;InstaAdmin&#34;,
+      &#34;sample_assertion&#34;:&#34;N&#34;,
+      &#34;procurement_tax_label&#34;:&#34;G&#34;,
+      &#34;validate_diagnosis_codification&#34;:&#34;Y&#34;,
+      &#34;password&#34;:&#34;&#34;,
+      &#34;signature_device_ip&#34;:&#34;&#34;,
+      &#34;se_with_po&#34;:&#34;N&#34;,
+      &#34;auto_close_visit&#34;:&#34;P&#34;,
+      &#34;shafafiya_preauth_password_obsolete&#34;:null,
+      &#34;shafafiya_password_obsolete&#34;:null,
+      &#34;pbm_price_threshold&#34;:0.00,
+      &#34;corporate_insurance&#34;:&#34;N&#34;,
+      &#34;show_tests_in_emr&#34;:&#34;A&#34;,
+      &#34;vat_applicable&#34;:&#34;Y&#34;,
+      &#34;emr_url_date&#34;:&#34;D&#34;,
+      &#34;diag_report_print_center&#34;:&#34;col&#34;,
+      &#34;dhpo_facility_user_id_obsolete&#34;:null,
+      &#34;obsolete_rate_plan_for_non_insured_bill&#34;:&#34;ORG0029&#34;,
+      &#34;hospital_pan&#34;:&#34;&#34;,
+      &#34;allow_bill_now_insurance&#34;:&#34;Y&#34;,
+      &#34;dhpo_facility_password_obsolete&#34;:null,
+      &#34;seperate_pharmacy_credit_bill&#34;:&#34;N&#34;,
+      &#34;whole&#34;:&#34;Rupees&#34;,
+      &#34;shafafiya_pbm_active_obsolete&#34;:&#34;N&#34;,
+      &#34;default_grn_print_template&#34;:&#34;GRN Print Template&#34;,
+      &#34;auto_close_claims_with_difference&#34;:0.00,
+      &#34;obsolete_prescriptions_by_generics&#34;:&#34;N&#34;,
+      &#34;expired_items_procurement&#34;:&#34;A&#34;,
+      &#34;normal_color_code&#34;:&#34;#FFFFFF&#34;,
+      &#34;default_bill_later_creditsales&#34;:&#34;Y&#34;,
+      &#34;deposit_avalibility&#34;:&#34;B&#34;,
+      &#34;force_sub_group_selection&#34;:&#34;N&#34;,
+      &#34;pac_validity_days&#34;:30,
+      &#34;max_dial_machine_count&#34;:null,
+      &#34;mobile_length_pattern&#34;:&#34;9&#34;,
+      &#34;tooth_numbering_system&#34;:&#34;F&#34;,
+      &#34;allow_decimals_in_qty_for_issues&#34;:&#34;Y&#34;,
+      &#34;max_active_hosp_users&#34;:999,
+      &#34;bill_cancellation_requires_approval&#34;:&#34;N&#34;,
+      &#34;service_name_required&#34;:&#34;O&#34;,
+      &#34;hospital_address&#34;:&#34;&#34;,
+      &#34;independent_generation_of_sample_id&#34;:&#34;N&#34;,
+      &#34;use_smart_card&#34;:&#34;Y&#34;,
+      &#34;decimal&#34;:&#34;Paise&#34;,
+      &#34;allow_cross_center_indents&#34;:&#34;Y&#34;,
+      &#34;email_bill_later_template&#34;:&#34;CUSTOM-Web Based Bill Later Print Template&#34;,
+      &#34;prescription_uses_stores&#34;:&#34;Y&#34;,
+      &#34;billing_bed_type_for_op&#34;:&#34;GENERAL&#34;,
+      &#34;hospital_service_regn_no&#34;:&#34;&#34;,
+      &#34;registration_on_arrival&#34;:&#34;Y&#34;,
+      &#34;apply_rateplan_discount&#34;:&#34;N&#34;,
+      &#34;nurse_staff_ward_assignments_applicable&#34;:&#34;N&#34;
+    }
+}
+</code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+              </div>
+            
+          </div>
+        
+          
+<div class="ui grey horizontal small divider header" style="margin-top:0">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui orange micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block inverted center aligned header" id="patient-issue-get-find-patient">
+              GET FIND PATIENT
+            </h3>
+            <div class="description"></div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui green large button">
+                  <h3>GET</h3>
+                </div>
+                <a class="ui basic fluid request-url green label">
+                  <code>http://localhost:8080/instahms/inventory/patientissues/patientsearch.json?query=MR013700&amp;method=findPatientsJson&amp;searchType=undefined&amp;status=active&amp;visitType=all</code>
+                </a>
+              </div>
+              
+              
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>application/json</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui blue segment">
+                  <div class="title" style="margin-bottom: 1rem;">
+                    <a class="ui blue circular label">
+                      200
+                    </a>
+                    <code>application/json</code>
+                  </div>
+                  <div class="content tabbed active">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-json">{  
+  &#34;patients&#34;:[  
+    {  
+      &#34;doctor_name&#34;:&#34;DR.KIRAN&#34;,
+      &#34;age_in&#34;:&#34;Y&#34;,
+      &#34;previous_visit_id&#34;:null,
+      &#34;government_identifier&#34;:null,
+      &#34;status&#34;:&#34;A&#34;,
+      &#34;patient_name&#34;:&#34;Neha&#34;,
+      &#34;salutation_name&#34;:&#34;Ms.&#34;,
+      &#34;dept_name&#34;:&#34;ANAESTHESIOLOGY&#34;,
+      &#34;patient_full_name&#34;:&#34;Neha A A&#34;,
+      &#34;patient_phone_country_code&#34;:null,
+      &#34;patient_gender&#34;:&#34;F&#34;,
+      &#34;visit_id&#34;:&#34;OP121762&#34;,
+      &#34;age&#34;:46,
+      &#34;op_type&#34;:&#34;M&#34;,
+      &#34;patient_phone&#34;:&#34;&#34;,
+      &#34;last_name&#34;:&#34;A&#34;,
+      &#34;visit_reg_date&#34;:1524729015154,
+      &#34;patient_id&#34;:&#34;OP121762&#34;,
+      &#34;mr_no&#34;:&#34;MR013700&#34;
+    }
+  ]
+}
+</code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+              </div>
+            
+          </div>
+        
+          
+<div class="ui grey horizontal small divider header" style="margin-top:0">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui orange micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block inverted center aligned header" id="patient-issue-get-patient-details">
+              GET PATIENT DETAILS
+            </h3>
+            <div class="description"></div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui green large button">
+                  <h3>GET</h3>
+                </div>
+                <a class="ui basic fluid request-url green label">
+                  <code>http://localhost:8080/instahms/inventory/patientissues/getpatientdetails.json?visit_id=0&amp;store_id=0</code>
+                </a>
+              </div>
+              
+              
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>application/json</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui blue segment">
+                  <div class="title" style="margin-bottom: 1rem;">
+                    <a class="ui blue circular label">
+                      200
+                    </a>
+                    <code>application/json</code>
+                  </div>
+                  <div class="content tabbed active">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-json">{  
+  &#34;patient_details&#34;:{  
+    &#34;insurance&#34;:[  
+      {  
+        &#34;discount_plan_id&#34;:1,
+        &#34;policy_holder_name&#34;:&#34;&#34;,
+        &#34;visit_max_copay_percentage&#34;:null,
+        &#34;per_diem_code&#34;:null,
+        &#34;prior_auth_mode_id&#34;:0,
+        &#34;priority&#34;:1,
+        &#34;visit_type&#34;:&#34;o&#34;,
+        &#34;use_perdiem&#34;:&#34;N&#34;,
+        &#34;policy_validity_start&#34;:null,
+        &#34;patient_relationship&#34;:&#34;&#34;,
+        &#34;visit_limit&#34;:null,
+        &#34;insurance_approval&#34;:null,
+        &#34;episode_limit&#34;:null,
+        &#34;visit_per_day_limit&#34;:null,
+        &#34;status&#34;:&#34;A&#34;,
+        &#34;episode_deductible&#34;:null,
+        &#34;visit_deductible&#34;:null,
+        &#34;tpa_name&#34;:&#34;BAJAJ ALLIANZ&#39;s&#34;,
+        &#34;visit_copay_percentage&#34;:10.00,
+        &#34;patient_policy_id&#34;:3641,
+        &#34;prior_auth_id&#34;:&#34;&#34;,
+        &#34;doc_id&#34;:null,
+        &#34;visit_id&#34;:&#34;OP193866&#34;,
+        &#34;codification_status&#34;:&#34; &#34;,
+        &#34;policy_validity_end&#34;:null,
+        &#34;insurance_co_name&#34;:&#34;Default Insurance Company&#34;,
+        &#34;mr_no&#34;:&#34;MR117565&#34;,
+        &#34;plan_name&#34;:&#34;Default Insurance Company Plan&#34;,
+        &#34;drg_code&#34;:&#34;&#34;,
+        &#34;episode_copay_percentage&#34;:null,
+        &#34;policy_number&#34;:&#34;&#34;,
+        &#34;plan_id&#34;:41,
+        &#34;plan_limit&#34;:null,
+        &#34;insurance_co&#34;:&#34;ICM00011&#34;,
+        &#34;plan_type_id&#34;:144,
+        &#34;utilization_amount&#34;:null,
+        &#34;insurance_rules_doc_name&#34;:null,
+        &#34;use_drg&#34;:&#34;N&#34;,
+        &#34;codification_remarks&#34;:&#34;&#34;,
+        &#34;plan_exclusions&#34;:&#34;&#34;,
+        &#34;sponsor_id&#34;:&#34;TPAID0002&#34;,
+        &#34;employer_name&#34;:null,
+        &#34;member_id&#34;:&#34;&#34;,
+        &#34;episode_max_copay_percentage&#34;:null,
+        &#34;plan_type_name&#34;:&#34;Default Plan Type&#34;,
+        &#34;codified_by&#34;:&#34;&#34;,
+        &#34;insurance_plan_details&#34;:[  
+          {  
+            &#34;patient_amount_cap&#34;:0.00,
+            &#34;insurance_plan_details_id&#34;:723,
+            &#34;patient_amount_per_category&#34;:0.00,
+            &#34;patient_amount&#34;:0.00,
+            &#34;category_payable&#34;:&#34;Y&#34;,
+            &#34;per_treatment_limit&#34;:0.00,
+            &#34;patient_percent&#34;:0.00,
+            &#34;plan_id&#34;:41,
+            &#34;username&#34;:&#34;InstaAdmin&#34;,
+            &#34;insurance_category_id&#34;:2,
+            &#34;category_prior_auth_required&#34;:&#34; &#34;,
+            &#34;patient_type&#34;:&#34;o&#34;
+          },
+          {  
+            &#34;insurance_plan_details_id&#34;:727,
+            &#34;patient_amount_cap&#34;:0.00,
+            &#34;patient_amount_per_category&#34;:0.00,
+            &#34;patient_amount&#34;:0.00,
+            &#34;category_payable&#34;:&#34;Y&#34;,
+            &#34;per_treatment_limit&#34;:0.00,
+            &#34;patient_percent&#34;:0.00,
+            &#34;insurance_category_id&#34;:4,
+            &#34;plan_id&#34;:41,
+            &#34;username&#34;:&#34;InstaAdmin&#34;,
+            &#34;category_prior_auth_required&#34;:&#34; &#34;,
+            &#34;patient_type&#34;:&#34;o&#34;
+          },
+          {  
+            &#34;patient_amount_cap&#34;:0.00,
+            &#34;insurance_plan_details_id&#34;:729,
+            &#34;category_payable&#34;:&#34;N&#34;,
+            &#34;patient_amount_per_category&#34;:0.00,
+            &#34;patient_amount&#34;:0.00,
+            &#34;per_treatment_limit&#34;:0.00,
+            &#34;patient_percent&#34;:0.00,
+            &#34;insurance_category_id&#34;:5,
+            &#34;plan_id&#34;:41,
+            &#34;username&#34;:&#34;InstaAdmin&#34;,
+            &#34;category_prior_auth_required&#34;:&#34; &#34;,
+            &#34;patient_type&#34;:&#34;o&#34;
+          },
+          {  
+            &#34;patient_amount_cap&#34;:0.00,
+            &#34;patient_amount_per_category&#34;:0.00,
+            &#34;patient_amount&#34;:0.00,
+            &#34;insurance_plan_details_id&#34;:733,
+            &#34;category_payable&#34;:&#34;Y&#34;,
+            &#34;per_treatment_limit&#34;:0.00,
+            &#34;patient_percent&#34;:0.00,
+            &#34;insurance_category_id&#34;:7,
+            &#34;plan_id&#34;:41,
+            &#34;username&#34;:&#34;InstaAdmin&#34;,
+            &#34;category_prior_auth_required&#34;:&#34; &#34;,
+            &#34;patient_type&#34;:&#34;o&#34;
+          },
+          {  
+            &#34;insurance_plan_details_id&#34;:725,
+            &#34;patient_amount_cap&#34;:0.00,
+            &#34;patient_amount_per_category&#34;:0.00,
+            &#34;patient_amount&#34;:0.00,
+            &#34;category_payable&#34;:&#34;Y&#34;,
+            &#34;per_treatment_limit&#34;:0.00,
+            &#34;patient_percent&#34;:0.00,
+            &#34;insurance_category_id&#34;:3,
+            &#34;plan_id&#34;:41,
+            &#34;username&#34;:&#34;InstaAdmin&#34;,
+            &#34;category_prior_auth_required&#34;:&#34; &#34;,
+            &#34;patient_type&#34;:&#34;o&#34;
+          },
+          {  
+            &#34;insurance_category_id&#34;:-1,
+            &#34;patient_amount_cap&#34;:0.00,
+            &#34;patient_amount_per_category&#34;:0.00,
+            &#34;patient_amount&#34;:0.00,
+            &#34;category_payable&#34;:&#34;Y&#34;,
+            &#34;per_treatment_limit&#34;:0.00,
+            &#34;patient_percent&#34;:0.00,
+            &#34;insurance_plan_details_id&#34;:737,
+            &#34;plan_id&#34;:41,
+            &#34;username&#34;:&#34;InstaAdmin&#34;,
+            &#34;category_prior_auth_required&#34;:&#34; &#34;,
+            &#34;patient_type&#34;:&#34;o&#34;
+          },
+          {  
+            &#34;patient_amount_cap&#34;:0.00,
+            &#34;patient_amount_per_category&#34;:0.00,
+            &#34;patient_amount&#34;:0.00,
+            &#34;insurance_plan_details_id&#34;:721,
+            &#34;category_payable&#34;:&#34;Y&#34;,
+            &#34;per_treatment_limit&#34;:0.00,
+            &#34;patient_percent&#34;:0.00,
+            &#34;plan_id&#34;:41,
+            &#34;username&#34;:&#34;InstaAdmin&#34;,
+            &#34;category_prior_auth_required&#34;:&#34; &#34;,
+            &#34;patient_type&#34;:&#34;o&#34;,
+            &#34;insurance_category_id&#34;:1
+          },
+          {  
+            &#34;patient_amount_cap&#34;:0.00,
+            &#34;patient_amount_per_category&#34;:0.00,
+            &#34;patient_amount&#34;:0.00,
+            &#34;insurance_plan_details_id&#34;:731,
+            &#34;category_payable&#34;:&#34;Y&#34;,
+            &#34;per_treatment_limit&#34;:0.00,
+            &#34;patient_percent&#34;:0.00,
+            &#34;insurance_category_id&#34;:6,
+            &#34;plan_id&#34;:41,
+            &#34;username&#34;:&#34;InstaAdmin&#34;,
+            &#34;category_prior_auth_required&#34;:&#34; &#34;,
+            &#34;patient_type&#34;:&#34;o&#34;
+          },
+          {  
+            &#34;patient_amount_cap&#34;:0.00,
+            &#34;patient_amount_per_category&#34;:0.00,
+            &#34;patient_amount&#34;:0.00,
+            &#34;category_payable&#34;:&#34;Y&#34;,
+            &#34;per_treatment_limit&#34;:0.00,
+            &#34;patient_percent&#34;:0.00,
+            &#34;insurance_category_id&#34;:8,
+            &#34;insurance_plan_details_id&#34;:735,
+            &#34;plan_id&#34;:41,
+            &#34;username&#34;:&#34;InstaAdmin&#34;,
+            &#34;category_prior_auth_required&#34;:&#34; &#34;,
+            &#34;patient_type&#34;:&#34;o&#34;
+          },
+          {  
+            &#34;patient_amount_cap&#34;:null,
+            &#34;per_treatment_limit&#34;:null,
+            &#34;insurance_category_id&#34;:-2,
+            &#34;patient_amount_per_category&#34;:0.00,
+            &#34;patient_amount&#34;:0.00,
+            &#34;category_payable&#34;:&#34;Y&#34;,
+            &#34;patient_percent&#34;:0.00,
+            &#34;insurance_plan_details_id&#34;:837,
+            &#34;plan_id&#34;:41,
+            &#34;username&#34;:&#34;InstaAdmin&#34;,
+            &#34;category_prior_auth_required&#34;:&#34; &#34;,
+            &#34;patient_type&#34;:&#34;o&#34;
+          }
+        ],
+        &#34;plan_notes&#34;:&#34;&#34;,
+        &#34;discount_plan_name&#34;:&#34;Management&#34;,
+        &#34;sponsor_type&#34;:&#34;I&#34;,
+        &#34;patient_id&#34;:&#34;OP193866&#34;
+      },
+      {  
+        &#34;discount_plan_id&#34;:null,
+        &#34;visit_max_copay_percentage&#34;:null,
+        &#34;policy_holder_name&#34;:&#34;&#34;,
+        &#34;per_diem_code&#34;:null,
+        &#34;prior_auth_mode_id&#34;:0,
+        &#34;priority&#34;:2,
+        &#34;visit_type&#34;:&#34;o&#34;,
+        &#34;use_perdiem&#34;:&#34;N&#34;,
+        &#34;patient_relationship&#34;:&#34;&#34;,
+        &#34;policy_validity_start&#34;:null,
+        &#34;insurance_approval&#34;:null,
+        &#34;visit_limit&#34;:null,
+        &#34;episode_limit&#34;:null,
+        &#34;visit_per_day_limit&#34;:null,
+        &#34;status&#34;:&#34;A&#34;,
+        &#34;visit_deductible&#34;:null,
+        &#34;episode_deductible&#34;:null,
+        &#34;tpa_name&#34;:&#34;TATA AIG&#34;,
+        &#34;visit_copay_percentage&#34;:10.00,
+        &#34;patient_policy_id&#34;:3642,
+        &#34;prior_auth_id&#34;:&#34;&#34;,
+        &#34;doc_id&#34;:null,
+        &#34;visit_id&#34;:&#34;OP193866&#34;,
+        &#34;codification_status&#34;:&#34; &#34;,
+        &#34;policy_validity_end&#34;:null,
+        &#34;insurance_co_name&#34;:&#34;Maharatra Bank&#34;,
+        &#34;mr_no&#34;:&#34;MR117565&#34;,
+        &#34;plan_name&#34;:&#34;issurence&#34;,
+        &#34;drg_code&#34;:&#34;&#34;,
+        &#34;episode_copay_percentage&#34;:null,
+        &#34;policy_number&#34;:&#34;&#34;,
+        &#34;plan_id&#34;:1,
+        &#34;insurance_co&#34;:&#34;ICM00003&#34;,
+        &#34;plan_type_id&#34;:133,
+        &#34;plan_limit&#34;:null,
+        &#34;utilization_amount&#34;:null,
+        &#34;insurance_rules_doc_name&#34;:&#34;&#34;,
+        &#34;use_drg&#34;:&#34;N&#34;,
+        &#34;codification_remarks&#34;:&#34;&#34;,
+        &#34;plan_exclusions&#34;:null,
+        &#34;sponsor_id&#34;:&#34;TPAID0038&#34;,
+        &#34;employer_name&#34;:null,
+        &#34;episode_max_copay_percentage&#34;:null,
+        &#34;member_id&#34;:&#34;&#34;,
+        &#34;plan_type_name&#34;:&#34;health plan&#34;,
+        &#34;codified_by&#34;:&#34;&#34;,
+        &#34;insurance_plan_details&#34;:[  
+          {  
+            &#34;patient_amount_cap&#34;:null,
+            &#34;per_treatment_limit&#34;:null,
+            &#34;insurance_category_id&#34;:-1,
+            &#34;category_prior_auth_required&#34;:null,
+            &#34;patient_amount_per_category&#34;:0.00,
+            &#34;patient_amount&#34;:0.00,
+            &#34;category_payable&#34;:&#34;Y&#34;,
+            &#34;patient_percent&#34;:0.00,
+            &#34;insurance_plan_details_id&#34;:10,
+            &#34;plan_id&#34;:1,
+            &#34;username&#34;:&#34;InstaAdmin&#34;,
+            &#34;patient_type&#34;:&#34;o&#34;
+          },
+          {  
+            &#34;patient_amount_cap&#34;:null,
+            &#34;per_treatment_limit&#34;:null,
+            &#34;category_prior_auth_required&#34;:null,
+            &#34;patient_amount_per_category&#34;:0.00,
+            &#34;patient_amount&#34;:0.00,
+            &#34;category_payable&#34;:&#34;Y&#34;,
+            &#34;patient_percent&#34;:0.00,
+            &#34;plan_id&#34;:1,
+            &#34;insurance_plan_details_id&#34;:11,
+            &#34;username&#34;:&#34;InstaAdmin&#34;,
+            &#34;patient_type&#34;:&#34;o&#34;,
+            &#34;insurance_category_id&#34;:1
+          },
+          {  
+            &#34;patient_amount_cap&#34;:null,
+            &#34;per_treatment_limit&#34;:null,
+            &#34;category_prior_auth_required&#34;:null,
+            &#34;patient_amount_per_category&#34;:0.00,
+            &#34;patient_amount&#34;:0.00,
+            &#34;category_payable&#34;:&#34;Y&#34;,
+            &#34;patient_percent&#34;:0.00,
+            &#34;insurance_plan_details_id&#34;:12,
+            &#34;plan_id&#34;:1,
+            &#34;username&#34;:&#34;InstaAdmin&#34;,
+            &#34;insurance_category_id&#34;:2,
+            &#34;patient_type&#34;:&#34;o&#34;
+          },
+          {  
+            &#34;patient_amount_cap&#34;:null,
+            &#34;per_treatment_limit&#34;:null,
+            &#34;category_prior_auth_required&#34;:null,
+            &#34;patient_amount_per_category&#34;:0.00,
+            &#34;patient_amount&#34;:0.00,
+            &#34;category_payable&#34;:&#34;Y&#34;,
+            &#34;patient_percent&#34;:0.00,
+            &#34;plan_id&#34;:1,
+            &#34;insurance_category_id&#34;:3,
+            &#34;username&#34;:&#34;InstaAdmin&#34;,
+            &#34;insurance_plan_details_id&#34;:13,
+            &#34;patient_type&#34;:&#34;o&#34;
+          },
+          {  
+            &#34;patient_amount_cap&#34;:null,
+            &#34;per_treatment_limit&#34;:null,
+            &#34;category_prior_auth_required&#34;:null,
+            &#34;patient_amount_per_category&#34;:0.00,
+            &#34;patient_amount&#34;:0.00,
+            &#34;category_payable&#34;:&#34;Y&#34;,
+            &#34;patient_percent&#34;:0.00,
+            &#34;insurance_category_id&#34;:4,
+            &#34;plan_id&#34;:1,
+            &#34;insurance_plan_details_id&#34;:14,
+            &#34;username&#34;:&#34;InstaAdmin&#34;,
+            &#34;patient_type&#34;:&#34;o&#34;
+          },
+          {  
+            &#34;patient_amount_cap&#34;:null,
+            &#34;insurance_plan_details_id&#34;:15,
+            &#34;per_treatment_limit&#34;:null,
+            &#34;category_prior_auth_required&#34;:null,
+            &#34;patient_amount_per_category&#34;:0.00,
+            &#34;patient_amount&#34;:0.00,
+            &#34;category_payable&#34;:&#34;Y&#34;,
+            &#34;patient_percent&#34;:0.00,
+            &#34;insurance_category_id&#34;:5,
+            &#34;plan_id&#34;:1,
+            &#34;username&#34;:&#34;InstaAdmin&#34;,
+            &#34;patient_type&#34;:&#34;o&#34;
+          },
+          {  
+            &#34;insurance_plan_details_id&#34;:16,
+            &#34;patient_amount_cap&#34;:null,
+            &#34;per_treatment_limit&#34;:null,
+            &#34;category_prior_auth_required&#34;:null,
+            &#34;patient_amount_per_category&#34;:0.00,
+            &#34;patient_amount&#34;:0.00,
+            &#34;category_payable&#34;:&#34;Y&#34;,
+            &#34;patient_percent&#34;:0.00,
+            &#34;insurance_category_id&#34;:6,
+            &#34;plan_id&#34;:1,
+            &#34;username&#34;:&#34;InstaAdmin&#34;,
+            &#34;patient_type&#34;:&#34;o&#34;
+          },
+          {  
+            &#34;patient_amount_cap&#34;:null,
+            &#34;per_treatment_limit&#34;:null,
+            &#34;category_prior_auth_required&#34;:null,
+            &#34;insurance_plan_details_id&#34;:17,
+            &#34;patient_amount_per_category&#34;:0.00,
+            &#34;patient_amount&#34;:0.00,
+            &#34;category_payable&#34;:&#34;Y&#34;,
+            &#34;patient_percent&#34;:0.00,
+            &#34;insurance_category_id&#34;:7,
+            &#34;plan_id&#34;:1,
+            &#34;username&#34;:&#34;InstaAdmin&#34;,
+            &#34;patient_type&#34;:&#34;o&#34;
+          },
+          {  
+            &#34;patient_amount_cap&#34;:null,
+            &#34;per_treatment_limit&#34;:null,
+            &#34;insurance_plan_details_id&#34;:18,
+            &#34;category_prior_auth_required&#34;:null,
+            &#34;patient_amount_per_category&#34;:0.00,
+            &#34;patient_amount&#34;:0.00,
+            &#34;category_payable&#34;:&#34;Y&#34;,
+            &#34;patient_percent&#34;:0.00,
+            &#34;insurance_category_id&#34;:8,
+            &#34;plan_id&#34;:1,
+            &#34;username&#34;:&#34;InstaAdmin&#34;,
+            &#34;patient_type&#34;:&#34;o&#34;
+          },
+          {  
+            &#34;patient_amount_cap&#34;:null,
+            &#34;per_treatment_limit&#34;:null,
+            &#34;category_prior_auth_required&#34;:null,
+            &#34;insurance_category_id&#34;:-2,
+            &#34;patient_amount_per_category&#34;:0.00,
+            &#34;patient_amount&#34;:0.00,
+            &#34;category_payable&#34;:&#34;Y&#34;,
+            &#34;patient_percent&#34;:0.00,
+            &#34;plan_id&#34;:1,
+            &#34;insurance_plan_details_id&#34;:757,
+            &#34;username&#34;:&#34;InstaAdmin&#34;,
+            &#34;patient_type&#34;:&#34;o&#34;
+          }
+        ],
+        &#34;discount_plan_name&#34;:null,
+        &#34;plan_notes&#34;:null,
+        &#34;sponsor_type&#34;:&#34;I&#34;,
+        &#34;patient_id&#34;:&#34;OP193866&#34;
+      }
+    ],
+    &#34;patient&#34;:{  
+      &#34;file_status&#34;:&#34;U&#34;,
+      &#34;patient_city&#34;:&#34;CT0637&#34;,
+      &#34;raise_case_file_indent&#34;:&#34;Y&#34;,
+      &#34;passport_validity&#34;:null,
+      &#34;family_id&#34;:null,
+      &#34;nationality_name&#34;:&#34;United Arab Emirates&#34;,
+      &#34;dateofbirth&#34;:null,
+      &#34;state_name&#34;:&#34;UAE&#34;,
+      &#34;custom_list6_value&#34;:null,
+      &#34;patient_care_oftext_country_code&#34;:&#34;&#34;,
+      &#34;country_name&#34;:&#34;United Arab Emirates&#34;,
+      &#34;patient_category_id&#34;:1,
+      &#34;patient_phone2&#34;:null,
+      &#34;patient_care_oftext&#34;:null,
+      &#34;passport_issue_country&#34;:null,
+      &#34;email_id&#34;:null,
+      &#34;no_allergies&#34;:null,
+      &#34;current_age&#34;:23,
+      &#34;middle_name&#34;:&#34;&#34;,
+      &#34;portal_access&#34;:&#34;false&#34;,
+      &#34;photo_size&#34;:null,
+      &#34;custom_list3_value&#34;:null,
+      &#34;old_reg_auto_generate&#34;:&#34;Y&#34;,
+      &#34;center_name&#34;:&#34;Default Center&#34;,
+      &#34;mod_time&#34;:1525690293671,
+      &#34;visit_id&#34;:&#34;OP193866&#34;,
+      &#34;last_name&#34;:&#34;&#34;,
+      &#34;food_allergies&#34;:&#34;&#34;,
+      &#34;city_name&#34;:&#34;UAE&#34;,
+      &#34;next_of_kin_relation&#34;:null,
+      &#34;conditional_custom_field4&#34;:null,
+      &#34;conditional_custom_field3&#34;:null,
+      &#34;government_identifier&#34;:&#34;84457ASAH&#34;,
+      &#34;conditional_custom_field2&#34;:null,
+      &#34;conditional_custom_field1&#34;:null,
+      &#34;reg_date&#34;:&#34;2018-05-07&#34;,
+      &#34;dead_on_arrival&#34;:null,
+      &#34;identifier_id&#34;:5,
+      &#34;conditional_custom_field5&#34;:null,
+      &#34;patient_careof_address&#34;:null,
+      &#34;med_allergies&#34;:&#34;&#34;,
+      &#34;visit_status&#34;:&#34;A&#34;,
+      &#34;oldmrno&#34;:null,
+      &#34;first_visit_reg_date&#34;:&#34;2018-05-07&#34;,
+      &#34;patient_name&#34;:&#34;TestII&#34;,
+      &#34;reference_docto_id&#34;:null,
+      &#34;vip_status&#34;:null,
+      &#34;indented&#34;:&#34;N&#34;,
+      &#34;original_mr_no&#34;:&#34;&#34;,
+      &#34;clinical_field2&#34;:null,
+      &#34;statename&#34;:&#34;UAE&#34;,
+      &#34;custom_list8_value&#34;:null,
+      &#34;clinical_field3&#34;:null,
+      &#34;patient_consultation_info&#34;:null,
+      &#34;salutation&#34;:&#34;SALU0002&#34;,
+      &#34;clinical_field1&#34;:null,
+      &#34;patient_category&#34;:null,
+      &#34;mobile_access&#34;:&#34;false&#34;,
+      &#34;age_text&#34;:&#34;23y&#34;,
+      &#34;other_allergies&#34;:&#34;&#34;,
+      &#34;category_expiry_date&#34;:null,
+      &#34;custom_list9_value&#34;:null,
+      &#34;expected_dob&#34;:&#34;1994-11-07&#34;,
+      &#34;age&#34;:23,
+      &#34;visit_type&#34;:&#34;o&#34;,
+      &#34;visa_validity&#34;:null,
+      &#34;death_date&#34;:null,
+      &#34;custom_field3&#34;:null,
+      &#34;custom_field2&#34;:null,
+      &#34;custom_field1&#34;:null,
+      &#34;relation&#34;:&#34;&#34;,
+      &#34;custom_field7&#34;:null,
+      &#34;custom_field6&#34;:null,
+      &#34;custom_field5&#34;:null,
+      &#34;custom_field4&#34;:null,
+      &#34;custom_list4_value&#34;:null,
+      &#34;nationality_id&#34;:&#34;CM0255&#34;,
+      &#34;primary_sponsor_id&#34;:&#34;TPAID0002&#34;,
+      &#34;passport_no&#34;:null,
+      &#34;custom_field9&#34;:null,
+      &#34;custom_field8&#34;:null,
+      &#34;country&#34;:&#34;CM0255&#34;,
+      &#34;patient_phone_country_code&#34;:&#34;&#43;91&#34;,
+      &#34;category_name&#34;:&#34;General&#34;,
+      &#34;patient_gender&#34;:&#34;M&#34;,
+      &#34;patient_category_custom_field&#34;:null,
+      &#34;mr_no&#34;:&#34;MR117565&#34;,
+      &#34;casefile_no&#34;:&#34;CS000341&#34;,
+      &#34;previous_visit_id&#34;:null,
+      &#34;patient_photo_available&#34;:&#34;N&#34;,
+      &#34;custom_list5_value&#34;:null,
+      &#34;issued_to&#34;:&#34;ANAESTHESIOLOGY&#34;,
+      &#34;current_agein&#34;:&#34;Y&#34;,
+      &#34;remarks&#34;:null,
+      &#34;middle_name2&#34;:&#34;&#34;,
+      &#34;patient_area&#34;:&#34;&#34;,
+      &#34;name_local_language&#34;:null,
+      &#34;patient_phone&#34;:&#34;&#43;918123400921&#34;,
+      &#34;agein&#34;:&#34;Y&#34;,
+      &#34;patient_address&#34;:&#34;&#34;,
+      &#34;custom_field16&#34;:null,
+      &#34;custom_field15&#34;:null,
+      &#34;patient_state&#34;:&#34;ST0039&#34;,
+      &#34;custom_field18&#34;:null,
+      &#34;custom_field17&#34;:null,
+      &#34;custom_field19&#34;:null,
+      &#34;sms_for_vaccination&#34;:&#34;N&#34;,
+      &#34;custom_list1_value&#34;:null,
+      &#34;mobile_password&#34;:null,
+      &#34;patient_source_category&#34;:null,
+      &#34;custom_field10&#34;:null,
+      &#34;custom_field11&#34;:null,
+      &#34;custom_field12&#34;:null,
+      &#34;custom_field13&#34;:null,
+      &#34;custom_list2_value&#34;:null,
+      &#34;custom_field14&#34;:null,
+      &#34;cityname&#34;:&#34;UAE&#34;,
+      &#34;center_id&#34;:0,
+      &#34;death_reason_id&#34;:null,
+      &#34;death_time&#34;:null,
+      &#34;custom_list7_value&#34;:null,
+      &#34;full_name&#34;:&#34;Mr. TestII&#34;
+    },
+    &#34;visit&#34;:{  
+      &#34;admitting_diagnosis_code&#34;:null,
+      &#34;patient_city&#34;:&#34;CT0637&#34;,
+      &#34;doctor_mail_id&#34;:&#34;&#34;,
+      &#34;sec_patient_national_relation&#34;:null,
+      &#34;sec_employee_name&#34;:null,
+      &#34;family_id&#34;:null,
+      &#34;sec_citizen_name&#34;:null,
+      &#34;custom_list6_value&#34;:null,
+      &#34;patient_category_id&#34;:1,
+      &#34;tpa_pincode&#34;:&#34;560035&#34;,
+      &#34;sec_sponsor_type&#34;:&#34;I&#34;,
+      &#34;patient_care_oftext&#34;:null,
+      &#34;refdoctorname&#34;:&#34;&#34;,
+      &#34;salutation_id&#34;:&#34;SALU0002&#34;,
+      &#34;govt_type_label&#34;:&#34;p- Govt ID&#34;,
+      &#34;email_id&#34;:null,
+      &#34;no_allergies&#34;:null,
+      &#34;primary_diagnosis_code&#34;:null,
+      &#34;main_visit_id&#34;:&#34;OP193866&#34;,
+      &#34;token_no&#34;:null,
+      &#34;middle_name&#34;:&#34;&#34;,
+      &#34;revisit&#34;:&#34;N&#34;,
+      &#34;insurance_co_address&#34;:&#34;&#34;,
+      &#34;visit_id&#34;:&#34;OP193866&#34;,
+      &#34;last_name&#34;:&#34;&#34;,
+      &#34;reg_charge_accepted&#34;:&#34;Y&#34;,
+      &#34;bills&#34;:[  
+        {  
+          &#34;total_receipts&#34;:0.00,
+          &#34;visit_id&#34;:&#34;OP193866&#34;,
+          &#34;mr_no&#34;:&#34;MR117565&#34;,
+          &#34;deposit_set_off&#34;:0.00,
+          &#34;total_amount&#34;:291.00,
+          &#34;bill_rate_plan_id&#34;:&#34;ORG0001&#34;,
+          &#34;bill_no&#34;:&#34;BNA246980&#34;,
+          &#34;status&#34;:&#34;A&#34;,
+          &#34;is_tpa&#34;:true,
+          &#34;account_group&#34;:1,
+          &#34;payment_status&#34;:&#34;U&#34;,
+          &#34;open_date&#34;:&#34;2018-05-07&#34;,
+          &#34;primary_sponsor_id&#34;:&#34;TPAID0002&#34;,
+          &#34;approval_amount&#34;:0.00
+        },
+        {  
+          &#34;open_date&#34;:&#34;2018-05-11&#34;,
+          &#34;total_receipts&#34;:0.00,
+          &#34;mr_no&#34;:&#34;MR117565&#34;,
+          &#34;bill_rate_plan_id&#34;:&#34;ORG0001&#34;,
+          &#34;status&#34;:&#34;A&#34;,
+          &#34;payment_status&#34;:&#34;U&#34;,
+          &#34;account_group&#34;:1,
+          &#34;primary_sponsor_id&#34;:&#34;TPAID0002&#34;,
+          &#34;visit_id&#34;:&#34;OP193866&#34;,
+          &#34;bill_no&#34;:&#34;BNA246981&#34;,
+          &#34;deposit_set_off&#34;:0.00,
+          &#34;is_tpa&#34;:true,
+          &#34;total_amount&#34;:96.16,
+          &#34;approval_amount&#34;:0.00
+        }
+      ],
+      &#34;food_allergies&#34;:&#34;&#34;,
+      &#34;sec_policy_number&#34;:&#34;&#34;,
+      &#34;center_code&#34;:&#34;Default Center&#34;,
+      &#34;discharge_remarks&#34;:null,
+      &#34;government_identifier&#34;:&#34;84457ASAH&#34;,
+      &#34;discharged_by&#34;:null,
+      &#34;discharge_date&#34;:null,
+      &#34;unit_id&#34;:null,
+      &#34;dead_on_arrival&#34;:null,
+      &#34;death_reason&#34;:null,
+      &#34;sec_policy_validity_start&#34;:null,
+      &#34;sec_patient_relationship&#34;:&#34;&#34;,
+      &#34;admitted_dept&#34;:&#34;DEP0002&#34;,
+      &#34;secondary_insurance_approval&#34;:null,
+      &#34;analysis_of_complaint&#34;:&#34;&#34;,
+      &#34;alloc_bed_name&#34;:null,
+      &#34;secondary_diagnosis_description&#34;:&#34;&#34;,
+      &#34;bed_type&#34;:&#34;GENERAL&#34;,
+      &#34;mlc_remarks&#34;:null,
+      &#34;sec_national_id&#34;:null,
+      &#34;center_address&#34;:&#34;&#34;,
+      &#34;oldmrno&#34;:null,
+      &#34;national_sponsor_id&#34;:null,
+      &#34;patient_name&#34;:&#34;TestII&#34;,
+      &#34;vip_status&#34;:null,
+      &#34;indented&#34;:&#34;N&#34;,
+      &#34;dept_name&#34;:&#34;DEP0002&#34;,
+      &#34;member_id&#34;:&#34;&#34;,
+      &#34;primary_plan_type_label&#34;:&#34;Network / Plan Type&#34;,
+      &#34;custom_list8_value&#34;:null,
+      &#34;patient_consultation_info&#34;:null,
+      &#34;insurance_id&#34;:null,
+      &#34;sec_patient_corporate_relation&#34;:null,
+      &#34;patient_category&#34;:1,
+      &#34;sec_tpa_name&#34;:&#34;TATA AIG&#34;,
+      &#34;patient_corporate_relation&#34;:null,
+      &#34;discharge_flag&#34;:&#34;&#34;,
+      &#34;age_text&#34;:&#34;23y&#34;,
+      &#34;ward_id&#34;:&#34;&#34;,
+      &#34;doctor&#34;:&#34;DOC0547&#34;,
+      &#34;corporate_sponsor_id&#34;:null,
+      &#34;qualification&#34;:&#34;&#34;,
+      &#34;alloc_ward_name&#34;:null,
+      &#34;discharge_doctor_id&#34;:null,
+      &#34;custom_list9_value&#34;:null,
+      &#34;expected_dob&#34;:&#34;1994-11-07&#34;,
+      &#34;reg_ward_name&#34;:null,
+      &#34;patient_relationship&#34;:&#34;&#34;,
+      &#34;tpa_phone_no&#34;:&#34;080-65656567&#34;,
+      &#34;visa_validity&#34;:null,
+      &#34;death_date&#34;:null,
+      &#34;sec_member_id&#34;:&#34;&#34;,
+      &#34;relation&#34;:&#34;&#34;,
+      &#34;secondary_plan_type_label&#34;:&#34;Network / Plan Type&#34;,
+      &#34;tpa_name&#34;:&#34;BAJAJ ALLIANZ&#39;s&#34;,
+      &#34;nationality_id&#34;:&#34;CM0255&#34;,
+      &#34;police_stn&#34;:null,
+      &#34;passport_no&#34;:null,
+      &#34;country&#34;:&#34;CM0255&#34;,
+      &#34;tpa_country&#34;:&#34;INDIA&#34;,
+      &#34;sec_insurance_co_name&#34;:&#34;Maharatra Bank&#34;,
+      &#34;patient_policy_id&#34;:0,
+      &#34;sec_employee_id&#34;:null,
+      &#34;primary_insurance_co&#34;:&#34;ICM00011&#34;,
+      &#34;patient_category_custom_field&#34;:null,
+      &#34;doc_id&#34;:null,
+      &#34;insurance_co_name&#34;:&#34;Default Insurance Company&#34;,
+      &#34;cons_time&#34;:&#34;&#34;,
+      &#34;org_name&#34;:&#34;GENERAL&#34;,
+      &#34;discharge_finalized_time&#34;:null,
+      &#34;verify_finger_print&#34;:&#34;N&#34;,
+      &#34;patient_photo_available&#34;:&#34;N&#34;,
+      &#34;custom_list5_value&#34;:null,
+      &#34;insurance_co_tin_number&#34;:null,
+      &#34;policy_number&#34;:&#34;&#34;,
+      &#34;remarks&#34;:null,
+      &#34;primary_member_id_label&#34;:&#34;Member ID&#34;,
+      &#34;plan_id&#34;:41,
+      &#34;patient_area&#34;:&#34;&#34;,
+      &#34;discharge_time&#34;:null,
+      &#34;name_local_language&#34;:null,
+      &#34;patient_phone&#34;:&#34;&#43;918123400921&#34;,
+      &#34;use_drg&#34;:&#34;N&#34;,
+      &#34;disch_date_for_disch_summary&#34;:null,
+      &#34;complaint&#34;:null,
+      &#34;alloc_bed_type&#34;:null,
+      &#34;patient_address&#34;:&#34;&#34;,
+      &#34;tpa_state&#34;:&#34;KARNATAKA&#34;,
+      &#34;custom_field16&#34;:null,
+      &#34;patient_state&#34;:&#34;ST0039&#34;,
+      &#34;custom_field15&#34;:null,
+      &#34;custom_field18&#34;:null,
+      &#34;custom_field17&#34;:null,
+      &#34;signatory_username&#34;:null,
+      &#34;custom_field19&#34;:null,
+      &#34;custom_list1_value&#34;:null,
+      &#34;sec_tpa_tin_number&#34;:&#34;&#34;,
+      &#34;org_id&#34;:&#34;ORG0001&#34;,
+      &#34;secondary_insurance_co&#34;:&#34;ICM00003&#34;,
+      &#34;primary_diagnosis_description&#34;:null,
+      &#34;custom_field10&#34;:null,
+      &#34;custom_field11&#34;:null,
+      &#34;health_authority&#34;:&#34;Default&#34;,
+      &#34;custom_field12&#34;:null,
+      &#34;custom_field13&#34;:null,
+      &#34;custom_field14&#34;:null,
+      &#34;custom_list2_value&#34;:null,
+      &#34;patient_id&#34;:&#34;OP193866&#34;,
+      &#34;sec_policy_holder_name&#34;:&#34;&#34;,
+      &#34;secondary_approval_limit&#34;:null,
+      &#34;custom_list7_value&#34;:null,
+      &#34;file_status&#34;:&#34;U&#34;,
+      &#34;sec_corporate_sponsor_id&#34;:null,
+      &#34;primary_insurance_approval&#34;:null,
+      &#34;passport_validity&#34;:null,
+      &#34;nationality_name&#34;:&#34;United Arab Emirates&#34;,
+      &#34;dateofbirth&#34;:null,
+      &#34;citizen_name&#34;:null,
+      &#34;state_name&#34;:&#34;UAE&#34;,
+      &#34;country_name&#34;:&#34;United Arab Emirates&#34;,
+      &#34;employee_name&#34;:null,
+      &#34;passport_issue_country&#34;:null,
+      &#34;prior_auth_mode_id&#34;:0,
+      &#34;sec_insurance_co_address&#34;:&#34;ere&#34;,
+      &#34;ins_prior_auth_id&#34;:null,
+      &#34;use_perdiem&#34;:&#34;N&#34;,
+      &#34;discharge_type&#34;:null,
+      &#34;addnl_phone&#34;:null,
+      &#34;portal_access&#34;:false,
+      &#34;custom_list3_value&#34;:null,
+      &#34;discharge_doc_id&#34;:null,
+      &#34;user_name&#34;:&#34;InstaAdmin&#34;,
+      &#34;center_name&#34;:&#34;Default Center&#34;,
+      &#34;policy_validity_end&#34;:null,
+      &#34;secondary_sponsor_id&#34;:&#34;TPAID0038&#34;,
+      &#34;require_pbm_authorization&#34;:&#34;N&#34;,
+      &#34;doctor_name&#34;:&#34; VINCENT&#34;,
+      &#34;next_of_kin_relation&#34;:null,
+      &#34;city_name&#34;:&#34;UAE&#34;,
+      &#34;doctor_type&#34;:&#34;CONSULTANT&#34;,
+      &#34;conditional_custom_field4&#34;:null,
+      &#34;conditional_custom_field3&#34;:null,
+      &#34;patient_national_relation&#34;:null,
+      &#34;conditional_custom_field2&#34;:null,
+      &#34;conditional_custom_field1&#34;:null,
+      &#34;mlc_status&#34;:null,
+      &#34;established_type&#34;:&#34;N&#34;,
+      &#34;reg_date&#34;:&#34;2018-05-07&#34;,
+      &#34;bill_and_payment_status&#34;:{  
+        &#34;visit_id&#34;:&#34;OP193866&#34;,
+        &#34;total_receipts&#34;:0.00,
+        &#34;bill_status_ok&#34;:false,
+        &#34;total_amount&#34;:387.16,
+        &#34;credit_bill_exists&#34;:true,
+        &#34;approval_amount&#34;:0.00,
+        &#34;payment_ok&#34;:false
+      },
+      &#34;admitting_diagnosis_description&#34;:null,
+      &#34;collection_center_id&#34;:-1,
+      &#34;mlc_type&#34;:null,
+      &#34;store_rate_plan_id&#34;:null,
+      &#34;tpa_tin_number&#34;:&#34;&#34;,
+      &#34;identifier_id&#34;:5,
+      &#34;conditional_custom_field5&#34;:null,
+      &#34;specialization&#34;:&#34;Anaesthetist&#34;,
+      &#34;patient_careof_address&#34;:null,
+      &#34;med_allergies&#34;:&#34;&#34;,
+      &#34;national_id&#34;:null,
+      &#34;reference_docto_id&#34;:null,
+      &#34;mlc_no&#34;:null,
+      &#34;discharge_finalized_user&#34;:&#34;&#34;,
+      &#34;tpa_address&#34;:&#34;BANGALORE&#34;,
+      &#34;plan_type_name&#34;:&#34;Default Plan Type&#34;,
+      &#34;center_contact_phone&#34;:&#34;2323232&#34;,
+      &#34;original_mr_no&#34;:&#34;&#34;,
+      &#34;disch_time_for_disch_summary&#34;:null,
+      &#34;plan_notes&#34;:&#34;&#34;,
+      &#34;clinical_field2&#34;:null,
+      &#34;sec_insurance_co_tin_number&#34;:null,
+      &#34;op_type&#34;:&#34;M&#34;,
+      &#34;statename&#34;:&#34;UAE&#34;,
+      &#34;clinical_field3&#34;:null,
+      &#34;salutation&#34;:&#34;Mr.&#34;,
+      &#34;patient_mod_time&#34;:1525690293671,
+      &#34;clinical_field1&#34;:null,
+      &#34;sec_national_sponsor_id&#34;:null,
+      &#34;collection_center&#34;:&#34;In House&#34;,
+      &#34;visit_custom_field5&#34;:null,
+      &#34;prior_auth_mode_name&#34;:null,
+      &#34;visit_custom_field4&#34;:null,
+      &#34;visit_custom_field7&#34;:null,
+      &#34;visit_custom_field6&#34;:null,
+      &#34;bed_end_date&#34;:null,
+      &#34;visit_custom_field1&#34;:null,
+      &#34;discharge_finalized_date&#34;:null,
+      &#34;visit_custom_field3&#34;:null,
+      &#34;visit_custom_field2&#34;:null,
+      &#34;doctor_license_number&#34;:&#34;&#34;,
+      &#34;discharge_format&#34;:null,
+      &#34;policy_holder_name&#34;:&#34;&#34;,
+      &#34;visit_custom_field9&#34;:null,
+      &#34;other_allergies&#34;:&#34;&#34;,
+      &#34;visit_custom_field8&#34;:null,
+      &#34;category_expiry_date&#34;:null,
+      &#34;per_diem_code&#34;:null,
+      &#34;bed_start_date&#34;:null,
+      &#34;age&#34;:23,
+      &#34;visit_type&#34;:&#34;o&#34;,
+      &#34;policy_validity_start&#34;:null,
+      &#34;employee_id&#34;:null,
+      &#34;op_type_name&#34;:&#34;Main Visit&#34;,
+      &#34;custom_field3&#34;:null,
+      &#34;status&#34;:&#34;A&#34;,
+      &#34;custom_field2&#34;:null,
+      &#34;custom_field1&#34;:null,
+      &#34;custom_field7&#34;:null,
+      &#34;certificate_status&#34;:null,
+      &#34;secondary_member_id_label&#34;:&#34;Member ID&#34;,
+      &#34;reg_time&#34;:&#34;16:21:33&#34;,
+      &#34;category_id&#34;:144,
+      &#34;custom_field6&#34;:null,
+      &#34;accident_place&#34;:null,
+      &#34;main_visit_primary_insurance_approval&#34;:null,
+      &#34;main_visit_secondary_insurance_approval&#34;:null,
+      &#34;docs_download_passcode&#34;:585359,
+      &#34;custom_field5&#34;:null,
+      &#34;custom_field4&#34;:null,
+      &#34;custom_list4_value&#34;:null,
+      &#34;primary_sponsor_id&#34;:&#34;TPAID0002&#34;,
+      &#34;bill_type&#34;:&#34;C&#34;,
+      &#34;custom_field9&#34;:null,
+      &#34;tpa_city&#34;:&#34;BANGALORE&#34;,
+      &#34;custom_field8&#34;:null,
+      &#34;doctor_mobile&#34;:&#34;&#34;,
+      &#34;prior_auth_id&#34;:&#34;&#34;,
+      &#34;patient_category_name&#34;:&#34;General&#34;,
+      &#34;doctor_address&#34;:&#34;Unity Hospital Mangalore\r\n   \r\n   \r\n   \r\n   \r\n   &#34;,
+      &#34;category_name&#34;:&#34;General&#34;,
+      &#34;patient_gender&#34;:&#34;M&#34;,
+      &#34;codification_status&#34;:&#34;P&#34;,
+      &#34;mr_no&#34;:&#34;MR117565&#34;,
+      &#34;plan_name&#34;:&#34;Default Insurance Company Plan&#34;,
+      &#34;casefile_no&#34;:&#34;CS000341&#34;,
+      &#34;drg_code&#34;:null,
+      &#34;previous_visit_id&#34;:null,
+      &#34;issued_to&#34;:&#34;ANAESTHESIOLOGY&#34;,
+      &#34;sec_policy_validity_end&#34;:null,
+      &#34;center_tin_number&#34;:null,
+      &#34;tpa_mobile_no&#34;:&#34;&#34;,
+      &#34;admitted_dept_name&#34;:&#34;ANAESTHESIOLOGY&#34;,
+      &#34;agein&#34;:&#34;Y&#34;,
+      &#34;primary_approval_limit&#34;:null,
+      &#34;plan_exclusions&#34;:&#34;&#34;,
+      &#34;res_phone&#34;:&#34;&#34;,
+      &#34;first_bill_for_visit&#34;:&#34;BNA246980&#34;,
+      &#34;patient_source_category&#34;:null,
+      &#34;registration_no&#34;:&#34;&#34;,
+      &#34;sec_plan_name&#34;:&#34;issurence&#34;,
+      &#34;clinic_phone&#34;:&#34;&#34;,
+      &#34;sponsor_type&#34;:&#34;I&#34;,
+      &#34;cons_date&#34;:&#34;&#34;,
+      &#34;cityname&#34;:&#34;UAE&#34;,
+      &#34;visit_custom_list2&#34;:null,
+      &#34;center_id&#34;:0,
+      &#34;unit_name&#34;:null,
+      &#34;death_time&#34;:null,
+      &#34;visit_custom_list1&#34;:null,
+      &#34;full_name&#34;:&#34;Mr. TestII&#34;
+    }
+  }
+}
+</code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+              </div>
+            
+          </div>
+        
+          
+<div class="ui grey horizontal small divider header" style="margin-top:0">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui orange micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block inverted center aligned header" id="patient-issue-get-item-list">
+              GET ITEM LIST
+            </h3>
+            <div class="description"></div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui green large button">
+                  <h3>GET</h3>
+                </div>
+                <a class="ui basic fluid request-url green label">
+                  <code>http://localhost:8080/instahms/inventory/patientissues/getmedicinesinstock.json?ts=45466&amp;hosp=cen&amp;issueType=CR&amp;includeConsignmentStock=Y&amp;storeId=0</code>
+                </a>
+              </div>
+              
+              
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>application/json</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui blue segment">
+                  <div class="title" style="margin-bottom: 1rem;">
+                    <a class="ui blue circular label">
+                      200
+                    </a>
+                    <code>application/json</code>
+                  </div>
+                  <div class="content tabbed active">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-json">[  
+  {  
+    &#34;item_code&#34;:null,
+    &#34;package_uom&#34;:&#34;Numbers&#34;,
+    &#34;item_barcode_id&#34;:null,
+    &#34;medicine_id&#34;:1122,
+    &#34;cust_item_code_with_name&#34;:&#34;WATER FOR INJ10ML&#34;,
+    &#34;issue_base_unit&#34;:1,
+    &#34;cust_item_code&#34;:null,
+    &#34;issue_units&#34;:&#34;Numbers&#34;,
+    &#34;medicine_name&#34;:&#34;WATER FOR INJ10ML&#34;
+  },
+  {  
+    &#34;item_code&#34;:null,
+    &#34;package_uom&#34;:&#34;STRIPS-10&#34;,
+    &#34;item_barcode_id&#34;:null,
+    &#34;medicine_id&#34;:2758,
+    &#34;cust_item_code_with_name&#34;:&#34;KETOALFA TAB&#34;,
+    &#34;issue_base_unit&#34;:10.00,
+    &#34;cust_item_code&#34;:null,
+    &#34;issue_units&#34;:&#34;1&#34;,
+    &#34;medicine_name&#34;:&#34;KETOALFA TAB&#34;
+  }
+]
+</code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+              </div>
+            
+          </div>
+        
+          
+<div class="ui grey horizontal small divider header" style="margin-top:0">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui orange micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block inverted center aligned header" id="patient-issue-get-item-batch-details">
+              GET ITEM BATCH DETAILS
+            </h3>
+            <div class="description"></div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui green large button">
+                  <h3>GET</h3>
+                </div>
+                <a class="ui basic fluid request-url green label">
+                  <code>http://localhost:8080/instahms/inventory/patientissues/getitembatchdetails.json?store_id=0&amp;medicine_id=35466</code>
+                </a>
+              </div>
+              
+              
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>application/json</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui blue segment">
+                  <div class="title" style="margin-bottom: 1rem;">
+                    <a class="ui blue circular label">
+                      200
+                    </a>
+                    <code>application/json</code>
+                  </div>
+                  <div class="content tabbed active">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-json">[  
+  {  
+    &#34;control_type_id&#34;:1,
+    &#34;item_batch_id&#34;:146302,
+    &#34;issue_type&#34;:&#34;CONSUMABLE&#34;,
+    &#34;package_uom&#34;:&#34;Numbers-10&#34;,
+    &#34;item_barcode_id&#34;:&#34;ITM00024&#34;,
+    &#34;category_id&#34;:152,
+    &#34;qty&#34;:10,
+    &#34;issue_units&#34;:&#34;Numbers&#34;,
+    &#34;billable&#34;:true,
+    &#34;exp_dt&#34;:1701369000000,
+    &#34;consignment_stock&#34;:false,
+    &#34;dept_id&#34;:0,
+    &#34;package_type&#34;:&#34;&#34;,
+    &#34;identification&#34;:&#34;B&#34;,
+    &#34;control_type_name&#34;:&#34;Normal&#34;,
+    &#34;medicine_id&#34;:35466,
+    &#34;issue_base_unit&#34;:10,
+    &#34;batch_no&#34;:&#34;dfvkjdfvkdf&#34;,
+    &#34;medicine_name&#34;:&#34;irs_debit_note&#34;
+  },
+  {  
+    &#34;control_type_id&#34;:1,
+    &#34;item_batch_id&#34;:144143,
+    &#34;issue_type&#34;:&#34;CONSUMABLE&#34;,
+    &#34;package_uom&#34;:&#34;Numbers-10&#34;,
+    &#34;item_barcode_id&#34;:&#34;ITM00024&#34;,
+    &#34;category_id&#34;:152,
+    &#34;qty&#34;:430.00,
+    &#34;issue_units&#34;:&#34;Numbers&#34;,
+    &#34;billable&#34;:true,
+    &#34;exp_dt&#34;:1701369000000,
+    &#34;consignment_stock&#34;:false,
+    &#34;dept_id&#34;:0,
+    &#34;package_type&#34;:&#34;&#34;,
+    &#34;identification&#34;:&#34;B&#34;,
+    &#34;control_type_name&#34;:&#34;Normal&#34;,
+    &#34;medicine_id&#34;:35466,
+    &#34;issue_base_unit&#34;:10,
+    &#34;batch_no&#34;:&#34;1212221sd&#34;,
+    &#34;medicine_name&#34;:&#34;irs_debit_note&#34;
+  },
+  {  
+    &#34;control_type_id&#34;:1,
+    &#34;item_batch_id&#34;:146316,
+    &#34;issue_type&#34;:&#34;CONSUMABLE&#34;,
+    &#34;package_uom&#34;:&#34;Numbers-10&#34;,
+    &#34;item_barcode_id&#34;:&#34;ITM00024&#34;,
+    &#34;category_id&#34;:152,
+    &#34;qty&#34;:10,
+    &#34;issue_units&#34;:&#34;Numbers&#34;,
+    &#34;billable&#34;:true,
+    &#34;exp_dt&#34;:1701369000000,
+    &#34;consignment_stock&#34;:false,
+    &#34;dept_id&#34;:0,
+    &#34;package_type&#34;:&#34;&#34;,
+    &#34;identification&#34;:&#34;B&#34;,
+    &#34;control_type_name&#34;:&#34;Normal&#34;,
+    &#34;medicine_id&#34;:35466,
+    &#34;issue_base_unit&#34;:10,
+    &#34;batch_no&#34;:&#34;81234009211&#34;,
+    &#34;medicine_name&#34;:&#34;irs_debit_note&#34;
+  },
+  {  
+    &#34;control_type_id&#34;:1,
+    &#34;item_batch_id&#34;:146572,
+    &#34;issue_type&#34;:&#34;CONSUMABLE&#34;,
+    &#34;package_uom&#34;:&#34;Numbers-10&#34;,
+    &#34;item_barcode_id&#34;:&#34;ITM00024&#34;,
+    &#34;category_id&#34;:152,
+    &#34;qty&#34;:10,
+    &#34;issue_units&#34;:&#34;Numbers&#34;,
+    &#34;billable&#34;:true,
+    &#34;exp_dt&#34;:1701369000000,
+    &#34;consignment_stock&#34;:false,
+    &#34;dept_id&#34;:0,
+    &#34;package_type&#34;:&#34;&#34;,
+    &#34;identification&#34;:&#34;B&#34;,
+    &#34;control_type_name&#34;:&#34;Normal&#34;,
+    &#34;medicine_id&#34;:35466,
+    &#34;issue_base_unit&#34;:10,
+    &#34;batch_no&#34;:&#34;dvfveve&#34;,
+    &#34;medicine_name&#34;:&#34;irs_debit_note&#34;
+  },
+  {  
+    &#34;control_type_id&#34;:1,
+    &#34;item_batch_id&#34;:146314,
+    &#34;issue_type&#34;:&#34;CONSUMABLE&#34;,
+    &#34;package_uom&#34;:&#34;Numbers-10&#34;,
+    &#34;item_barcode_id&#34;:&#34;ITM00024&#34;,
+    &#34;category_id&#34;:152,
+    &#34;qty&#34;:10,
+    &#34;issue_units&#34;:&#34;Numbers&#34;,
+    &#34;billable&#34;:true,
+    &#34;exp_dt&#34;:1701369000000,
+    &#34;consignment_stock&#34;:false,
+    &#34;dept_id&#34;:0,
+    &#34;package_type&#34;:&#34;&#34;,
+    &#34;identification&#34;:&#34;B&#34;,
+    &#34;control_type_name&#34;:&#34;Normal&#34;,
+    &#34;medicine_id&#34;:35466,
+    &#34;issue_base_unit&#34;:10,
+    &#34;batch_no&#34;:&#34;12323112&#34;,
+    &#34;medicine_name&#34;:&#34;irs_debit_note&#34;
+  },
+  {  
+    &#34;control_type_id&#34;:1,
+    &#34;item_batch_id&#34;:146276,
+    &#34;issue_type&#34;:&#34;CONSUMABLE&#34;,
+    &#34;package_uom&#34;:&#34;Numbers-10&#34;,
+    &#34;item_barcode_id&#34;:&#34;ITM00024&#34;,
+    &#34;category_id&#34;:152,
+    &#34;qty&#34;:20,
+    &#34;issue_units&#34;:&#34;Numbers&#34;,
+    &#34;billable&#34;:true,
+    &#34;exp_dt&#34;:1701369000000,
+    &#34;consignment_stock&#34;:false,
+    &#34;dept_id&#34;:0,
+    &#34;package_type&#34;:&#34;&#34;,
+    &#34;identification&#34;:&#34;B&#34;,
+    &#34;control_type_name&#34;:&#34;Normal&#34;,
+    &#34;medicine_id&#34;:35466,
+    &#34;issue_base_unit&#34;:10,
+    &#34;batch_no&#34;:&#34;kdfjvfdkjbdf&#34;,
+    &#34;medicine_name&#34;:&#34;irs_debit_note&#34;
+  },
+  {  
+    &#34;control_type_id&#34;:1,
+    &#34;item_batch_id&#34;:146595,
+    &#34;issue_type&#34;:&#34;CONSUMABLE&#34;,
+    &#34;package_uom&#34;:&#34;Numbers-10&#34;,
+    &#34;item_barcode_id&#34;:&#34;ITM00024&#34;,
+    &#34;category_id&#34;:152,
+    &#34;qty&#34;:20,
+    &#34;issue_units&#34;:&#34;Numbers&#34;,
+    &#34;billable&#34;:true,
+    &#34;exp_dt&#34;:1701369000000,
+    &#34;consignment_stock&#34;:false,
+    &#34;dept_id&#34;:0,
+    &#34;package_type&#34;:&#34;&#34;,
+    &#34;identification&#34;:&#34;B&#34;,
+    &#34;control_type_name&#34;:&#34;Normal&#34;,
+    &#34;medicine_id&#34;:35466,
+    &#34;issue_base_unit&#34;:10,
+    &#34;batch_no&#34;:&#34;ffgbfgbfgbfgbgf&#34;,
+    &#34;medicine_name&#34;:&#34;irs_debit_note&#34;
+  },
+  {  
+    &#34;control_type_id&#34;:1,
+    &#34;item_batch_id&#34;:146519,
+    &#34;issue_type&#34;:&#34;CONSUMABLE&#34;,
+    &#34;package_uom&#34;:&#34;Numbers-10&#34;,
+    &#34;item_barcode_id&#34;:&#34;ITM00024&#34;,
+    &#34;category_id&#34;:152,
+    &#34;qty&#34;:30,
+    &#34;issue_units&#34;:&#34;Numbers&#34;,
+    &#34;billable&#34;:true,
+    &#34;exp_dt&#34;:1701369000000,
+    &#34;consignment_stock&#34;:false,
+    &#34;dept_id&#34;:0,
+    &#34;package_type&#34;:&#34;&#34;,
+    &#34;identification&#34;:&#34;B&#34;,
+    &#34;control_type_name&#34;:&#34;Normal&#34;,
+    &#34;medicine_id&#34;:35466,
+    &#34;issue_base_unit&#34;:10,
+    &#34;batch_no&#34;:&#34;3434r34r34&#34;,
+    &#34;medicine_name&#34;:&#34;irs_debit_note&#34;
+  },
+  {  
+    &#34;control_type_id&#34;:1,
+    &#34;item_batch_id&#34;:146310,
+    &#34;issue_type&#34;:&#34;CONSUMABLE&#34;,
+    &#34;package_uom&#34;:&#34;Numbers-10&#34;,
+    &#34;item_barcode_id&#34;:&#34;ITM00024&#34;,
+    &#34;category_id&#34;:152,
+    &#34;qty&#34;:50.00,
+    &#34;issue_units&#34;:&#34;Numbers&#34;,
+    &#34;billable&#34;:true,
+    &#34;exp_dt&#34;:1701369000000,
+    &#34;consignment_stock&#34;:false,
+    &#34;dept_id&#34;:0,
+    &#34;package_type&#34;:&#34;&#34;,
+    &#34;identification&#34;:&#34;B&#34;,
+    &#34;control_type_name&#34;:&#34;Normal&#34;,
+    &#34;medicine_id&#34;:35466,
+    &#34;issue_base_unit&#34;:10,
+    &#34;batch_no&#34;:&#34;321212&#34;,
+    &#34;medicine_name&#34;:&#34;irs_debit_note&#34;
+  },
+  {  
+    &#34;control_type_id&#34;:1,
+    &#34;item_batch_id&#34;:146518,
+    &#34;issue_type&#34;:&#34;CONSUMABLE&#34;,
+    &#34;package_uom&#34;:&#34;Numbers-10&#34;,
+    &#34;item_barcode_id&#34;:&#34;ITM00024&#34;,
+    &#34;category_id&#34;:152,
+    &#34;qty&#34;:10,
+    &#34;issue_units&#34;:&#34;Numbers&#34;,
+    &#34;billable&#34;:true,
+    &#34;exp_dt&#34;:1701369000000,
+    &#34;consignment_stock&#34;:false,
+    &#34;dept_id&#34;:0,
+    &#34;package_type&#34;:&#34;&#34;,
+    &#34;identification&#34;:&#34;B&#34;,
+    &#34;control_type_name&#34;:&#34;Normal&#34;,
+    &#34;medicine_id&#34;:35466,
+    &#34;issue_base_unit&#34;:10,
+    &#34;batch_no&#34;:&#34;rifherifue&#34;,
+    &#34;medicine_name&#34;:&#34;irs_debit_note&#34;
+  },
+  {  
+    &#34;control_type_id&#34;:1,
+    &#34;item_batch_id&#34;:146283,
+    &#34;issue_type&#34;:&#34;CONSUMABLE&#34;,
+    &#34;package_uom&#34;:&#34;Numbers-10&#34;,
+    &#34;item_barcode_id&#34;:&#34;ITM00024&#34;,
+    &#34;category_id&#34;:152,
+    &#34;qty&#34;:10,
+    &#34;issue_units&#34;:&#34;Numbers&#34;,
+    &#34;billable&#34;:true,
+    &#34;exp_dt&#34;:1701369000000,
+    &#34;consignment_stock&#34;:false,
+    &#34;dept_id&#34;:0,
+    &#34;package_type&#34;:&#34;&#34;,
+    &#34;identification&#34;:&#34;B&#34;,
+    &#34;control_type_name&#34;:&#34;Normal&#34;,
+    &#34;medicine_id&#34;:35466,
+    &#34;issue_base_unit&#34;:10,
+    &#34;batch_no&#34;:&#34;rinrgenrge&#34;,
+    &#34;medicine_name&#34;:&#34;irs_debit_note&#34;
+  },
+  {  
+    &#34;control_type_id&#34;:1,
+    &#34;item_batch_id&#34;:146522,
+    &#34;issue_type&#34;:&#34;CONSUMABLE&#34;,
+    &#34;package_uom&#34;:&#34;Numbers-10&#34;,
+    &#34;item_barcode_id&#34;:&#34;ITM00024&#34;,
+    &#34;category_id&#34;:152,
+    &#34;qty&#34;:10,
+    &#34;issue_units&#34;:&#34;Numbers&#34;,
+    &#34;billable&#34;:true,
+    &#34;exp_dt&#34;:1701369000000,
+    &#34;consignment_stock&#34;:false,
+    &#34;dept_id&#34;:0,
+    &#34;package_type&#34;:&#34;&#34;,
+    &#34;identification&#34;:&#34;B&#34;,
+    &#34;control_type_name&#34;:&#34;Normal&#34;,
+    &#34;medicine_id&#34;:35466,
+    &#34;issue_base_unit&#34;:10,
+    &#34;batch_no&#34;:&#34;fregerger&#34;,
+    &#34;medicine_name&#34;:&#34;irs_debit_note&#34;
+  },
+  {  
+    &#34;control_type_id&#34;:1,
+    &#34;item_batch_id&#34;:146597,
+    &#34;issue_type&#34;:&#34;CONSUMABLE&#34;,
+    &#34;package_uom&#34;:&#34;Numbers-10&#34;,
+    &#34;item_barcode_id&#34;:&#34;ITM00024&#34;,
+    &#34;category_id&#34;:152,
+    &#34;qty&#34;:2788,
+    &#34;issue_units&#34;:&#34;Numbers&#34;,
+    &#34;billable&#34;:true,
+    &#34;exp_dt&#34;:1701369000000,
+    &#34;consignment_stock&#34;:false,
+    &#34;dept_id&#34;:0,
+    &#34;package_type&#34;:&#34;&#34;,
+    &#34;identification&#34;:&#34;B&#34;,
+    &#34;control_type_name&#34;:&#34;Normal&#34;,
+    &#34;medicine_id&#34;:35466,
+    &#34;issue_base_unit&#34;:10,
+    &#34;batch_no&#34;:&#34;81210999923&#34;,
+    &#34;medicine_name&#34;:&#34;irs_debit_note&#34;
+  },
+  {  
+    &#34;control_type_id&#34;:1,
+    &#34;item_batch_id&#34;:146303,
+    &#34;issue_type&#34;:&#34;CONSUMABLE&#34;,
+    &#34;package_uom&#34;:&#34;Numbers-10&#34;,
+    &#34;item_barcode_id&#34;:&#34;ITM00024&#34;,
+    &#34;category_id&#34;:152,
+    &#34;qty&#34;:10,
+    &#34;issue_units&#34;:&#34;Numbers&#34;,
+    &#34;billable&#34;:true,
+    &#34;exp_dt&#34;:1701369000000,
+    &#34;consignment_stock&#34;:false,
+    &#34;dept_id&#34;:0,
+    &#34;package_type&#34;:&#34;&#34;,
+    &#34;identification&#34;:&#34;B&#34;,
+    &#34;control_type_name&#34;:&#34;Normal&#34;,
+    &#34;medicine_id&#34;:35466,
+    &#34;issue_base_unit&#34;:10,
+    &#34;batch_no&#34;:&#34;812109&#34;,
+    &#34;medicine_name&#34;:&#34;irs_debit_note&#34;
+  },
+  {  
+    &#34;control_type_id&#34;:1,
+    &#34;item_batch_id&#34;:146521,
+    &#34;issue_type&#34;:&#34;CONSUMABLE&#34;,
+    &#34;package_uom&#34;:&#34;Numbers-10&#34;,
+    &#34;item_barcode_id&#34;:&#34;ITM00024&#34;,
+    &#34;category_id&#34;:152,
+    &#34;qty&#34;:10.00,
+    &#34;issue_units&#34;:&#34;Numbers&#34;,
+    &#34;billable&#34;:true,
+    &#34;exp_dt&#34;:1701369000000,
+    &#34;consignment_stock&#34;:false,
+    &#34;dept_id&#34;:0,
+    &#34;package_type&#34;:&#34;&#34;,
+    &#34;identification&#34;:&#34;B&#34;,
+    &#34;control_type_name&#34;:&#34;Normal&#34;,
+    &#34;medicine_id&#34;:35466,
+    &#34;issue_base_unit&#34;:10,
+    &#34;batch_no&#34;:&#34;referfe&#34;,
+    &#34;medicine_name&#34;:&#34;irs_debit_note&#34;
+  },
+  {  
+    &#34;control_type_id&#34;:1,
+    &#34;item_batch_id&#34;:146315,
+    &#34;issue_type&#34;:&#34;CONSUMABLE&#34;,
+    &#34;package_uom&#34;:&#34;Numbers-10&#34;,
+    &#34;item_barcode_id&#34;:&#34;ITM00024&#34;,
+    &#34;category_id&#34;:152,
+    &#34;qty&#34;:20,
+    &#34;issue_units&#34;:&#34;Numbers&#34;,
+    &#34;billable&#34;:true,
+    &#34;exp_dt&#34;:1701369000000,
+    &#34;consignment_stock&#34;:false,
+    &#34;dept_id&#34;:0,
+    &#34;package_type&#34;:&#34;&#34;,
+    &#34;identification&#34;:&#34;B&#34;,
+    &#34;control_type_name&#34;:&#34;Normal&#34;,
+    &#34;medicine_id&#34;:35466,
+    &#34;issue_base_unit&#34;:10,
+    &#34;batch_no&#34;:&#34;8123400921&#34;,
+    &#34;medicine_name&#34;:&#34;irs_debit_note&#34;
+  },
+  {  
+    &#34;control_type_id&#34;:1,
+    &#34;item_batch_id&#34;:146307,
+    &#34;issue_type&#34;:&#34;CONSUMABLE&#34;,
+    &#34;package_uom&#34;:&#34;Numbers-10&#34;,
+    &#34;item_barcode_id&#34;:&#34;ITM00024&#34;,
+    &#34;category_id&#34;:152,
+    &#34;qty&#34;:10.00,
+    &#34;issue_units&#34;:&#34;Numbers&#34;,
+    &#34;billable&#34;:true,
+    &#34;exp_dt&#34;:1701369000000,
+    &#34;consignment_stock&#34;:false,
+    &#34;dept_id&#34;:0,
+    &#34;package_type&#34;:&#34;&#34;,
+    &#34;identification&#34;:&#34;B&#34;,
+    &#34;control_type_name&#34;:&#34;Normal&#34;,
+    &#34;medicine_id&#34;:35466,
+    &#34;issue_base_unit&#34;:10,
+    &#34;batch_no&#34;:&#34;ffg34r&#34;,
+    &#34;medicine_name&#34;:&#34;irs_debit_note&#34;
+  },
+  {  
+    &#34;control_type_id&#34;:1,
+    &#34;item_batch_id&#34;:146517,
+    &#34;issue_type&#34;:&#34;CONSUMABLE&#34;,
+    &#34;package_uom&#34;:&#34;Numbers-10&#34;,
+    &#34;item_barcode_id&#34;:&#34;ITM00024&#34;,
+    &#34;category_id&#34;:152,
+    &#34;qty&#34;:8710,
+    &#34;issue_units&#34;:&#34;Numbers&#34;,
+    &#34;billable&#34;:true,
+    &#34;exp_dt&#34;:1669833000000,
+    &#34;consignment_stock&#34;:false,
+    &#34;dept_id&#34;:0,
+    &#34;package_type&#34;:&#34;&#34;,
+    &#34;identification&#34;:&#34;B&#34;,
+    &#34;control_type_name&#34;:&#34;Normal&#34;,
+    &#34;medicine_id&#34;:35466,
+    &#34;issue_base_unit&#34;:10,
+    &#34;batch_no&#34;:&#34;r33&#34;,
+    &#34;medicine_name&#34;:&#34;irs_debit_note&#34;
+  },
+  {  
+    &#34;control_type_id&#34;:1,
+    &#34;item_batch_id&#34;:146290,
+    &#34;issue_type&#34;:&#34;CONSUMABLE&#34;,
+    &#34;package_uom&#34;:&#34;Numbers-10&#34;,
+    &#34;item_barcode_id&#34;:&#34;ITM00024&#34;,
+    &#34;category_id&#34;:152,
+    &#34;qty&#34;:10,
+    &#34;issue_units&#34;:&#34;Numbers&#34;,
+    &#34;billable&#34;:true,
+    &#34;exp_dt&#34;:1701369000000,
+    &#34;consignment_stock&#34;:false,
+    &#34;dept_id&#34;:0,
+    &#34;package_type&#34;:&#34;&#34;,
+    &#34;identification&#34;:&#34;B&#34;,
+    &#34;control_type_name&#34;:&#34;Normal&#34;,
+    &#34;medicine_id&#34;:35466,
+    &#34;issue_base_unit&#34;:10,
+    &#34;batch_no&#34;:&#34;erergrege&#34;,
+    &#34;medicine_name&#34;:&#34;irs_debit_note&#34;
+  },
+  {  
+    &#34;control_type_id&#34;:1,
+    &#34;item_batch_id&#34;:146592,
+    &#34;issue_type&#34;:&#34;CONSUMABLE&#34;,
+    &#34;package_uom&#34;:&#34;Numbers-10&#34;,
+    &#34;item_barcode_id&#34;:&#34;ITM00024&#34;,
+    &#34;category_id&#34;:152,
+    &#34;qty&#34;:630,
+    &#34;issue_units&#34;:&#34;Numbers&#34;,
+    &#34;billable&#34;:true,
+    &#34;exp_dt&#34;:1701369000000,
+    &#34;consignment_stock&#34;:false,
+    &#34;dept_id&#34;:0,
+    &#34;package_type&#34;:&#34;&#34;,
+    &#34;identification&#34;:&#34;B&#34;,
+    &#34;control_type_name&#34;:&#34;Normal&#34;,
+    &#34;medicine_id&#34;:35466,
+    &#34;issue_base_unit&#34;:10,
+    &#34;batch_no&#34;:&#34;fevevev&#34;,
+    &#34;medicine_name&#34;:&#34;irs_debit_note&#34;
+  },
+  {  
+    &#34;control_type_id&#34;:1,
+    &#34;item_batch_id&#34;:146278,
+    &#34;issue_type&#34;:&#34;CONSUMABLE&#34;,
+    &#34;package_uom&#34;:&#34;Numbers-10&#34;,
+    &#34;item_barcode_id&#34;:&#34;ITM00024&#34;,
+    &#34;category_id&#34;:152,
+    &#34;qty&#34;:20,
+    &#34;issue_units&#34;:&#34;Numbers&#34;,
+    &#34;billable&#34;:true,
+    &#34;exp_dt&#34;:1701369000000,
+    &#34;consignment_stock&#34;:false,
+    &#34;dept_id&#34;:0,
+    &#34;package_type&#34;:&#34;&#34;,
+    &#34;identification&#34;:&#34;B&#34;,
+    &#34;control_type_name&#34;:&#34;Normal&#34;,
+    &#34;medicine_id&#34;:35466,
+    &#34;issue_base_unit&#34;:10,
+    &#34;batch_no&#34;:&#34;ererer&#34;,
+    &#34;medicine_name&#34;:&#34;irs_debit_note&#34;
+  },
+  {  
+    &#34;control_type_id&#34;:1,
+    &#34;item_batch_id&#34;:146286,
+    &#34;issue_type&#34;:&#34;CONSUMABLE&#34;,
+    &#34;package_uom&#34;:&#34;Numbers-10&#34;,
+    &#34;item_barcode_id&#34;:&#34;ITM00024&#34;,
+    &#34;category_id&#34;:152,
+    &#34;qty&#34;:10,
+    &#34;issue_units&#34;:&#34;Numbers&#34;,
+    &#34;billable&#34;:true,
+    &#34;exp_dt&#34;:1701369000000,
+    &#34;consignment_stock&#34;:false,
+    &#34;dept_id&#34;:0,
+    &#34;package_type&#34;:&#34;&#34;,
+    &#34;identification&#34;:&#34;B&#34;,
+    &#34;control_type_name&#34;:&#34;Normal&#34;,
+    &#34;medicine_id&#34;:35466,
+    &#34;issue_base_unit&#34;:10,
+    &#34;batch_no&#34;:&#34;fdfbdf&#34;,
+    &#34;medicine_name&#34;:&#34;irs_debit_note&#34;
+  },
+  {  
+    &#34;control_type_id&#34;:1,
+    &#34;item_batch_id&#34;:146573,
+    &#34;issue_type&#34;:&#34;CONSUMABLE&#34;,
+    &#34;package_uom&#34;:&#34;Numbers-10&#34;,
+    &#34;item_barcode_id&#34;:&#34;ITM00024&#34;,
+    &#34;category_id&#34;:152,
+    &#34;qty&#34;:10,
+    &#34;issue_units&#34;:&#34;Numbers&#34;,
+    &#34;billable&#34;:true,
+    &#34;exp_dt&#34;:1701369000000,
+    &#34;consignment_stock&#34;:false,
+    &#34;dept_id&#34;:0,
+    &#34;package_type&#34;:&#34;&#34;,
+    &#34;identification&#34;:&#34;B&#34;,
+    &#34;control_type_name&#34;:&#34;Normal&#34;,
+    &#34;medicine_id&#34;:35466,
+    &#34;issue_base_unit&#34;:10,
+    &#34;batch_no&#34;:&#34;ererer3434t3&#34;,
+    &#34;medicine_name&#34;:&#34;irs_debit_note&#34;
+  },
+  {  
+    &#34;control_type_id&#34;:1,
+    &#34;item_batch_id&#34;:146559,
+    &#34;issue_type&#34;:&#34;CONSUMABLE&#34;,
+    &#34;package_uom&#34;:&#34;Numbers-10&#34;,
+    &#34;item_barcode_id&#34;:&#34;ITM00024&#34;,
+    &#34;category_id&#34;:152,
+    &#34;qty&#34;:100,
+    &#34;issue_units&#34;:&#34;Numbers&#34;,
+    &#34;billable&#34;:true,
+    &#34;exp_dt&#34;:1701369000000,
+    &#34;consignment_stock&#34;:false,
+    &#34;dept_id&#34;:0,
+    &#34;package_type&#34;:&#34;&#34;,
+    &#34;identification&#34;:&#34;B&#34;,
+    &#34;control_type_name&#34;:&#34;Normal&#34;,
+    &#34;medicine_id&#34;:35466,
+    &#34;issue_base_unit&#34;:10,
+    &#34;batch_no&#34;:&#34;ewkjewfwe&#34;,
+    &#34;medicine_name&#34;:&#34;irs_debit_note&#34;
+  },
+  {  
+    &#34;control_type_id&#34;:1,
+    &#34;item_batch_id&#34;:146309,
+    &#34;issue_type&#34;:&#34;CONSUMABLE&#34;,
+    &#34;package_uom&#34;:&#34;Numbers-10&#34;,
+    &#34;item_barcode_id&#34;:&#34;ITM00024&#34;,
+    &#34;category_id&#34;:152,
+    &#34;qty&#34;:60,
+    &#34;issue_units&#34;:&#34;Numbers&#34;,
+    &#34;billable&#34;:true,
+    &#34;exp_dt&#34;:1701369000000,
+    &#34;consignment_stock&#34;:false,
+    &#34;dept_id&#34;:0,
+    &#34;package_type&#34;:&#34;&#34;,
+    &#34;identification&#34;:&#34;B&#34;,
+    &#34;control_type_name&#34;:&#34;Normal&#34;,
+    &#34;medicine_id&#34;:35466,
+    &#34;issue_base_unit&#34;:10,
+    &#34;batch_no&#34;:&#34;123321&#34;,
+    &#34;medicine_name&#34;:&#34;irs_debit_note&#34;
+  },
+  {  
+    &#34;control_type_id&#34;:1,
+    &#34;item_batch_id&#34;:146282,
+    &#34;issue_type&#34;:&#34;CONSUMABLE&#34;,
+    &#34;package_uom&#34;:&#34;Numbers-10&#34;,
+    &#34;item_barcode_id&#34;:&#34;ITM00024&#34;,
+    &#34;category_id&#34;:152,
+    &#34;qty&#34;:1,
+    &#34;issue_units&#34;:&#34;Numbers&#34;,
+    &#34;billable&#34;:true,
+    &#34;exp_dt&#34;:1701369000000,
+    &#34;consignment_stock&#34;:false,
+    &#34;dept_id&#34;:0,
+    &#34;package_type&#34;:&#34;&#34;,
+    &#34;identification&#34;:&#34;B&#34;,
+    &#34;control_type_name&#34;:&#34;Normal&#34;,
+    &#34;medicine_id&#34;:35466,
+    &#34;issue_base_unit&#34;:10,
+    &#34;batch_no&#34;:&#34;erreg233&#34;,
+    &#34;medicine_name&#34;:&#34;irs_debit_note&#34;
+  },
+  {  
+    &#34;control_type_id&#34;:1,
+    &#34;item_batch_id&#34;:146526,
+    &#34;issue_type&#34;:&#34;CONSUMABLE&#34;,
+    &#34;package_uom&#34;:&#34;Numbers-10&#34;,
+    &#34;item_barcode_id&#34;:&#34;ITM00024&#34;,
+    &#34;category_id&#34;:152,
+    &#34;qty&#34;:1000,
+    &#34;issue_units&#34;:&#34;Numbers&#34;,
+    &#34;billable&#34;:true,
+    &#34;exp_dt&#34;:1701369000000,
+    &#34;consignment_stock&#34;:false,
+    &#34;dept_id&#34;:0,
+    &#34;package_type&#34;:&#34;&#34;,
+    &#34;identification&#34;:&#34;B&#34;,
+    &#34;control_type_name&#34;:&#34;Normal&#34;,
+    &#34;medicine_id&#34;:35466,
+    &#34;issue_base_unit&#34;:10,
+    &#34;batch_no&#34;:&#34;erkle8394785&#34;,
+    &#34;medicine_name&#34;:&#34;irs_debit_note&#34;
+  },
+  {  
+    &#34;control_type_id&#34;:1,
+    &#34;item_batch_id&#34;:146593,
+    &#34;issue_type&#34;:&#34;CONSUMABLE&#34;,
+    &#34;package_uom&#34;:&#34;Numbers-10&#34;,
+    &#34;item_barcode_id&#34;:&#34;ITM00024&#34;,
+    &#34;category_id&#34;:152,
+    &#34;qty&#34;:20,
+    &#34;issue_units&#34;:&#34;Numbers&#34;,
+    &#34;billable&#34;:true,
+    &#34;exp_dt&#34;:1701369000000,
+    &#34;consignment_stock&#34;:false,
+    &#34;dept_id&#34;:0,
+    &#34;package_type&#34;:&#34;&#34;,
+    &#34;identification&#34;:&#34;B&#34;,
+    &#34;control_type_name&#34;:&#34;Normal&#34;,
+    &#34;medicine_id&#34;:35466,
+    &#34;issue_base_unit&#34;:10,
+    &#34;batch_no&#34;:&#34;12efcdkjsdvsk&#34;,
+    &#34;medicine_name&#34;:&#34;irs_debit_note&#34;
+  },
+  {  
+    &#34;control_type_id&#34;:1,
+    &#34;item_batch_id&#34;:146263,
+    &#34;issue_type&#34;:&#34;CONSUMABLE&#34;,
+    &#34;package_uom&#34;:&#34;Numbers-10&#34;,
+    &#34;item_barcode_id&#34;:&#34;ITM00024&#34;,
+    &#34;category_id&#34;:152,
+    &#34;qty&#34;:50,
+    &#34;issue_units&#34;:&#34;Numbers&#34;,
+    &#34;billable&#34;:true,
+    &#34;exp_dt&#34;:1701369000000,
+    &#34;consignment_stock&#34;:false,
+    &#34;dept_id&#34;:0,
+    &#34;package_type&#34;:&#34;&#34;,
+    &#34;identification&#34;:&#34;B&#34;,
+    &#34;control_type_name&#34;:&#34;Normal&#34;,
+    &#34;medicine_id&#34;:35466,
+    &#34;issue_base_unit&#34;:10,
+    &#34;batch_no&#34;:&#34;34ferfefer&#34;,
+    &#34;medicine_name&#34;:&#34;irs_debit_note&#34;
+  },
+  {  
+    &#34;control_type_id&#34;:1,
+    &#34;item_batch_id&#34;:146599,
+    &#34;issue_type&#34;:&#34;CONSUMABLE&#34;,
+    &#34;package_uom&#34;:&#34;Numbers-10&#34;,
+    &#34;item_barcode_id&#34;:&#34;ITM00024&#34;,
+    &#34;category_id&#34;:152,
+    &#34;qty&#34;:50,
+    &#34;issue_units&#34;:&#34;Numbers&#34;,
+    &#34;billable&#34;:true,
+    &#34;exp_dt&#34;:1701369000000,
+    &#34;consignment_stock&#34;:false,
+    &#34;dept_id&#34;:0,
+    &#34;package_type&#34;:&#34;&#34;,
+    &#34;identification&#34;:&#34;B&#34;,
+    &#34;control_type_name&#34;:&#34;Normal&#34;,
+    &#34;medicine_id&#34;:35466,
+    &#34;issue_base_unit&#34;:10,
+    &#34;batch_no&#34;:&#34;fkjvnriutrn&#34;,
+    &#34;medicine_name&#34;:&#34;irs_debit_note&#34;
+  },
+  {  
+    &#34;control_type_id&#34;:1,
+    &#34;item_batch_id&#34;:146596,
+    &#34;issue_type&#34;:&#34;CONSUMABLE&#34;,
+    &#34;package_uom&#34;:&#34;Numbers-10&#34;,
+    &#34;item_barcode_id&#34;:&#34;ITM00024&#34;,
+    &#34;category_id&#34;:152,
+    &#34;qty&#34;:994,
+    &#34;issue_units&#34;:&#34;Numbers&#34;,
+    &#34;billable&#34;:true,
+    &#34;exp_dt&#34;:1701369000000,
+    &#34;consignment_stock&#34;:false,
+    &#34;dept_id&#34;:0,
+    &#34;package_type&#34;:&#34;&#34;,
+    &#34;identification&#34;:&#34;B&#34;,
+    &#34;control_type_name&#34;:&#34;Normal&#34;,
+    &#34;medicine_id&#34;:35466,
+    &#34;issue_base_unit&#34;:10,
+    &#34;batch_no&#34;:&#34;rjerjgejrn&#34;,
+    &#34;medicine_name&#34;:&#34;irs_debit_note&#34;
+  },
+  {  
+    &#34;control_type_id&#34;:1,
+    &#34;item_batch_id&#34;:146558,
+    &#34;issue_type&#34;:&#34;CONSUMABLE&#34;,
+    &#34;package_uom&#34;:&#34;Numbers-10&#34;,
+    &#34;item_barcode_id&#34;:&#34;ITM00024&#34;,
+    &#34;category_id&#34;:152,
+    &#34;qty&#34;:50,
+    &#34;issue_units&#34;:&#34;Numbers&#34;,
+    &#34;billable&#34;:true,
+    &#34;exp_dt&#34;:1701369000000,
+    &#34;consignment_stock&#34;:false,
+    &#34;dept_id&#34;:0,
+    &#34;package_type&#34;:&#34;&#34;,
+    &#34;identification&#34;:&#34;B&#34;,
+    &#34;control_type_name&#34;:&#34;Normal&#34;,
+    &#34;medicine_id&#34;:35466,
+    &#34;issue_base_unit&#34;:10,
+    &#34;batch_no&#34;:&#34;erfkjernrjke&#34;,
+    &#34;medicine_name&#34;:&#34;irs_debit_note&#34;
+  },
+  {  
+    &#34;control_type_id&#34;:1,
+    &#34;item_batch_id&#34;:146591,
+    &#34;issue_type&#34;:&#34;CONSUMABLE&#34;,
+    &#34;package_uom&#34;:&#34;Numbers-10&#34;,
+    &#34;item_barcode_id&#34;:&#34;ITM00024&#34;,
+    &#34;category_id&#34;:152,
+    &#34;qty&#34;:250,
+    &#34;issue_units&#34;:&#34;Numbers&#34;,
+    &#34;billable&#34;:true,
+    &#34;exp_dt&#34;:1701369000000,
+    &#34;consignment_stock&#34;:false,
+    &#34;dept_id&#34;:0,
+    &#34;package_type&#34;:&#34;&#34;,
+    &#34;identification&#34;:&#34;B&#34;,
+    &#34;control_type_name&#34;:&#34;Normal&#34;,
+    &#34;medicine_id&#34;:35466,
+    &#34;issue_base_unit&#34;:10,
+    &#34;batch_no&#34;:&#34;dfkvjnkdfjvndfj&#34;,
+    &#34;medicine_name&#34;:&#34;irs_debit_note&#34;
+  },
+  {  
+    &#34;control_type_id&#34;:1,
+    &#34;item_batch_id&#34;:146273,
+    &#34;issue_type&#34;:&#34;CONSUMABLE&#34;,
+    &#34;package_uom&#34;:&#34;Numbers-10&#34;,
+    &#34;item_barcode_id&#34;:&#34;ITM00024&#34;,
+    &#34;category_id&#34;:152,
+    &#34;qty&#34;:20,
+    &#34;issue_units&#34;:&#34;Numbers&#34;,
+    &#34;billable&#34;:true,
+    &#34;exp_dt&#34;:1701369000000,
+    &#34;consignment_stock&#34;:false,
+    &#34;dept_id&#34;:0,
+    &#34;package_type&#34;:&#34;&#34;,
+    &#34;identification&#34;:&#34;B&#34;,
+    &#34;control_type_name&#34;:&#34;Normal&#34;,
+    &#34;medicine_id&#34;:35466,
+    &#34;issue_base_unit&#34;:10,
+    &#34;batch_no&#34;:&#34;ergegerg&#34;,
+    &#34;medicine_name&#34;:&#34;irs_debit_note&#34;
+  },
+  {  
+    &#34;control_type_id&#34;:1,
+    &#34;item_batch_id&#34;:146603,
+    &#34;issue_type&#34;:&#34;CONSUMABLE&#34;,
+    &#34;package_uom&#34;:&#34;Numbers-10&#34;,
+    &#34;item_barcode_id&#34;:&#34;ITM00024&#34;,
+    &#34;category_id&#34;:152,
+    &#34;qty&#34;:10,
+    &#34;issue_units&#34;:&#34;Numbers&#34;,
+    &#34;billable&#34;:true,
+    &#34;exp_dt&#34;:1701369000000,
+    &#34;consignment_stock&#34;:false,
+    &#34;dept_id&#34;:0,
+    &#34;package_type&#34;:&#34;&#34;,
+    &#34;identification&#34;:&#34;B&#34;,
+    &#34;control_type_name&#34;:&#34;Normal&#34;,
+    &#34;medicine_id&#34;:35466,
+    &#34;issue_base_unit&#34;:10,
+    &#34;batch_no&#34;:&#34;212313&#34;,
+    &#34;medicine_name&#34;:&#34;irs_debit_note&#34;
+  },
+  {  
+    &#34;control_type_id&#34;:1,
+    &#34;item_batch_id&#34;:146288,
+    &#34;issue_type&#34;:&#34;CONSUMABLE&#34;,
+    &#34;package_uom&#34;:&#34;Numbers-10&#34;,
+    &#34;item_barcode_id&#34;:&#34;ITM00024&#34;,
+    &#34;category_id&#34;:152,
+    &#34;qty&#34;:3550.00,
+    &#34;issue_units&#34;:&#34;Numbers&#34;,
+    &#34;billable&#34;:true,
+    &#34;exp_dt&#34;:1701369000000,
+    &#34;consignment_stock&#34;:false,
+    &#34;dept_id&#34;:0,
+    &#34;package_type&#34;:&#34;&#34;,
+    &#34;identification&#34;:&#34;B&#34;,
+    &#34;control_type_name&#34;:&#34;Normal&#34;,
+    &#34;medicine_id&#34;:35466,
+    &#34;issue_base_unit&#34;:10,
+    &#34;batch_no&#34;:&#34;fdvfbfg&#34;,
+    &#34;medicine_name&#34;:&#34;irs_debit_note&#34;
+  },
+  {  
+    &#34;control_type_id&#34;:1,
+    &#34;item_batch_id&#34;:146261,
+    &#34;issue_type&#34;:&#34;CONSUMABLE&#34;,
+    &#34;package_uom&#34;:&#34;Numbers-10&#34;,
+    &#34;item_barcode_id&#34;:&#34;ITM00024&#34;,
+    &#34;category_id&#34;:152,
+    &#34;qty&#34;:10,
+    &#34;issue_units&#34;:&#34;Numbers&#34;,
+    &#34;billable&#34;:true,
+    &#34;exp_dt&#34;:1701369000000,
+    &#34;consignment_stock&#34;:false,
+    &#34;dept_id&#34;:0,
+    &#34;package_type&#34;:&#34;&#34;,
+    &#34;identification&#34;:&#34;B&#34;,
+    &#34;control_type_name&#34;:&#34;Normal&#34;,
+    &#34;medicine_id&#34;:35466,
+    &#34;issue_base_unit&#34;:10,
+    &#34;batch_no&#34;:&#34;433g4&#34;,
+    &#34;medicine_name&#34;:&#34;irs_debit_note&#34;
+  },
+  {  
+    &#34;control_type_id&#34;:1,
+    &#34;item_batch_id&#34;:146297,
+    &#34;issue_type&#34;:&#34;CONSUMABLE&#34;,
+    &#34;package_uom&#34;:&#34;Numbers-10&#34;,
+    &#34;item_barcode_id&#34;:&#34;ITM00024&#34;,
+    &#34;category_id&#34;:152,
+    &#34;qty&#34;:10,
+    &#34;issue_units&#34;:&#34;Numbers&#34;,
+    &#34;billable&#34;:true,
+    &#34;exp_dt&#34;:1701369000000,
+    &#34;consignment_stock&#34;:false,
+    &#34;dept_id&#34;:0,
+    &#34;package_type&#34;:&#34;&#34;,
+    &#34;identification&#34;:&#34;B&#34;,
+    &#34;control_type_name&#34;:&#34;Normal&#34;,
+    &#34;medicine_id&#34;:35466,
+    &#34;issue_base_unit&#34;:10,
+    &#34;batch_no&#34;:&#34;ejhbjherg&#34;,
+    &#34;medicine_name&#34;:&#34;irs_debit_note&#34;
+  },
+  {  
+    &#34;control_type_id&#34;:1,
+    &#34;item_batch_id&#34;:146523,
+    &#34;issue_type&#34;:&#34;CONSUMABLE&#34;,
+    &#34;package_uom&#34;:&#34;Numbers-10&#34;,
+    &#34;item_barcode_id&#34;:&#34;ITM00024&#34;,
+    &#34;category_id&#34;:152,
+    &#34;qty&#34;:90.00,
+    &#34;issue_units&#34;:&#34;Numbers&#34;,
+    &#34;billable&#34;:true,
+    &#34;exp_dt&#34;:1701369000000,
+    &#34;consignment_stock&#34;:false,
+    &#34;dept_id&#34;:0,
+    &#34;package_type&#34;:&#34;&#34;,
+    &#34;identification&#34;:&#34;B&#34;,
+    &#34;control_type_name&#34;:&#34;Normal&#34;,
+    &#34;medicine_id&#34;:35466,
+    &#34;issue_base_unit&#34;:10,
+    &#34;batch_no&#34;:&#34;erreergeerge&#34;,
+    &#34;medicine_name&#34;:&#34;irs_debit_note&#34;
+  },
+  {  
+    &#34;control_type_id&#34;:1,
+    &#34;item_batch_id&#34;:146274,
+    &#34;issue_type&#34;:&#34;CONSUMABLE&#34;,
+    &#34;package_uom&#34;:&#34;Numbers-10&#34;,
+    &#34;item_barcode_id&#34;:&#34;ITM00024&#34;,
+    &#34;category_id&#34;:152,
+    &#34;qty&#34;:20,
+    &#34;issue_units&#34;:&#34;Numbers&#34;,
+    &#34;billable&#34;:true,
+    &#34;exp_dt&#34;:1701369000000,
+    &#34;consignment_stock&#34;:false,
+    &#34;dept_id&#34;:0,
+    &#34;package_type&#34;:&#34;&#34;,
+    &#34;identification&#34;:&#34;B&#34;,
+    &#34;control_type_name&#34;:&#34;Normal&#34;,
+    &#34;medicine_id&#34;:35466,
+    &#34;issue_base_unit&#34;:10,
+    &#34;batch_no&#34;:&#34;djvhbdfvjhdf&#34;,
+    &#34;medicine_name&#34;:&#34;irs_debit_note&#34;
+  },
+  {  
+    &#34;control_type_id&#34;:1,
+    &#34;item_batch_id&#34;:146301,
+    &#34;issue_type&#34;:&#34;CONSUMABLE&#34;,
+    &#34;package_uom&#34;:&#34;Numbers-10&#34;,
+    &#34;item_barcode_id&#34;:&#34;ITM00024&#34;,
+    &#34;category_id&#34;:152,
+    &#34;qty&#34;:10,
+    &#34;issue_units&#34;:&#34;Numbers&#34;,
+    &#34;billable&#34;:true,
+    &#34;exp_dt&#34;:1701369000000,
+    &#34;consignment_stock&#34;:false,
+    &#34;dept_id&#34;:0,
+    &#34;package_type&#34;:&#34;&#34;,
+    &#34;identification&#34;:&#34;B&#34;,
+    &#34;control_type_name&#34;:&#34;Normal&#34;,
+    &#34;medicine_id&#34;:35466,
+    &#34;issue_base_unit&#34;:10,
+    &#34;batch_no&#34;:&#34;fdvkfdnvjkd&#34;,
+    &#34;medicine_name&#34;:&#34;irs_debit_note&#34;
+  },
+  {  
+    &#34;control_type_id&#34;:1,
+    &#34;item_batch_id&#34;:146594,
+    &#34;issue_type&#34;:&#34;CONSUMABLE&#34;,
+    &#34;package_uom&#34;:&#34;Numbers-10&#34;,
+    &#34;item_barcode_id&#34;:&#34;ITM00024&#34;,
+    &#34;category_id&#34;:152,
+    &#34;qty&#34;:20,
+    &#34;issue_units&#34;:&#34;Numbers&#34;,
+    &#34;billable&#34;:true,
+    &#34;exp_dt&#34;:2016988200000,
+    &#34;consignment_stock&#34;:false,
+    &#34;dept_id&#34;:0,
+    &#34;package_type&#34;:&#34;&#34;,
+    &#34;identification&#34;:&#34;B&#34;,
+    &#34;control_type_name&#34;:&#34;Normal&#34;,
+    &#34;medicine_id&#34;:35466,
+    &#34;issue_base_unit&#34;:10,
+    &#34;batch_no&#34;:&#34;fjvjfgfg&#34;,
+    &#34;medicine_name&#34;:&#34;irs_debit_note&#34;
+  },
+  {  
+    &#34;control_type_id&#34;:1,
+    &#34;item_batch_id&#34;:146590,
+    &#34;issue_type&#34;:&#34;CONSUMABLE&#34;,
+    &#34;package_uom&#34;:&#34;Numbers-10&#34;,
+    &#34;item_barcode_id&#34;:&#34;ITM00024&#34;,
+    &#34;category_id&#34;:152,
+    &#34;qty&#34;:100,
+    &#34;issue_units&#34;:&#34;Numbers&#34;,
+    &#34;billable&#34;:true,
+    &#34;exp_dt&#34;:1701369000000,
+    &#34;consignment_stock&#34;:false,
+    &#34;dept_id&#34;:0,
+    &#34;package_type&#34;:&#34;&#34;,
+    &#34;identification&#34;:&#34;B&#34;,
+    &#34;control_type_name&#34;:&#34;Normal&#34;,
+    &#34;medicine_id&#34;:35466,
+    &#34;issue_base_unit&#34;:10,
+    &#34;batch_no&#34;:&#34;fdbgbfgbfg&#34;,
+    &#34;medicine_name&#34;:&#34;irs_debit_note&#34;
+  },
+  {  
+    &#34;control_type_id&#34;:1,
+    &#34;item_batch_id&#34;:146281,
+    &#34;issue_type&#34;:&#34;CONSUMABLE&#34;,
+    &#34;package_uom&#34;:&#34;Numbers-10&#34;,
+    &#34;item_barcode_id&#34;:&#34;ITM00024&#34;,
+    &#34;category_id&#34;:152,
+    &#34;qty&#34;:1,
+    &#34;issue_units&#34;:&#34;Numbers&#34;,
+    &#34;billable&#34;:true,
+    &#34;exp_dt&#34;:1701369000000,
+    &#34;consignment_stock&#34;:false,
+    &#34;dept_id&#34;:0,
+    &#34;package_type&#34;:&#34;&#34;,
+    &#34;identification&#34;:&#34;B&#34;,
+    &#34;control_type_name&#34;:&#34;Normal&#34;,
+    &#34;medicine_id&#34;:35466,
+    &#34;issue_base_unit&#34;:10,
+    &#34;batch_no&#34;:&#34;erverger&#34;,
+    &#34;medicine_name&#34;:&#34;irs_debit_note&#34;
+  },
+  {  
+    &#34;control_type_id&#34;:1,
+    &#34;item_batch_id&#34;:146520,
+    &#34;issue_type&#34;:&#34;CONSUMABLE&#34;,
+    &#34;package_uom&#34;:&#34;Numbers-10&#34;,
+    &#34;item_barcode_id&#34;:&#34;ITM00024&#34;,
+    &#34;category_id&#34;:152,
+    &#34;qty&#34;:20,
+    &#34;issue_units&#34;:&#34;Numbers&#34;,
+    &#34;billable&#34;:true,
+    &#34;exp_dt&#34;:1701369000000,
+    &#34;consignment_stock&#34;:false,
+    &#34;dept_id&#34;:0,
+    &#34;package_type&#34;:&#34;&#34;,
+    &#34;identification&#34;:&#34;B&#34;,
+    &#34;control_type_name&#34;:&#34;Normal&#34;,
+    &#34;medicine_id&#34;:35466,
+    &#34;issue_base_unit&#34;:10,
+    &#34;batch_no&#34;:&#34;3igiu45gihu45&#34;,
+    &#34;medicine_name&#34;:&#34;irs_debit_note&#34;
+  }
+]
+</code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+              </div>
+            
+          </div>
+        
+          
+<div class="ui grey horizontal small divider header" style="margin-top:0">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui orange micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block inverted center aligned header" id="patient-issue-get-item-amounts">
+              GET ITEM AMOUNTS
+            </h3>
+            <div class="description"></div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui green large button">
+                  <h3>GET</h3>
+                </div>
+                <a class="ui basic fluid request-url green label">
+                  <code>http://localhost:8080/instahms/inventory/patientissues/getitemamounts.json?store_id=0&amp;medicine_id=12323&amp;item_batch_id=1201&amp;visit_id=OP12321&amp;discount_per=10&amp;amount=120&amp;issue_type=I</code>
+                </a>
+              </div>
+              
+              
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>application/json</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui blue segment">
+                  <div class="title" style="margin-bottom: 1rem;">
+                    <a class="ui blue circular label">
+                      200
+                    </a>
+                    <code>application/json</code>
+                  </div>
+                  <div class="content tabbed active">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-json">{
+    &#34;amount_details&#34;:{  
+        &#34;mrp&#34;:120,
+        &#34;original_mrp&#34;:120,
+        &#34;unit_mrp&#34;:12,
+        &#34;discount_per&#34;:10,
+        &#34;discount_amt&#34;:10
+    },
+    &#34;tax_details&#34;:{
+        &#34;net_amount&#34;:120,
+        &#34;tax_basis&#34;:&#34;CB&#34;
+        &#34;tax_map&#34;: {
+            {
+                &#34;item_group_name&#34;:&#34;GST&#34;,
+                &#34;item_group_id&#34;:2,
+                &#34;item_subgroup_name&#34;:&#34;SGST&#34;,
+                &#34;item_subgroup_id&#34;:13,
+                &#34;tax_per&#34;:2.5,
+                &#34;tax_amt&#34;:2.5
+            },
+            {
+                &#34;item_group_name&#34;:&#34;GST&#34;,
+                &#34;item_group_id&#34;:2,
+                &#34;item_subgroup_name&#34;:&#34;CGST&#34;,
+                &#34;item_subgroup_id&#34;:14,
+                &#34;tax_per&#34;:2.5,
+                &#34;tax_amt&#34;:2.5
+            }
+        }
+    }
+}
+</code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+              </div>
+            
+          </div>
+        
+          
+<div class="ui grey horizontal small divider header" style="margin-top:0">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui orange micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block inverted center aligned header" id="patient-issue-post-issue-details">
+              POST ISSUE DETAILS
+            </h3>
+            <div class="description"></div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui blue large button">
+                  <h3>POST</h3>
+                </div>
+                <a class="ui basic fluid request-url blue label">
+                  <code>http://localhost:8080/instahms/inventory/patientissues/saveissuedetails.json</code>
+                </a>
+              </div>
+              
+              
+                
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>application/json</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              
+              
+                <div class="ui stacked segment">
+                  <div class="ui fluid transaction">
+                    <div class="title">
+                      <code>application/json</code>
+                    </div>
+                    <div class="content tabbed">
+                      <div class="ui top attached tabular menu">
+                        <a data-tab="body" class="active item">BODY</a>
+                        <a data-tab="schema" class="item">SCHEMA</a>
+                      </div>
+                      <div class="ui bottom attached active tab segment" data-tab="body">
+                        <pre style="white-space: inherit">
+                          <code class="language-json">{
+    &#34;patient_issue_main&#34;:{
+        &#34;issued_to&#34; : &#34;IP044286&#34;,
+        &#34;dept_from&#34; : 1,
+        &#34;user_type&#34; : &#34;Patient&#34;,
+        &#34;reference&#34; : &#34;ISSUED ON 26/10/11&#34;,
+        &#34;bill_no&#34; : &#34;BP1232323&#34;
+    },
+    &#34;patient_issue_details&#34;:[  
+      {  
+        &#34;medicine_id&#34; : 42352,
+        &#34;batch_no&#34; : &#34;ACD12232&#34;,
+        &#34;orig_rate&#34; : 120,
+        &#34;act_rate&#34; : 12,
+        &#34;discount&#34; : 10,
+        &#34;amount&#34;: 120,
+        &#34;insurance_category_id&#34;: 12,
+        &#34;item_batch_id&#34;: 10001,
+        &#34;pkg_mrp&#34;: 120,
+        &#34;pri_inc_claim_amt&#34;: 0,
+        &#34;sec_inc_claim_amt&#34;: 0,
+        &#34;qty&#34;: 10,
+        &#34;hdeleted&#34; : &#34;true&#34;,
+        &#34;itemorkit&#34; : &#34;true&#34;,
+        &#34;is_consignment_stock&#34; : &#34;true&#34;,
+        &#34;gatepass&#34; : &#34;true&#34;,
+        &#34;item_unit&#34; : &#34;1&#34;,
+        &#34;issue_pkg_size&#34; : &#34;12&#34;,
+        &#34;dispense_status&#34; : &#34;F&#34;,
+        &#34;patient_indent_no&#34; : &#34;PI122323&#34;
+      },
+      {  
+        &#34;medicine_id&#34; : 42351,
+        &#34;batch_no&#34; : &#34;ACD12223&#34;,
+        &#34;orig_rate&#34; : 120,
+        &#34;act_rate&#34; : 12,
+        &#34;discount&#34; : 10,
+        &#34;amount&#34;: 120,
+        &#34;insurance_category_id&#34;: 12,
+        &#34;item_batch_id&#34;: 10001,
+        &#34;pkg_mrp&#34;: 120,
+        &#34;pri_inc_claim_amt&#34;: 0,
+        &#34;sec_inc_claim_amt&#34;: 0,
+        &#34;qty&#34;: 10,
+        &#34;hdeleted&#34; : &#34;true&#34;,
+        &#34;itemorkit&#34; : &#34;true&#34;,
+        &#34;is_consignment_stock&#34; : &#34;true&#34;,
+        &#34;gatepass&#34; : &#34;true&#34;,
+        &#34;item_unit&#34; : &#34;1&#34;,
+        &#34;issue_pkg_size&#34; : &#34;12&#34;,
+        &#34;dispense_status&#34; : &#34;F&#34;,
+        &#34;patient_indent_no&#34; : &#34;PI122323&#34;
+      }
+    ]
+}
+</code>
+                        </pre>
+                      </div>
+                      <div class="ui bottom attached tab segment" data-tab="schema">
+                        <pre style="white-space: inherit">
+                          <code class="language-json"></code>
+                        </pre>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>application/json</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui blue segment">
+                  <div class="title" style="margin-bottom: 1rem;">
+                    <a class="ui blue circular label">
+                      200
+                    </a>
+                    <code>application/json</code>
+                  </div>
+                  <div class="content tabbed active">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-json">{
+    &#34;status&#34;:&#34;Successfully issued items to patient&#34;
+}
+</code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+              </div>
+            
+          </div>
+        
+        </div>
+      <div class="ui hidden divider"></div>
+    
+  
+
+
+      </div>
+    </div>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.1/components/accordion.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.1/components/tab.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.1/components/transition.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.1/components/popup.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.13.0/prism.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.13.0/components/prism-json.min.js"></script>
+    <script type="text/javascript">
+      $(function() {
+        $('.ui.accordion').accordion({ animateChildren: false, duration: 0 });
+        $('.content.tabbed').each(function(index) {
+          $('.ui.tabular .item', $(this)).tab({ context: $(this) });
+        });
+        $('.ui.vertical.menu').on('click', '.item', function() {
+          $('.ui.vertical.menu .item').removeClass('active');
+          $(this).addClass('active');
+        });
+        $('.ui.empty.circular.label').popup();
+      });
+    </script>
+  </body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

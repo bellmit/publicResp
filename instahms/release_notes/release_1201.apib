@@ -1,0 +1,559 @@
+FORMAT: 1A
+HOST: http://blog.acme.com
+
+# Insta HMS 12.1 Release Notes
+
+## New Features [/]
+
+### Initial Assessment - New UX [GET]
+
+With v12.1, Insta introduces initial Assessment as part of the New OP Flow
+
+![](media/image1201_4.png)
+
+The new navigation as part of the OP Flow also introduces the activity bar with the activity for Initial Assessment which share a common Patients List with other Activities like Triage/Nurse Assessment , Consultation etc. The Initial Assessment - New UX activity involves the doctor capturing history of patient illness, Past History, Family History, Personal history along with Social status and other Patient Specific information. This upgrade introduces the following changes:
+
+- Table of Contents enabling quick navigation, faster data entry, easier to read summaries and additional features
+
+#### Adding a New/Existing Initial Assessment
+
+As is the case with most new screens in the New UX, the Initial Assessment screen has the below landing page which allows the user to a. either start a new Assessment or b. access an Assessment documentation which is in-progress or completed. Assessment can also be associated to Consultation.
+
+![](media/image1201_19.png)
+
+#### Sub-Activity
+
+The sub-activity bar displays the patient's allergy status and allows the user to either access a new Assessment for documentation (Add New Assessment) or access an existing documentation from the Today/Past buckets.
+
+![](media/image1201_18.png)
+
+#### Table of Contents
+
+The Table of Contents summarizes the list of sections available in the Initial Assessment Documentation and allows the user to quickly navigate to the relevant section and enables faster data entry.
+
+#### Sections
+
+##### Initial Assessment Summary Section
+
+- This section allows the user to select the Initial Assessment for documentation (default behaviour is to auto-select the Initial Assessment if there is only one eligible for selection),
+
+- captures the start and end time of the Initial Assessment, (start time is defaulted on page load and end time defaulted to close action of Initial Assessment, which also allows for manual override as well).
+
+- displays the Initial Assessment status = Open/Partial/Closed, (Open = New Initial Assessment with no data captured, Partial = New Initial Assessment with data captured, Closed = completed documentation with/without data)
+
+- other details such as Referred By and consultation order remarks.
+
+![](media/image1201_13.png)
+
+#### Audit Log
+
+The audit log redirects the user to the audit logs as were available in the old UI.
+
+![](media/image1201_25.png)
+
+#### Print
+
+The print pop-up displays the relevant Assessment documentation which can be printed on the fly.
+
+![](media/image1201_20.png)
+
+#### Terminal Actions
+
+The Terminal Actions allow the user to i) Save, ii) Save & Close. There are currently no ACL (access controls) around which user can close/reopen a Assessment.
+
+![](media/image1201_7.png)
+
+#### Migration
+
+All old Assessment documentation is migrated to the triage activity as an open/partial/closed triage.
+
+### Triage / Nurse Assessment with Templates [GET]
+
+v12.1 introduces the concept of Template in Triage / Nurses Assessment based documentation to enable standardization of clinical protocols and faster data entry. This allows the user to build medical condition based templates on the Triage/Nurses Assessment form and with the additional option of storing the template with pre-set data as is relevant for sections such as complaints, History etc.
+
+The templates by default are stored at the Department level across doctors.
+
+The templates do not store patient specific information such as allergies, vitals, health maintenance section, obstetric history section, antenatal details section, pre anesthesia check up section, consultation notes section, triage summary section, insta sections defined as a patient section etc.
+
+If the user has already captured data on the Triage/Nurses Assessment screen and then applies a template. The page will display the union of data with sections captured and the additional sections(with/without data) from the template.
+
+![](media/image1201_21.png)
+
+![](media/image1201_16.png)
+
+### Introduction of Practitioner Types master and related transaction controls [GET]
+
+Practitioner types master is now made available (Settings > Hospital Admin Masters) with having an additional configuration to set up all applicable consultation types for each practitioner type.
+
+![](media/image1201_17.png)
+
+Consultation type applicability allows user to add all applicable consultation types from the list of all the consultation types and save the list.
+
+![](media/image1201_8.png)
+
+Center preferences shows only applicable consultation types to configure default consultation types for practitioner types
+
+Consultation types are filtering based on the practitioner type associated to doctor selected on the OP Registration screen and Billing Orders screen.
+
+In codification screen, it shows validation message 'Selected consultation for Dr.X is not valid' when selected consultation type is not supported for practitioner type associated to doctor.
+
+If any doctor is not mapped to any practitioner type or practitioner type does not have any consultation type associated with, then all the consultation types will be available for billing in all transaction screens
+
+### Insurance model changes - introducing the flexibility of creating multiple insurance categories per sponsor [GET]
+
+The following changes are introduced to provide further flexibility to the insurance master configuration and setup.
+
+#### Supporting multiple insurance categories to an Item
+
+It is now possible to map multiple insurance categories to a billing item, which provides flexibility of adding an item to different co-pay/exclusion classification based on the insurance policy defined by insurance providers.
+
+The Insurance category field is now converted to multi-select list where multiple categories can be added.
+
+![](media/image1201_9.png)
+
+This feature is added to all below billing masters
+
+-   Bed Types
+
+-   Consultation Types
+
+-   Diagnostic Tests
+
+-   Services
+
+-   Equipment Master
+
+-   Operation master
+
+-   Operation theatre
+
+-   Anaesthesia type
+
+-   Other Charges
+
+-   Dietary Charges
+
+-   Package master
+
+-   Item Store Master
+
+Insurance category is also mandatory in all above masters, All Registration charges are internally mapped to 'General' category and cannot be allowed to override by users.
+
+#### Introducing priority in Insurance Item Category Master
+
+Priority is added in Insurance Item Category master which determines the priority of co-pay/deductible rule to be applied when an item is mapped with multiple categories and all such categories are associated with an Insurance Plan.
+
+![](media/image1201_10.png)
+
+Duplicate is not allowed for Priority, which shows validation message while attempting to save duplicate priority.
+
+![](media/image1201_2.png)
+
+Any new category does not associate to any insurance company/insurance plan by default, it has to be mapped explicitly to existing plans.
+
+There are two system default categories such DRG & Default, which are now hidden from UI and priority 1&3 are assigned internally to system categories.
+
+##### Defining default set of Insurance categories to Insurance Company
+
+A new feature is added to configure default set of insurance item categories to insurance company, only those categories will default when new insurance plan creates.
+
+##### Customizing Insurance Categories in Insurance Plan Master
+
+- Allows users to customize insurance item categories in insurance plan master.
+
+- While creating new plan, only those insurance item categories mapped with insurance company are defaulted, however it able to delete/add new categories to the plan.
+
+- Delete option is available to remove insurance categories from the plan.
+
+- Add New Insurance Item Categories option allows user to add new categories which are not default with selected insurance company in insurance company master.
+
+![](media/image1201_11.png)
+
+- Co-pay rules get applied based on the categories available in selected insurance plan.
+
+- If any item belongs to any insurance item category which is not associated with selected insurance plan, then item shall be considered as Non-Covered item while billing.
+
+- If any item belongs to two insurance item categories and both are associated with selected insurance plan, then co-pay rule shall be processed based on the priority assigned to insurance item categories.
+
+### UAE specific Insurance Changes [GET]
+
+#### Capturing ERx Details for pharmacy claims
+
+In reference to the DHA regulatory changes to link eRx Reference Number & associated activities within pharmacy claim submission, the below required changes have been done:
+
+-   Sales screen: added a new Insurance Details sub-header with the fields a> ERx Reference No. b> External PBM/Non-PBM flag, which gets enabled only when mod_eclaim_erx activated for any schema.
+
+![](media/image1201_6.png)
+
+-   Added a field called "ERxActivityID" in Add and Edit Item Dialog while adding/editing any medicines and same data is shown in medicine grid as such.
+
+![](media/image1201_5.png)
+
+-   Erx Reference No & ERx ActivityID are auto-captured while auto-filling Insta eRx prescriptions, otherwise users have to feed them manually.
+
+-   Prescription Print Template tokens for the ERx Reference No and eRxActivityID are provided. Below are the tokens
+
+    -   eRx ReferenceNo -> erx_cons_bean.erx_reference_no
+
+    -   eRx ActivityID -> erxActivities.activity_id
+
+-   Claim Generation XML contains ERx details as observation for an activity. This observation section will appear only if both eRx reference No & ERx activity Id have values for any transactions. Below is the format is given
+
+```
+<Observation>
+    <Type>ERX</Type>
+    <Code>eRxReference ID</Code>
+    <Value>eRxActivityID</Value>
+    <ValueType>Reference</ValueType>
+</Observation>
+```
+
+#### Tracking External PBM Approvals in Insta
+
+As Insta does not currently have a PBM module in place for Dubai, our pharmacy customers rely on external PBM software to get the approvals, and submit those claims. In this case, they use Insta only to dispense medicines and manage their stock.
+
+There are two scenarios for which will not use external pbm software.
+
+- When Insurance plan doesn't require any approval
+
+- In case any emergency/system failures, takes verbal approvals
+
+- In both the above cases, customers are using insta to manage their stock and claim submission.
+
+- In previous versions, there was no option to differentiate such externally approved claims and exclude those claims from the E-claim xml. We have introduced a new feature to track all externally approved sale transactions and exclude them when E-claim xml is being generated.
+
+**In Sales screen**: added a flag called 'External PBM, users should be able to mark all externally approved sales while dispensing medicine.
+
+![](media/image1201_3.png)
+
+In Claim batch creation screen, introduced new filter called 'Ignore External PBM', by checking it, all those pharmacy sales transactions that have been flagged as 'External PBM' will be excluded from the claim batch, Any claim will include only those items belongs to non external pharmacy sale bills.
+
+![](media/image1201_1.png)
+
+### Support for Postgres 10.5 [GET]
+
+We introduced support for Postgres 10.5 in Rel 11.13.12 & Rel 12.0.4 for customers on Insta Cloud. With release of v12.1, we are announcing formal support for PostgreSQL 10.5 as database engine for Insta HMS. PostgreSQL 9.3 has reached end of life and won't receive further security updates or bug fixes. Support for PostgreSQL 9.3 is now deprecated and will be removed by Jun 30, 2019. Customers with onsite installations are advised to start upgrading to PostgreSQL 10.5.
+
+
+### Direct Scanner Support for Insurance Card Upload [GET]
+Now you can scan Insurance card directly from scanner Insta application. This feature works only on Windows 8 onwards and Insta Nexus 18.11.231821 or later must be installed.
+
+#### Configuring Insta Nexus for Scanner 
+
+Open Insta Nexus application and navigate to "Devices" section. Select "Scanners". Click on "Enable Scanner Module" and select the device (The list populates if scanner is recognized by the Windows). 
+
+Save the Nexus configuration
+
+![](media/image1201_30.png)
+
+Scan directly from Scanner in Insta Application
+
+Navigate to Add/Edit Registration Document page from "Add Insurance Document" link on registration page. Click on "Scan Document" link to invoke scanner page.
+
+![](media/image1201_31.png)
+
+##### Scanning Document
+
+**Source**: "Single Page", "Multi Page", "ADF".
+
+"Single Page" scans only one page, whereas "Multi Page" allows you to scan more than one page where you need to feed the document manually. ADF (Automatic Document Feed) is scanner dependent and only experimental feature now. ADF feature works only for 75 DPI resolution. 
+
+**Page Size**: Select the appropriate page size
+
+**File Type**: "PDF" or "JPG"
+
+**Color Format**: "Color" or "Greyscale" 
+
+**Resolution**: "75","150","300"
+
+Select appropriate values, feed document in the scanner and press "Scan" button in Insta application.
+
+You can use dotted line to crop the image (This feature is available only if the source is "Single Page".
+
+Click on Save and the page is redirected to document upload page. Click on Save to complete the process.
+
+![](media/image1201_32.png)
+
+You can scan more than one page if the source is "Multi Page". To scan another page, feed another page to the scanner and click on "Scan & Add Page". You can scan multiple pages like this.
+
+If you want to delete any of the page scanned, select the image from the preview pane and click on "Delete Page".
+
+Once you done with scanning click on Save
+
+![](media/image1201_32.png)
+
+## Minor enhancements [/]
+
+### Scheduler [GET]
+
+Based on the Doctor Calendar View feedback, the appointment details pop-up which displayed on hover is now changed to display only on click.
+
+### Registration [GET]
+
+Based on the need especially for certain hospital/clinics in Tier 2/Tier 3 cities a> to capture patient's Village/SubTaluk/Taluk/District and b> filter the referral doctors based on the same location source, the below listed changed are done. The customers then use this data to identify and generate reports based on Village/ SubTaluk /Taluk/ District details for marketing purposes and to understand referral source patterns.
+
+There are three registration preferences that have been introduced, such as
+
+#### Enable district
+
+-   This enables the 'District' field in the Cities Master as an optional field
+
+-   This enables State-District-City/Sub-District-Area/Village in Referral doctor master
+
+-   City gets re-labelled as City/Taluk in in all OP/IP/OSP and pre-registration screens.
+
+-   Area gets re-labelled as Area/Village in all OP/IP/OSP and pre-registration screens.
+
+-   Enables District In all OP/IP/OSP and pre-registration screens
+
+#### Allow Auto Entry of Areas: 
+
+If it is set to 'No', then only master driven values are accepted in Area field in all the registration screens and will not insert new value to area master. It has default value 'yes', so that it will accept any value as it works earlier.
+
+#### Show Referral Doctor Filter
+
+-   If it is set to yes, then filters for referral doctors by Village/Taluk/District/State get enabled in all OP/IP/OSP registration screens.
+
+-   __District Master__: Introduced a new District Master under General master menu. The District field in City Master is getting enabled based on Preference 'Enable District'.
+
+-   __Referral Doctors Master__:
+
+    -   State-District-City/Sub-District-Area/Village-fields are
+        getting enabled based on Enable District Preference, which
+        is used to filter the referral doctors in registration
+        screens.
+
+    -   Area is made it as mandatory field when either
+        State/District/taluk is selected, otherwise Area is
+        optional.
+
+-   __Report Builders__:
+
+    -   In Visit Details Report Builder, Bills Report Builder, Bill
+        Charge Report Builder, Referral Doctor Area, Referral Doctor
+        City, Referral Doctor District, Referral Doctor State,
+        Referral Doctor Country fields have been added.
+
+    -   In Bill Charge Adjustment Report Builder fields named
+        Referer Area, Referer City, Referer District, Referer State,
+        Referer Country have been added.
+
+-   __List of Tokens__
+
+    -   Token for registration documents is added -> district_name
+
+    -   Token for Bill print is added -> patient.district_name
+
+### Billing [GET]
+
+-   Quick Estimate screen enhancements to apply taxation rules.
+
+-   Taxation changes are now made available in the Quick Estimate
+    screen, which applies the taxes against all hospital items while
+    creating quick estimate.
+
+-   Added nationality field as optional to enable accurate KSA based tax
+    calculation rules. Search by MR No patient, auto-populates the
+    nationality field.
+
+-   This transaction screen has additional columns displayed which are:
+    Sponsor Tax Amt and Patient Tax Amt.
+
+-   The Summary of Totals at the bottom of the page reflect Sponsor
+    Amount, Patient Tax Amount.
+
+![](media/image1201_15.png)
+
+### Payments [GET]
+
+-   It is now possible to relabel TDS to WHT for Withholding Tax for Sri Lankan customers and this works based on the generic preference called 'Tax Deduction Label for Payment Voucher'. This preference has default value as TDS.
+
+-   This label change is applicable in both Payments Due and Paid Payments screens, Added 'WHT Amount' as available field in Payment Paid Report builder.
+
+### Consultation EMR changes [GET]
+
+#### Clinical Preferences
+
+![](media/image1201_14.png)
+
+-   Preference to default the Basic or Advanced Management pop-up.
+
+    -   For certain clinics or certain doctors based on geography and
+        prescription rules it is now possible to set up the default
+        behavior of the management pop-up from the Clinical Preferences
+        screen. There is also an option to define whether the user can
+        override the default pop-up and switch to the basic/advanced
+        pop-up and vice-versa.
+
+-   There is an option to setup the OP Prescription validity period in hours.
+
+    -   After the defined period of time the Medicine items in the
+        prescription will not be available in sales screen to dispense.
+
+    -   In Consultation screen the Edit option for the Medicine Item will be disabled.
+
+        -   *This feature of viewing expired information will be available only at the time dispensing to be done in 12.2*
+
+        -   *New Reports to list the details will be taken up in following release based on the need and usage.*
+
+    -   At Medicine level doctors are allowed to override expiry of
+        selected items.
+
+        -   The Doctor can select one of the medication in the Prescription and mark it to be excluded from expiry. So the medicine is available for dispensing after the expiration period too.
+
+        -   *The items marked for refill are automatically excluded from the expiry period.*
+
+![](media/image1201_23.png)
+
+-   Setup the Test Result validity to ensure that the same test is not prescribed within X days/months as per UAE regulatory rules.
+
+    -   Test result validity period is set in the Diagnostic master
+        against the test , which results has validity for the set
+        period.
+
+![](media/image1201_26.png)
+
+-   If the test with result validity period is added in the prescription system prompts the availability of the earlier signed off results only. However systems allows doctor to override the alert and order again.
+
+-   *Note: In current Release this validity is checked only if the test is order individually. This alerts and override options is not available if the test is ordered from favourite, previous history, package or order sets. This would be addressed in following release*
+
+#### Introduction of Order Sets
+
+    -   From the Management sections the user are allowed to add items
+        through order sets.
+
+![](media/image1201_22.png)
+
+-   Enforcing reopen reason
+
+    -   When a closed OP consultation is re-opened , the users are mandated to capture the remarks for re-opening.
+
+![](media/image1201_29.png)
+
+-   The Re-opening Remarks can be Viewed Along with the Audit Trail of OP Consultation at Form Level
+
+![](media/image1201_28.png)
+
+![](media/image1201_24.png)
+
+-   OP Consultations: to be closed automatically after a specific time-period
+
+    -   Under Clinical Preferences the user is allowed to set the period by when the all the open and partial OP consultation to be automatically closed.
+
+    -   Under Cron Job we have a new cron for Consultation closure "AutoCloseConsultationJob".
+
+    -   Note the system closed Op Consultation has standard Remarks along with system user reference.
+
+![](media/image1201_27.png)
+
+### Diagnostics [GET]
+
+#### Password protected Diagnostic Reports
+
+Diagnostics Reports sent via Email can now be password protected
+
+##### Configuration steps:
+
+-   In Message_Config Table(Static table, values to be updated by running script at DB level) for the Record with
+
+    -   message_type_id:"email_diag_report"
+
+    -   param_name : pdf_encryption
+
+    -   param_value : Y
+
+    -   param_description : Applying encryption for PDF
+
+-   If pdf_encryption is Y then it will generate password based on MR Number
+
+-   If pdf_encryption is N then it will retain current functionality of sending email of Diagnostic report without password.
+
+-   By Default pdf_encryption will be 'N'
+
+-   Password by default will be the last four digits of the MR Number.
+
+##### Laboratory Report Print Optimizations
+
+Laboratory Report Prints are now optimized to ensure minimal wastage of paper.
+
+-   In order to support optimized laboratory print output, there is a new generic preference added called: Optimized Lab Report Print which can be set to Yes/No. By Default the value will be "No".
+
+![](media/image1201_12.png)
+
+-   Option Available under Settings-->Hospital Preference-->Generic Preference under the group "Diag Preference"
+
+-   If set to Yes: All the laboratory test reports conducted for the Visit are combined without Page break and department wise groups (Ex - Laboratory & Radiology) are maintained.
+
+-   The Optimization is covered when the reports are printed from (Ex- with Print Report Options)
+
+    -   Modules-->Search-->Patient Test Status
+
+    -   Modules-->Laboratory-->Laboratory Reports
+
+    -   Modules-->Laboratory-->Signed off Reports (Print Report (Visit wise))
+
+-   If set to No: the report prints retain current functionality.
+
+### Reports [GET]
+
+Report generation improvements have been such as:
+
+-   Link to the Reports Dashboard from the Custom Reports and Report Builders.
+
+-   A message to inform the user to access the Report from the Dashboard.
+
+-   Reports Dashboard displays custom report name, generated date/time displaying reports in the descending order, favorite report name, status of report generated.
+
+## Bugs fixes [/bug-fixes]
+
+### List of bugs [GET]
+
+JIRA ID|Module|Description
+-------|-----|---
+HMS-19773|Billing|Consolidated Financial Report: Unable to read long service names in PDF.
+HMS-24201|Billing|Order screen: Cancel action is disabled for a diagnostic test where conduction is set to No.
+HMS-20112|Billing|Bills Report Builder: shows incorrect primary sponsor amount.
+HMS-24418|Billing|TypeError: Cannot read property 'status' of undefined in order screen in a case
+HMS-24456|Billing|Getting exception while updating remark or prescribing doctor in doctor order
+HMS-24495|Billing|Able to create Billing Masters without any insurance category.
+HMS-24609|Billing|Not able to raise credit not, getting alert message "credit amount is greater than item amount plus past credit note amount"
+HMS-25096|Billing|Unable to download Day Book report.
+HMS-24640|Billing|Getting null pointer exception on ordering a item for a dyna package bill (cash)
+HMS-24723|Billing|Unable to remove insurance for dyna package patient
+HMS-24786|Billing|Throwing console error on trying to add new visit
+HMS-24888|Billing|In order(IP Flow) screen, primary operation name is showing multiple times if it has a secondary operation.
+HMS-23550|Insurance|Prior Authorization Number is repeating for revisits
+HMS-24364|Insurance|In self pay claims, Activity id is repeating for pharmacy claims.
+HMS-24716|Insurance|Throwing null pointer exception on saving edit insurance screen again on removing insurance
+HMS-25062|Insurance|[Combined activity]Sales bill having external PBM is batched in ignore external PBM claim batch submission
+HMS-25064|Insurance|Including external PBM claims in ignore external PBM claim batch submission, for a visit having 2 bills
+HMS-25050|Insurance|Able to batch external PBM claims in non external claim batch submission
+HMS-25133|Insurance|ERx observation is displaying in XML for the sales item which doesn't have ERx activity ID
+HMS-25150|Insurance|Unable to generate eclaim for the particular case
+HMS-24185|Clinical|Codification: Year Of Onset is not mandated even for primary Diagnosis code
+HMS-24200|Clinical|While navigating into Role screen getting an POP up for vitals
+HMS-24788|Clinical|Throwing sql exception when we click on send erx from consultation screen.
+HMS-25075|Clinical|In patient EMR for follow up visit, patient section details are not showing
+HMS-25058|Clinical|Throwing sql exception when we click on save and send erx from consultation screen.
+HMS-25058|Clinical|Throwing sql exception when we click on save and send erx from consultation screen.
+HMS-23704|Common|Year of onset has a UI alignment issue in firefox only.
+HMS-25003|Clinical|Not able to add anything under management section in consultation screen after clicking on send erx.
+HMS-25008|Clinical|Not able to add/edit Insta sections like complaint,vital,Management,diagnosis if we select consultation Template in consultation management screen.
+HMS-15548|Clinical|Discharge Screen > Pending Indents are not showing finalized indents which are not dispensed.
+HMS-20673|Diagnostics|HL7 Export Code is taking wrong and inactivate HL7 Export Code is printing in OBR Segment
+HMS-24309|Diagnostics|Getting exception in print when using \T\ in obx segment character sequence
+HMS-23595|Patient Administration|Throwing Timeout error when we click on Active patient visits.
+HMS-25087|Patient Administration|Not able to book appointment from patient portal
+HMS-20297|Scheduler|When we click on arrive from doctor scheduler screen, it is redirecting to the OP registration screen with wrong patient details
+HMS-25131|Common|Not able to add new center.
+HMS-25134|Common|Throwing error on opening system preference screen.
+
+## Previous Releases [/prev-release]
+
+### 12.x [GET]
+
+[12.0](release_1200.html)
+
+### 11.x [GET]
+
+[11.0 - 11.13.0](release_notes_11xx.pdf)

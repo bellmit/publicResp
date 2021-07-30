@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<suite name="PackagesTest" verbose="10" allow-return-values="true">
+	<test name="ordersets">
+		<classes>
+			<class name="testng.com.insta.hms.mdm.codetype.CodeTypeServiceTest" />
+			<methods>
+				<exclude name="getSessionServiceAttributes" />
+			</methods>
+			<class name="testng.com.insta.hms.mdm.codetype.CodeTypeControllerTest" />
+		</classes>
+	</test>
+
+</suite>

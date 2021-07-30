@@ -1,0 +1,202 @@
+{
+    "title": "Surgery / Procedure Appointments Report",
+    "description": "This report shows all the surgery / procedure appointments.",
+    "reportGroup": "Scheduler Reports",
+    "dateFields": [
+        "appointment_date",
+        "booked_date",
+        "orig_appt_date",
+        "arrival_date"
+    ],
+    "includes": [
+        "CommonScheduledAppointmentFields.srjs"
+    ],
+    "queryUnits": [
+        {
+            "mainTableName": "scheduler_appointments",
+            "mainTableAlias": "sa",
+            "joinTables": [
+                {
+                    "name": "operation_master",
+                    "alias": "om",
+                    "dependsOn": "sa",
+                    "expression": "ON(om.op_id = sa.res_sch_name)"
+                },
+                {
+                    "name": "department",
+                    "alias": "d",
+                    "dependsOn": "om",
+                    "expression": "ON(d.dept_id=om.dept_id)"
+                },
+                {
+                    "name": "scheduler_appointment_items",
+                    "alias": "sai",
+                    "dependsOn": "sa",
+                    "expression": "ON (sai.appointment_id = sa.appointment_id AND resource_type = 'THID')"
+                },
+                {
+                    "name": "theatre_master",
+                    "alias": "tm",
+                    "dependsOn": "sai",
+                    "expression": "ON(theatre_id=sai.resource_id)"
+                }
+            ],
+            "whereExpression": "sm.res_sch_category = 'OPE'",
+            "whereTable": "sm"
+        }
+    ],
+    "fields": {
+        "theatre_name": {
+            "table": "tm",
+            "displayName": "Theater / Room",
+            "width": 50,
+            "groupable": true,
+            "filterable": true
+        },
+        "operation_name": {
+            "table": "om",
+            "displayName": "Surgery / Procedure Name",
+            "width": 70,
+            "groupable": true,
+            "filterable": true
+        },
+        "op_dept_name": {
+            "table": "d",
+            "displayName": "Operation Department",
+            "width": 100,
+            "groupable": true,
+            "filterable": true,
+            "allowedValuesQuery": "SELECT dept_name FROM department ORDER BY dept_name",
+            "expression": "d.dept_name"
+        },
+        "surgeon_name": {
+            "table": "sa",
+            "displayName": "Surgeon / Doctor Name",
+            "width": 120,
+            "groupable": true,
+            "filterable": true,
+            "expressionLines": [
+                " (SELECT textcat_commacat(doctor_name) ",
+                " FROM scheduler_appointment_items sai ",
+                " JOIN doctors doc ON (doc.doctor_id = sai.resource_id) ",
+                " WHERE sa.appointment_id = sai.appointment_id AND sai.resource_type = 'SUDOC') "
+            ]
+        },
+        "asst_surgeon_name": {
+            "table": "sa",
+            "displayName": "Asst Surgeon / Asst Doctor",
+            "width": 120,
+            "groupable": true,
+            "filterable": true,
+            "expressionLines": [
+                " (SELECT textcat_commacat(doctor_name) ",
+                " FROM scheduler_appointment_items sai ",
+                " JOIN doctors doc ON (doc.doctor_id = sai.resource_id) ",
+                " WHERE sa.appointment_id = sai.appointment_id AND sai.resource_type = 'ASUDOC') "
+            ]
+        },
+        "paediatrician_name": {
+            "table": "sa",
+            "displayName": "Doctor",
+            "width": 80,
+            "groupable": true,
+            "filterable": true,
+            "expressionLines": [
+                " (SELECT textcat_commacat(doctor_name) ",
+                " FROM scheduler_appointment_items sai ",
+                " JOIN doctors doc ON (doc.doctor_id = sai.resource_id) ",
+                " WHERE sa.appointment_id = sai.appointment_id AND sai.resource_type = 'PAEDDOC') "
+            ]
+        },
+        "anesthetist_name": {
+            "table": "sa",
+            "displayName": "Anesthetist Name",
+            "width": 70,
+            "groupable": true,
+            "filterable": true,
+            "expressionLines": [
+                " (SELECT textcat_commacat(doctor_name) ",
+                " FROM scheduler_appointment_items  sai ",
+                " JOIN doctors doc ON(doc.doctor_id=sai.resource_id) ",
+                " WHERE sai.appointment_id=sa.appointment_id AND sai.resource_type='ANEDOC') "
+            ]
+        },
+        "equipment_name": {
+            "table": "sa",
+            "displayName": "Equipment Name",
+            "width": 70,
+            "groupable": true,
+            "filterable": true,
+            "expressionLines": [
+                " (SELECT textcat_commacat(equipment_name) ",
+                " FROM scheduler_appointment_items  sai ",
+                " JOIN test_equipment_master tem ON(tem.eq_id::text=sai.resource_id) ",
+                " WHERE sai.appointment_id=sa.appointment_id AND sai.resource_type='EQID') "
+            ]
+        },
+        "service_resource": {
+            "table": "sai,sa",
+            "displayName": "Service Resource",
+            "width": 70,
+            "groupable": true,
+            "filterable": true,
+            "allowedValuesQuery": "select serv_resource_name from service_resource_master order by serv_resource_name",
+            "expressionLines": [
+                " (SELECT textcat_commacat(serv_resource_name) ",
+                "  FROM scheduler_appointment_items sai ",
+                "   JOIN service_resource_master srm ON (srm.serv_res_id::text=sai.resource_id) ",
+                "  WHERE sa.appointment_id = sai.appointment_id AND sai.resource_type='SRID') "
+            ]
+        },
+        "prescribing_doctor_name": {
+            "table": "sa",
+            "displayName": "Prescribing doctor",
+            "width": 100,
+            "groupable": true,
+            "filterable": true,
+            "expressionLines": [
+                " (SELECT d.doctor_name ",
+                " FROM doctors d WHERE(d.doctor_id=sa.presc_doc_id)) "
+            ]
+        },
+        "other_resources": {
+            "table": "sai,sa",
+            "displayName": "Other Resources",
+            "width": 70,
+            "groupable": true,
+            "filterable": true,
+            "expressionLines": [
+                " (SELECT textcat_commacat(resourcename) ",
+                " FROM (SELECT ",
+                "     CASE WHEN sai1.resource_type = 'ANEDOC' THEN (select doctor_name from doctors where doctor_id = sai1.resource_id) ",
+                "     WHEN sai1.resource_type = 'SUDOC' THEN (select doctor_name from doctors where doctor_id = sai1.resource_id) ",
+                "     WHEN sai1.resource_type = 'SRID'  THEN (select serv_resource_name from service_resource_master WHERE serv_res_id::text = sai1.resource_id)",
+                "     WHEN sai1.resource_type = 'EQID'  THEN (select equipment_name from test_equipment_master WHERE eq_id::text = sai1.resource_id)",
+                "     ELSE ",
+                "      (SELECT generic_resource_name FROM generic_resource_type grt ",
+                "      JOIN generic_resource_master grm ON(grm.generic_resource_type_id = grt.generic_resource_type_id) ",
+                "      AND grm.generic_resource_id::text = sai1.resource_id ",
+                "      WHERE sa.appointment_id = sai1.appointment_id AND grt.scheduler_resource_type = sai1.resource_type) ",
+                "      END AS resourcename ",
+                "      FROM scheduler_appointment_items sai1 WHERE sa.appointment_id = sai1.appointment_id) ",
+                " as foo)"
+            ]
+        }
+    },
+    "defaultShowFields": [
+        "appointment_time",
+        "operation_name",
+        "theatre_name",
+        "surgeon_name",
+        "anesthetist_name",
+        "asst_surgeon_name",
+        "paediatrician_name",
+        "equipment_name",
+        "service_resource",
+        "mr_no",
+        "patient_name",
+        "appointment_status",
+        "duration",
+        "other_resources"
+    ]
+}

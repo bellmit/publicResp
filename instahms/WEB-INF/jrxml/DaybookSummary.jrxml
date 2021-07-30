@@ -1,0 +1,370 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="40" bottomMargin="40">
+	<style name="Crosstab Data Text" isDefault="false" hAlign="Center"/>
+	<parameter name="visitType" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="countername" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="userName" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="fromdateTime" class="java.sql.Timestamp" isForPrompting="false"/>
+	<parameter name="todateTime" class="java.sql.Timestamp" isForPrompting="false"/>
+	<parameter name="receipts" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="bills" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="paymentMode" class="java.lang.String"/>
+	<parameter name="centers" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select sum(amt) ,payment_mode,username, temp_username,
+CASE WHEN main_type='Consolidated Sponsor Receipts' THEN 'Consolidated Sponsor Receipts'
+  when main_type in ('Bill Receipts', 'Deposits','Deposit Refund') then
+      case when sub_type in ('S','A','F','R','D') then 'Bill Receipts / Refunds' end
+when  main_type in ('Payments') then
+    case when sub_type in ('D','P','R','F','S','O','C') then 'Payments / Reversal' end
+    ELSE 'Bill Receipts / Refunds'
+end as main_type  from
+(
+  SELECT CASE WHEN r.receipt_type='R' AND r.tpa_id IS null AND NOT r.is_deposit THEN 'Bill Receipts' 
+  			  WHEN r.receipt_type='F' AND r.tpa_id IS null AND NOT r.is_deposit THEN 'Bill Refunds'
+  			  WHEN r.receipt_type='R' AND r.tpa_id IS NOT null AND NOT r.is_deposit THEN 'Sponsor Receipts'  
+  			  WHEN r.receipt_type='R' AND r.is_deposit THEN 'Deposits'
+  			  WHEN r.receipt_type='F' AND r.is_deposit THEN 'Deposit Refund' END 
+  			  AS main_type, 
+	CASE WHEN r.receipt_type='R' AND r.tpa_id IS null THEN 'R' 
+  		 WHEN r.receipt_type='F' AND r.tpa_id IS null THEN 'F'
+  		 WHEN r.receipt_type='R' AND r.tpa_id IS NOT null THEN 'S' END 
+	AS payment_type,
+	CASE  WHEN receipt_type = 'F' THEN 'F'
+    WHEN tpa_id IS NOT NULL THEN 'SP'
+    WHEN is_deposit THEN 'D'
+    WHEN  is_settlement THEN 'S'
+    WHEN  NOT is_settlement THEN 'A'
+    END AS sub_type,
+	r.payment_mode_id ,r.card_type_id,
+	pm.payment_mode ,ctm.card_type, r.bank_name, r.reference_no,
+	r.receipt_id, CASE WHEN NOT r.is_deposit THEN b.bill_no ELSE '' END as bill_no, CASE WHEN NOT r.is_deposit THEN b.bill_type ELSE '' END as bill_type, CASE WHEN NOT r.is_deposit THEN b.visit_type ELSE '' END AS visittype,
+	pd.mr_no, pr.patient_id, pr.op_type,
+	COALESCE (get_patient_full_name(sm.salutation, pd.patient_name, pd.middle_name, pd.last_name),
+	prc.customer_name, isr.patient_name) AS patname, r.created_by as username, 
+	concat(r.created_by,'(',u.temp_username,')') AS temp_username,
+	r.counter, c.counter_no,CASE WHEN c.counter_type='B' THEN 'Billing' ELSE 'Pharmacy' END AS counter_type,
+	CASE WHEN c.collection_counter='Y' THEN 'Yes' ELSE 'No' END AS collection_counter,
+	CASE WHEN ma.activation_status = 'Y' THEN br.allocated_amount ELSE r.amount END AS amt, br.display_date AS date,
+	r.tds_amount AS tds_amt,
+	r.bank_batch_no, r.card_auth_code, r.card_holder_name, r.currency_id, r.exchange_rate,
+	r.exchange_date, r.currency_amt, r.card_exp_date AS card_expdate, r.card_number, fc.currency, c.center_id
+	FROM receipts r 
+	LEFT JOIN bill_receipts br ON r.receipt_id = br.receipt_no AND NOT r.is_deposit
+	LEFT JOIN  bill b ON b.bill_no = br.bill_no
+	LEFT JOIN patient_registration pr ON pr.patient_id = b.visit_id
+	LEFT JOIN patient_details pd ON pr.mr_no = pd.mr_no
+	LEFT JOIN salutation_master sm ON (sm.salutation_id = pd.salutation)
+	LEFT JOIN store_retail_customers prc ON prc.customer_id = b.visit_id
+	LEFT JOIN incoming_sample_registration isr ON isr.incoming_visit_id = b.visit_id
+	JOIN counters c on c.counter_id = r.counter
+	JOIN payment_mode_master pm ON (r.payment_mode_id = pm.mode_id)
+	LEFT JOIN card_type_master ctm ON (r.card_type_id = ctm.card_type_id)
+	LEFT JOIN foreign_currency fc ON (fc.currency_id = r.currency_id)
+	LEFT JOIN u_user u ON r.created_by = u.emp_username
+	LEFT JOIN modules_activated ma ON module_id = 'mod_ins_ext'
+	where date_trunc('sec', r.display_date) BETWEEN '$P!{fromdateTime}' AND '$P!{todateTime}' AND r.receipt_type != 'W' AND r.payment_mode_id<>-9
+
+UNION ALL
+SELECT 'Payments' AS main_type, '' AS payment_type, payment_type AS sub_type,
+	p.payment_mode_id,p.card_type_id,pm.payment_mode, ctm.card_type, p.bank AS bank_name, p.reference_no,
+	voucher_no, '' AS bill_no, '' AS bill_type, '' AS visit_type, '' AS mr_no, '' AS patient_id,'' AS op_type,
+	CASE
+		WHEN payment_type='D' THEN (SELECT doctor_name FROM doctors WHERE  doctor_id=payee_name)
+		WHEN payment_type='R' THEN (SELECT doctor_name FROM  doctors WHERE doctor_id=payee_name)
+		WHEN payment_type='F' THEN (SELECT referal_name FROM  referral where referal_no=payee_name)
+		WHEN payment_type='O' THEN (SELECT oh_name FROM  outhouse_master where oh_id=payee_name)
+		WHEN payment_type='P' THEN (SELECT doctor_name FROM doctors WHERE  doctor_id=payee_name)
+		WHEN payment_type='S' THEN (SELECT supplier_name FROM supplier_master WHERE  supplier_code=payee_name)
+		ELSE payee_name END AS patname, username, concat(username, '(',u.temp_username, ')' ) AS temp_username,
+	counter, c.counter_no,
+	CASE WHEN c.counter_type='B' THEN 'Billing' ELSE 'Pharmacy' END AS counter_type,
+	CASE WHEN c.collection_counter='Y' THEN 'Yes' ELSE 'No' END AS collection_counter,
+	(0-amount) AS amt, date, 0.00 AS tds_amt,
+	null, null, null, null, null,
+	null, null, null, null, null, c.center_id
+FROM payments p
+	JOIN counters c on c.counter_id = p.counter
+	JOIN payment_mode_master pm ON (p.payment_mode_id = pm.mode_id)
+	LEFT JOIN card_type_master ctm ON (p.card_type_id = ctm.card_type_id)
+	LEFT JOIN u_user u ON (u.emp_username = p.username)
+	where date_trunc('sec', date)  between '$P!{fromdateTime}'   and '$P!{todateTime}'
+
+UNION ALL
+	SELECT 'Consolidated Claim Receipts' AS main_type, 'S' AS payment_type,
+	'Consolidated Claim Receipts' AS sub_type, icr.payment_mode_id,icr.card_type_id,
+	pm.payment_mode,  ctm.card_type, icr.bank_name, icr.reference_no,
+	receipt_no, '' as sponsor_bill_no, '' as bill_type, '' as visit_type, '' as mr_no,
+	'' as patient_id, '' AS op_type, tpa_name||','||insurance_co_name AS pat_name, icr.username AS username, 
+	concat(icr.username,'(',u.temp_username,')' ) AS temp_username,
+	icr.counter, c.counter_no,
+	CASE WHEN c.counter_type='B' THEN 'Billing' ELSE 'Pharmacy' END AS counter_type,
+	CASE WHEN c.collection_counter='Y' THEN 'Yes' ELSE 'No' END AS collection_counter,
+	amount , display_date, 0,
+	icr.bank_batch_no, icr.card_auth_code, icr.card_holder_name, icr.currency_id, icr.exchange_rate,
+	icr.exchange_date, icr.currency_amt, icr.card_expdate, icr.card_number, fc.currency, c.center_id
+	FROM insurance_claim_receipt icr
+	LEFT JOIN tpa_master tp ON (tp.tpa_id = icr.tpa_id)
+	LEFT JOIN insurance_company_master ic ON (ic.insurance_co_id = icr.insurance_co_id)
+	JOIN counters c on c.counter_id = icr.counter
+	JOIN payment_mode_master pm ON (icr.payment_mode_id = pm.mode_id)
+	LEFT JOIN card_type_master ctm ON (icr.card_type_id = ctm.card_type_id)
+	LEFT JOIN foreign_currency fc ON (fc.currency_id = icr.currency_id)
+	JOIN u_user u ON icr.username = u.emp_username
+	where date_trunc('sec', display_date)  between '$P!{fromdateTime}'   and '$P!{todateTime}'
+) AS p
+
+where  1=1 $P!{countername}  $P!{userName} $P!{bills}  $P!{receipts} $P!{visitType} $P!{paymentMode}
+$P!{centers}
+ group by p.username,p.temp_username, payment_mode,sub_type,main_type]]>
+	</queryString>
+	<field name="sum" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="payment_mode" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="temp_username" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="main_type" class="java.lang.String"/>
+	<background>
+		<band/>
+	</background>
+	<title>
+		<band height="24">
+			<staticText>
+				<reportElement x="0" y="0" width="245" height="20"/>
+				<textElement textAlignment="Left">
+					<font size="14" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[User Collection Summary]]></text>
+			</staticText>
+		</band>
+	</title>
+	<summary>
+		<band height="150">
+			<crosstab>
+				<reportElement x="0" y="0" width="555" height="150"/>
+				<crosstabHeaderCell>
+					<cellContents>
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<staticText>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="83" height="30"/>
+							<textElement textAlignment="Right" verticalAlignment="Middle">
+								<font size="9" pdfFontName="Helvetica"/>	
+							</textElement>
+							<text><![CDATA[Payment Mode]]></text>
+						</staticText>
+						<staticText>
+							<reportElement style="Crosstab Data Text" x="0" y="30" width="83" height="30"/>
+							<textElement verticalAlignment="Middle">
+								<font size="9" pdfFontName="Helvetica"/>	
+							</textElement>
+							<text><![CDATA[User Name]]></text>
+						</staticText>
+						<line>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="83" height="60">
+								<property name="net.sf.jasperreports.export.pdf.tag.th"/>
+							</reportElement>
+						</line>
+					</cellContents>
+				</crosstabHeaderCell>
+				<rowGroup name="temp_username" width="83" totalPosition="End">
+					<bucket>
+						<bucketExpression class="java.lang.String"><![CDATA[$F{temp_username}]]></bucketExpression>
+					</bucket>
+					<crosstabRowHeader>
+						<cellContents backcolor="#FFFFFF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<textField>
+								<reportElement style="Crosstab Data Text" x="0" y="0" width="83" height="25"/>
+								<textElement verticalAlignment="Middle">
+									<font size="8" pdfFontName="Helvetica"/>	
+								</textElement>
+								<textFieldExpression class="java.lang.String"><![CDATA[$V{temp_username}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabRowHeader>
+					<crosstabTotalRowHeader>
+						<cellContents backcolor="#FFFFFF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<staticText>
+								<reportElement x="0" y="0" width="83" height="25"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="8" pdfFontName="Helvetica"/>	
+								</textElement>
+								<text><![CDATA[Total username]]></text>
+							</staticText>
+						</cellContents>
+					</crosstabTotalRowHeader>
+				</rowGroup>
+				<columnGroup name="main_type" height="30" totalPosition="End">
+					<bucket>
+						<bucketExpression class="java.lang.String"><![CDATA[$F{main_type}]]></bucketExpression>
+					</bucket>
+					<crosstabColumnHeader>
+						<cellContents backcolor="#FFFFFF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<textField>
+								<reportElement style="Crosstab Data Text" x="0" y="0" width="123" height="30"/>
+								<textElement verticalAlignment="Middle">
+									<font size="8" pdfFontName="Helvetica-Bold"/>
+								</textElement>
+								<textFieldExpression class="java.lang.String"><![CDATA[$V{main_type}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabColumnHeader>
+					<crosstabTotalColumnHeader>
+						<cellContents backcolor="#FFFFFF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<staticText>
+								<reportElement x="0" y="0" width="65" height="60" forecolor="#000000"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="8" pdfFontName="Helvetica-Bold"/>
+								</textElement>
+								<text><![CDATA[Grand Total]]></text>
+							</staticText>
+						</cellContents>
+					</crosstabTotalColumnHeader>
+				</columnGroup>
+				<columnGroup name="payment_mode" height="30" totalPosition="End">
+					<bucket>
+						<bucketExpression class="java.lang.String"><![CDATA[$F{payment_mode}]]></bucketExpression>
+					</bucket>
+					<crosstabColumnHeader>
+						<cellContents backcolor="#FFFFFF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<textField>
+								<reportElement style="Crosstab Data Text" x="0" y="0" width="62" height="30"/>
+								<textElement verticalAlignment="Middle">
+									<font size="8" pdfFontName="Helvetica-Bold"/>
+								</textElement>
+								<textFieldExpression class="java.lang.String"><![CDATA[$V{payment_mode}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabColumnHeader>
+					<crosstabTotalColumnHeader>
+						<cellContents backcolor="#FFFFFF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<staticText>
+								<reportElement style="Crosstab Data Text" x="0" y="0" width="61" height="30"/>
+								<textElement verticalAlignment="Middle">
+									<font size="8" pdfFontName="Helvetica"/>	
+								</textElement>
+								<text><![CDATA[Total]]></text>
+							</staticText>
+						</cellContents>
+					</crosstabTotalColumnHeader>
+				</columnGroup>
+				<measure name="sumMeasure" class="java.math.BigDecimal" calculation="Sum">
+					<measureExpression><![CDATA[$F{sum}]]></measureExpression>
+				</measure>
+				<crosstabCell width="62" height="25">
+					<cellContents>
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="62" height="25"/>
+							<textElement verticalAlignment="Middle">
+								<font size="8" pdfFontName="Helvetica"/>	
+							</textElement>
+							<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{sumMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell width="62" height="25" rowTotalGroup="temp_username">
+					<cellContents backcolor="#FFFFFF" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="62" height="25"/>
+							<textElement verticalAlignment="Middle">
+								<font size="8" pdfFontName="Helvetica"/>	
+							</textElement>
+							<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{sumMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell width="65" height="25" columnTotalGroup="main_type">
+					<cellContents backcolor="#FFFFFF" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="65" height="25" forecolor="#000000"/>
+							<textElement verticalAlignment="Middle">
+								<font size="8" pdfFontName="Helvetica"/>	
+							</textElement>
+							<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{sumMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell width="65" rowTotalGroup="temp_username" columnTotalGroup="main_type">
+					<cellContents backcolor="#FFFFFF" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="65" height="25" forecolor="#000000"/>
+							<textElement verticalAlignment="Middle">
+								<font size="8" pdfFontName="Helvetica"/>	
+							</textElement>
+							<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{sumMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell width="61" height="25" columnTotalGroup="payment_mode">
+					<cellContents backcolor="#FFFFFF" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="61" height="25"/>
+							<textElement verticalAlignment="Middle">
+								<font size="8" pdfFontName="Helvetica"/>	
+							</textElement>
+							<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{sumMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell width="61" rowTotalGroup="temp_username" columnTotalGroup="payment_mode">
+					<cellContents backcolor="#FFFFFF" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="61" height="25"/>
+							<textElement verticalAlignment="Middle">
+								<font size="8" pdfFontName="Helvetica"/>	
+							</textElement>
+							<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{sumMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+			</crosstab>
+		</band>
+	</summary>
+</jasperReport>

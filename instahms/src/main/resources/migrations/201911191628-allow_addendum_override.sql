@@ -1,0 +1,4 @@
+-- liquibase formatted sql
+-- changeset vinaykumarjavalkar:override_addendum_for_radiology_from_hl7_message_for_valiant
+
+ALTER TABLE hl7_lab_interfaces RENAME COLUMN allow_multiple_addendums TO allow_addendum_override;

@@ -1,0 +1,509 @@
+#!/usr/bin/perl -w
+
+use strict;
+use DBI;
+use POSIX qw(strftime);
+use File::Basename;
+use IO::Socket::INET;
+use Getopt::Long;
+use Sys::Hostname;
+use POSIX ":sys_wait_h";
+use IO::Handle;
+
+use lib dirname($0)."/../lib";	# find our Hl7 module. Needed for the next two lines
+use Hl7::Message;
+use Hl7::Segment;
+use Insta::Util;
+use Insta::Logger;
+
+# Database configuration
+
+our $opt_db = 'hms';
+our $opt_port = 5432;
+our $opt_schema ='' ;
+our $opt_host = 'localhost';
+our $opt_username = 'postgres';
+our $opt_password ='';
+our $opt_foreground = 0;
+
+
+sub usage {
+	return "Usage: $0 [OPTIONS] <schema>\n" .
+	" OPTIONS: \n" .
+	"  -d|--db <database>: which database to connect to (hms)\n" .
+	"  -s|--schema <schema>: which schema to operate on (hostname)\n" .
+	"  -h|--host <host> : datbase host\n".
+	"  -U|--username <username> : database username\n".
+	"  -W|--password <password> : database password\n".
+	"  -o|--port <port_no> : database port no".
+	"  -f|--foreground: print to console instead of logfile\n" ;
+}
+
+GetOptions( "port|o=i", "db=s", "schema=s", "host=s", "username|U=s", 'password|W=s', "foreground!") or die usage();
+
+
+unless ($opt_schema) {
+	$opt_schema = hostname;
+	$opt_schema =~ s/instahms-//;
+}
+
+my $util = Insta::Util->new();
+my $log = Insta::Logger->new({level=>$util->getProperty('log.level'),base_name=>basename($0),db=>$opt_db,
+								schema=>$opt_schema,isConsilePrint=>$opt_foreground});
+$log->rotateLog(10*1024*1024);
+
+$log->info("#####################>>>>>>>>>>>>>>>>>INIT<<<<<<<<<<<<<<<<<<<<<#################");
+
+my $pidfile = "/var/run/hl7_consultation_order.$opt_db.$opt_schema.pid";
+
+#
+# Standard message header attributes for all ORM exports
+#
+my %ORM_MSH = (
+	sendApp=>'InstaHMS', sendFac=>'Export.CONSULTATION',
+	msgType=>['ORM','O01'], procId=>'P', ver=>'2.3'
+);
+
+#
+# Read the config from the database: Do this before daemonizing so that we don't need
+# to run if we cannot read the config, or if the config says there's nothing to do.
+#
+my $interfaces;
+
+
+eval {
+	readConfig();
+};
+if ($@) {
+	$log->error("Reading config: ", $@);
+	exit 1;
+}
+
+if (keys(%$interfaces) < 1) {
+	$log->error("No interfaces configured for exporting orders, exiting");
+	exit 2;
+}
+
+$util->isProcess($pidfile);
+
+# get the set of orders to be exported into hl7_export_items
+# (could also be a trigger ... later)
+
+my $nowString = localtime;
+$log->info("Starting to look for orders.....");
+
+# updateExportableOrders();
+
+# iterate through the interfaces
+foreach my $ifName (keys %$interfaces) {
+	my $if = $interfaces->{$ifName};
+	$log->info("Interface Name = $ifName");
+	# Get the orders to be exported meant for this interface as HL7 messages
+	my $orders = getInterfaceOrders($if->{interface_name});
+	my $numOrders = @$orders;
+	$log->info("Found $numOrders orders for interface $ifName");
+
+	foreach my $order (@$orders) {
+		# construct a HL7 message for this order
+		my $msg = getOrderMessage($order, $if);
+
+		# Send the HL7 message according to interface preference (and also update
+		# hl7_export_items to indicate done/failed status)
+		if (($if->{export_type} eq 'F') || ($if->{export_type} eq 'B')) {
+			exportMessage($order, $msg, $if->{orders_export_dir}, $if->{export_type} eq 'F');
+		}
+		if (($if->{export_type} eq 'S') || ($if->{export_type} eq 'B')) {
+			# this could fork and do the job in a different process, so don't rely on return value
+			sendMessage($order, $msg, $if->{orders_export_ip_addr}, $if->{orders_export_port});
+		}
+		# otherwise, the interface wouldn't have been selected
+		$log->info("Done processing order: ", $order->{prescribed_id});
+	}
+}
+
+#clean up
+
+$util->pidFileCleanUp($pidfile);
+
+####################
+# Subs
+####################
+
+sub readConfig {
+	my $dbh = getConnection();
+
+	# get all interfaces configured
+	$interfaces = $dbh->selectall_hashref(
+		"SELECT hli.*,hci.*, (hli.interface_name||'-'|| hci.center_id)::character varying as interface_center
+	         FROM hl7_lab_interfaces hli
+		 JOIN hl7_center_interfaces hci USING(interface_name)
+		 WHERE status='A' AND export_type IN ('S','F','B')",
+		 'interface_center');
+	$dbh->disconnect();
+}
+
+sub updateExportableOrders {
+	my $dbh = getConnection();
+
+	#
+	# Update the bill_paid (actually ready_for_export) status for existing rows in hl7_export_items.
+	# This will take effect in case the bill was paid, or sample collected after the order was placed,
+	# for orders already present in hl7_export_items.
+	#
+	# todo: rename bill_paid to ready_for_export since this considers sample collection as well
+	# todo: need updated_ts when we actually set it to ready for export.
+	#
+	my $sth = $dbh->prepare(qq{
+		UPDATE hl7_export_items ei SET bill_paid = 'Y'
+		FROM doctor_consultation dc, bill_charge bc, bill b, doctors
+		WHERE bill_paid = 'N' AND item_type = 'TEST'
+			AND (b.payment_status = 'P' OR b.bill_type = 'C')
+			AND (b.bill_no = bc.bill_no)
+			AND (d.test_id = tp.test_id)
+			AND (tp.prescribed_id = ei.item_id::integer)
+	});
+
+	$sth->execute();
+	$dbh->disconnect();
+}
+
+sub getInterfaceOrders {
+	my ($ifName) = @_;
+	my $dbh = getConnection();
+	my $orders = $dbh->selectall_arrayref(qq{
+		SELECT ei.*, dc.patient_id as patient_id, dc.consultation_id as prescribed_id, dr.doctor_name, '' as hl7_export_code,
+            dr.doctor_id, to_char(dc.presc_date, 'YYYYMMDDhh24mi') as pres_date, dc.common_order_id,
+            coalesce(to_char(sched.appointment_time, 'YYYYMMDDhh24mi'), to_char(sched.arrival_time, 'YYYYMMDDhh24mi'),
+            	to_char(dc.consultation_complete_time, 'YYYYMMDDhh24mi')) as scheduled_time_start,
+            coalesce(to_char(sched.completed_time, 'YYYYMMDDhh24mi'), to_char(dc.consultation_complete_time, 'YYYYMMDDhh24mi'))
+                as scheduled_time_end,
+            pd.mr_no as mr_no, pd.oldmrno,
+			pd.last_name as last_name,
+			COALESCE(pd.patient_name,'') as patient_name, sm.salutation,
+			pd.patient_gender as patient_gender,
+           	to_char(coalesce(pd.dateofbirth, (pd.expected_dob + interval '6 months')::date), 'YYYYMMDD')
+				as expected_dob,
+            COALESCE(pd.patient_address, '') as patient_address,
+			COALESCE(ci.city_name,'') AS cityname, COALESCE(substring(ci.city_id, 4, 3),'') as city_code,
+			COALESCE(st.state_name,'') AS statename, COALESCE(substring(st.state_id, 4, 3),'') as state_code,
+			COALESCE(cnm.country_name,'') as country_name, COALESCE(cnm.country_code,'') as country_code,
+			COALESCE(pd.patient_phone, '') AS patient_phone,
+            to_char((pr.reg_date + pr.reg_time)::timestamp, 'YYYYMMDDhh24mi') as reg_date,
+			substring(dr.doctor_name,1,50) as doctor_name, pr.bed_type, wn.ward_name,
+			pr.reference_docto_id, mrd.icd_code as diagnosis_code, mrd.description as diagnosis,
+			substring(COALESCE(drs.doctor_name, rd.referal_name),1,50) AS refdoctorname,
+			pr.center_id AS center_id, hcm.center_name
+		FROM hl7_export_items ei
+			JOIN doctor_consultation dc ON (dc.patient_id = ei.item_id AND ei.item_type = 'CONSULTATION' AND dc.status ='A')
+			LEFT JOIN patient_registration pr ON (pr.patient_id = dc.patient_id)
+			LEFT JOIN mrd_diagnosis mrd ON (mrd.visit_id = dc.patient_id AND diag_type = 'P')
+			LEFT JOIN hospital_center_master hcm ON (hcm.center_id = pr.center_id)
+			LEFT JOIN ward_names wn ON (wn.ward_no = pr.ward_id)
+			LEFT JOIN doctors drs ON pr.reference_docto_id = drs.doctor_id
+			LEFT JOIN referral rd ON pr.reference_docto_id = rd.referal_no
+			LEFT JOIN doctors dr ON dr.doctor_id = dc.doctor_name
+			LEFT JOIN patient_details pd ON (pd.mr_no = pr.mr_no)
+			LEFT JOIN salutation_master sm ON (pd.salutation = sm.salutation_id)
+			LEFT JOIN city ci ON pd.patient_city = ci.city_id
+			LEFT JOIN state_master st ON pd.patient_state = st.state_id
+			LEFT JOIN country_master cnm ON pd.country = cnm.country_id
+			LEFT JOIN scheduler_appointments sched ON (sched.appointment_id = dc.appointment_id)
+			LEFT JOIN scheduler_appointment_items schi ON (sched.appointment_id = schi.appointment_id AND schi.resource_type IN ('DOC', 'OPDOC'))
+		WHERE ei.bill_paid = 'Y' AND ei.export_status IN ('N','F') AND ei.interface_name=?},
+		{Slice=>{}}, $ifName);
+
+	$dbh->disconnect();
+	return $orders;
+}
+
+sub getOrderMessage {
+	my ($order, $interface) = @_;
+
+	my $dbh = getConnection();
+	my $msgId = ($dbh->selectrow_array(qq{SELECT nextval('hl7_msgid_sequence') AS hl7_msg_id}))[0];
+	$dbh->disconnect();
+
+	my $msg = new Hl7::Message(\%ORM_MSH);
+	$msg->{MSH}{controlId} = $msgId;
+	$msg->{MSH}{recvApp} = $interface->{sending_app};
+	$msg->{MSH}{recvFac} = $interface->{sending_facility};
+
+	if ($order->{center_id} != 0) {
+		$msg->{MSH}{sendFac} = $order->{center_name};
+	}
+
+	# Order cancellations do not require a PID / PV1
+
+	if ($order->{op_code} ne 'C') {
+		# Add PID
+		my ($line1, $line2) = split('\r{0,1}\n', $order->{patient_address});
+		my $pid = new Hl7::Segment('PID', {
+				sid=> 1,
+				pidList=>[$order->{mr_no},'InstaHMS'],
+				name=> [$order->{last_name} || '-', $order->{patient_name}, '', '', $order->{salutation}],
+				dob=> $order->{expected_dob}, sex=> $order->{patient_gender},
+				addr=> [$line1 || '', $line2 || '', $order->{cityname}, $order->{state_code}, '',
+					$order->{country_code} || $order->{country_name}],
+				phHome => $order->{patient_phone} || ''
+			});
+
+# Bug#: 	44654
+#
+#		if ($order->{oldmrno}) {
+#			$pid->{'pidList~'} = [[$order->{oldmrno}, 'Alternate']];
+#		}
+		$msg->addSegment($pid);
+
+		# Add PV1
+		my $pv = new Hl7::Segment('PV1', {
+				sid=>1, patientClass=>'O', visitNum => $order->{patient_id},
+				admitTimest=>$order->{reg_date}, assgndLoc=> ['', $order->{ward_name}||'', $order->{bed_type}]
+			});
+
+		if ($order->{refdoctorname}) {
+			$pv->{refDoctor} = [$order->{reference_docto_id}, $order->{refdoctorname}];
+		}
+
+		if ($order->{doctor_name}) {
+			$pv->{admitDoctor} = [$order->{doctor_id}, $order->{doctor_name}];
+		}
+	    $msg->addSegment($pv);
+	}
+
+	# Add ORC - placerOrderNum should be separated by dot(.) instead of with ampersand(&).
+	my $orderNum = $order->{prescribed_id};
+	my $format = $order->{conduction_format};
+	if ($format eq 'V' && defined($order->{resultlabel_id})) {
+		$orderNum .= ".". $order->{resultlabel_id};
+	}
+	if (defined($order->{sample_sno})) {
+		$orderNum .= ".". $order->{sample_sno};
+	}
+
+	my $ctrlCode = $order->{op_code} eq 'C' ? 'CA' : 'NW';
+
+	my $orc = new Hl7::Segment('ORC', {ctrl=>$ctrlCode, placerOrderNum=>[$orderNum, 'InstaHMS'],
+		placerGrpNum=>$order->{common_order_id} });
+
+	$msg->addSegment($orc);
+
+	# Order cancellations do not have any OBR segments
+	if ($order->{op_code} ne 'C') {
+		# Add OBR
+		my $serviceId = $order->{hl7_export_code};
+		if (!defined($serviceId) || $serviceId eq '') {
+			$serviceId = $order->{test_id};
+		}
+		if ($format eq 'V' && defined($order->{resultlabel_id})) {
+			$serviceId = $order->{resultlabel_id};
+		}
+
+		my $scheduledStart = $order->{scheduled_time_start} || $order->{pres_date};
+		my $obr = new Hl7::Segment('OBR', {sid=>1,
+				# serviceId=>[$serviceId, $order->{resultlabel}||$order->{test_name},
+				#	'InstaHMS', '', $order->{equipment_code} || ''],
+				placerOrderNum=>[$orderNum, 'InstaHMS'],
+				reqTime=>$order->{pres_date}, specimenAction=>'O', specimenTime=>$order->{sample_date},
+				reason=>$order->{diagnosis}
+			});
+		if (defined $order->{scheduled_time_start}) {
+			$obr->{qtyTiming} = [1,'','',$scheduledStart, $order->{scheduled_time_end}]
+		}
+		if (defined($order->{sample_sno})) {
+			$obr->{placer1} =  $order->{sample_sno};
+		}
+		$msg->addSegment($obr);
+	}
+	return $msg;
+}
+
+sub exportMessage {
+	my ($order, $msg, $dir, $isMainTransport) = @_;
+	my $msgId = $msg->{MSH}{controlId};
+
+	my $patientId = $order->{patient_id};
+	my $orderNum = $order->{prescribed_id};
+	my $format = $order->{conduction_format};
+	if ($format eq 'V' && defined($order->{resultlabel_id})) {
+		$orderNum .= ".". $order->{resultlabel_id};
+	}
+	if (defined($order->{sample_sno})) {
+		$orderNum .= ".". $order->{sample_sno};
+	}
+
+	$log->info("Exporting message $msgId:". $msg->dump());
+	unless (open(FH, "> $dir/$patientId"."_"."$orderNum.hl7")) {
+		my $failureMsg = "Could not open $dir/$patientId"."_"."$orderNum.out: $!";
+		$log->error($failureMsg);
+		updateExportedFailure($order->{export_id}, $msgId, $failureMsg, 'F') if ($isMainTransport);
+		return;
+	}
+
+	print FH $msg->toString(0);
+	close FH;
+
+	updateExportedSuccess($order->{export_id}, $msgId) if ($isMainTransport);
+}
+
+sub sendMessage {
+	my ($order, $msg, $ipAddr, $port) = @_;
+	my $msgId = $msg->{MSH}{controlId};
+
+	$log->info("Sending message: $msgId" . $msg->dump());
+	my $conn = IO::Socket::INET->new (
+		Proto    => "tcp",
+		PeerAddr => $ipAddr,
+		PeerPort => $port,
+		timeout  => 10
+	);
+
+	unless ($conn) {
+		my $failureMsg = "Unable to connect to host $ipAddr at port $port: $!";
+		$log->error($failureMsg);
+		updateExportedFailure($order->{export_id}, $msgId, $failureMsg, 'F');
+		return;
+	}
+
+	$log->info($conn . "\x0B", $msg->toString(), "\x1C\x0D");
+	$conn->flush();
+
+	# Read the response:
+	$/ = "\x1C\x0D";	# file separator, carriage return
+	my $resp;
+	my $respMsg;
+	eval {
+		local $SIG{ALRM} = sub { die "Timed Out" };
+		alarm 10;
+		$resp = <$conn>;
+		alarm 0;
+	};
+	if ($@) {
+		my $failureMsg;
+		if ($@ =~ /Timed Out/) {
+			$failureMsg = "Reading response timed out";
+		} else {
+			$failureMsg = "Failed to read response: $@";
+		}
+		$log->error($failureMsg);
+		updateExportedFailure($order->{export_id}, $msgId, $failureMsg, 'F');
+		$conn->close();
+		return 0;
+	}
+
+	eval {
+		$respMsg = Hl7::Message->new($resp);
+		$log->info("Recd commit message acknowledgement:");
+		$log->info($respMsg->toString(1));
+	};
+	if ($@) {
+		my $clean = $resp;
+		$clean =~ tr/\x0B\x0D\x1C/\n\n./;
+		my $failureMsg = "Could not parse response as HL7: $clean";
+		$log->error($failureMsg);
+		updateExportedFailure($order->{export_id}, $msgId, $failureMsg, 'R');
+		return 0;
+	}
+	$conn->close();
+
+	if ($respMsg->{MSA}{code} ne 'AA') {
+		my $failureMsg = "Receiver rejected the message due to: " . $respMsg->{MSA}{msgText};
+		$log->error($failureMsg);
+		updateExportedFailure($order->{export_id}, $msgId, $failureMsg, 'R');
+		return 0;
+	}
+
+	$log->info("Sending message succeeded: ", $respMsg->{MSA}{code}, ", updating success.");
+	updateExportedSuccess($order->{export_id}, $msgId);
+	return 1;
+}
+
+sub updateExportedSuccess {
+	my ($exportId, $msgId) = @_;
+
+	my $dbh = getConnection();
+	my $sth = $dbh->prepare(qq{
+		UPDATE hl7_export_items set exported_ts=current_timestamp, export_status='S', export_msg_id=?
+		WHERE export_id=?});
+	$sth->execute($msgId, $exportId);
+	$dbh->disconnect();
+}
+
+sub updateExportedFailure {
+	my ($exportId, $msgId, $failureMsg, $failType) = @_;
+
+	my $dbh = getConnection();
+	my $sth = $dbh->prepare(qq{
+		UPDATE hl7_export_items set export_status=?, export_msg_id=?, export_failure_msg=?
+		WHERE export_id=?});
+	$sth->execute($failType, $msgId, $failureMsg, $exportId);
+	$dbh->disconnect();
+}
+
+sub getConnection {
+	my $dbh = DBI->connect("dbi:Pg:dbname=$opt_db;host=$opt_host;port=$opt_port;", $opt_username, $opt_password,
+		{AutoCommit => 1, RaiseError =>1});
+	$dbh->do("SET search_path TO $opt_schema");
+	return $dbh;
+}
+
+#
+# close when user presses ctrl-C, also remove pidfile
+#
+sub interrupt {
+	$log->info("Received signal, exiting ...");
+	unlink $pidfile;
+	exit 0;
+};
+
+
+END { $log->info("#####################<<<<<<<<<<<<<<<<<END>>>>>>>>>>>>>>>>>>>>>>#################\n");}
+
+
+
+=head1 Name : hl7_consultation_order.pl is exporting OP cansultation message from IHS.
+
+=head1 When message will export :
+
+        This message will export in following senarios.
+
+=over 4
+
+=item 1. Consulting doctor set at the time of registring an OP Patient.
+
+=item 2. Order a doctor for a patient from order screen.
+
+=back
+
+=head1 Event  :
+
+Only one trigger is available in IHS for exporting consultation message :
+
+Table   : INSERT or UPDATE on doctor_consultation
+Trigger : doctor_consultation_set_export_trigger
+=head1 Execution 
+
+This program needs to be run as a cron-job periodically.
+
+=head1 SETUP
+
+=over 4
+
+=item (a) Insert into hl7_lab_interfaces a list of interfaces that will be accepting our orders
+    	 See \d+ comments on that table.
+    	 
+=item (b) Insert center_id, interface_name and file location(export_order) in hl7_center_interfaces 
+    	 
+=item (b) For every test that we need to export orders for, set its hl7_interface_name to one
+	     of the interfaces in hl7_lab_interfaces (editable from UI)
+	     
+=item (c) If the interface understands our code, nothing to do. We will export our test_id as the
+	     service ID in the export. If not, we'll need to set hl7_interface_code as non-blank. This
+	     will be used as the service ID now.
+	     
+=item (d) Setup a cron-job to call this script with appropriate cmd line parameters periodically.
+
+=back
+
+=head1 Document Version :
+
+=cut

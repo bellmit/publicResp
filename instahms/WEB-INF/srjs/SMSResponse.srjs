@@ -1,0 +1,263 @@
+{
+    "title": "SMS Response Report",
+    "description": "This report shows the SMS Response Details  done through HTTP Protocol",
+    "reportGroup": "Scheduler Reports",
+    "dateFields": [
+        "received_date"
+    ],
+    "queryUnits": [
+        {
+            "mainTableName": "received_message",
+            "mainTableAlias": "rm",
+            "joinTables": [
+                {
+                    "name": "received_message_status_update_log",
+                    "alias": "rmsul",
+                    "dependsOn": "rm",
+                    "expression": "ON (rm.id=rmsul.received_message_id)",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "scheduler_appointments",
+                    "alias": "sa",
+                    "dependsOn": "rmsul",
+                    "expression": "USING (appointment_id)",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "doctors",
+                    "alias": "doc",
+                    "dependsOn": "sa",
+                    "expression": "ON (doc.doctor_id = sa.prim_res_id AND sa.prim_res_id ILIKE 'DOC%')",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "theatre_master",
+                    "alias": "tm",
+                    "dependsOn": "sa",
+                    "expression": "ON (tm.theatre_id::text = sa.prim_res_id::text AND sa.res_sch_name ILIKE 'OPID%')",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "service_resource_master",
+                    "alias": "srm",
+                    "dependsOn": "sa",
+                    "expression": "ON (srm.serv_res_id::text = sa.prim_res_id::text AND sa.res_sch_name ILIKE 'SERV%')",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "test_equipment_master",
+                    "alias": "eqm",
+                    "dependsOn": "sa",
+                    "expression": "ON (eqm.eq_id::text = sa.prim_res_id::text AND sa.res_sch_name ILIKE 'DGC%')",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "department",
+                    "alias": "d",
+                    "dependsOn": "doc",
+                    "expression": "ON (d.dept_id = doc.dept_id)",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "patient_details",
+                    "alias": "pd",
+                    "dependsOn": "sa",
+                    "expression": "ON(pd.mr_no=sa.mr_no)",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "hospital_center_master",
+                    "alias": "hcm",
+                    "dependsOn": "sa",
+                    "expression": "ON (hcm.center_id=sa.center_id)",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "scheduler_master",
+                    "alias": "sm",
+                    "dependsOn": "sa",
+                    "expression": "ON (sm.res_sch_id = sa.res_sch_id)",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "doctors",
+                    "alias": "adoc",
+                    "dependsOn": "sa",
+                    "type": "LEFT",
+                    "expression": "ON (adoc.doctor_id::text = sa.res_sch_name::text AND sa.res_sch_id = 1)"
+                },
+                {
+                    "name": "services",
+                    "alias": "ser",
+                    "dependsOn": "sa",
+                    "type": "LEFT",
+                    "expression": "ON (ser.service_id::text = sa.res_sch_name::text AND sa.res_sch_id = 3)"
+                },
+                {
+                    "name": "diagnostics",
+                    "alias": "test",
+                    "dependsOn": "sa",
+                    "type": "LEFT",
+                    "expression": "ON (test.test_id::text = sa.res_sch_name::text AND sa.res_sch_id = 4)"
+                },
+                {
+                    "name": "operation_master",
+                    "alias": "om",
+                    "dependsOn": "sa",
+                    "type": "LEFT",
+                    "expression": "ON (om.op_id::text = sa.res_sch_name::text AND sa.res_sch_id = 2)"
+                },
+                {
+                    "name": "confidentiality_grp_master",
+                    "alias": "cgm",
+                    "dependsOn": "pd",
+                    "expression": "ON(pd.patient_group=cgm.confidentiality_grp_id)"
+                }
+            ]
+        }
+    ],
+    "fields": {
+        "received_date": {
+            "table": "rm",
+            "displayName": "Response Date",
+            "dataType": "date",
+            "width": 60,
+            "groupable": true,
+            "filterable": true,
+            "description": "Date of the response received",
+            "expression": "date(received_date_time)"
+        },
+        "received_date_time": {
+            "table": "rm",
+            "displayName": "Response Date/Time",
+            "width": 60,
+            "groupable": true,
+            "filterable": true,
+            "description": "Date/Time of the response received",
+            "expression": "TO_CHAR((received_date_time::date +received_date_time::time  ),'dd-MM-yyyy hh24:mi')"
+        },
+        "mr_no": {
+            "table": "sa",
+            "displayName": "MR No.",
+            "width": 65,
+            "groupable": true,
+            "filterable": true
+        },
+        "from_phone_no": {
+            "table": "rm",
+            "description": "Mobile Number from which the response is received",
+            "displayName": "Mobile No.",
+            "width": 100
+        },
+        "message": {
+            "table": "rm",
+            "description": "Response of the patient",
+            "displayName": "Patient Response",
+            "width": 100
+        },
+        "appointment_id": {
+            "table": "sa",
+            "description": "appointment_id",
+            "displayName": "Appointment ID",
+            "width": 100
+        },
+        "job_status": {
+            "table": "rm",
+            "description": "Action performed upon receiving the appointment",
+            "displayName": "Action Taken",
+            "width": 100
+        },
+        "patient_name": {
+            "table": "sa",
+            "displayName": "Patient Name",
+            "width": 100,
+            "groupable": true,
+            "filterable": true
+        },
+        "consultant_name": {
+            "table": "sa,doc,tm,srm,eqm",
+            "displayName": "Consultant/Resource",
+            "width": 120,
+            "groupable": true,
+            "filterable": true,
+            "expressionLines": [
+                " CASE WHEN sa.prim_res_id ILIKE 'DOC%' THEN doc.doctor_name ",
+                " WHEN sa.res_sch_name ILIKE 'OPID%' THEN tm.theatre_name ",
+                " WHEN sa.res_sch_name ILIKE 'SERV%' THEN srm.serv_resource_name ",
+                " WHEN sa.res_sch_name ILIKE 'DGC%' THEN eqm.equipment_name END "
+            ]
+        },
+        "doctor_dept_name": {
+            "table": "d",
+            "displayName": "Consultant Department",
+            "width": 100,
+            "groupable": true,
+            "filterable": true,
+            "allowedValuesQuery": "SELECT dept_name FROM department ORDER BY dept_name",
+            "expression": "d.dept_name"
+        },
+        "center_name": {
+            "table": "hcm",
+            "displayName": "Center Name",
+            "width": 100,
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT center_name FROM hospital_center_master"
+        },
+        "appointment_type": {
+            "table": "sa,sm",
+            "displayName": "Appointment Type",
+            "width": 100,
+            "groupable": true,
+            "filterable": true,
+            "allowedValues": [
+                "Consultation",
+                "Test",
+                "Surgery",
+                "Service"
+            ],
+            "expressionLines": [
+                " CASE WHEN sm.res_sch_id = 1 THEN 'Consultation' ",
+                " WHEN sm.res_sch_id = 2 THEN 'Surgery' ",
+                " WHEN sm.res_sch_id = 3 THEN 'Service' ",
+                " WHEN sm.res_sch_id = 4 THEN 'Test' END "
+            ]
+        },
+        "appointment_description": {
+            "table": "sa,doc,adoc,ser,test,om",
+            "displayName": "Appointment Description",
+            "width": 150,
+            "groupable": true,
+            "filterable": true,
+            "expressionLines": [
+                " CASE WHEN sm.res_sch_id = 1 THEN COALESCE(adoc.doctor_name,doc.doctor_name) ",
+                " WHEN sm.res_sch_id = 2 THEN om.operation_name ",
+                " WHEN sm.res_sch_id = 3 THEN ser.service_name ",
+                " WHEN sm.res_sch_id = 4 THEN test.test_name END "
+            ]
+        },
+        "patient_group": {
+            "table": "cgm",
+            "displayName": "Patient Confidentiality Group",
+            "width": 150,
+            "expression": "cgm.name",
+            "filterable": true,
+            "groupable": true
+        },
+        "name_local_language": {
+                    "table": "pd",
+                    "displayName": "Name In Local Language",
+                    "width": 150,
+                    "expression": "pd.name_local_language"
+          }
+    },
+    "defaultShowFields": [
+        "received_date",
+        "from_phone_no",
+        "mr_no",
+        "patient_name",
+        "consultant_name",
+        "message"
+    ]
+}

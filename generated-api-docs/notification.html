@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Insta Notification</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.4/semantic.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/themes/prism-okaidia.min.css" />
+    <style>
+      blockquote {
+        border-left: solid 4px #eee;
+        padding-left: 8px;
+        font-style: italic;
+        margin-left: 0;
+        padding: 8px;
+      }
+
+      .ui.micro.label {
+        font-size: .25rem;
+      }
+
+      .ui.transaction.accordion .title {
+        text-align: center;
+      }
+
+      .ui.transaction.accordion .content {
+        border-top: solid 1px #ddd !important;
+        border-bottom: solid 1px #ddd !important;
+        background-color: rgba(0,0,0,.03);
+        padding: 0.5em 1em !important;
+      }
+
+      .ui.transaction.accordion .content.active {
+        margin-top: 0.5em;
+      }
+
+      .ui.basic.label {
+        text-align: left;
+        overflow: auto;
+      }
+      
+      .ui.basic.label.request-url {
+        user-select: text;
+      }
+
+      .resource .ui.sub.header {
+        text-transform: none;
+      }
+
+      .sidenav .ui.fluid.accordion .title {
+        padding-left: 0.5rem;
+      }
+      .sidenav .ui.fluid.accordion .title:not(:first-child) {
+        border-top: 1px solid #e0e0ec;        
+      }
+
+      .sidenav .ui.fluid.accordion .content {
+        padding: 0 0 0 2rem !important;
+        margin: 0;
+      }
+
+      .sidenav .ui.fluid.accordion .content .ui.secondary.menu {
+        margin: 0;
+      }
+
+      .sidenav .ui.fluid.accordion .content .ui.secondary.menu a.item{
+        margin: 0 0.75rem 0.5rem 0;
+      }
+      .sidenav .ui.fluid.accordion .content a.item > .label{
+        margin-top: 0.1rem;
+      }
+
+      @media only screen and (min-width: 768px) {
+        .sidewrap {
+          margin-right: 2rem;
+          border-right: 1px solid #b4b4be;
+          background-color: #f7f7fa;
+        }
+
+        .sidenav {
+          left: 0;
+          top: 0;
+          width: inherit;
+          position: fixed !important;
+          height: 100% !important;
+          overflow-y: auto !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="ui padded grid">
+      <div class="sidewrap four wide computer five wide tablet sixteen wide mobile column">
+        <div class="sidenav">
+          
+<a href="#introduction">
+  <h3 class="ui header centered" style="margin: 0;padding: 1rem 0;border-bottom: solid 1px #b4b4be;">
+    <img class="ui tiny image" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHgAAAAqCAYAAAB4Ip8uAAAAAXNSR0IArs4c6QAADUlJREFUeAHtWw10VMUVnnlv80Plx6Ig0Yj1FFSyScgmIGLVhmMPlRSLFVGxauvRY/XUQ0+zCfhLV6EISTYetf4VtK2KVlItKgon+BMRRAzZxJCNRaEHQSWKVglIkt33ZvrN2523bzeb3c1uqGGbObBzZ+bOnZn7zdyZuW9C7UXO/xDCKTECXe1tcd8SoId+00EDNk748RiIAbBCyPfSYVBDYwhpAJgOhXTWwBDA6YwuxmZL8/H1Gl7+tNtP4n7ffLMga/iT3q0unEPSM/zfAcx7esbj3HGfhDND69oIOm0BHjLREuk0jYcATlNg5bCGAJaaSNN4COA0BVYOawhgqYk0jYcATlNg5bCOuWtSQYnzLMZ4GeU0n1E+Gj7WLzGYj1VFqW9tqtkmBzYUBzSQEMBnn33bCUe0np9IpSknKuta62u+lWkZFzgqpuuczaSUnAr3di7hJAtebgDAO5B+h9iUN72N1aD7HwrPrjhd9/EHdZ3/TNTGXVb8iH9G0HR2j91RvoMqakVbU3V9MDtupPv9s+yOioK4jBaGeXOGr3G5XMyS1SdZOGXhmbquoc/KBM55DvQxGp3uIArdSzjfq1D6VpunpjWaADGZUWeyKONEOeL11Lws6JKSxzK6+UfnC1oEhfCDNJvu0/30ZOi3ReQVnlsxVu9ScxICuFvTJzJG/i4qimDrtJ2OyADYPs+VSXd3VnJGrwe4Ih/9Nn7FTwgBwm8hfp3bHc51KlWXtXqq3g0wxP/NLyo/F+CuA6jfj8WNdgu4rm8A0FXz5oy8PREQgFI14QlhZTZd5yUvIOEzMyKIAAA7b4ROFmiadkagONiGnJEsQDB0GjppBPCrRmad8tTWreVdUhxYfo6urRBpSvk+RAbAY8f2KHv3cywiPgcFLYQr2/Uu8gNC9EdKShZNbGpacVA/wpZyysamtAfnF1cUkl2HGgH+UijfAFd0JkagmJEXa0zbmucov18oIgavUTR5+h2nMEpfDAOX0m5K6VYwPI0Bvk4JtVoTtEEW1b14uDqe7KNRbi+uvKib7WwHMH8CAEFwY7cEnUzljD92sOuTxslTF9ljcxOyfv2CHnzW/RsmRTOs4ks7WqpfDdZ5qZvpNxVOW5gLK8rwFZgntIKjNVjgcF6AvXAjFJ8pyykhn6LR1zHf9kDxX3PGRimU5HBCz8cg8iSfEXOyoFv/sBAW4KfeOlefq0Hv6l4CRZ0o6wLMBjT46+Zm98cyD7N2VDfzL0C7i9GOMSbOWTlWxnZvs/tZyRc1pgSWJGyCRGWzZo45AOVFCXkOpxNjrkJR+MKh9Cvoph4K/zdKOmAxMjlVcihn+ZiMM8CfFRRn1zR/I77R32wAGKWNWFmUKg2Ms8t0HwPAtvsJ15clBbDe4x8P81EnwYXSNxNVXextqnqzrw4ED0d3YUBXSR7UL6W7Dq1C+lqZZ40LZ1Ycp33BTH5Mnv3Ziu0SYYKsfMH0EvuUyjeIxtZjQoxAn9apY+hLVr5odIYt44b3G1d4o5X1ldcepQCgVGFyVVqLAOp76MedkyZMe6Ou7nLdWiZpe6lrOOk8PB91XdjbToZ+hqHsiYKiygMs+jySVaPGWFCrIOOSNk/VB3lFzuS+JmHtP4UdZCxmPmYyvbOtuXo5TKbcXaI2vKPJ/S8U/DKv2PkqYfxx0MasxcCugVl7xuup3hBZkX1FfyT5RBmU9XAkuNY63u3VW/KLnHPRkbK8idMq+lKqtc5A0NiqrmaMmeDCPPphwW5pa6pZKfTSZhx7orfkbXAdRsnKkhLX6m7W+QDAuR4TVNGp/ixuCv+MXiuQa7NlvECPG/apSKmZdJvqY2pzc62wbOtEHlWJO6kVjE6MNwQofIHX436I0hqRTCi0e9yrMduHYfWulBVg1paB7gUwYXqu5AnEPOpp08rT1uIWX4c2emMo1cqfKl1UVDnRz/U/SzkAt4tQZTZOvG9Q6pbZceOmJtcRMN2AbWUPJv0SHJtHQke/ilXRanlat1V9EsnrbXJvDt8rIjlipDEzn/V6ah+KwdJnEfaXVagvgAgG7oh2uOBE1SRHIFbF86JBFfyU3R00q8F+qTcJcJPtJM4MS6Gbp5KtH1kvKYBhKn046NwWKaw/aZVw4/gv6+i6XiZpGaNzwtyYgRP9CjMxCIjCKRU4JPErQ12ha7zN1U+G0slR2cqIm7B/G6Y3OQmhWkkBjOr11lNsSFzi1JkTzmnALnHIrMECF3ozDSJ33KnvYi8TnqpA4KQMd9y7ZPK7jnWNX4s+AAsRKFMU1WWQKf4Y5loh96YoxqieFMA4N8h7V9J9MA5AlJiuRTzcxaEtPIj7HrR3vzUX5hAeK+fzwlNjzf9OaEoMr5poG3vvRnFyHah+jMzKfcLYz1MUmBzARPkoxXYD1blwYQZJwk+QtDXOmzDtXmgPd+tQgFm8VO9ie4SzRLgwQyX/O0o4YNCP0N2e0t6HxBS6Izxa8B80pCDCqJoUwERRP0+1YVEfftivpRxcCaL2Raz0saNGzAbf05JXxMbBBs4Szcd34VT+svAgQeFBc2nlPDq05usOm1jwB7890C0pnGxOVWZUpcYXqvnj88TnABwsPhchDQ2u7vaW2mtUSn+ME2ZTeB0OPfDZnOnrcR/dJvzW4eVHKcXIOKtkG1f3W9MDQTOFpiwzSYAHovv9l7Gj2b0JX16moublOMk3RErACp6KGbMFe/QzBefdGvPDRGTd/qZhKkz3qag7blzuV/2VEY8frsyUZR5TAAuFYAVzrOY63KVnqCqdBDP/IMD+1qosAD2ffevbUlJye441fyBpeMvC3KUdHftHDqR8IQu+5ZRlHnMAW5Uo3J9tze4FZNiI8bisPGAtwx49qVvvWTNv3hrVmj9gtKKaB0QhU1NYmMkeiHbwKfGkVOUc0wDLwYu/TGhvrv2dotC5uFqYTn3szee172q8RPINZGxTtTBHBGd+sXUMaMA2UJKqwLQAWCqhzeN+AWZtqUwHYsvXqPCClFLvv1f7IQAwQcbXtYtSEhhRGY8VcHgkMyOy+50c1ADPmvVAlt1RObc/o+JZw4Wphm7MMMGkQKg22mVN61wfY033i6Z0veSH5Zhtn1o5YGb6+bWHL8ZdMKpvQLaZSDwoARb7Zl5xxXV7O/Z8yLn+DyiuKJHBCB5hrqHsfSF+nhGicXDJyDLv3iIfLy8mWsv7QyuEPif5jXu5zm6V6VRicZ/HJ1lXKjJk3UEJ8M7djecSxp6A0saLjnK/7pQdjheLyYF65uEESznky0ZlLTfjACZA6B7PeNIA72iueQ0n+JAzgpPfipcu8foYrzy/uHIhzg8JT+pY8gYlwK2e6retDg3QVxYWV54fayCy7IPd288AnSXT2Cffl7SIxfMgLBCPzIOz5fLp02uHyXR/Y7yguEPWwcqz4eS7Jr+k8ocyr79xfkkF/Nvsj/2t1xf/oAQ42Fnza7lQnMb15xLZ42DS74kY7MaItLhL15t5nJ92qOezRWY6DpE/tfxUK4twvkDecpkHi3ESXne8ay9xnifzEo2xLf0Gj+/WwgLBaUd0yO3V90RlSb5BC/CYUSPqwj4ycJJD/OwdvFXq9d1YDEY8380rKv8DJsNlcnBQ0O68Cee8ItMyzlYyHxHftGUaSr0Nb6MXlZa6bDIvMnY4nKfhUd3jXCM77cW3hh3c5s0ZcQcA2WDW4XgkyHgDPGorHY6FJ5v5fRCTp5Q7IHsjtqVHxWQ22CitxN3+tT6qJJzd54ASlnCUGOF/1vBacm6Xrm3GLpwvmsG+dLpO9FegjE14G+shitKOFaNQxs4iHx2aBZYzLd2Bk5o6o73Lampath/KXw6Bi4NyM3FiXX7gYOd8+LPXIq8dL8z2cYWMxsvRs5C+0Ef4TPCr4niOLfwxkYf/RhDvr2HmL+3s/vQvAOgKkSlWIX5v8FHtOnwMeZsqFJ9Y+W4A30GpmoFDVA7k5RPKL/ZrvFCMzgxw2uAp1H32YudCMy9JYtACLMYjHtjBJJZxP31LgGuOkfMLoI4LMOONrIBqLApCLlbvYhyCXjTrRBBYdXfXre0sQK1fyCKAMhnPbY2/JDDyTJdJmPoFeF9itWeLjyCybvDB+pV49NfKKLkLTNmiLAh0KaxEqeTFc1aTtOKKmdOJPf3GNk+teToPMSZHDVoTLYfT1li77/jj1MlA7FGrWZXlkTEOVZ8D3KvE26bIMmtarDq4OYXna3GkL9vKF07TZuEta29xX2EF18qDR3/LFBs/AzL/in5EvCmzcoZo9PkweFfZMpSigQRXtGCD4BWYZ2jDmKXbRRwZsNt/hg6LB91GsLHMlL9yBCSJv0ogPYJG/Fkgr/fvli1Vh5B7M/azJT6qX41lMQMfwyfBjOKLDtYIIV9gArTg/4ZsOnx18IVib0ERORi7qLsEf3v18BGf72r8MdsM9CQP5l84GGDh6QHQn1BF2QRrUQ/w3okQETUpJiUKrisqdf3e/83hMkp4GSzQRAxyHFbsaPTzc3R7L+K9KNukjFGei/a3XgpXtuFttKF3nPy/idpYnMz/AkWIIZ8N4GHaAAAAAElFTkSuQmCC"/>
+    <div class="content" style="padding:0;">
+      &nbsp;
+      <div class="sub header">Hospital Management System</div>
+    </div>
+  </h3>
+</a>
+
+
+<div class="ui accordion fluid">
+  
+    
+    <div class="title active">
+      <i class="dropdown icon"></i>
+      
+        <strong>Questions Collection</strong>
+      
+    </div>
+    <div class="content active">
+      <div class="ui fluid secondary vertical menu">
+      
+        <a class="item green" href="#questions-collection-list-all-questions">
+          <i class="ui green empty circular label"></i>
+          
+            <span>List All Questions</span>
+          
+        </a>
+      
+        <a class="item blue" href="#questions-collection-create-a-new-question">
+          <i class="ui blue empty circular label"></i>
+          
+            <span>Create a New Question</span>
+          
+        </a>
+      
+      </div>
+    </div>
+    
+  
+</div>
+
+
+        </div>
+      </div>
+      <div class="eleven wide computer ten wide tablet sixteen wide mobile column">
+        
+<div class="ui hidden divider header"></div>
+<h1 class="ui huge header" id="introduction">Insta Notification</h1>
+<hr class="ui divider">
+<div class="description">
+  <p>Polls is a simple API allowing consumers to view polls and vote in them.</p>
+
+</div>
+
+        <div class="ui hidden divider"></div>
+        
+
+  <div class="ui horizontal divider" >
+    
+  </div>
+  <div class="ui header center aligned">
+    <div class="ui header">
+      <div class="sub header">
+        
+      </div>
+    </div>
+  </div>
+  
+    
+      <div class="ui segments">
+        <div class="ui basic segment resource">
+          <div class="ui black huge ribbon label">
+            Questions Collection
+          </div>
+          
+        </div>
+
+        
+          
+<div class="ui grey horizontal small divider header" style="margin-top:0">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui orange micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block inverted center aligned header" id="questions-collection-list-all-questions">
+              List All Questions
+            </h3>
+            <div class="description"></div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui green large button">
+                  <h3>GET</h3>
+                </div>
+                <a class="ui basic fluid request-url green label">
+                  <code>http://polls.apiblueprint.org/questions</code>
+                </a>
+              </div>
+              
+              
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>application/json</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui blue segment">
+                  <div class="title" style="margin-bottom: 1rem;">
+                    <a class="ui blue circular label">
+                      200
+                    </a>
+                    <code>application/json</code>
+                  </div>
+                  <div class="content tabbed active">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-json">[
+    {
+        &#34;question&#34;: &#34;Favourite programming language?&#34;,
+        &#34;published_at&#34;: &#34;2015-08-05T08:40:51.620Z&#34;,
+        &#34;choices&#34;: [
+            {
+                &#34;choice&#34;: &#34;Swift&#34;,
+                &#34;votes&#34;: 2048
+            }, {
+                &#34;choice&#34;: &#34;Python&#34;,
+                &#34;votes&#34;: 1024
+            }, {
+                &#34;choice&#34;: &#34;Objective-C&#34;,
+                &#34;votes&#34;: 512
+            }, {
+                &#34;choice&#34;: &#34;Ruby&#34;,
+                &#34;votes&#34;: 256
+            }
+        ]
+    }
+]
+</code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+              </div>
+            
+          </div>
+        
+          
+<div class="ui grey horizontal small divider header" style="margin-top:0">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui orange micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block inverted center aligned header" id="questions-collection-create-a-new-question">
+              Create a New Question
+            </h3>
+            <div class="description"><p>You may create your own question using this action. It takes a JSON
+object containing a question and a collection of answers in the
+form of choices.</p>
+</div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui blue large button">
+                  <h3>POST</h3>
+                </div>
+                <a class="ui basic fluid request-url blue label">
+                  <code>http://polls.apiblueprint.org/questions</code>
+                </a>
+              </div>
+              
+              
+                
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>application/json</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              
+              
+                <div class="ui stacked segment">
+                  <div class="ui fluid transaction">
+                    <div class="title">
+                      <code>application/json</code>
+                    </div>
+                    <div class="content tabbed">
+                      <div class="ui top attached tabular menu">
+                        <a data-tab="body" class="active item">BODY</a>
+                        <a data-tab="schema" class="item">SCHEMA</a>
+                      </div>
+                      <div class="ui bottom attached active tab segment" data-tab="body">
+                        <pre style="white-space: inherit">
+                          <code class="language-json">{
+    &#34;question&#34;: &#34;Favourite programming language?&#34;,
+    &#34;choices&#34;: [
+        &#34;Swift&#34;,
+        &#34;Python&#34;,
+        &#34;Objective-C&#34;,
+        &#34;Ruby&#34;
+    ]
+}
+</code>
+                        </pre>
+                      </div>
+                      <div class="ui bottom attached tab segment" data-tab="schema">
+                        <pre style="white-space: inherit">
+                          <code class="language-json"></code>
+                        </pre>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>application/json</code></td>
+    </tr>
+  
+    <tr>
+      <td class="four wide">Location</td>
+      <td><code>/questions/2</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui blue segment">
+                  <div class="title" style="margin-bottom: 1rem;">
+                    <a class="ui blue circular label">
+                      201
+                    </a>
+                    <code>application/json</code>
+                  </div>
+                  <div class="content tabbed active">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-json">{
+    &#34;question&#34;: &#34;Favourite programming language?&#34;,
+    &#34;published_at&#34;: &#34;2015-08-05T08:40:51.620Z&#34;,
+    &#34;choices&#34;: [
+        {
+            &#34;choice&#34;: &#34;Swift&#34;,
+            &#34;votes&#34;: 0
+        }, {
+            &#34;choice&#34;: &#34;Python&#34;,
+            &#34;votes&#34;: 0
+        }, {
+            &#34;choice&#34;: &#34;Objective-C&#34;,
+            &#34;votes&#34;: 0
+        }, {
+            &#34;choice&#34;: &#34;Ruby&#34;,
+            &#34;votes&#34;: 0
+        }
+    ]
+}
+</code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+              </div>
+            
+          </div>
+        
+        </div>
+      <div class="ui hidden divider"></div>
+    
+  
+
+
+      </div>
+    </div>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.1/components/accordion.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.1/components/tab.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.1/components/transition.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.1/components/popup.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.13.0/prism.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.13.0/components/prism-json.min.js"></script>
+    <script type="text/javascript">
+      $(function() {
+        $('.ui.accordion').accordion({ animateChildren: false, duration: 0 });
+        $('.content.tabbed').each(function(index) {
+          $('.ui.tabular .item', $(this)).tab({ context: $(this) });
+        });
+        $('.ui.vertical.menu').on('click', '.item', function() {
+          $('.ui.vertical.menu .item').removeClass('active');
+          $(this).addClass('active');
+        });
+        $('.ui.empty.circular.label').popup();
+      });
+    </script>
+  </body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

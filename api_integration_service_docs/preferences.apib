@@ -1,0 +1,1120 @@
+FORMAT: 1A
+HOST: http://polls.apiblueprint.org/
+
+# Insta Preferences API
+
+This document defines the API endpoints for all preferences.
+
+## Get Generic Preferences Data [/fullrepo/genericpreferences.json]
+### Get Generic Preference Data [GET]
+
+This endpoint returns data that is required by generic preference screen.
+
++ Response 200 (application/json)
+{
+  "bean": {
+    "daily_checkpoint1": "08:00:00",
+    "validate_cost_price": "N",
+    "scheduler_generate_order": "Y",
+    "default_prescribe_doctor": "Y",
+    "mobile_starting_pattern": "7,8,10,11",
+    "points_earning_amt": 0,
+    "claim_service_tax": 12,
+    "issue_to_dept_only": "Y",
+    "after_decimal_digits": 2,
+    "email_bill_printer": 1,
+    "username": "",
+    "surgery_name_required": "O",
+    "qty_default_to_issue_unit": "N",
+    "fixed_ot_charges": "N",
+    "package_uom": "AMPUL-48",
+    "show_central_excise_duty": "Y",
+    "domain_name": "",
+    "auto_close_visit": "P",
+    "upload_limit_in_mb": 10,
+    "enable_sms": "Y",
+    "is_return_against_grnno": false,
+    "autogenerate_labno": "Y",
+    "pharmacy_schedule_h_alert": "Y",
+    "sms_username": ".instahms@smscountry.net",
+    "service_name_required": "O",
+    "enable_nestloop": "Y",
+    "show_hosp_amts_pharmasales": "N",
+    "nurse_staff_ward_assignments_applicable": "N",
+    "default_consultation_print_template": "New Consultation Print",
+    "prescription_uses_stores": "Y",
+    "tooth_numbering_system": "F",
+    "deposit_receipt_print_default": "BUILTIN_HTML",
+    "sampleflow_required": "Y",
+    "bill_cancellation_requires_approval": "Y",
+    "max_collection_centers_count": null,
+    "return_validity": 155,
+    "ip_cases_across_doctors": "Y",
+    "hospital_tin": "",
+    "default_printer_for_bill_now": 1,
+    "allow_cons_qty_incr": "N",
+    "daily_checkpoint2": "20:00:00",
+    "auto_mail_po_to_sup": false,
+    "pharmacy_patient_type": "H",
+    "returns_against_specific_supplier": "N",
+    "bill_service_charge_percent": 0,
+    "pharma_return_restricted": "Y",
+    "email_bill_later_template": "CUSTOM-Web Based Bill Later Print Template",
+    "no_of_credit_debit_card_digits": 0,
+    "sample_no_generation": "P",
+    "luxary_tax_applicable_on": "B",
+    "currency_symbol": "Rs",
+    "allow_consumable_stock_negative": "Y",
+    "doctors_custom_field1": "",
+    "doctors_custom_field2": "",
+    "package_size": 48,
+    "cfd_max_count": 5,
+    "points_earning_points": 100,
+    "doctors_custom_field5": "",
+    "allow_zero_claim_amount_for_op": "Y",
+    "doctors_custom_field3": "",
+    "doctors_custom_field4": "",
+    "obsolete_eclaim_xml_schema": "",
+    "fp_authentication_url": "",
+    "menu_background_color": "",
+    "bill_later_print_default": "BILL-DET-DIA",
+    "operation_apllicable_for": "B",
+    "fin_year_end_month": 3,
+    "deposit_avalibility": "H",
+    "slida_mailslot_path": "",
+    "receive_transfer_indent": "Y",
+    "improbable_color_code": "#E18EF3",
+    "default_voucher_print": "summary",
+    "blood_exp": 0,
+    "default_po_print_template": "PO New",
+    "auth_required": true,
+    "user_name_in_bill_print": "Y",
+    "stock_inc": "M",
+    "deposit_cheque_realization_flow": "Y",
+    "shafafiya_preauth_active_obsolete": "N",
+    "port_no": 25,
+    "obsolete_default_diagnosis_code_type": "",
+    "stock_entry_agnst_do": "Y",
+    "sale_expiry": "H",
+    "po_approval_reqd_more_than_amt": 0,
+    "autogenerate_sampleid": "Y",
+    "restrict_inactive_visits": "B",
+    "consultation_reopen_time_limit": 10,
+    "sample_collection_print_type": "SL",
+    "go_live_date": "2009-12-07",
+    "consultation_validity_units": "D",
+    "check_insu_card_exp_in_sales": "Y",
+    "protocol": "smtp",
+    "diag_images": "P",
+    "auto_close_indented_casefiles": "Y",
+    "abnormal_color_code": "#FFF3B7",
+    "aggregate_amt_on_remittance": "Y",
+    "diag_report_print_center": "con",
+    "max_centers_inc_default": 20,
+    "points_redemption_rate": 0,
+    "auto_close_nocharge_op_bills": "N",
+    "validate_diagnosis_codification": "N",
+    "stock_negative_sale": "W",
+    "allow_decimals_for_qty": "Y",
+    "hosp_uses_dynamic_addresses": "Y",
+    "mobile_length_pattern": "15",
+    "shafafiya_preauth_user_id_obsolete": "",
+    "calendar_start_day": 0,
+    "mod_username": "mohitInsta",
+    "force_remarks_po_item_reject": "Y",
+    "hospital_mail_id": "customer-support@instahealthsolutions.com",
+    "warn_expiry": 300,
+    "vat_applicable": "Y",
+    "barcode_for_item": "Y",
+    "enable_force_selection_for_mrno_search": "Y",
+    "hospital_name": "",
+    "hijricalendar": "N",
+    "issue_uom": "Numbers",
+    "currency_format": "Millions",
+    "apply_supplier_tax_rules": false,
+    "google_analytics_key": "UA-84532639-1",
+    "obsolete_pharmacy_defalut_vat_rate": 5,
+    "independent_generation_of_sample_id": "N",
+    "default_prescription_web_printer": 1,
+    "dental_chart": "Y",
+    "shafafiya_user_id_obsolete": "",
+    "procurement_expiry_days": 16,
+    "use_smart_card": "Y",
+    "default_emr_print_template": "BUILTIN_HTML",
+    "po_to_be_validated": "Y",
+    "allow_zero_claim_amount_for_ip": "Y",
+    "allow_cross_center_indents": "Y",
+    "default_prescription_web_template": "Web Based Prescription Template",
+    "op_one_presc_doc": "N",
+    "emr_url_date": "D",
+    "gen_token_for_lab": "Y",
+    "pharmacy_sale_margin_in_per": 0,
+    "sales_returns_print_type": "R",
+    "max_active_hosp_users": 9999,
+    "default_printer_for_bill_later": 1,
+    "gen_token_for_rad": "Y",
+    "fin_year_start_month": 4,
+    "pharma_allow_cp_sale": "Y",
+    "allow_decimals_in_qty_for_issues": "Y",
+    "allow_only_indent_based_issue": "N",
+    "separator_type": "",
+    "shafafiya_pbm_active_obsolete": "N",
+    "host_name": "mail1.insta.lan",
+    "force_sub_group_selection": "N",
+    "mobile_number_validation": "N",
+    "expired_items_procurement": "B",
+    "whole": "Dhirams",
+    "password": "",
+    "signature_device_ip": "",
+    "pharma_auto_roundoff": "Y",
+    "default_bill_later_creditsales": "N",
+    "critical_color_code": "#FFB6B9",
+    "shafafiya_preauth_password_obsolete": "",
+    "shafafiya_password_obsolete": "",
+    "indent_approval_by": "R",
+    "normal_color_code": "#FFFFFF",
+    "pbm_price_threshold": 0,
+    "bill_now_print_default": "CUSTOM-TDS Amount",
+    "cess_applicable": "Y",
+    "apply_rateplan_discount": "Y",
+    "mobile_phone_pattern": "",
+    "email_bill_now_template": "CUSTOM-Web Based Bill Now Print Template",
+    "dhpo_facility_user_id_obsolete": "",
+    "hospital_pan": "",
+    "billing_bed_type_for_op": "BT-3",
+    "dhpo_facility_password_obsolete": "",
+    "receipt_refund_print_default": "BUILTIN_HTML",
+    "obsolete_vat_type": "C",
+    "auto_close_claims_with_difference": 0,
+    "procurement_tax_label": "G",
+    "obsolete_prescriptions_by_generics": "N",
+    "se_with_po": "N",
+    "max_dial_machine_count": null,
+    "sample_assertion": "N",
+    "default_dental_cons_print_template": "BUILTIN_TEXT",
+    "default_prescription_print_template": "Default Prescription HTML Template",
+    "seperate_pharmacy_credit_bill": "Y",
+    "allow_bill_reopen": "Y",
+    "prescribing_doctor_required": "N",
+    "show_tests_in_emr": "A",
+    "pac_validity_days": 40,
+    "hospital_address": "",
+    "allow_bill_now_insurance": "N",
+    "obsolete_rate_plan_for_non_insured_bill": "ORG0029",
+    "decimal": "",
+    "corporate_insurance": "N",
+    "allow_all_cons_types_in_reg": "Y",
+    "op_consultation_edit_across_doctors": "Y",
+    "sales_print_items": "BILLPRESCLABEL",
+    "hospital_service_regn_no": ""
+  },
+  "templateNames": [
+    {
+      "template_name": "Customized Case Sheet Print Template"
+    },
+    {
+      "template_name": "Default Prescription HTML Template"
+    },
+    {
+      "template_name": "New Consultation Print"
+    },
+    {
+      "template_name": "Web Based Prescription Template"
+    },
+    {
+      "template_name": "a html"
+    },
+    {
+      "template_name": "a text"
+    }
+  ],
+  "bedTypes": [
+    {
+      "bed_type_name": "BT-1"
+    },
+    {
+      "bed_type_name": "BT-2"
+    },
+    {
+      "bed_type_name": "BT-3"
+    },
+    {
+      "bed_type_name": "GENERAL"
+    },
+    {
+      "bed_type_name": "ICU"
+    },
+    {
+      "bed_type_name": "SEMI PRIVATE"
+    }
+  ],
+  "fileSize": [
+    {
+      "screen_logo_size": 3127869
+    }
+  ],
+  "receiptRefundTemplateList": [],
+  "countryList": [
+    {
+      "country_code": "91",
+      "country_name": "INDIA",
+      "country_id": "CM0001",
+      "status": "A"
+    }
+  ],
+  "printerDefination": [
+    {
+      "printer_id": 1,
+      "printer_definition_name": "Bill Print Settings"
+    },
+    {
+      "printer_id": 7,
+      "printer_definition_name": "Default Template Settings"
+    },
+    {
+      "printer_id": 2,
+      "printer_definition_name": "Diagnostic Report Settings"
+    },
+    {
+      "printer_id": 12,
+      "printer_definition_name": "new ruchi print"
+    }
+  ],
+  "dentalPrintTemplate": [],
+  "templateList": [
+    {
+      "template_name": "Bill_Rate_Plan_code"
+    },
+    {
+      "template_name": "DOT MATRIX"
+    },
+    {
+      "template_name": "Detail Bill Print(Merge)"
+    },
+    {
+      "template_name": "Dnlsh Bill Print"
+    },
+    {
+      "template_name": "testing"
+    }
+  ],
+  "depositReceiptRefundTemplateList": [
+    {
+      "template_name": "Deposite Template"
+    },
+    {
+      "template_name": "New Deposit Template"
+    }
+  ],
+  "poTemplates": [
+    {
+      "template_name": "PO New"
+    },
+    {
+      "template_name": "Purchase Order Print Template"
+    }
+  ],
+  "packageUOMList": [
+    {
+      "issue_uom": "CAN",
+      "package_size": 1,
+      "package_uom": "CAN"
+    },
+    {
+      "package_uom": "BOT",
+      "package_size": 1,
+      "issue_uom": "BOT"
+    },
+    {
+      "package_size": 2,
+      "package_uom": "VIAL-2",
+      "issue_uom": "Numbers"
+    },
+    {
+      "package_uom": "Unit",
+      "issue_uom": "Unit",
+      "package_size": 1
+    },
+    {
+      "issue_uom": "pair",
+      "package_uom": "pair",
+      "package_size": 1
+    },
+    {
+      "package_size": 8,
+      "package_uom": "ST-8",
+      "issue_uom": "Numbers"
+    },
+    {
+      "package_uom": "BOTTL-20",
+      "package_size": 20,
+      "issue_uom": "Numbers"
+    },
+    {
+      "package_uom": "S-20",
+      "package_size": 20,
+      "issue_uom": "Numbers"
+    },
+    {
+      "package_uom": "STRIP-20",
+      "issue_uom": "1",
+      "package_size": 20
+    },
+    {
+      "package_uom": "Box-20",
+      "package_size": 20,
+      "issue_uom": "Box"
+    },
+    {
+      "issue_uom": "test gf",
+      "package_size": 78,
+      "package_uom": "test gf"
+    }
+  ],
+  "issuePackageList": [
+    {
+      "package_uom": "BOT",
+      "package_size": 1,
+      "issue_uom": "BOT"
+    },
+    {
+      "package_size": 14,
+      "package_uom": "STRI[P-14",
+      "issue_uom": "Numbers"
+    },
+    {
+      "package_size": 10,
+      "package_uom": "ST`-10",
+      "issue_uom": "Numbers"
+    },
+    {
+      "package_size": 1,
+      "package_uom": "HOLDER",
+      "issue_uom": "HOLDER"
+    },
+    {
+      "package_size": 25,
+      "issue_uom": "KGS",
+      "package_uom": "25KG"
+    },
+    {
+      "package_uom": "STRIP-10",
+      "issue_uom": "1",
+      "package_size": 10
+    },
+    {
+      "package_size": 3,
+      "package_uom": "STRIP-3",
+      "issue_uom": "Numbers"
+    },
+    {
+      "package_uom": "lit",
+      "issue_uom": "lit",
+      "package_size": 1
+    },
+    {
+      "package_size": 15,
+      "package_uom": "STRPS-15",
+      "issue_uom": "Numbers"
+    },
+    {
+      "package_size": 32,
+      "package_uom": "Box-32",
+      "issue_uom": "Box"
+    },
+    {
+      "package_size": 25,
+      "package_uom": "STRIPS-25",
+      "issue_uom": "1"
+    },
+    {
+      "package_size": 15,
+      "package_uom": "STRIP-15",
+      "issue_uom": "Numbers"
+    },
+    {
+      "package_size": 20,
+      "package_uom": "BOTTLS-20",
+      "issue_uom": "Numbers"
+    },
+    {
+      "package_uom": "STRIP-6",
+      "package_size": 6,
+      "issue_uom": "Numbers"
+    },
+    {
+      "issue_uom": "peice",
+      "package_uom": "peice",
+      "package_size": 1
+    },
+    {
+      "package_uom": "STRIP-7",
+      "package_size": 7,
+      "issue_uom": "Numbers"
+    },
+    {
+      "package_uom": "Can-10",
+      "package_size": 10,
+      "issue_uom": "Can"
+    },
+    {
+      "package_uom": "STRIP-9",
+      "package_size": 9,
+      "issue_uom": "Numbers"
+    },
+    {
+      "package_uom": "Package UOM: ",
+      "issue_uom": "10",
+      "package_size": 10
+    },
+    {
+      "package_uom": "ST-20",
+      "issue_uom": "1",
+      "package_size": 20
+    },
+    {
+      "package_uom": "INJ",
+      "issue_uom": "INJ",
+      "package_size": 1
+    },
+    {
+      "package_uom": "ST-10",
+      "package_size": 10,
+      "issue_uom": "Numbers"
+    },
+    {
+      "package_size": 15,
+      "package_uom": "BOTTLE-15",
+      "issue_uom": "1"
+    },
+    {
+      "package_uom": "Dialyser",
+      "issue_uom": "Dialyser",
+      "package_size": 1
+    },
+    {
+      "issue_uom": "UNIT",
+      "package_size": 1,
+      "package_uom": "UNIT"
+    },
+    {
+      "package_uom": "Box-20",
+      "package_size": 20,
+      "issue_uom": "Box"
+    },
+    {
+      "package_size": 8,
+      "package_uom": "STRIP-8",
+      "issue_uom": "Numbers"
+    },
+    {
+      "issue_uom": "1",
+      "package_size": 10,
+      "package_uom": "STRIPS-10"
+    },
+    {
+      "package_size": 100,
+      "package_uom": "Bottle-100",
+      "issue_uom": "Strips"
+    },
+    {
+      "package_uom": "Numbers",
+      "package_size": 1,
+      "issue_uom": "Numbers"
+    },
+    {
+      "package_uom": "500 ML bottles",
+      "issue_uom": "500 ML bottles",
+      "package_size": 1
+    },
+    {
+      "package_size": 60,
+      "issue_uom": "1",
+      "package_uom": "BOTTLE-60"
+    },
+    {
+      "package_size": 100,
+      "package_uom": "BOTTLE-100",
+      "issue_uom": "Numbers"
+    },
+    {
+      "package_uom": "Can-5",
+      "package_size": 5,
+      "issue_uom": "Ltrs"
+    },
+    {
+      "issue_uom": "CAN",
+      "package_size": 1,
+      "package_uom": "CAN"
+    },
+    {
+      "package_size": 31,
+      "package_uom": "ST-31",
+      "issue_uom": "Numbers"
+    },
+    {
+      "package_uom": "SHEET",
+      "issue_uom": "SHEET",
+      "package_size": 1
+    },
+    {
+      "package_size": 25,
+      "package_uom": "Box-25",
+      "issue_uom": "Box"
+    },
+    {
+      "package_size": 12,
+      "issue_uom": "Roll",
+      "package_uom": "Roll-12"
+    },
+    {
+      "package_uom": "VIAL-10",
+      "package_size": 10,
+      "issue_uom": "Numbers"
+    },
+    {
+      "package_uom": "ST-30",
+      "package_size": 30,
+      "issue_uom": "1"
+    },
+    {
+      "package_uom": "TRAY",
+      "package_size": 1,
+      "issue_uom": "TRAY"
+    },
+    {
+      "package_uom": "PEICE",
+      "issue_uom": "PEICE",
+      "package_size": 1
+    },
+    {
+      "package_size": 15,
+      "package_uom": "ST-15",
+      "issue_uom": "1"
+    },
+    {
+      "package_size": 4,
+      "package_uom": "STRIP-4",
+      "issue_uom": "Numbers"
+    },
+    {
+      "package_uom": "Box-200",
+      "package_size": 200,
+      "issue_uom": "Box"
+    },
+    {
+      "package_size": 50,
+      "package_uom": "Box-50",
+      "issue_uom": "Box"
+    },
+    {
+      "package_size": 60,
+      "package_uom": "BOTTLES-60",
+      "issue_uom": "Numbers"
+    },
+    {
+      "package_uom": "STRIP-28",
+      "package_size": 28,
+      "issue_uom": "Numbers"
+    },
+    {
+      "package_uom": "STRI[P-10",
+      "package_size": 10,
+      "issue_uom": "Numbers"
+    },
+    {
+      "package_uom": "tube",
+      "issue_uom": "tube",
+      "package_size": 1
+    },
+    {
+      "package_uom": "pcs",
+      "issue_uom": "pcs",
+      "package_size": 1
+    },
+    {
+      "package_size": 100,
+      "issue_uom": "1",
+      "package_uom": "BOTTLE-100"
+    }
+  ],
+  "defaultPrinterStyling": [
+    {
+      "footer2": "#1, Sapthagiri Garden, Solai Nagar Main Road,",
+      "duplicate_watermark": null,
+      "footer1": "DAVITA NEPHROLIFE - PMM",
+      "pre_final_watermark": "",
+      "print_type": "Bill",
+      "center_id": 8,
+      "footer3": "Muthialpet, Puducherry - 605 003. Ph: 0413 - 2235734",
+      "header3": "",
+      "header2": "",
+      "header1": "",
+      "printer_id": 1
+    }
+  ],
+  "issueUOMList": [
+    {
+      "issue_uom": "1"
+    },
+    {
+      "issue_uom": "10"
+    },
+    {
+      "issue_uom": "15"
+    },
+    {
+      "issue_uom": "PAIR"
+    },
+    {
+      "issue_uom": "PCS"
+    },
+    {
+      "issue_uom": "TRAY"
+    },
+    {
+      "issue_uom": "TUBE"
+    },
+    {
+      "issue_uom": "Tube"
+    },
+    {
+      "issue_uom": "UNIT"
+    },
+    {
+      "issue_uom": "Unit"
+    },
+    {
+      "issue_uom": "pair"
+    },
+    {
+      "issue_uom": "unit"
+    }
+  ]
+}
+
+## Update Generic Preferences Data [/fullrepo/genericpreferences/update.json]
+### Post Generic Preference Data [POST]
+
+This end point update the generic preference data.
+
++ Request (multipart/form-data)
+    {    
+        "points_earning_points": 0,
+        "daily_checkpoint1": "08:00:00",
+        "validate_cost_price": "N",
+        "scheduler_generate_order": "Y",
+        "default_prescribe_doctor": "Y",
+        "points_earning_amt": 0,
+        "issue_to_dept_only": "Y",
+        "after_decimal_digits": 2,
+        "email_bill_printer": 1,
+        "username": "",
+        "surgery_name_required": "O",
+        "qty_default_to_issue_unit": "N",
+        "fixed_ot_charges": "N",
+        "show_central_excise_duty": "Y",
+        "domain_name": "",
+        "auto_close_visit": "P",
+        "upload_limit_in_mb": 10,
+        "enable_sms": "Y",
+        "is_return_against_grnno": false,
+        "autogenerate_labno": "Y",
+        "sms_username": ".instahms@smscountry.net",
+        "service_name_required": "O",
+        "enable_nestloop": "Y",
+        "show_hosp_amts_pharmasales": "N",
+        "warn_expiry": 30,
+        "claim_service_tax": 10.3,
+        "nurse_staff_ward_assignments_applicable": "N",
+        "prescription_uses_stores": "Y",
+        "tooth_numbering_system": "F",
+        "deposit_receipt_print_default": "BUILTIN_HTML",
+        "default_printer_for_bill_now": 8,
+        "sampleflow_required": "Y",
+        "bill_cancellation_requires_approval": "Y",
+        "max_collection_centers_count": null,
+        "pharmacy_patient_type": "Y",
+        "ip_cases_across_doctors": "Y",
+        "hospital_tin": "",
+        "whole": "Rupees",
+        "allow_cons_qty_incr": "N",
+        "daily_checkpoint2": "20:00:00",
+        "auto_mail_po_to_sup": false,
+        "returns_against_specific_supplier": "N",
+        "bill_service_charge_percent": 0,
+        "pharma_return_restricted": "Y",
+        "email_bill_later_template": "CUSTOM-Web Based Bill Later Print Template",
+        "bill_later_print_default": "CUSTOM-Detail Bill Print(Merge)",
+        "no_of_credit_debit_card_digits": 0,
+        "sample_no_generation": "P",
+        "luxary_tax_applicable_on": "B",
+        "currency_symbol": "Rs",
+        "allow_consumable_stock_negative": "Y",
+        "doctors_custom_field1": "",
+        "doctors_custom_field2": "",
+        "cfd_max_count": 5,
+        "doctors_custom_field5": "",
+        "allow_zero_claim_amount_for_op": "Y",
+        "blood_exp": 91,
+        "doctors_custom_field3": "",
+        "doctors_custom_field4": "",
+        "obsolete_eclaim_xml_schema": "",
+        "fp_authentication_url": "",
+        "menu_background_color": "",
+        "operation_apllicable_for": "B",
+        "fin_year_end_month": 3,
+        "deposit_avalibility": "H",
+        "slida_mailslot_path": "",
+        "receive_transfer_indent": "Y",
+        "improbable_color_code": "#E18EF3",
+        "default_voucher_print": "summary",
+        "default_po_print_template": "PO New",
+        "auth_required": true,
+        "user_name_in_bill_print": "Y",
+        "stock_inc": "M",
+        "deposit_cheque_realization_flow": "Y",
+        "shafafiya_preauth_active_obsolete": "N",
+        "port_no": 25,
+        "obsolete_default_diagnosis_code_type": "",
+        "stock_entry_agnst_do": "Y",
+        "sale_expiry": "H",
+        "po_approval_reqd_more_than_amt": 0,
+        "billing_bed_type_for_op": "GENERAL",
+        "autogenerate_sampleid": "Y",
+        "restrict_inactive_visits": "B",
+        "sample_collection_print_type": "SL",
+        "go_live_date": "2009-12-07",
+        "consultation_validity_units": "D",
+        "check_insu_card_exp_in_sales": "Y",
+        "default_prescription_print_template": "BUILTIN_HTML",
+        "protocol": "smtp",
+        "auto_close_indented_casefiles": "Y",
+        "abnormal_color_code": "#FFF3B7",
+        "aggregate_amt_on_remittance": "Y",
+        "max_centers_inc_default": 20,
+        "points_redemption_rate": 0,
+        "auto_close_nocharge_op_bills": "N",
+        "return_validity": 6,
+        "mobile_starting_pattern": "7,8,10",
+        "pharmacy_schedule_h_alert": "N",
+        "validate_diagnosis_codification": "N",
+        "allow_decimals_for_qty": "Y",
+        "mobile_length_pattern": "11",
+        "hosp_uses_dynamic_addresses": "Y",
+        "shafafiya_preauth_user_id_obsolete": "",
+        "calendar_start_day": 0,
+        "stock_negative_sale": "D",
+        "diag_images": "T",
+        "mod_username": "mohitInsta",
+        "force_remarks_po_item_reject": "Y",
+        "diag_report_print_center": "col",
+        "hospital_mail_id": "customer-support@instahealthsolutions.com",
+        "currency_format": "Lakhs",
+        "vat_applicable": "Y",
+        "barcode_for_item": "Y",
+        "issue_uom": "1",
+        "enable_force_selection_for_mrno_search": "Y",
+        "default_consultation_print_template": "BUILTIN_HTML",
+        "apply_supplier_tax_rules": false,
+        "google_analytics_key": "UA-84532639-1",
+        "obsolete_pharmacy_defalut_vat_rate": 5,
+        "decimal": "Paise",
+        "independent_generation_of_sample_id": "N",
+        "hijricalendar": "Y",
+        "default_prescription_web_printer": 1,
+        "dental_chart": "Y",
+        "shafafiya_user_id_obsolete": "",
+        "procurement_expiry_days": 16,
+        "bill_now_print_default": "CUSTOM-Detail Bill Print(Merge)",
+        "use_smart_card": "Y",
+        "default_emr_print_template": "BUILTIN_HTML",
+        "package_uom": "Package UOM: ",
+        "po_to_be_validated": "Y",
+        "hospital_name": "Davita Nephrolife India Pvt. Ltd.",
+        "allow_zero_claim_amount_for_ip": "Y",
+        "allow_cross_center_indents": "Y",
+        "emr_url_date": "V",
+        "default_prescription_web_template": "Web Based Prescription Template",
+        "op_one_presc_doc": "N",
+        "gen_token_for_lab": "Y",
+        "pharmacy_sale_margin_in_per": 0,
+        "sales_returns_print_type": "R",
+        "max_active_hosp_users": 9999,
+        "default_printer_for_bill_later": 1,
+        "default_dental_cons_print_template": "BUILTIN_HTML",
+        "gen_token_for_rad": "Y",
+        "fin_year_start_month": 4,
+        "pharma_allow_cp_sale": "Y",
+        "allow_decimals_in_qty_for_issues": "Y",
+        "allow_only_indent_based_issue": "N",
+        "separator_type": "",
+        "shafafiya_pbm_active_obsolete": "N",
+        "host_name": "mail1.insta.lan",
+        "force_sub_group_selection": "N",
+        "expired_items_procurement": "B",
+        "mobile_number_validation": "Y",
+        "password": "",
+        "signature_device_ip": "",
+        "pharma_auto_roundoff": "Y",
+        "default_bill_later_creditsales": "N",
+        "critical_color_code": "#FFB6B9",
+        "shafafiya_preauth_password_obsolete": "",
+        "shafafiya_password_obsolete": "",
+        "indent_approval_by": "R",
+        "normal_color_code": "#FFFFFF",
+        "pbm_price_threshold": 0,
+        "cess_applicable": "Y",
+        "apply_rateplan_discount": "Y",
+        "mobile_phone_pattern": "",
+        "package_size": 10,
+        "email_bill_now_template": "CUSTOM-Web Based Bill Now Print Template",
+        "dhpo_facility_user_id_obsolete": "",
+        "hospital_pan": "",
+        "dhpo_facility_password_obsolete": "",
+        "receipt_refund_print_default": "BUILTIN_HTML",
+        "obsolete_vat_type": "C",
+        "auto_close_claims_with_difference": 0,
+        "obsolete_prescriptions_by_generics": "N",
+        "se_with_po": "N",
+        "max_dial_machine_count": null,
+        "sample_assertion": "N",
+        "seperate_pharmacy_credit_bill": "Y",
+        "allow_bill_reopen": "Y",
+        "prescribing_doctor_required": "N",
+        "show_tests_in_emr": "A",
+        "pac_validity_days": 40,
+        "hospital_address": "",
+        "allow_bill_now_insurance": "N",
+        "obsolete_rate_plan_for_non_insured_bill": "ORG0029",
+        "corporate_insurance": "N",
+        "allow_all_cons_types_in_reg": "Y",
+        "op_consultation_edit_across_doctors": "Y",
+        "sales_print_items": "BILLPRESCLABEL",
+        "consultation_reopen_time_limit": 10000,
+        "hospital_service_regn_no": "",
+        "procurement_tax_label": "V"
+    }
+        
++ Response 200 (application/json)
+
+    {
+        "points_earning_points": 0,
+        "daily_checkpoint1": "08:00:00",
+        "validate_cost_price": "N",
+        "scheduler_generate_order": "Y",
+        "default_prescribe_doctor": "Y",
+        "points_earning_amt": 0,
+        "issue_to_dept_only": "Y",
+        "after_decimal_digits": 2,
+        "email_bill_printer": 1,
+        "username": "",
+        "surgery_name_required": "O",
+        "qty_default_to_issue_unit": "N",
+        "fixed_ot_charges": "N",
+        "show_central_excise_duty": "Y",
+        "domain_name": "",
+        "auto_close_visit": "P",
+        "upload_limit_in_mb": 10,
+        "enable_sms": "Y",
+        "is_return_against_grnno": false,
+        "autogenerate_labno": "Y",
+        "sms_username": ".instahms@smscountry.net",
+        "service_name_required": "O",
+        "enable_nestloop": "Y",
+        "show_hosp_amts_pharmasales": "N",
+        "warn_expiry": 30,
+        "claim_service_tax": 10.3,
+        "nurse_staff_ward_assignments_applicable": "N",
+        "prescription_uses_stores": "Y",
+        "tooth_numbering_system": "F",
+        "deposit_receipt_print_default": "BUILTIN_HTML",
+        "default_printer_for_bill_now": 8,
+        "sampleflow_required": "Y",
+        "bill_cancellation_requires_approval": "Y",
+        "max_collection_centers_count": null,
+        "pharmacy_patient_type": "Y",
+        "ip_cases_across_doctors": "Y",
+        "hospital_tin": "",
+        "whole": "Rupees",
+        "allow_cons_qty_incr": "N",
+        "daily_checkpoint2": "20:00:00",
+        "auto_mail_po_to_sup": false,
+        "returns_against_specific_supplier": "N",
+        "bill_service_charge_percent": 0,
+        "pharma_return_restricted": "Y",
+        "email_bill_later_template": "CUSTOM-Web Based Bill Later Print Template",
+        "bill_later_print_default": "CUSTOM-Detail Bill Print(Merge)",
+        "no_of_credit_debit_card_digits": 0,
+        "sample_no_generation": "P",
+        "luxary_tax_applicable_on": "B",
+        "currency_symbol": "Rs",
+        "allow_consumable_stock_negative": "Y",
+        "doctors_custom_field1": "",
+        "doctors_custom_field2": "",
+        "cfd_max_count": 5,
+        "doctors_custom_field5": "",
+        "allow_zero_claim_amount_for_op": "Y",
+        "blood_exp": 91,
+        "doctors_custom_field3": "",
+        "doctors_custom_field4": "",
+        "obsolete_eclaim_xml_schema": "",
+        "fp_authentication_url": "",
+        "menu_background_color": "",
+        "operation_apllicable_for": "B",
+        "fin_year_end_month": 3,
+        "deposit_avalibility": "H",
+        "slida_mailslot_path": "",
+        "receive_transfer_indent": "Y",
+        "improbable_color_code": "#E18EF3",
+        "default_voucher_print": "summary",
+        "default_po_print_template": "PO New",
+        "auth_required": true,
+        "user_name_in_bill_print": "Y",
+        "stock_inc": "M",
+        "deposit_cheque_realization_flow": "Y",
+        "shafafiya_preauth_active_obsolete": "N",
+        "port_no": 25,
+        "obsolete_default_diagnosis_code_type": "",
+        "stock_entry_agnst_do": "Y",
+        "sale_expiry": "H",
+        "po_approval_reqd_more_than_amt": 0,
+        "billing_bed_type_for_op": "GENERAL",
+        "autogenerate_sampleid": "Y",
+        "restrict_inactive_visits": "B",
+        "sample_collection_print_type": "SL",
+        "go_live_date": "2009-12-07",
+        "consultation_validity_units": "D",
+        "check_insu_card_exp_in_sales": "Y",
+        "default_prescription_print_template": "BUILTIN_HTML",
+        "protocol": "smtp",
+        "auto_close_indented_casefiles": "Y",
+        "abnormal_color_code": "#FFF3B7",
+        "aggregate_amt_on_remittance": "Y",
+        "max_centers_inc_default": 20,
+        "points_redemption_rate": 0,
+        "auto_close_nocharge_op_bills": "N",
+        "return_validity": 6,
+        "mobile_starting_pattern": "7,8,10",
+        "pharmacy_schedule_h_alert": "N",
+        "validate_diagnosis_codification": "N",
+        "allow_decimals_for_qty": "Y",
+        "mobile_length_pattern": "11",
+        "hosp_uses_dynamic_addresses": "Y",
+        "shafafiya_preauth_user_id_obsolete": "",
+        "calendar_start_day": 0,
+        "stock_negative_sale": "D",
+        "diag_images": "T",
+        "mod_username": "mohitInsta",
+        "force_remarks_po_item_reject": "Y",
+        "diag_report_print_center": "col",
+        "hospital_mail_id": "customer-support@instahealthsolutions.com",
+        "currency_format": "Lakhs",
+        "vat_applicable": "Y",
+        "barcode_for_item": "Y",
+        "issue_uom": "1",
+        "enable_force_selection_for_mrno_search": "Y",
+        "default_consultation_print_template": "BUILTIN_HTML",
+        "apply_supplier_tax_rules": false,
+        "google_analytics_key": "UA-84532639-1",
+        "obsolete_pharmacy_defalut_vat_rate": 5,
+        "decimal": "Paise",
+        "independent_generation_of_sample_id": "N",
+        "hijricalendar": "Y",
+        "default_prescription_web_printer": 1,
+        "dental_chart": "Y",
+        "shafafiya_user_id_obsolete": "",
+        "procurement_expiry_days": 16,
+        "bill_now_print_default": "CUSTOM-Detail Bill Print(Merge)",
+        "use_smart_card": "Y",
+        "default_emr_print_template": "BUILTIN_HTML",
+        "package_uom": "Package UOM: ",
+        "po_to_be_validated": "Y",
+        "hospital_name": "Davita Nephrolife India Pvt. Ltd.",
+        "allow_zero_claim_amount_for_ip": "Y",
+        "allow_cross_center_indents": "Y",
+        "emr_url_date": "V",
+        "default_prescription_web_template": "Web Based Prescription Template",
+        "op_one_presc_doc": "N",
+        "gen_token_for_lab": "Y",
+        "pharmacy_sale_margin_in_per": 0,
+        "sales_returns_print_type": "R",
+        "max_active_hosp_users": 9999,
+        "default_printer_for_bill_later": 1,
+        "default_dental_cons_print_template": "BUILTIN_HTML",
+        "gen_token_for_rad": "Y",
+        "fin_year_start_month": 4,
+        "pharma_allow_cp_sale": "Y",
+        "allow_decimals_in_qty_for_issues": "Y",
+        "allow_only_indent_based_issue": "N",
+        "separator_type": "",
+        "shafafiya_pbm_active_obsolete": "N",
+        "host_name": "mail1.insta.lan",
+        "force_sub_group_selection": "N",
+        "expired_items_procurement": "B",
+        "mobile_number_validation": "Y",
+        "password": "",
+        "signature_device_ip": "",
+        "pharma_auto_roundoff": "Y",
+        "default_bill_later_creditsales": "N",
+        "critical_color_code": "#FFB6B9",
+        "shafafiya_preauth_password_obsolete": "",
+        "shafafiya_password_obsolete": "",
+        "indent_approval_by": "R",
+        "normal_color_code": "#FFFFFF",
+        "pbm_price_threshold": 0,
+        "cess_applicable": "Y",
+        "apply_rateplan_discount": "Y",
+        "mobile_phone_pattern": "",
+        "package_size": 10,
+        "email_bill_now_template": "CUSTOM-Web Based Bill Now Print Template",
+        "dhpo_facility_user_id_obsolete": "",
+        "hospital_pan": "",
+        "dhpo_facility_password_obsolete": "",
+        "receipt_refund_print_default": "BUILTIN_HTML",
+        "obsolete_vat_type": "C",
+        "auto_close_claims_with_difference": 0,
+        "obsolete_prescriptions_by_generics": "N",
+        "se_with_po": "N",
+        "max_dial_machine_count": null,
+        "sample_assertion": "N",
+        "seperate_pharmacy_credit_bill": "Y",
+        "allow_bill_reopen": "Y",
+        "prescribing_doctor_required": "N",
+        "show_tests_in_emr": "A",
+        "pac_validity_days": 40,
+        "hospital_address": "",
+        "allow_bill_now_insurance": "N",
+        "obsolete_rate_plan_for_non_insured_bill": "ORG0029",
+        "corporate_insurance": "N",
+        "allow_all_cons_types_in_reg": "Y",
+        "op_consultation_edit_across_doctors": "Y",
+        "sales_print_items": "BILLPRESCLABEL",
+        "consultation_reopen_time_limit": 10000,
+        "hospital_service_regn_no": "",
+        "procurement_tax_label": "V",
+        "screen_logo_size" : "16969"
+    }
+
+
+## Delete Screen Logo [/fullrepo/genericpreferences/delete.json]
+### Delete Screen Logo [DELETE]
+
+ This end point deletes the screen logo.   
++ Response 200 (application/json)
+
+    {
+        "status": "true"
+    }
+    
+## View Screen Logo [/fullrepo/genericpreferences/view.json]
+### View Screen Logo [GET]
+
+This end point retuns the screen logo.
++ Response 200 (image/gif)
+    
+        /9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0a
+        HBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIy
+        MjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCAABAAEDASIA
+        AhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAf/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFAEB
+        AAAAAAAAAAAAAAAAAAAAAP/EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAMAwEAAhEDEQA/AL+AD//Z

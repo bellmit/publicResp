@@ -1,0 +1,240 @@
+{
+    "title": "Dental Supplies Report",
+    "reportGroup": "Dental Reports",
+    "description": "This report shows Dental Supplies Details within the given date range.",
+    "dateFields": [
+        "ordered_date"
+    ],
+    "allowNoDate": true,
+    "defaultOrder": "mr_no",
+    "defaultShowFields": [
+        "mr_no",
+        "full_name",
+        "item_name",
+        "shade",
+        "item_rate",
+        "item_qty",
+        "order_by_name",
+        "received_by",
+        "received_date",
+        "total_item_cost"
+    ],
+    "includes": [
+        "PatientDetailFields.srjs"
+    ],
+    "fields": {
+        "item_name": {
+            "displayName": "Supply Item",
+            "width": "100",
+            "groupable": true,
+            "filterable": true,
+            "table": "item"
+        },
+        "shade": {
+            "displayName": "Item Shade",
+            "width": "50",
+            "expression": "shades.shade_name",
+            "table": "shades",
+            "filterable": true
+        },
+        "item_rate": {
+            "displayName": "Item Unit Rate",
+            "width": "42",
+            "expression": "dsi.unit_rate",
+            "table": "dsi"
+        },
+        "vat_perc": {
+            "displayName": "Item Tax Perc",
+            "width": "40",
+            "expression": "dsi.vat_perc",
+            "table": "dsi",
+            "filterable": true,
+            "groupable": true,
+            "dataType": "numeric"
+        },
+        "vat_amt": {
+            "displayName": "Item Tax Amt",
+            "width": "40",
+            "expression": "(dsi.item_qty*dsi.unit_rate)*dsi.vat_perc/100",
+            "aggFunction": "sum",
+            "allowHorizGroup": true,
+            "allowNull": false,
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "table": "dsi"
+        },
+        "order_by_name": {
+            "displayName": "Supply Item Order By",
+            "width": "70",
+            "filterable": true,
+            "groupable": true,
+            "expression": "pdoc.doctor_name",
+            "table": "pdoc"
+        },
+        "ordered_date": {
+            "dataType": "date",
+            "displayName": "Supply Item Ordered Date",
+            "expression": " date(dso.ordered_date) ",
+            "filterable": true,
+            "groupable": true,
+            "table": "dso",
+            "width": 60
+        },
+        "received_by": {
+            "displayName": "Supply Item Received By",
+            "width": "70",
+            "filterable": true,
+            "groupable": true,
+            "expression": "rdoc.doctor_name",
+            "table": "rdoc"
+        },
+        "supplies_order_status": {
+            "displayName": "Supply Item Ordered Status",
+            "width": "50",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValues": [
+                "Ordered",
+                "Completed",
+                "Partial",
+                "Cancelled"
+            ],
+            "expressionLines": [
+                "CASE WHEN supplies_order_status='O' THEN 'Ordered' WHEN supplies_order_status='C' THEN 'Completed' ",
+                " WHEN supplies_order_status='P' THEN 'Partial' ELSE 'Cancelled' END"
+            ],
+            "table": "dso"
+        },
+        "received_date": {
+            "dataType": "date",
+            "displayName": "Supply Item Received Date",
+            "expression": " date(dsi.received_date) ",
+            "filterable": true,
+            "groupable": true,
+            "table": "dsi",
+            "width": 60
+        },
+        "order_fullfill_time": {
+            "displayName": "Order Fullfill Time",
+            "expression": "dsi.received_date - dso.ordered_date",
+            "width": 60,
+            "table": "dso,dsi"
+        },
+        "supplier_name": {
+            "displayName": "Supplier Name",
+            "expression": "dsm.supplier_name",
+            "width": 100,
+            "filterable": true,
+            "allowedValuesQuery": "SELECT supplier_name FROM dental_supplier_master GROUP BY supplier_name",
+            "groupable": true,
+            "table": "dsm"
+        },
+        "item_qty": {
+            "displayName": "Order Qty",
+            "expression": "dsi.item_qty",
+            "width": 50,
+            "table": "dsi",
+            "filterable": true,
+            "groupable": true,
+            "dataType": "integer"
+        },
+        "received_qty": {
+            "displayName": "Rec. Qty",
+            "expression": "dsi.received_qty",
+            "width": 50,
+            "table": "dsi",
+            "filterable": true,
+            "groupable": true,
+            "dataType": "integer"
+        },
+        "supplies_order_id": {
+            "displayName": "Supplies Order No.",
+            "expression": "dso.supplies_order_id",
+            "width": "60",
+            "table": "dso"
+        },
+        "total_item_cost": {
+            "displayName": "Item Total",
+            "expression": "(dsi.item_qty*dsi.unit_rate) + ((dsi.item_qty*dsi.unit_rate)*dsi.vat_perc/100)",
+            "aggFunction": "sum",
+            "allowHorizGroup": true,
+            "allowNull": false,
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "table": "dsi"
+        },
+        "center_id": {
+            "displayName": "Order Center",
+            "expression": "hcm.center_name",
+            "width": "70",
+            "table": "hcm",
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "select center_name from hospital_center_master group by center_name"
+        }
+    },
+    "queryUnits": [
+        {
+            "mainTableAlias": "dso",
+            "mainTableName": "dental_supplies_order",
+            "groupBy": false,
+            "joinTables": [
+                {
+                    "name": "patient_details",
+                    "alias": "pd",
+                    "expression": "ON (dso.mr_no = pd.mr_no)",
+                    "dependsOn": "dso",
+                    "type": "JOIN"
+                },
+                {
+                    "name": "dental_supplies_items",
+                    "alias": "dsi",
+                    "expression": "ON (dso.supplies_order_id = dsi.supplies_order_id)",
+                    "dependsOn": "dso",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "dental_supplier_master",
+                    "alias": "dsm",
+                    "expression": "ON (dsm.supplier_id=dso.supplier_id)",
+                    "dependsOn": "dso",
+                    "type": "JOIN"
+                },
+                {
+                    "name": "dental_supplies_master",
+                    "alias": "item",
+                    "dependsOn": "dsi",
+                    "expression": "ON (dsi.item_id=item.item_id)",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "doctors",
+                    "alias": "pdoc",
+                    "expression": "ON (dso.ordered_by = pdoc.doctor_id)",
+                    "dependsOn": "dso",
+                    "type": "JOIN"
+                },
+                {
+                    "name": "doctors",
+                    "alias": "rdoc",
+                    "expression": "ON (dsi.received_by = rdoc.doctor_id)",
+                    "dependsOn": "dsi",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "dental_shades_master",
+                    "alias": "shades",
+                    "expression": "ON (dsi.shade_id=shades.shade_id)",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "hospital_center_master",
+                    "alias": "hcm",
+                    "expression": "ON (dso.center_id=hcm.center_id)",
+                    "type": "JOIN"
+                }
+            ]
+        }
+    ]
+}

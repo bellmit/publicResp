@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="HVFDocumentPrint" pageWidth="595" pageHeight="842" columnWidth="490" leftMargin="75" rightMargin="30" topMargin="100" bottomMargin="40">
+	<parameter name="doc_id" class="java.lang.Integer"/>
+	<parameter name="printerId" class="java.lang.Integer"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
+	<parameter name="center_id" class="java.lang.Integer" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new Integer(0)]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select pgd.patient_id, pgd.mr_no,
+pgd.doc_name,pgd.doc_date, dht.template_name, dht.title, dhtf.field_name, phdv.field_value
+from patient_general_docs pgd
+left outer join patient_documents phd on pgd.doc_id=phd.doc_id
+left outer join patient_hvf_doc_values phdv on phd.doc_id=phdv.doc_id
+left outer join doc_hvf_templates dht on dht.template_id=phd.template_id
+left outer join doc_hvf_template_fields  dhtf on dhtf.field_id=phdv.field_id
+where pgd.doc_id=$P!{doc_id} and phdv.field_value is not null and phdv.field_value!=''
+order by dhtf.display_order]]>
+	</queryString>
+	<field name="patient_id" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="mr_no" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="doc_name" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="doc_date" class="java.sql.Date">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="template_name" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="title" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="field_name" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="field_value" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<group name="documentdetailsgroup">
+		<groupExpression><![CDATA[$F{doc_name}]]></groupExpression>
+		<groupHeader>
+			<band height="41">
+				<textField isStretchWithOverflow="true">
+					<reportElement isPrintRepeatedValues="false" x="0" y="5" width="473" height="20" isPrintWhenDetailOverflows="true"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="14" isBold="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{title}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement mode="Transparent" x="321" y="25" width="73" height="13"/>
+					<textElement verticalAlignment="Bottom">
+						<font size="9" pdfFontName="Helvetica"/>	
+					</textElement>
+					<text><![CDATA[Document Date:]]></text>
+				</staticText>
+				<textField>
+					<reportElement mode="Transparent" x="399" y="25" width="73" height="13"/>
+					<textElement verticalAlignment="Bottom">
+						<font size="9" pdfFontName="Helvetica"/>	
+					</textElement>
+					<textFieldExpression class="java.util.Date"><![CDATA[$F{doc_date}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<background>
+		<band/>
+	</background>
+	<title>
+		<band/>
+	</title>
+	<pageHeader>
+		<band height="65">
+			<subreport isUsingCache="true">
+				<reportElement key="subreport-1" x="-72" y="-100" width="589" height="110"/>
+				<subreportParameter name="type">
+					<subreportParameterExpression><![CDATA["Discharge"]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="printerId">
+					<subreportParameterExpression><![CDATA[$P{printerId}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="center_id">
+					<subreportParameterExpression><![CDATA[$P{center_id}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR}+"/PrintmasterHeader.jasper"]]></subreportExpression>
+			</subreport>
+			<subreport isUsingCache="true">
+				<reportElement key="subreport-6" x="-2" y="10" width="474" height="53" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[new Boolean(($F{patient_id}==null || $F{patient_id}.equals(""))
+    &&$F{mr_no}!=null)]]></printWhenExpression>
+				</reportElement>
+				<subreportParameter name="mr_no">
+					<subreportParameterExpression><![CDATA[$F{mr_no}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "/PatientDetail.jasper"]]></subreportExpression>
+			</subreport>
+			<subreport isUsingCache="true">
+				<reportElement key="subreport-6" x="-2" y="13" width="474" height="50" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[new Boolean($F{patient_id}!=null && !$F{patient_id}.equals(""))]]></printWhenExpression>
+				</reportElement>
+				<subreportParameter name="patientid">
+					<subreportParameterExpression><![CDATA[$F{patient_id}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "/GeneralPatientDetails.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="52">
+			<printWhenExpression><![CDATA[new Boolean($F{template_name}!=null)]]></printWhenExpression>
+			<textField>
+				<reportElement mode="Opaque" x="1" y="8" width="480" height="16"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{field_name}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement mode="Transparent" x="9" y="30" width="464" height="20"/>
+				<textElement>
+					<font size="9" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{field_value}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="20">
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="6" y="0" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.util.Date"><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="328" y="0" width="80" height="20"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.String"><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="412" y="0" width="40" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="42"/>
+	</summary>
+</jasperReport>

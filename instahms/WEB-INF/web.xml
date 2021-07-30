@@ -1,0 +1,378 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+
+<web-app xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" version="3.0">
+
+	<!-- Note : distributable needs to be the first entry and is required for load balancing -->
+  <distributable/>
+    <listener>
+        <listener-class>
+            com.sun.xml.ws.transport.http.servlet.WSServletContextListener
+        </listener-class>
+        <listener-class>
+            org.springframework.web.context.ContextLoaderListener
+        </listener-class>
+        <listener-class>
+        	com.insta.hms.common.SessionListener
+        </listener-class>
+    </listener>
+<!-- This should be the first filter in the chain, so that character encoding
+	is set before getParameter() is called on the request object by any other
+	filter -->
+  <filter>
+    <filter-name>CharacterEncodingFilter</filter-name>
+    <filter-class>com.insta.hms.common.CharacterEncodingFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>CharacterEncodingFilter</filter-name>
+    <url-pattern>*.do</url-pattern>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>CharacterEncodingFilter</filter-name>
+    <url-pattern>*.htm</url-pattern>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>CharacterEncodingFilter</filter-name>
+    <url-pattern>*.json</url-pattern>
+  </filter-mapping>
+
+  <filter>
+    <filter-name>FlashFilter</filter-name>
+    <filter-class>com.insta.hms.common.FlashFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>FlashFilter</filter-name>
+    <url-pattern>*.do</url-pattern>
+  </filter-mapping>
+
+  <filter>
+    <filter-name>NewRelicIgnoreTransactionFilter</filter-name>
+    <filter-class>com.insta.hms.common.NewRelicIgnoreTransactionFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>NewRelicIgnoreTransactionFilter</filter-name>
+    <servlet-name>default</servlet-name>
+  </filter-mapping>
+
+  <filter>
+    <filter-name>RequestContextFilter</filter-name>
+    <filter-class>com.bob.hms.common.RequestContextFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>RequestContextFilter</filter-name>
+    <url-pattern>*.do</url-pattern>
+  </filter-mapping>
+
+  <filter-mapping>
+    <filter-name>RequestContextFilter</filter-name>
+    <url-pattern>*.htm</url-pattern>
+  </filter-mapping>
+
+  <filter-mapping>
+    <filter-name>RequestContextFilter</filter-name>
+    <url-pattern>*.json</url-pattern>
+  </filter-mapping>
+
+<!--   REMOVE_FOR_AD_AUTHENTICATION
+   <filter>
+       <filter-name>SpnegoHttpFilter</filter-name>
+       <filter-class>net.sourceforge.spnego.SpnegoHttpFilter</filter-class>
+
+       <init-param>
+      <param-name>spnego.allow.basic</param-name>
+      <param-value>true</param-value>
+       </init-param>
+
+       <init-param>
+      <param-name>spnego.allow.localhost</param-name>
+      <param-value>true</param-value>
+       </init-param>
+
+       <init-param>
+      <param-name>spnego.allow.unsecure.basic</param-name>
+      <param-value>true</param-value>
+       </init-param>
+
+       <init-param>
+      <param-name>spnego.login.client.module</param-name>
+      <param-value>spnego-client</param-value>
+       </init-param>
+
+       <init-param>
+      <param-name>spnego.krb5.conf</param-name>
+      <param-value>{tomcat_home}/bin/ldap/krb5.conf</param-value>
+       </init-param>
+
+       <init-param>
+      <param-name>spnego.login.conf</param-name>
+      <param-value>{tomcat_home}/bin/ldap/login.conf</param-value>
+       </init-param>
+
+       <init-param>
+      <param-name>spnego.preauth.username</param-name>
+      <param-value>{spnego_username}</param-value>
+       </init-param>
+
+       <init-param>
+      <param-name>spnego.preauth.password</param-name>
+      <param-value>{spnego_password}</param-value>
+       </init-param>
+
+       <init-param>
+      <param-name>spnego.login.server.module</param-name>
+      <param-value>spnego-server</param-value>
+       </init-param>
+
+       <init-param>
+      <param-name>spnego.prompt.ntlm</param-name>
+      <param-value>true</param-value>
+       </init-param>
+
+       <init-param>
+      <param-name>spnego.logger.level</param-name>
+      <param-value>1</param-value>
+       </init-param>
+   </filter>
+
+   <filter-mapping>
+       <filter-name>SpnegoHttpFilter</filter-name>
+       <url-pattern>*.do</url-pattern>
+   </filter-mapping>
+
+REMOVE_FOR_AD_AUTHENTICATION -->
+
+
+  <filter>
+    <filter-name>SessionCheckFilter</filter-name>
+    <filter-class>com.bob.hms.common.SessionCheckFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>SessionCheckFilter</filter-name>
+    <url-pattern>*.do</url-pattern>
+  </filter-mapping>
+
+  <filter-mapping>
+    <filter-name>SessionCheckFilter</filter-name>
+    <url-pattern>*.htm</url-pattern>
+  </filter-mapping>
+
+  <filter-mapping>
+    <filter-name>SessionCheckFilter</filter-name>
+    <url-pattern>*.json</url-pattern>
+  </filter-mapping>
+
+  <filter>
+    <filter-name>AccessControlFilter</filter-name>
+    <filter-class>com.insta.hms.common.AccessControlFilter</filter-class>
+  </filter>
+
+  <filter-mapping>
+    <filter-name>AccessControlFilter</filter-name>
+    <url-pattern>*.do</url-pattern>
+  </filter-mapping>
+  
+  <filter>
+    <filter-name>ConfidentialityPatientFilter</filter-name>
+    <filter-class>com.insta.hms.common.ConfidentialityPatientFilter</filter-class>
+    <async-supported>true</async-supported>
+  </filter>
+
+  <filter-mapping>
+    <filter-name>ConfidentialityPatientFilter</filter-name>
+    <url-pattern>*</url-pattern>
+  </filter-mapping>
+
+  <filter>
+    <filter-name>sitemesh</filter-name>
+    <filter-class>com.opensymphony.sitemesh.webapp.SiteMeshFilter</filter-class>
+  </filter>
+
+
+  <filter-mapping>
+    <filter-name>sitemesh</filter-name>
+    <url-pattern>*.do</url-pattern>
+  </filter-mapping>
+
+  <filter-mapping>
+    <filter-name>sitemesh</filter-name>
+    <url-pattern>*.htm</url-pattern>
+  </filter-mapping>
+
+
+  <servlet>
+    <servlet-name>action</servlet-name>
+    <servlet-class>org.apache.struts.action.ActionServlet</servlet-class>
+    <init-param>
+      <param-name>config</param-name>
+      <param-value>/WEB-INF/struts-config.xml</param-value>
+    </init-param>
+    <init-param>
+      <param-name>debug</param-name>
+      <param-value>2</param-value>
+    </init-param>
+    <init-param>
+      <param-name>detail</param-name>
+      <param-value>2</param-value>
+    </init-param>
+    <init-param>
+      <param-name>application</param-name>
+      <param-value>java.resources.application</param-value>
+    </init-param>
+	  <init-param>
+		  <param-name>chainConfig</param-name>
+		  <param-value>/WEB-INF/chain-config.xml</param-value>
+	  </init-param>
+    <init-param>
+    	<param-name>trimSpaces</param-name>
+    	<param-value>true</param-value>
+    </init-param>
+    <load-on-startup>2</load-on-startup>
+    <async-supported>true</async-supported>
+  </servlet>
+
+	 <context-param>
+		 <param-name>javax.servlet.jsp.jstl.fmt.localizationContext</param-name>
+		 <param-value>java.resources.application</param-value>
+	 </context-param>
+   <context-param>
+     <param-name>contextConfigLocation</param-name>
+     <param-value>/WEB-INF/spring/spring-application-config.xml</param-value>
+   </context-param>
+
+  <servlet>
+  	<servlet-name>dcmservlet</servlet-name>
+  	<servlet-class>com.bob.hms.medicalrecords.file.DicomServlet</servlet-class>
+    <async-supported>true</async-supported>
+  </servlet>
+  <servlet>
+     <servlet-name>ssoservlet</servlet-name>
+     <servlet-class>com.sun.xml.ws.transport.http.servlet.WSServlet</servlet-class>
+     <description>JAX-WS SSO endpoint</description>
+     <display-name>SSO servlet</display-name>
+    <async-supported>true</async-supported>
+   </servlet>
+  <!-- Standard Action Servlet Mapping -->
+  <servlet-mapping>
+    <servlet-name>action</servlet-name>
+    <url-pattern>*.do</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>dcmservlet</servlet-name>
+    <url-pattern>*.dtm</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+      <servlet-name>ssoservlet</servlet-name>
+      <url-pattern>/SSOService</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+  	<servlet-name>FocusSyncTest</servlet-name>
+  	<servlet-class>com.insta.hms.focus.FocusSyncTestServlet</servlet-class>
+    <async-supported>true</async-supported> 
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>FocusSyncTest</servlet-name>
+    <url-pattern>/FocusSyncTestServlet</url-pattern>
+  </servlet-mapping>
+
+ 	<servlet-mapping>
+		<servlet-name>default</servlet-name>
+		<url-pattern>/scripts/tiny_mce/*</url-pattern>
+		<url-pattern>/</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>spring</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>
+				/WEB-INF/spring/spring-config.xml
+				/WEB-INF/spring/insta-master-config.xml
+				/WEB-INF/spring/insta-store-config.xml
+				/WEB-INF/spring/insta-billing-config.xml
+				/WEB-INF/spring/insta-diag-config.xml
+				/WEB-INF/spring/insta-insurance-config.xml
+				/WEB-INF/spring/insta-patient-config.xml
+				/WEB-INF/spring/insta-scheduler-config.xml
+				/WEB-INF/spring/insta-common-config.xml
+				/WEB-INF/spring/insta-integration-config.xml
+				/WEB-INF/spring/insta-document-config.xml
+				/WEB-INF/spring/insta-clinical-config.xml
+				/WEB-INF/spring/insta-fingerprint-config.xml
+				/WEB-INF/spring/insta-quartz.xml
+				/WEB-INF/spring/insta-codification-ticket.xml
+				/WEB-INF/spring/insta-messaging.xml
+				/WEB-INF/spring/insta-multiuser-config.xml
+			</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+        <async-supported>true</async-supported>                 
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>spring</servlet-name>
+        <url-pattern>/ws/*</url-pattern>
+		<url-pattern>*.htm</url-pattern>
+		<url-pattern>*.json</url-pattern>
+		<url-pattern>*.xml</url-pattern>
+	</servlet-mapping>
+
+ <welcome-file-list>
+    <welcome-file>home.do</welcome-file>
+  </welcome-file-list>
+
+  <session-config>
+    <session-timeout>120</session-timeout>
+    <cookie-config>
+      <http-only>true</http-only>
+    </cookie-config>
+  </session-config>
+  <resource-ref>
+	<description>SQLServer Datasource example</description>
+	<res-ref-name>jdbc/globaldb</res-ref-name>
+	<res-type>javax.sql.DataSource</res-type>
+	<res-auth>Container</res-auth>
+	</resource-ref>
+
+   <error-page>
+    <error-code>404</error-code>
+    <error-code>403</error-code>
+    <location>/pages/notfound.jsp</location>
+   </error-page>
+   <error-page>
+    <error-code>402</error-code>
+    <location>/pages/subscriptionExpired.jsp</location>
+   </error-page>
+
+  <security-constraint>
+    <web-resource-collection>
+      <web-resource-name>All JSP direct access</web-resource-name>
+      <url-pattern>*.jsp</url-pattern>
+      <url-pattern>*.jrxml</url-pattern>
+      <url-pattern>*.jasper</url-pattern>
+    </web-resource-collection>
+    <auth-constraint />
+  </security-constraint>
+
+	<!--
+	  The following commented lines are required for SSL enabling. Durying deployment,
+	  the deploy scripts will remove the REMOVE_FOR_SSL lines if the deployment is SSL,
+		thus uncommenting the required security constraint.
+	-->
+	<!-- REMOVE_FOR_SSL (remove this line for SSL)
+	<security-constraint>
+   	<display-name>Security Constraint</display-name>
+   	<web-resource-collection>
+      	<web-resource-name>Protected Area</web-resource-name>
+      	<url-pattern>/*</url-pattern>
+   	</web-resource-collection>
+   	<user-data-constraint>
+      	<transport-guarantee>CONFIDENTIAL</transport-guarantee>
+   	</user-data-constraint>
+	</security-constraint>
+	REMOVE_FOR_SSL (remove this line for SSL) -->
+	
+</web-app>
+

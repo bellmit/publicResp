@@ -1,0 +1,4685 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Insta Scheduler API</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.4/semantic.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/themes/prism-okaidia.min.css" />
+    <style>
+      blockquote {
+        border-left: solid 4px #eee;
+        padding-left: 8px;
+        font-style: italic;
+        margin-left: 0;
+        padding: 8px;
+      }
+
+      .ui.micro.label {
+        font-size: .25rem;
+      }
+
+      .ui.transaction.accordion .title {
+        text-align: center;
+      }
+
+      .ui.transaction.accordion .content {
+        border-top: solid 1px #ddd !important;
+        border-bottom: solid 1px #ddd !important;
+        background-color: rgba(0,0,0,.03);
+        padding: 0.5em 1em !important;
+      }
+
+      .ui.transaction.accordion .content.active {
+        margin-top: 0.5em;
+      }
+
+      .ui.basic.label {
+        text-align: left;
+        overflow: auto;
+      }
+      
+      .ui.basic.label.request-url {
+        user-select: text;
+      }
+
+      .resource .ui.sub.header {
+        text-transform: none;
+      }
+
+      .sidenav .ui.fluid.accordion .title {
+        padding-left: 0.5rem;
+      }
+      .sidenav .ui.fluid.accordion .title:not(:first-child) {
+        border-top: 1px solid #e0e0ec;        
+      }
+
+      .sidenav .ui.fluid.accordion .content {
+        padding: 0 0 0 2rem !important;
+        margin: 0;
+      }
+
+      .sidenav .ui.fluid.accordion .content .ui.secondary.menu {
+        margin: 0;
+      }
+
+      .sidenav .ui.fluid.accordion .content .ui.secondary.menu a.item{
+        margin: 0 0.75rem 0.5rem 0;
+      }
+      .sidenav .ui.fluid.accordion .content a.item > .label{
+        margin-top: 0.1rem;
+      }
+
+      @media only screen and (min-width: 768px) {
+        .sidewrap {
+          margin-right: 2rem;
+          border-right: 1px solid #b4b4be;
+          background-color: #f7f7fa;
+        }
+
+        .sidenav {
+          left: 0;
+          top: 0;
+          width: inherit;
+          position: fixed !important;
+          height: 100% !important;
+          overflow-y: auto !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="ui padded grid">
+      <div class="sidewrap four wide computer five wide tablet sixteen wide mobile column">
+        <div class="sidenav">
+          
+<a href="#introduction">
+  <h3 class="ui header centered" style="margin: 0;padding: 1rem 0;border-bottom: solid 1px #b4b4be;">
+    <img class="ui tiny image" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHgAAAAqCAYAAAB4Ip8uAAAAAXNSR0IArs4c6QAADUlJREFUeAHtWw10VMUVnnlv80Plx6Ig0Yj1FFSyScgmIGLVhmMPlRSLFVGxauvRY/XUQ0+zCfhLV6EISTYetf4VtK2KVlItKgon+BMRRAzZxJCNRaEHQSWKVglIkt33ZvrN2523bzeb3c1uqGGbObBzZ+bOnZn7zdyZuW9C7UXO/xDCKTECXe1tcd8SoId+00EDNk748RiIAbBCyPfSYVBDYwhpAJgOhXTWwBDA6YwuxmZL8/H1Gl7+tNtP4n7ffLMga/iT3q0unEPSM/zfAcx7esbj3HGfhDND69oIOm0BHjLREuk0jYcATlNg5bCGAJaaSNN4COA0BVYOawhgqYk0jYcATlNg5bCOuWtSQYnzLMZ4GeU0n1E+Gj7WLzGYj1VFqW9tqtkmBzYUBzSQEMBnn33bCUe0np9IpSknKuta62u+lWkZFzgqpuuczaSUnAr3di7hJAtebgDAO5B+h9iUN72N1aD7HwrPrjhd9/EHdZ3/TNTGXVb8iH9G0HR2j91RvoMqakVbU3V9MDtupPv9s+yOioK4jBaGeXOGr3G5XMyS1SdZOGXhmbquoc/KBM55DvQxGp3uIArdSzjfq1D6VpunpjWaADGZUWeyKONEOeL11Lws6JKSxzK6+UfnC1oEhfCDNJvu0/30ZOi3ReQVnlsxVu9ScxICuFvTJzJG/i4qimDrtJ2OyADYPs+VSXd3VnJGrwe4Ih/9Nn7FTwgBwm8hfp3bHc51KlWXtXqq3g0wxP/NLyo/F+CuA6jfj8WNdgu4rm8A0FXz5oy8PREQgFI14QlhZTZd5yUvIOEzMyKIAAA7b4ROFmiadkagONiGnJEsQDB0GjppBPCrRmad8tTWreVdUhxYfo6urRBpSvk+RAbAY8f2KHv3cywiPgcFLYQr2/Uu8gNC9EdKShZNbGpacVA/wpZyysamtAfnF1cUkl2HGgH+UijfAFd0JkagmJEXa0zbmucov18oIgavUTR5+h2nMEpfDAOX0m5K6VYwPI0Bvk4JtVoTtEEW1b14uDqe7KNRbi+uvKib7WwHMH8CAEFwY7cEnUzljD92sOuTxslTF9ljcxOyfv2CHnzW/RsmRTOs4ks7WqpfDdZ5qZvpNxVOW5gLK8rwFZgntIKjNVjgcF6AvXAjFJ8pyykhn6LR1zHf9kDxX3PGRimU5HBCz8cg8iSfEXOyoFv/sBAW4KfeOlefq0Hv6l4CRZ0o6wLMBjT46+Zm98cyD7N2VDfzL0C7i9GOMSbOWTlWxnZvs/tZyRc1pgSWJGyCRGWzZo45AOVFCXkOpxNjrkJR+MKh9Cvoph4K/zdKOmAxMjlVcihn+ZiMM8CfFRRn1zR/I77R32wAGKWNWFmUKg2Ms8t0HwPAtvsJ15clBbDe4x8P81EnwYXSNxNVXextqnqzrw4ED0d3YUBXSR7UL6W7Dq1C+lqZZ40LZ1Ycp33BTH5Mnv3Ziu0SYYKsfMH0EvuUyjeIxtZjQoxAn9apY+hLVr5odIYt44b3G1d4o5X1ldcepQCgVGFyVVqLAOp76MedkyZMe6Ou7nLdWiZpe6lrOOk8PB91XdjbToZ+hqHsiYKiygMs+jySVaPGWFCrIOOSNk/VB3lFzuS+JmHtP4UdZCxmPmYyvbOtuXo5TKbcXaI2vKPJ/S8U/DKv2PkqYfxx0MasxcCugVl7xuup3hBZkX1FfyT5RBmU9XAkuNY63u3VW/KLnHPRkbK8idMq+lKqtc5A0NiqrmaMmeDCPPphwW5pa6pZKfTSZhx7orfkbXAdRsnKkhLX6m7W+QDAuR4TVNGp/ixuCv+MXiuQa7NlvECPG/apSKmZdJvqY2pzc62wbOtEHlWJO6kVjE6MNwQofIHX436I0hqRTCi0e9yrMduHYfWulBVg1paB7gUwYXqu5AnEPOpp08rT1uIWX4c2emMo1cqfKl1UVDnRz/U/SzkAt4tQZTZOvG9Q6pbZceOmJtcRMN2AbWUPJv0SHJtHQke/ilXRanlat1V9EsnrbXJvDt8rIjlipDEzn/V6ah+KwdJnEfaXVagvgAgG7oh2uOBE1SRHIFbF86JBFfyU3R00q8F+qTcJcJPtJM4MS6Gbp5KtH1kvKYBhKn046NwWKaw/aZVw4/gv6+i6XiZpGaNzwtyYgRP9CjMxCIjCKRU4JPErQ12ha7zN1U+G0slR2cqIm7B/G6Y3OQmhWkkBjOr11lNsSFzi1JkTzmnALnHIrMECF3ozDSJ33KnvYi8TnqpA4KQMd9y7ZPK7jnWNX4s+AAsRKFMU1WWQKf4Y5loh96YoxqieFMA4N8h7V9J9MA5AlJiuRTzcxaEtPIj7HrR3vzUX5hAeK+fzwlNjzf9OaEoMr5poG3vvRnFyHah+jMzKfcLYz1MUmBzARPkoxXYD1blwYQZJwk+QtDXOmzDtXmgPd+tQgFm8VO9ie4SzRLgwQyX/O0o4YNCP0N2e0t6HxBS6Izxa8B80pCDCqJoUwERRP0+1YVEfftivpRxcCaL2Raz0saNGzAbf05JXxMbBBs4Szcd34VT+svAgQeFBc2nlPDq05usOm1jwB7890C0pnGxOVWZUpcYXqvnj88TnABwsPhchDQ2u7vaW2mtUSn+ME2ZTeB0OPfDZnOnrcR/dJvzW4eVHKcXIOKtkG1f3W9MDQTOFpiwzSYAHovv9l7Gj2b0JX16moublOMk3RErACp6KGbMFe/QzBefdGvPDRGTd/qZhKkz3qag7blzuV/2VEY8frsyUZR5TAAuFYAVzrOY63KVnqCqdBDP/IMD+1qosAD2ffevbUlJye441fyBpeMvC3KUdHftHDqR8IQu+5ZRlHnMAW5Uo3J9tze4FZNiI8bisPGAtwx49qVvvWTNv3hrVmj9gtKKaB0QhU1NYmMkeiHbwKfGkVOUc0wDLwYu/TGhvrv2dotC5uFqYTn3szee172q8RPINZGxTtTBHBGd+sXUMaMA2UJKqwLQAWCqhzeN+AWZtqUwHYsvXqPCClFLvv1f7IQAwQcbXtYtSEhhRGY8VcHgkMyOy+50c1ADPmvVAlt1RObc/o+JZw4Wphm7MMMGkQKg22mVN61wfY033i6Z0veSH5Zhtn1o5YGb6+bWHL8ZdMKpvQLaZSDwoARb7Zl5xxXV7O/Z8yLn+DyiuKJHBCB5hrqHsfSF+nhGicXDJyDLv3iIfLy8mWsv7QyuEPif5jXu5zm6V6VRicZ/HJ1lXKjJk3UEJ8M7djecSxp6A0saLjnK/7pQdjheLyYF65uEESznky0ZlLTfjACZA6B7PeNIA72iueQ0n+JAzgpPfipcu8foYrzy/uHIhzg8JT+pY8gYlwK2e6retDg3QVxYWV54fayCy7IPd288AnSXT2Cffl7SIxfMgLBCPzIOz5fLp02uHyXR/Y7yguEPWwcqz4eS7Jr+k8ocyr79xfkkF/Nvsj/2t1xf/oAQ42Fnza7lQnMb15xLZ42DS74kY7MaItLhL15t5nJ92qOezRWY6DpE/tfxUK4twvkDecpkHi3ESXne8ay9xnifzEo2xLf0Gj+/WwgLBaUd0yO3V90RlSb5BC/CYUSPqwj4ycJJD/OwdvFXq9d1YDEY8380rKv8DJsNlcnBQ0O68Cee8ItMyzlYyHxHftGUaSr0Nb6MXlZa6bDIvMnY4nKfhUd3jXCM77cW3hh3c5s0ZcQcA2WDW4XgkyHgDPGorHY6FJ5v5fRCTp5Q7IHsjtqVHxWQ22CitxN3+tT6qJJzd54ASlnCUGOF/1vBacm6Xrm3GLpwvmsG+dLpO9FegjE14G+shitKOFaNQxs4iHx2aBZYzLd2Bk5o6o73Lampath/KXw6Bi4NyM3FiXX7gYOd8+LPXIq8dL8z2cYWMxsvRs5C+0Ef4TPCr4niOLfwxkYf/RhDvr2HmL+3s/vQvAOgKkSlWIX5v8FHtOnwMeZsqFJ9Y+W4A30GpmoFDVA7k5RPKL/ZrvFCMzgxw2uAp1H32YudCMy9JYtACLMYjHtjBJJZxP31LgGuOkfMLoI4LMOONrIBqLApCLlbvYhyCXjTrRBBYdXfXre0sQK1fyCKAMhnPbY2/JDDyTJdJmPoFeF9itWeLjyCybvDB+pV49NfKKLkLTNmiLAh0KaxEqeTFc1aTtOKKmdOJPf3GNk+teToPMSZHDVoTLYfT1li77/jj1MlA7FGrWZXlkTEOVZ8D3KvE26bIMmtarDq4OYXna3GkL9vKF07TZuEta29xX2EF18qDR3/LFBs/AzL/in5EvCmzcoZo9PkweFfZMpSigQRXtGCD4BWYZ2jDmKXbRRwZsNt/hg6LB91GsLHMlL9yBCSJv0ogPYJG/Fkgr/fvli1Vh5B7M/azJT6qX41lMQMfwyfBjOKLDtYIIV9gArTg/4ZsOnx18IVib0ERORi7qLsEf3v18BGf72r8MdsM9CQP5l84GGDh6QHQn1BF2QRrUQ/w3okQETUpJiUKrisqdf3e/83hMkp4GSzQRAxyHFbsaPTzc3R7L+K9KNukjFGei/a3XgpXtuFttKF3nPy/idpYnMz/AkWIIZ8N4GHaAAAAAElFTkSuQmCC"/>
+    <div class="content" style="padding:0;">
+      &nbsp;
+      <div class="sub header">Hospital Management System</div>
+    </div>
+  </h3>
+</a>
+
+
+<div class="ui horizontal divider">
+  <a href="#resources">Resources</a>
+</div>
+
+<div class="ui accordion fluid">
+  
+    
+    <div class="title active">
+      <i class="dropdown icon"></i>
+      
+        <strong>Get Metadata</strong>
+      
+    </div>
+    <div class="content active">
+      <div class="ui fluid secondary vertical menu">
+      
+        <a class="item green" href="#resources-get-metadata-get-metadata">
+          <i class="ui green empty circular label"></i>
+          
+            <span>Get Metadata</span>
+          
+        </a>
+      
+      </div>
+    </div>
+    
+  
+    
+    <div class="title ">
+      <i class="dropdown icon"></i>
+      
+        <strong>Search Resources</strong>
+      
+    </div>
+    <div class="content ">
+      <div class="ui fluid secondary vertical menu">
+      
+        <a class="item green" href="#resources-search-resources-search-resources">
+          <i class="ui green empty circular label"></i>
+          
+            <span>Search Resources</span>
+          
+        </a>
+      
+      </div>
+    </div>
+    
+  
+    
+    <div class="title ">
+      <i class="dropdown icon"></i>
+      
+        <strong>Get Weekly Availability and Details of Resource</strong>
+      
+    </div>
+    <div class="content ">
+      <div class="ui fluid secondary vertical menu">
+      
+        <a class="item green" href="#resources-get-weekly-availability-and-details-of-resource-get-weekly-availability-and-details-of-resource">
+          <i class="ui green empty circular label"></i>
+          
+            <span>Get Weekly Availability and Details of Resource</span>
+          
+        </a>
+      
+      </div>
+    </div>
+    
+  
+    
+    <div class="title ">
+      <i class="dropdown icon"></i>
+      
+        <strong>Get Resources and their availability by resource type</strong>
+      
+    </div>
+    <div class="content ">
+      <div class="ui fluid secondary vertical menu">
+      
+        <a class="item green" href="#resources-get-resources-and-their-availability-by-resource-type-get-resources-and-their-availability-by-resource-type">
+          <i class="ui green empty circular label"></i>
+          
+            <span>Get Resources and their availability by resource type</span>
+          
+        </a>
+      
+      </div>
+    </div>
+    
+  
+    
+    <div class="title ">
+      <i class="dropdown icon"></i>
+      
+        <strong>Lookup resources by category</strong>
+      
+    </div>
+    <div class="content ">
+      <div class="ui fluid secondary vertical menu">
+      
+        <a class="item green" href="#resources-lookup-resources-by-category-lookup-resources-by-category">
+          <i class="ui green empty circular label"></i>
+          
+            <span>Lookup resources by category</span>
+          
+        </a>
+      
+      </div>
+    </div>
+    
+  
+    
+    <div class="title ">
+      <i class="dropdown icon"></i>
+      
+        <strong>Get resource\s available slots for a day</strong>
+      
+    </div>
+    <div class="content ">
+      <div class="ui fluid secondary vertical menu">
+      
+        <a class="item green" href="#resources-get-resource-s-available-slots-for-a-day-get-resource-s-available-slots-for-a-day">
+          <i class="ui green empty circular label"></i>
+          
+            <span>Get resource\s available slots for a day</span>
+          
+        </a>
+      
+      </div>
+    </div>
+    
+  
+    
+    <div class="title ">
+      <i class="dropdown icon"></i>
+      
+        <strong>Add Overrides</strong>
+      
+    </div>
+    <div class="content ">
+      <div class="ui fluid secondary vertical menu">
+      
+        <a class="item blue" href="#resources-add-overrides-add-overrides">
+          <i class="ui blue empty circular label"></i>
+          
+            <span>Add Overrides</span>
+          
+        </a>
+      
+      </div>
+    </div>
+    
+  
+</div>
+
+
+<div class="ui horizontal divider">
+  <a href="#appointments">Appointments</a>
+</div>
+
+<div class="ui accordion fluid">
+  
+    
+    <div class="title active">
+      <i class="dropdown icon"></i>
+      
+        <strong>Resource Calendar</strong>
+      
+    </div>
+    <div class="content active">
+      <div class="ui fluid secondary vertical menu">
+      
+        <a class="item green" href="#appointments-resource-calendar-resource-calendar">
+          <i class="ui green empty circular label"></i>
+          
+            <span>Resource Calendar</span>
+          
+        </a>
+      
+      </div>
+    </div>
+    
+  
+    
+    <div class="title ">
+      <i class="dropdown icon"></i>
+      
+        <strong>Get Sponsor info for patient&#39;s Main active visit</strong>
+      
+    </div>
+    <div class="content ">
+      <div class="ui fluid secondary vertical menu">
+      
+        <a class="item green" href="#appointments-get-sponsor-info-for-patients-main-active-visit-get-sponsor-info-for-patients-main-active-visit">
+          <i class="ui green empty circular label"></i>
+          
+            <span>Get Sponsor info for patient&#39;s Main active visit</span>
+          
+        </a>
+      
+      </div>
+    </div>
+    
+  
+    
+    <div class="title ">
+      <i class="dropdown icon"></i>
+      
+        <strong>Create Appointment</strong>
+      
+    </div>
+    <div class="content ">
+      <div class="ui fluid secondary vertical menu">
+      
+        <a class="item blue" href="#appointments-create-appointment-create-appointment">
+          <i class="ui blue empty circular label"></i>
+          
+            <span>Create Appointment</span>
+          
+        </a>
+      
+      </div>
+    </div>
+    
+  
+    
+    <div class="title ">
+      <i class="dropdown icon"></i>
+      
+        <strong>View Appointment</strong>
+      
+    </div>
+    <div class="content ">
+      <div class="ui fluid secondary vertical menu">
+      
+        <a class="item green" href="#appointments-view-appointment-view-appointment">
+          <i class="ui green empty circular label"></i>
+          
+            <span>View Appointment</span>
+          
+        </a>
+      
+      </div>
+    </div>
+    
+  
+    
+    <div class="title ">
+      <i class="dropdown icon"></i>
+      
+        <strong>Edit/Reschedule Appointment</strong>
+      
+    </div>
+    <div class="content ">
+      <div class="ui fluid secondary vertical menu">
+      
+        <a class="item blue" href="#appointments-edit-reschedule-appointment-edit-reschedule-appointment">
+          <i class="ui blue empty circular label"></i>
+          
+            <span>Edit/Reschedule Appointment</span>
+          
+        </a>
+      
+      </div>
+    </div>
+    
+  
+    
+    <div class="title ">
+      <i class="dropdown icon"></i>
+      
+        <strong>Status Update for Appointment</strong>
+      
+    </div>
+    <div class="content ">
+      <div class="ui fluid secondary vertical menu">
+      
+        <a class="item blue" href="#appointments-status-update-for-appointment-status-update-for-appointment">
+          <i class="ui blue empty circular label"></i>
+          
+            <span>Status Update for Appointment</span>
+          
+        </a>
+      
+      </div>
+    </div>
+    
+  
+    
+    <div class="title ">
+      <i class="dropdown icon"></i>
+      
+        <strong>Previous Appointment</strong>
+      
+    </div>
+    <div class="content ">
+      <div class="ui fluid secondary vertical menu">
+      
+        <a class="item green" href="#appointments-previous-appointment-previous-appointment">
+          <i class="ui green empty circular label"></i>
+          
+            <span>Previous Appointment</span>
+          
+        </a>
+      
+      </div>
+    </div>
+    
+  
+</div>
+
+
+        </div>
+      </div>
+      <div class="eleven wide computer ten wide tablet sixteen wide mobile column">
+        
+<div class="ui hidden divider header"></div>
+<h1 class="ui huge header" id="introduction">Insta Scheduler API</h1>
+<hr class="ui divider">
+<div class="description">
+  <p>This document defines the API endpoints for Scheduler.</p>
+
+<p>All Dates in DD-MM-YYYY format, Timestamps in DD-MM-YYYY HH:MM:SS</p>
+
+</div>
+
+        <div class="ui hidden divider"></div>
+        
+
+  <div class="ui horizontal divider" id="resources">
+    Resources
+  </div>
+  <div class="ui header center aligned">
+    <div class="ui header">
+      <div class="sub header">
+        
+      </div>
+    </div>
+  </div>
+  
+    
+      <div class="ui segments">
+        <div class="ui basic segment resource">
+          <div class="ui black huge ribbon label">
+            Get Metadata
+          </div>
+          
+        </div>
+
+        
+          
+<div class="ui grey horizontal small divider header" style="margin-top:0">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui orange micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block inverted center aligned header" id="resources-get-metadata-get-metadata">
+              Get Metadata
+            </h3>
+            <div class="description"><p>This endpoint returns all the metadata needed for scheduler views.</p>
+</div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui green large button">
+                  <h3>GET</h3>
+                </div>
+                <a class="ui basic fluid request-url green label">
+                  <code>http://localhost:8080/instahms/resources/metadata.json{?res_sch_category}</code>
+                </a>
+              </div>
+              
+                <table class="ui celled definition table">
+                  <thead>
+                    <tr>
+                      <th colspan="4">Parameters</th>
+                    </tr>
+                  <thead>
+                  <tbody>
+                    
+                      
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label black" data-content="required" data-position="top center"></i>
+      </td>
+      <td><code>res_sch_category</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">DOC</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>Category of resources</p>
+
+        
+      </td>
+    </tr>
+  
+
+                    
+                    
+                  </tbody>
+                </table>
+              
+              
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>application/json</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui blue segment">
+                  <div class="title" style="margin-bottom: 1rem;">
+                    <a class="ui blue circular label">
+                      200
+                    </a>
+                    <code>application/json</code>
+                  </div>
+                  <div class="content tabbed active">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-json">{
+    &#34;appointment_status&#34;: [
+        {
+            &#34;status_name&#34;: &#34;Booked&#34;,
+            &#34;status_description&#34;: &#34;Booked&#34;
+        },
+        {
+            &#34;status_description&#34;: &#34;Appt Confirmed&#34;,
+            &#34;status_name&#34;: &#34;Confirmed&#34;
+        },
+        {
+            &#34;status_name&#34;: &#34;Arrived&#34;,
+            &#34;status_description&#34;: &#34;Arrived&#34;
+        },
+        {
+            &#34;status_description&#34;: &#34;No Show&#34;,
+            &#34;status_name&#34;: &#34;Noshow&#34;
+        },
+        {
+            &#34;status_name&#34;: &#34;Cancel&#34;,
+            &#34;status_description&#34;: &#34;Cancel&#34;
+        },
+        {
+            &#34;status_description&#34;: &#34;Completed&#34;,
+            &#34;status_name&#34;: &#34;Completed&#34;
+        },
+        {
+            &#34;status_description&#34;: &#34;OP Regn&#34;,
+            &#34;status_name&#34;: &#34;OP&#34;
+        },
+        {
+            &#34;status_description&#34;: &#34;Channel&#34;,
+            &#34;status_name&#34;: &#34;Channel&#34;
+        }
+    ],
+    &#34;appointment_source&#34; : [
+        {
+            &#34;appointment_source_id&#34; : 1,
+            &#34;appointment_source_name&#34; : &#34;hospital&#34;
+        }
+    ],
+    &#34;center_defaults&#34;: {
+        &#34;region_id&#34;: null,
+        &#34;country_name&#34;: &#34;India&#34;,
+        &#34;dhpo_facility_user_id&#34;: null,
+        &#34;center_name&#34;: &#34;BRS&#34;,
+        &#34;state_id&#34;: &#34;ST0017&#34;,
+        &#34;accounting_company_name&#34;: &#34;BRS&#34;,
+        &#34;hospital_center_service_reg_no&#34;: null,
+        &#34;eclaim_active&#34;: &#34;N&#34;,
+        &#34;shafafiya_user_id&#34;: null,
+        &#34;shafafiya_preauth_test_provider_id&#34;: null,
+        &#34;shafafiya_preauth_active&#34;: &#34;N&#34;,
+        &#34;shafafiya_preauth_test_member_id&#34;: null,
+        &#34;country_id&#34;: &#34;CM0106&#34;,
+        &#34;dhpo_facility_password&#34;: null,
+        &#34;updated_timestamp&#34;: &#34;26-02-2014 22:31:49&#34;,
+        &#34;center_address&#34;: null,
+        &#34;city_id&#34;: &#34;CT0088&#34;,
+        &#34;status&#34;: &#34;A&#34;,
+        &#34;country_code&#34;: &#34;91&#34;,
+        &#34;city_name&#34;: &#34;BANGALORE&#34;,
+        &#34;ha_password&#34;: null,
+        &#34;shafafiya_preauth_user_id&#34;: null,
+        &#34;shafafiya_pbm_test_member_id&#34;: null,
+        &#34;shafafiya_pbm_active&#34;: &#34;N&#34;,
+        &#34;ha_username&#34;: null,
+        &#34;created_timestamp&#34;: &#34;26-02-2014 22:31:48&#34;,
+        &#34;center_id&#34;: 7,
+        &#34;health_authority&#34;: &#34;Default&#34;,
+        &#34;shafafiya_preauth_password&#34;: null,
+        &#34;center_code&#34;: &#34;7212&#34;,
+        &#34;shafafiya_password&#34;: null,
+        &#34;shafafiya_pbm_test_provider_id&#34;: null,
+        &#34;center_contact_phone&#34;: &#34;9876576543&#34;,
+        &#34;state_name&#34;: &#34;KARNATAKA&#34;,
+        &#34;tin_number&#34;: null
+    },
+    &#34;planner_visit_types&#34;: [
+        {
+            &#34;display_name&#34;: &#34;Consultation&#34;,
+            &#34;additional_resource_types&#34;: [
+                {
+                    &#34;resource_description&#34;: &#34;Equipment&#34;,
+                    &#34;resource_type&#34;: &#34;EQID&#34;
+                }
+            ],
+            &#34;res_sch_category&#34;: &#34;DOC&#34;
+        },
+        {
+            &#34;display_name&#34;: &#34;Service&#34;,
+            &#34;additional_resource_types&#34;: [
+                {
+                    &#34;resource_description&#34;: &#34;Doctor&#34;,
+                    &#34;resource_type&#34;: &#34;DOC&#34;
+                }
+            ],
+            &#34;res_sch_category&#34;: &#34;SNP&#34;
+        },
+        {
+            &#34;display_name&#34;: &#34;Test&#34;,
+            &#34;additional_resource_types&#34;: [
+                {
+                    &#34;resource_type&#34;: &#34;LABTECH&#34;,
+                    &#34;resource_description&#34;: &#34;Technician/Radiologist&#34;
+                }
+            ],
+            &#34;res_sch_category&#34;: &#34;DIA&#34;
+        },
+        {
+            &#34;display_name&#34;: &#34;Operation&#34;,
+            &#34;additional_resource_types&#34;: [
+            {
+                &#34;resource_description&#34;: &#34;Anesthetist&#34;,
+                &#34;resource_type&#34;: &#34;ANEDOC&#34;
+            },
+            {
+                &#34;resource_description&#34;: &#34;Asst Surgeon&#34;,
+                &#34;resource_type&#34;: &#34;ASUDOC&#34;
+            },
+            {
+                &#34;resource_description&#34;: &#34;Equipment&#34;,
+                &#34;resource_type&#34;: &#34;EQID&#34;
+            },
+            {
+                &#34;resource_type&#34;: &#34;PAEDDOC&#34;,
+                &#34;resource_description&#34;: &#34;Paediatrician&#34;
+            },
+            {
+                &#34;resource_description&#34;: &#34;Service Resource&#34;,
+                &#34;resource_type&#34;: &#34;SRID&#34;
+            },
+            {
+                &#34;resource_type&#34;: &#34;SUDOC&#34;,
+                &#34;resource_description&#34;: &#34;Surgeon&#34;
+            }
+        ],
+        &#34;res_sch_category&#34;: &#34;OPE&#34;
+    }
+],
+    &#34;repeats&#34; : [
+        {
+            &#34;value&#34; : &#34;Y&#34;,
+            &#34;text&#34; : &#34;Yearly&#34;
+        },
+        {
+            &#34;value&#34; : &#34;M&#34;,
+            &#34;text&#34; : &#34;Monthly&#34;
+        },
+        {
+            &#34;value&#34; : &#34;W&#34;,
+            &#34;text&#34; : &#34;Weekly&#34;
+        },
+        {
+            &#34;value&#34; : &#34;D&#34;,
+            &#34;text&#34; : &#34;Daily&#34;
+        }
+    ],
+     &#34;repeats_every&#34;: {
+        &#34;D&#34;: [
+            {
+                &#34;text&#34;: &#34;1 Day&#34;,
+                &#34;value&#34;: &#34;1&#34;
+            },
+            {
+                &#34;text&#34;: &#34;2 Day&#34;,
+                &#34;value&#34;: &#34;2&#34;
+            },
+            {
+                &#34;text&#34;: &#34;3 Day&#34;,
+                &#34;value&#34;: &#34;3&#34;
+            },
+            {
+                &#34;text&#34;: &#34;4 Day&#34;,
+                &#34;value&#34;: &#34;4&#34;
+            },
+            {
+                &#34;text&#34;: &#34;5 Day&#34;,
+                &#34;value&#34;: &#34;5&#34;
+            },
+            {
+                &#34;text&#34;: &#34;6 Day&#34;,
+                &#34;value&#34;: &#34;6&#34;
+            },
+            {
+                &#34;text&#34;: &#34;7 Day&#34;,
+                &#34;value&#34;: &#34;7&#34;
+            },
+            {
+                &#34;text&#34;: &#34;8 Day&#34;,
+                &#34;value&#34;: &#34;8&#34;
+            },
+            {
+                &#34;text&#34;: &#34;9 Day&#34;,
+                &#34;value&#34;: &#34;9&#34;
+            },
+            {
+                &#34;text&#34;: &#34;10 Day&#34;,
+                &#34;value&#34;: &#34;10&#34;
+            },
+            {
+                &#34;text&#34;: &#34;11 Day&#34;,
+                &#34;value&#34;: &#34;11&#34;
+            },
+            {
+                &#34;text&#34;: &#34;12 Day&#34;,
+                &#34;value&#34;: &#34;12&#34;
+            },
+            {
+                &#34;text&#34;: &#34;13 Day&#34;,
+                &#34;value&#34;: &#34;13&#34;
+            },
+            {
+                &#34;text&#34;: &#34;14 Day&#34;,
+                &#34;value&#34;: &#34;14&#34;
+            },
+            {
+                &#34;text&#34;: &#34;15 Day&#34;,
+                &#34;value&#34;: &#34;15&#34;
+            },
+            {
+                &#34;text&#34;: &#34;16 Day&#34;,
+                &#34;value&#34;: &#34;16&#34;
+            },
+            {
+                &#34;text&#34;: &#34;17 Day&#34;,
+                &#34;value&#34;: &#34;17&#34;
+            },
+            {
+                &#34;text&#34;: &#34;18 Day&#34;,
+                &#34;value&#34;: &#34;18&#34;
+            },
+            {
+                &#34;text&#34;: &#34;19 Day&#34;,
+                &#34;value&#34;: &#34;19&#34;
+            },
+            {
+                &#34;text&#34;: &#34;20 Day&#34;,
+                &#34;value&#34;: &#34;20&#34;
+            },
+            {
+                &#34;text&#34;: &#34;21 Day&#34;,
+                &#34;value&#34;: &#34;21&#34;
+            },
+            {
+                &#34;text&#34;: &#34;22 Day&#34;,
+                &#34;value&#34;: &#34;22&#34;
+            },
+            {
+                &#34;text&#34;: &#34;23 Day&#34;,
+                &#34;value&#34;: &#34;23&#34;
+            },
+            {
+                &#34;text&#34;: &#34;24 Day&#34;,
+                &#34;value&#34;: &#34;24&#34;
+            },
+            {
+                &#34;text&#34;: &#34;25 Day&#34;,
+                &#34;value&#34;: &#34;25&#34;
+            },
+            {
+                &#34;text&#34;: &#34;26 Day&#34;,
+                &#34;value&#34;: &#34;26&#34;
+            },
+            {
+                &#34;text&#34;: &#34;27 Day&#34;,
+                &#34;value&#34;: &#34;27&#34;
+            },
+            {
+                &#34;text&#34;: &#34;28 Day&#34;,
+                &#34;value&#34;: &#34;28&#34;
+            },
+            {
+                &#34;text&#34;: &#34;29 Day&#34;,
+                &#34;value&#34;: &#34;29&#34;
+            },
+            {
+                &#34;text&#34;: &#34;30 Day&#34;,
+                &#34;value&#34;: &#34;30&#34;
+            },
+            {
+                &#34;text&#34;: &#34;31 Day&#34;,
+                &#34;value&#34;: &#34;31&#34;
+            }
+        ],
+        &#34;W&#34;: [
+            {
+                &#34;text&#34;: &#34;1 Week&#34;,
+                &#34;value&#34;: &#34;1&#34;
+            },
+            {
+                &#34;text&#34;: &#34;2 Week&#34;,
+                &#34;value&#34;: &#34;2&#34;
+            },
+            {
+                &#34;text&#34;: &#34;3 Week&#34;,
+                &#34;value&#34;: &#34;3&#34;
+            },
+            {
+                &#34;text&#34;: &#34;4 Week&#34;,
+                &#34;value&#34;: &#34;4&#34;
+            }
+        ],
+        &#34;M&#34;: [
+            {
+                &#34;text&#34;: &#34;1 Month&#34;,
+                &#34;value&#34;: &#34;1&#34;
+            },
+            {
+                &#34;text&#34;: &#34;2 Month&#34;,
+                &#34;value&#34;: &#34;2&#34;
+            },
+            {
+                &#34;text&#34;: &#34;3 Month&#34;,
+                &#34;value&#34;: &#34;3&#34;
+            },
+            {
+                &#34;text&#34;: &#34;4 Month&#34;,
+                &#34;value&#34;: &#34;4&#34;
+            },
+            {
+                &#34;text&#34;: &#34;5 Month&#34;,
+                &#34;value&#34;: &#34;5&#34;
+            },
+            {
+                &#34;text&#34;: &#34;6 Month&#34;,
+                &#34;value&#34;: &#34;6&#34;
+            },
+            {
+                &#34;text&#34;: &#34;7 Month&#34;,
+                &#34;value&#34;: &#34;7&#34;
+            },
+            {
+                &#34;text&#34;: &#34;8 Month&#34;,
+                &#34;value&#34;: &#34;8&#34;
+            },
+            {
+                &#34;text&#34;: &#34;9 Month&#34;,
+                &#34;value&#34;: &#34;9&#34;
+            },
+            {
+                &#34;text&#34;: &#34;10 Month&#34;,
+                &#34;value&#34;: &#34;10&#34;
+            },
+            {
+                &#34;text&#34;: &#34;11 Month&#34;,
+                &#34;value&#34;: &#34;11&#34;
+            },
+            {
+                &#34;text&#34;: &#34;12 Month&#34;,
+                &#34;value&#34;: &#34;12&#34;
+            }
+        ],
+        &#34;Y&#34;: [
+            {
+                &#34;text&#34;: &#34;1 Year&#34;,
+                &#34;value&#34;: &#34;1&#34;
+            },
+            {
+                &#34;text&#34;: &#34;2 Year&#34;,
+                &#34;value&#34;: &#34;2&#34;
+            },
+            {
+                &#34;text&#34;: &#34;3 Year&#34;,
+                &#34;value&#34;: &#34;3&#34;
+            },
+            {
+                &#34;text&#34;: &#34;4 Year&#34;,
+                &#34;value&#34;: &#34;4&#34;
+            },
+            {
+                &#34;text&#34;: &#34;5 Year&#34;,
+                &#34;value&#34;: &#34;5&#34;
+            }
+        ]
+    }
+}
+</code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+              </div>
+            
+          </div>
+        
+        </div>
+      <div class="ui hidden divider"></div>
+    
+  
+    
+      <div class="ui segments">
+        <div class="ui basic segment resource">
+          <div class="ui black huge ribbon label">
+            Search Resources
+          </div>
+          
+        </div>
+
+        
+          
+<div class="ui grey horizontal small divider header" style="margin-top:0">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui orange micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block inverted center aligned header" id="resources-search-resources-search-resources">
+              Search Resources
+            </h3>
+            <div class="description"><p>Searches the resources according to filters</p>
+</div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui green large button">
+                  <h3>GET</h3>
+                </div>
+                <a class="ui basic fluid request-url green label">
+                  <code>http://localhost:8080/instahms/resources/list.json{?page_num,page_size,sort_order,with_count,find_string,departments,availability_days,centers,availability_start_date,availability_end_date,additional_restypes_reqd,res_sch_category}</code>
+                </a>
+              </div>
+              
+                <table class="ui celled definition table">
+                  <thead>
+                    <tr>
+                      <th colspan="4">Parameters</th>
+                    </tr>
+                  <thead>
+                  <tbody>
+                    
+                      
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label grey" data-content="optional" data-position="top center"></i>
+      </td>
+      <td><code>page_num</code></td>
+      <td class="center aligned">
+        <code>number</code>
+        <code class="ui label">1</code>
+        <div class="ui violet image label">Default<div class="detail">1</div></div>
+      </td>
+      <td class="eight wide">
+        <p>Which page number to fetch</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label grey" data-content="optional" data-position="top center"></i>
+      </td>
+      <td><code>page_size</code></td>
+      <td class="center aligned">
+        <code>number</code>
+        <code class="ui label">20</code>
+        <div class="ui violet image label">Default<div class="detail">15</div></div>
+      </td>
+      <td class="eight wide">
+        <p>Number of items in each page</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label grey" data-content="optional" data-position="top center"></i>
+      </td>
+      <td><code>sort_order</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">resource_name</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>Name of field to sort on</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label grey" data-content="optional" data-position="top center"></i>
+      </td>
+      <td><code>with_count</code></td>
+      <td class="center aligned">
+        <code>boolean</code>
+        <code class="ui label">false</code>
+        <div class="ui violet image label">Default<div class="detail">false</div></div>
+      </td>
+      <td class="eight wide">
+        <p>Whether count of number of records are required</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label black" data-content="required" data-position="top center"></i>
+      </td>
+      <td><code>find_string</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">Dr. sairam</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>Search input entered by user</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label grey" data-content="optional" data-position="top center"></i>
+      </td>
+      <td><code>departments</code></td>
+      <td class="center aligned">
+        <code>array</code>
+        <code class="ui label">DEP0026,DEP0027</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>Resources should belong to either of these departments</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label grey" data-content="optional" data-position="top center"></i>
+      </td>
+      <td><code>availability_days</code></td>
+      <td class="center aligned">
+        <code>array</code>
+        <code class="ui label">0,1,2,3</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>Resources should be available in these days</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label grey" data-content="optional" data-position="top center"></i>
+      </td>
+      <td><code>centers</code></td>
+      <td class="center aligned">
+        <code>array</code>
+        <code class="ui label">1,2,3</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>Resources should be associated with these centers</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label grey" data-content="optional" data-position="top center"></i>
+      </td>
+      <td><code>availability_start_date</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">10:00</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>Resource should be available from this time</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label grey" data-content="optional" data-position="top center"></i>
+      </td>
+      <td><code>availability_end_date</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">11:00</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>Resource should be available till this time</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label grey" data-content="optional" data-position="top center"></i>
+      </td>
+      <td><code>additional_restypes_reqd</code></td>
+      <td class="center aligned">
+        <code>boolean</code>
+        <code class="ui label">false</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>Additional Resource types would be shared for this category if this parameter is true</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label black" data-content="required" data-position="top center"></i>
+      </td>
+      <td><code>res_sch_category</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">DOC</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>Resources must belong to this category</p>
+
+        
+      </td>
+    </tr>
+  
+
+                    
+                    
+                  </tbody>
+                </table>
+              
+              
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>application/json</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui blue segment">
+                  <div class="title" style="margin-bottom: 1rem;">
+                    <a class="ui blue circular label">
+                      200
+                    </a>
+                    <code>application/json</code>
+                  </div>
+                  <div class="content tabbed active">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-json">{
+   &#34;resources&#34;:[
+    {
+        &#34;resource_id&#34;:&#34;DOC0082&#34;,
+        &#34;resource_name&#34;:&#34;Dr. James&#34;,
+        &#34;contact_number&#34;:&#34;&#43;919987665432&#34;,
+        &#34;resource_color&#34;:&#34;0xFFFFFF&#34;,
+        &#34;dept_id&#34;:&#34;DEP1234&#34;,
+        &#34;dept_name&#34;:&#34;Dentist&#34;,
+        &#34;default_duration&#34;:15,
+        &#34;overbook_limit&#34;: 2,
+        &#34;default_additional_resources&#34; : [
+            {
+                &#34;resource_type&#34;: &#34;EQID&#34;,
+                &#34;resource_id&#34;:65
+            }  
+        ],
+        &#34;visit_timings&#34;:{
+            &#34;0&#34;:[
+               {
+                  &#34;from_time&#34;:&#34;00:00:00&#34;,
+                  &#34;to_time&#34;:&#34;23:59:00&#34;,
+                  &#34;availability_status&#34;: &#34;A&#34;,
+                  &#34;center_id&#34;: 1,
+                  &#34;remarks&#34;: &#34;blah blah&#34;
+               }
+            ],
+            &#34;1&#34;:[
+               {
+                  &#34;from_time&#34;:&#34;00:00:00&#34;,
+                  &#34;to_time&#34;:&#34;01:30:00&#34;,
+                  &#34;availability_status&#34;: &#34;A&#34;,
+                  &#34;center_id&#34;: 1,
+                  &#34;remarks&#34;: &#34;&#34;
+               },
+               {
+                  &#34;from_time&#34;:&#34;01:30:00&#34;,
+                  &#34;to_time&#34;:&#34;04:30:00&#34;,
+                  &#34;availability_status&#34;: &#34;N&#34;,
+                  &#34;center_id&#34;: null,
+                  &#34;remarks&#34;: &#34;&#34;
+               },
+               {
+                  &#34;from_time&#34;:&#34;04:30:00&#34;,
+                  &#34;to_time&#34;:&#34;13:00:00&#34;,
+                  &#34;availability_status&#34;: &#34;A&#34;,
+                  &#34;center_id&#34;: 1,
+                  &#34;remarks&#34;: &#34;&#34;
+               },
+               {
+                  &#34;from_time&#34;:&#34;13:00:00&#34;,
+                  &#34;to_time&#34;:&#34;14:00:00&#34;,
+                  &#34;availability_status&#34;: &#34;N&#34;,
+                  &#34;center_id&#34;: null,
+                  &#34;remarks&#34;: &#34;&#34;
+               },
+               {
+                  &#34;from_time&#34;:&#34;14:00:00&#34;,
+                  &#34;to_time&#34;:&#34;23:59:00&#34;,
+                  &#34;availability_status&#34;: &#34;A&#34;,
+                  &#34;center_id&#34;: 1,
+                  &#34;remarks&#34;: &#34;&#34;
+               }
+            ],
+            &#34;2&#34;:[
+               {
+                  &#34;from_time&#34;:&#34;00:00:00&#34;,
+                  &#34;to_time&#34;:&#34;23:59:00&#34;,
+                  &#34;availability_status&#34;: &#34;A&#34;,
+                  &#34;center_id&#34;: 1,
+                  &#34;remarks&#34;: &#34;&#34;
+               }
+            ],
+            &#34;3&#34;:[
+               {
+                  &#34;from_time&#34;:&#34;00:00:00&#34;,
+                  &#34;to_time&#34;:&#34;23:59:00&#34;,
+                  &#34;availability_status&#34;: &#34;A&#34;,
+                  &#34;center_id&#34;: 1,
+                  &#34;remarks&#34;: &#34;blah blah&#34;
+               }
+            ],
+            &#34;4&#34;:[
+               {
+                  &#34;from_time&#34;:&#34;00:00:00&#34;,
+                  &#34;to_time&#34;:&#34;23:59:00&#34;,
+                  &#34;availability_status&#34;: &#34;A&#34;,
+                  &#34;center_id&#34;: 1,
+                  &#34;remarks&#34;: &#34;blah blah&#34;
+               }
+            ],
+            &#34;5&#34;: [
+               {
+                  &#34;from_time&#34;:&#34;00:00:00&#34;,
+                  &#34;to_time&#34;:&#34;23:59:00&#34;,
+                  &#34;availability_status&#34;: &#34;A&#34;,
+                  &#34;center_id&#34;: 1,
+                  &#34;remarks&#34;: &#34;blah blah&#34;
+               }
+            ],
+            &#34;6&#34;:[
+               {
+                  &#34;from_time&#34;:&#34;00:00:00&#34;,
+                  &#34;to_time&#34;:&#34;23:59:00&#34;,
+                  &#34;availability_status&#34;: &#34;A&#34;,
+                  &#34;center_id&#34;: 1,
+                  &#34;remarks&#34;: &#34;blah blah&#34;
+               }
+            ]
+         }
+      }
+   ],
+   &#34;page_size&#34;:15,
+   &#34;page_num&#34;:1,
+   &#34;total_records&#34;:150
+}
+</code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+              </div>
+            
+          </div>
+        
+        </div>
+      <div class="ui hidden divider"></div>
+    
+  
+    
+      <div class="ui segments">
+        <div class="ui basic segment resource">
+          <div class="ui black huge ribbon label">
+            Get Weekly Availability and Details of Resource
+          </div>
+          
+        </div>
+
+        
+          
+<div class="ui grey horizontal small divider header" style="margin-top:0">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui orange micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block inverted center aligned header" id="resources-get-weekly-availability-and-details-of-resource-get-weekly-availability-and-details-of-resource">
+              Get Weekly Availability and Details of Resource
+            </h3>
+            <div class="description"><p>Gets the Weekly Availbility and Details of Resource.</p>
+</div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui green large button">
+                  <h3>GET</h3>
+                </div>
+                <a class="ui basic fluid request-url green label">
+                  <code>http://localhost:8080/instahms/resources/visittimings.json{?modified_after,resources}</code>
+                </a>
+              </div>
+              
+                <table class="ui celled definition table">
+                  <thead>
+                    <tr>
+                      <th colspan="4">Parameters</th>
+                    </tr>
+                  <thead>
+                  <tbody>
+                    
+                      
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label grey" data-content="optional" data-position="top center"></i>
+      </td>
+      <td><code>modified_after</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">2017-09-12 02:00:00</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>YYYY-MM-DD HH:MM:SS</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label black" data-content="required" data-position="top center"></i>
+      </td>
+      <td><code>resources</code></td>
+      <td class="center aligned">
+        <code>array[string]</code>
+        <code class="ui label">DOC122,DOC124,DOC12455</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>List of resources for which detals are to be fetched</p>
+
+        
+      </td>
+    </tr>
+  
+
+                    
+                    
+                  </tbody>
+                </table>
+              
+              
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>application/json</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui blue segment">
+                  <div class="title" style="margin-bottom: 1rem;">
+                    <a class="ui blue circular label">
+                      200
+                    </a>
+                    <code>application/json</code>
+                  </div>
+                  <div class="content tabbed active">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-json">{
+   &#34;resources&#34;:[
+    {
+        &#34;resource_id&#34;:&#34;DOC0082&#34;,
+        &#34;resource_name&#34;:&#34;Dr. James&#34;,
+        &#34;contact_number&#34;:&#34;&#43;919987665432&#34;,
+        &#34;resource_color&#34;:&#34;0xFFFFFF&#34;,
+        &#34;dept_id&#34;:&#34;DEP1234&#34;,
+        &#34;dept_name&#34;:&#34;Dentist&#34;,
+        &#34;default_duration&#34;:15,
+        &#34;visit_timings&#34;:{
+            &#34;0&#34;:[
+               {
+                  &#34;from_time&#34;:&#34;00:00&#34;,
+                  &#34;to_time&#34;:&#34;12:12&#34;
+               },
+               {
+                  &#34;from_time&#34;:&#34;13:00&#34;,
+                  &#34;to_time&#34;:&#34;23:59&#34;
+               }
+            ],
+            &#34;1&#34;:[
+               {
+                  &#34;from_time&#34;:&#34;00:00&#34;,
+                  &#34;to_time&#34;:&#34;12:12&#34;
+               },
+               {
+                  &#34;from_time&#34;:&#34;13:00&#34;,
+                  &#34;to_time&#34;:&#34;23:59&#34;
+               }
+            ],
+            &#34;2&#34;:[
+               {
+                  &#34;from_time&#34;:&#34;00:00&#34;,
+                  &#34;to_time&#34;:&#34;12:12&#34;
+               },
+               {
+                  &#34;from_time&#34;:&#34;13:00&#34;,
+                  &#34;to_time&#34;:&#34;23:59&#34;
+               }
+            ],
+            &#34;3&#34;:[
+               {
+                  &#34;from_time&#34;:&#34;00:00&#34;,
+                  &#34;to_time&#34;:&#34;12:12&#34;
+               },
+               {
+                  &#34;from_time&#34;:&#34;13:00&#34;,
+                  &#34;to_time&#34;:&#34;23:59&#34;
+               }
+            ],
+            &#34;4&#34;:[
+               {
+                  &#34;from_time&#34;:&#34;00:00&#34;,
+                  &#34;to_time&#34;:&#34;12:12&#34;
+               },
+               {
+                  &#34;from_time&#34;:&#34;13:00&#34;,
+                  &#34;to_time&#34;:&#34;23:59&#34;
+               }
+            ],
+            &#34;5&#34;:[
+               {
+                  &#34;from_time&#34;:&#34;00:00&#34;,
+                  &#34;to_time&#34;:&#34;12:12&#34;
+               },
+               {
+                  &#34;from_time&#34;:&#34;13:00&#34;,
+                  &#34;to_time&#34;:&#34;23:59&#34;
+               }
+            ],
+            &#34;6&#34;:[
+               {
+                  &#34;from_time&#34;:&#34;00:00&#34;,
+                  &#34;to_time&#34;:&#34;12:12&#34;
+               },
+               {
+                  &#34;from_time&#34;:&#34;13:00&#34;,
+                  &#34;to_time&#34;:&#34;23:59&#34;
+               }
+            ]
+         }
+      }
+   ]
+}
+</code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+              </div>
+            
+          </div>
+        
+        </div>
+      <div class="ui hidden divider"></div>
+    
+  
+    
+      <div class="ui segments">
+        <div class="ui basic segment resource">
+          <div class="ui black huge ribbon label">
+            Get Resources and their availability by resource type
+          </div>
+          
+        </div>
+
+        
+          
+<div class="ui grey horizontal small divider header" style="margin-top:0">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui orange micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block inverted center aligned header" id="resources-get-resources-and-their-availability-by-resource-type-get-resources-and-their-availability-by-resource-type">
+              Get Resources and their availability by resource type
+            </h3>
+            <div class="description"><p>Get the list of resources for specified resource types along with boolean representing their availability for the specified
+slot and duration and overbook status for the same slot.</p>
+</div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui green large button">
+                  <h3>GET</h3>
+                </div>
+                <a class="ui basic fluid request-url green label">
+                  <code>http://localhost:8080/instahms/resources/resourceAvailabilities.json{?res_sch_category,res_types,center_id,date,slot_time,duration,appointment_id}</code>
+                </a>
+              </div>
+              
+                <table class="ui celled definition table">
+                  <thead>
+                    <tr>
+                      <th colspan="4">Parameters</th>
+                    </tr>
+                  <thead>
+                  <tbody>
+                    
+                      
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label black" data-content="required" data-position="top center"></i>
+      </td>
+      <td><code>res_sch_category</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">DOC</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>Secondary resource appplicable fro this category</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label black" data-content="required" data-position="top center"></i>
+      </td>
+      <td><code>res_types</code></td>
+      <td class="center aligned">
+        <code>array[string]</code>
+        <code class="ui label">DOC</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>List of Resource types</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label black" data-content="required" data-position="top center"></i>
+      </td>
+      <td><code>center_id</code></td>
+      <td class="center aligned">
+        <code>number</code>
+        <code class="ui label">0</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>center_id of the center for which the resources are needed</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label black" data-content="required" data-position="top center"></i>
+      </td>
+      <td><code>date</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">17-11-2017</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>date for which the availability info is needed</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label black" data-content="required" data-position="top center"></i>
+      </td>
+      <td><code>slot_time</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">04:30</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>slot time for which the availability info is needed</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label black" data-content="required" data-position="top center"></i>
+      </td>
+      <td><code>duration</code></td>
+      <td class="center aligned">
+        <code>number</code>
+        <code class="ui label">15</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>slot duration for which the availability info is needed</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label grey" data-content="optional" data-position="top center"></i>
+      </td>
+      <td><code>appointment_id</code></td>
+      <td class="center aligned">
+        <code>number</code>
+        <code class="ui label">82316</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>appointment_id in case of update appointment</p>
+
+        
+      </td>
+    </tr>
+  
+
+                    
+                    
+                  </tbody>
+                </table>
+              
+              
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>application/json</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui blue segment">
+                  <div class="title" style="margin-bottom: 1rem;">
+                    <a class="ui blue circular label">
+                      200
+                    </a>
+                    <code>application/json</code>
+                  </div>
+                  <div class="content tabbed active">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-json">{
+    &#34;resources&#34;: [
+        {
+            &#34;overbooked&#34;: false,
+            &#34;resource_name&#34;: &#34;Fresenius - 1(BRS_CHN) &#34;,
+            &#34;resource_type&#34;: &#34;EQID&#34;,
+            &#34;resource_id&#34;: &#34;64&#34;,
+            &#34;center_id&#34;: 7,
+            &#34;overbook_limit&#34;: 0,
+            &#34;availability&#34;: true
+        },
+        {
+            &#34;overbooked&#34;: false,
+            &#34;resourcename&#34;: &#34;Fresenius - 2(BRS_CHN) &#34;,
+            &#34;resourcetype&#34;: &#34;EQID&#34;,
+            &#34;center_id&#34;: 7,
+            &#34;resourceid&#34;: &#34;65&#34;,
+            &#34;overbook_limit&#34;: null,
+            &#34;availability&#34;: false
+        }
+    ]
+}
+</code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+              </div>
+            
+          </div>
+        
+        </div>
+      <div class="ui hidden divider"></div>
+    
+  
+    
+      <div class="ui segments">
+        <div class="ui basic segment resource">
+          <div class="ui black huge ribbon label">
+            Lookup resources by category
+          </div>
+          
+        </div>
+
+        
+          
+<div class="ui grey horizontal small divider header" style="margin-top:0">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui orange micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block inverted center aligned header" id="resources-lookup-resources-by-category-lookup-resources-by-category">
+              Lookup resources by category
+            </h3>
+            <div class="description"><p>Lookp for the resources by the category and return their first available slot for a date</p>
+</div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui green large button">
+                  <h3>GET</h3>
+                </div>
+                <a class="ui basic fluid request-url green label">
+                  <code>http://localhost:8080/instahms/resources/lookup.json{?res_sch_category,resource,center_id,date,filterText,page_num,page_size}</code>
+                </a>
+              </div>
+              
+                <table class="ui celled definition table">
+                  <thead>
+                    <tr>
+                      <th colspan="4">Parameters</th>
+                    </tr>
+                  <thead>
+                  <tbody>
+                    
+                      
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label black" data-content="required" data-position="top center"></i>
+      </td>
+      <td><code>res_sch_category</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">DOC</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>Secondary resource appplicable from this category</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label black" data-content="required" data-position="top center"></i>
+      </td>
+      <td><code>resource</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">&#39;primary&#39;</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>Specifies if &lsquo;primary&rsquo; or &lsquo;secondary&rsquo; resource</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label black" data-content="required" data-position="top center"></i>
+      </td>
+      <td><code>center_id</code></td>
+      <td class="center aligned">
+        <code>number</code>
+        <code class="ui label">0</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>center_id of the center for which the resources are needed</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label black" data-content="required" data-position="top center"></i>
+      </td>
+      <td><code>date</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">17-11-2017</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>date for which the availability info is needed</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label black" data-content="required" data-position="top center"></i>
+      </td>
+      <td><code>filterText</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">``</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>search for a string</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label grey" data-content="optional" data-position="top center"></i>
+      </td>
+      <td><code>page_num</code></td>
+      <td class="center aligned">
+        <code>number</code>
+        <code class="ui label">1</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>select page number for paginated result set.</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label grey" data-content="optional" data-position="top center"></i>
+      </td>
+      <td><code>page_size</code></td>
+      <td class="center aligned">
+        <code>number</code>
+        <code class="ui label">2</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>select results to return per size for paginated result set. Valid values between 1 and 100.</p>
+
+        
+      </td>
+    </tr>
+  
+
+                    
+                    
+                  </tbody>
+                </table>
+              
+              
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>application/json</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui blue segment">
+                  <div class="title" style="margin-bottom: 1rem;">
+                    <a class="ui blue circular label">
+                      200
+                    </a>
+                    <code>application/json</code>
+                  </div>
+                  <div class="content tabbed active">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-json">{
+    &#34;resources&#34;: [
+        {
+            &#34;resource_name&#34;: &#34;Dr. Ajit Mehta &#34;,
+            &#34;resource_type&#34;: &#34;DOC&#34;,
+            &#34;resource_id&#34;: &#34;DOC0123&#34;,
+            &#34;center_id&#34;: 7,
+            &#34;overbook_limit&#34;: 0,
+            &#34;first_available_slot&#34;: &#34;14:30&#34;,
+            &#34;duration&#34; : 15
+        },
+        {
+            &#34;resourcename&#34;: &#34;Dr. Ajay Kumar&#34;,
+            &#34;resourcetype&#34;: &#34;DOC&#34;,
+            &#34;center_id&#34;: 7,
+            &#34;resourceid&#34;: &#34;DOC)124&#34;,
+            &#34;overbook_limit&#34;: null,
+            &#34;first_available_slot&#34;: &#34;14:30&#34;,
+            &#34;duration&#34; : 15
+        }
+    ]
+}
+</code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+              </div>
+            
+          </div>
+        
+        </div>
+      <div class="ui hidden divider"></div>
+    
+  
+    
+      <div class="ui segments">
+        <div class="ui basic segment resource">
+          <div class="ui black huge ribbon label">
+            Get resource\s available slots for a day
+          </div>
+          
+        </div>
+
+        
+          
+<div class="ui grey horizontal small divider header" style="margin-top:0">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui orange micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block inverted center aligned header" id="resources-get-resource-s-available-slots-for-a-day-get-resource-s-available-slots-for-a-day">
+              Get resource\s available slots for a day
+            </h3>
+            <div class="description"><p>Returns the available slots for a resource for the specified date. If multiple resources are provides,
+then returns the common available slots for them.</p>
+</div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui green large button">
+                  <h3>GET</h3>
+                </div>
+                <a class="ui basic fluid request-url green label">
+                  <code>http://localhost:8080/instahms/resources/getCommonSlots.json{?center_id,date,category,appointment_duration,resources_id_list,resources_type_list,days_counter}</code>
+                </a>
+              </div>
+              
+                <table class="ui celled definition table">
+                  <thead>
+                    <tr>
+                      <th colspan="4">Parameters</th>
+                    </tr>
+                  <thead>
+                  <tbody>
+                    
+                      
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label black" data-content="required" data-position="top center"></i>
+      </td>
+      <td><code>center_id</code></td>
+      <td class="center aligned">
+        <code>number</code>
+        <code class="ui label">0</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>center_id of the center for which the resources are needed</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label black" data-content="required" data-position="top center"></i>
+      </td>
+      <td><code>date</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">17-11-2017</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>date for which the availability info is needed</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label black" data-content="required" data-position="top center"></i>
+      </td>
+      <td><code>category</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">DOC</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>appointment category</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label grey" data-content="optional" data-position="top center"></i>
+      </td>
+      <td><code>appointment_duration</code></td>
+      <td class="center aligned">
+        <code>number</code>
+        <code class="ui label">30</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>duration for which you want the slot</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label black" data-content="required" data-position="top center"></i>
+      </td>
+      <td><code>resources_id_list</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">DOC0232,DOC0088</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>comma separated resources</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label black" data-content="required" data-position="top center"></i>
+      </td>
+      <td><code>resources_type_list</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">DOC,DOC</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>comma separated resources types</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label black" data-content="required" data-position="top center"></i>
+      </td>
+      <td><code>days_counter</code></td>
+      <td class="center aligned">
+        <code>number</code>
+        <code class="ui label">30</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>number of days you want to consider</p>
+
+        
+      </td>
+    </tr>
+  
+
+                    
+                    
+                  </tbody>
+                </table>
+              
+              
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>application/json</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui blue segment">
+                  <div class="title" style="margin-bottom: 1rem;">
+                    <a class="ui blue circular label">
+                      200
+                    </a>
+                    <code>application/json</code>
+                  </div>
+                  <div class="content tabbed active">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-json">{
+    &#34;resources_first_available_date&#34;: &#34;2018-05-05&#34;,
+    &#34;resources_available_slots_centerwise&#34; : [
+        {
+            &#34;center_id&#34;: 0,
+            &#34;slot_time&#34;: &#34;2018-05-05T02:30:00Z&#34;
+        }
+    ]
+}
+</code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+              </div>
+            
+          </div>
+        
+        </div>
+      <div class="ui hidden divider"></div>
+    
+  
+    
+      <div class="ui segments">
+        <div class="ui basic segment resource">
+          <div class="ui black huge ribbon label">
+            Add Overrides
+          </div>
+          
+        </div>
+
+        
+          
+<div class="ui grey horizontal small divider header" style="margin-top:0">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui orange micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block inverted center aligned header" id="resources-add-overrides-add-overrides">
+              Add Overrides
+            </h3>
+            <div class="description"><p>This endpoint is used to add overrides of resource.</p>
+</div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui blue large button">
+                  <h3>POST</h3>
+                </div>
+                <a class="ui basic fluid request-url blue label">
+                  <code>http://localhost:8080/instahms/resources/calendarview/addoverrides.json</code>
+                </a>
+              </div>
+              
+              
+              
+                <div class="ui stacked segment">
+                  <div class="ui fluid transaction">
+                    <div class="title">
+                      <code></code>
+                    </div>
+                    <div class="content tabbed">
+                      <div class="ui top attached tabular menu">
+                        <a data-tab="body" class="active item">BODY</a>
+                        <a data-tab="schema" class="item">SCHEMA</a>
+                      </div>
+                      <div class="ui bottom attached active tab segment" data-tab="body">
+                        <pre style="white-space: inherit">
+                          <code class="language-">{
+    &#34;timings&#34;:{
+        &#34;override_for&#34;:&#34;H&#34;,
+        &#34;start_date&#34;:&#34;21-01-2017&#34;,
+        &#34;end_date&#34;:&#34;21-02-2017&#34;,
+        &#34;availability_details&#34;:[
+            {
+                &#34;start_time&#34;:&#34;20:10&#34;,
+                &#34;end_time&#34;:&#34;21:00&#34;,
+                &#34;center_id&#34;:1,
+                &#34;availability_status&#34;:&#34;A&#34;,
+                &#34;remarks&#34;:&#34;xyz&#34;
+            }
+        ],
+        &#34;resource_id&#34;:&#34;DOC001&#34;,
+        &#34;cancel_existing_appointments&#34;:&#34;Y&#34;
+    }
+}
+</code>
+                        </pre>
+                      </div>
+                      <div class="ui bottom attached tab segment" data-tab="schema">
+                        <pre style="white-space: inherit">
+                          <code class="language-json"></code>
+                        </pre>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>application/json</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui blue segment">
+                  <div class="title" style="margin-bottom: 1rem;">
+                    <a class="ui blue circular label">
+                      200
+                    </a>
+                    <code></code>
+                  </div>
+                  <div class="content tabbed active">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-"></code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+              </div>
+            
+          </div>
+        
+        </div>
+      <div class="ui hidden divider"></div>
+    
+  
+
+  <div class="ui horizontal divider" id="appointments">
+    Appointments
+  </div>
+  <div class="ui header center aligned">
+    <div class="ui header">
+      <div class="sub header">
+        
+      </div>
+    </div>
+  </div>
+  
+    
+      <div class="ui segments">
+        <div class="ui basic segment resource">
+          <div class="ui black huge ribbon label">
+            Resource Calendar
+          </div>
+          
+        </div>
+
+        
+          
+<div class="ui grey horizontal small divider header" style="margin-top:0">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui orange micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block inverted center aligned header" id="appointments-resource-calendar-resource-calendar">
+              Resource Calendar
+            </h3>
+            <div class="description"><p>This endpoint gives all the overrides and appointment details. Empty list of overrides means no overrides are present for that date.
+In that case weekly availability has to be considered</p>
+</div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui green large button">
+                  <h3>GET</h3>
+                </div>
+                <a class="ui basic fluid request-url green label">
+                  <code>http://localhost:8080/instahms/resources/calendarview/schedule.json{?start_date,end_date,modified_after,resources,res_sch_category,skip_status}</code>
+                </a>
+              </div>
+              
+                <table class="ui celled definition table">
+                  <thead>
+                    <tr>
+                      <th colspan="4">Parameters</th>
+                    </tr>
+                  <thead>
+                  <tbody>
+                    
+                      
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label black" data-content="required" data-position="top center"></i>
+      </td>
+      <td><code>start_date</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">12-09-2017</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>DD-MM-YYYY Appointment should start &gt;= start_date</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label black" data-content="required" data-position="top center"></i>
+      </td>
+      <td><code>end_date</code></td>
+      <td class="center aligned">
+        <code>strng</code>
+        <code class="ui label">12-09-2017</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>DD-MM-YYYY Appointment should less &lt;= end_date</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label grey" data-content="optional" data-position="top center"></i>
+      </td>
+      <td><code>modified_after</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">12-09-2017 02:00:00</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>DD-MM-YYYY HH:MM:SS</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label black" data-content="required" data-position="top center"></i>
+      </td>
+      <td><code>resources</code></td>
+      <td class="center aligned">
+        <code>array[string]</code>
+        <code class="ui label">DOC122,DOC124,DOC12455</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>List of resources for which</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label black" data-content="required" data-position="top center"></i>
+      </td>
+      <td><code>res_sch_category</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">DOC</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>Category of resources</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label grey" data-content="optional" data-position="top center"></i>
+      </td>
+      <td><code>skip_status</code></td>
+      <td class="center aligned">
+        <code>array[string]</code>
+        <code class="ui label">Noshow, Cancel</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>skip the appointments with these status</p>
+
+        
+      </td>
+    </tr>
+  
+
+                    
+                    
+                  </tbody>
+                </table>
+              
+              
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>application/json</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui blue segment">
+                  <div class="title" style="margin-bottom: 1rem;">
+                    <a class="ui blue circular label">
+                      200
+                    </a>
+                    <code>application/json</code>
+                  </div>
+                  <div class="content tabbed active">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-json">{
+    &#34;resources_calender&#34; : [
+    {
+        &#34;resource_id&#34;:&#34;DOC0082&#34;,
+        &#34;appointments&#34;:[
+            {
+               &#34;appointment_id&#34;:34566,
+               &#34;mr_no&#34;:&#34;MR008317&#34;,
+               &#34;patient_name&#34;:&#34;Mr. Aakash&#34;,
+               &#34;appointment_status&#34;:&#34;Booked&#34;,
+               &#34;appointment_visit_type&#34;:&#34;F&#34;,
+               &#34;patient_contact&#34;:&#34;&#43;9199765465432&#34;,
+               &#34;appointment_time&#34;:&#34;12-09-2017 10:15:37&#34;,
+               &#34;appointment_source_name&#34;: &#34;Practo&#34;,
+               &#34;duration&#34;:30,
+               &#34;complaint&#34;:&#34;&#34;,
+               &#34;remarks&#34;:&#34;&#34;,
+               &#34;vip_status&#34;:&#34;Y&#34;
+            },
+            {
+               &#34;appointment_id&#34;:34568,
+               &#34;mr_no&#34;:&#34;MR008317&#34;,
+               &#34;patient_name&#34;:&#34;Mr. Aakash&#34;,
+               &#34;appointment_status&#34;:&#34;Booked&#34;,
+               &#34;appointment_visit_type&#34;:&#34;F&#34;,
+               &#34;patient_contact&#34;:&#34;&#43;9199765465432&#34;,
+               &#34;appointment_time&#34;:&#34;12-09-2017 10:45:37&#34;,
+               &#34;appointment_source_name&#34;: &#34;Practo&#34;,
+               &#34;duration&#34;:15,
+               &#34;complaint&#34;:&#34;&#34;,
+               &#34;remarks&#34;:&#34;&#34;,
+               &#34;vip_status&#34;:&#34;Y&#34;
+            },
+            {
+               &#34;appointment_id&#34;:34569,
+               &#34;mr_no&#34;:&#34;MR008317&#34;,
+               &#34;patient_name&#34;:&#34;Mr. Aakash&#34;,
+               &#34;appointment_status&#34;:&#34;Booked&#34;,
+               &#34;appointment_visit_type&#34;:&#34;F&#34;,
+               &#34;patient_contact&#34;:&#34;&#43;9199765465432&#34;,
+               &#34;appointment_time&#34;:&#34;12-09-2017 10:45:37&#34;,
+               &#34;appointment_source_name&#34;: &#34;Practo&#34;,
+               &#34;duration&#34;:15,
+               &#34;complaint&#34;:&#34;&#34;,
+               &#34;remarks&#34;:&#34;&#34;,
+               &#34;vip_status&#34;:&#34;Y&#34;
+            }
+        ],
+         &#34;overrides&#34;:[
+            {
+               &#34;from_time&#34;:&#34;00:00:00&#34;,
+               &#34;to_time&#34;:&#34;12:00:00&#34;,
+               &#34;availability_status&#34;:&#34;A&#34;,
+               &#34;remarks&#34;:&#34;&#34;,
+               &#34;center_id&#34;:1,
+               &#34;availability_date&#34;: &#34;12-09-2017&#34;
+            },
+            {
+               &#34;from_time&#34;:&#34;12:00:00&#34;,
+               &#34;to_time&#34;:&#34;23:59:00&#34;,
+               &#34;availability_status&#34;:&#34;N&#34;,
+               &#34;remarks&#34;:&#34;&#34;,
+               &#34;center_id&#34;: null,
+               &#34;availability_date&#34;: &#34;12-09-2017&#34;
+            }
+        ]
+    }]
+}
+</code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+              </div>
+            
+          </div>
+        
+        </div>
+      <div class="ui hidden divider"></div>
+    
+  
+    
+      <div class="ui segments">
+        <div class="ui basic segment resource">
+          <div class="ui black huge ribbon label">
+            Get Sponsor info for patient&#39;s Main active visit
+          </div>
+          
+        </div>
+
+        
+          
+<div class="ui grey horizontal small divider header" style="margin-top:0">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui orange micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block inverted center aligned header" id="appointments-get-sponsor-info-for-patients-main-active-visit-get-sponsor-info-for-patients-main-active-visit">
+              Get Sponsor info for patient&#39;s Main active visit
+            </h3>
+            <div class="description"><p>This endpoint gives sponsor information associated with the last active visit of the mr_no supplied.</p>
+</div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui green large button">
+                  <h3>GET</h3>
+                </div>
+                <a class="ui basic fluid request-url green label">
+                  <code>http://localhost:8080/instahms/resources/getSponsorInfoForLastActiveVisit.json{?mr_no}</code>
+                </a>
+              </div>
+              
+                <table class="ui celled definition table">
+                  <thead>
+                    <tr>
+                      <th colspan="4">Parameters</th>
+                    </tr>
+                  <thead>
+                  <tbody>
+                    
+                      
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label black" data-content="required" data-position="top center"></i>
+      </td>
+      <td><code>mr_no</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">MR008315</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>patient&rsquo;s MRNO</p>
+
+        
+      </td>
+    </tr>
+  
+
+                    
+                    
+                  </tbody>
+                </table>
+              
+              
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>application/json</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui blue segment">
+                  <div class="title" style="margin-bottom: 1rem;">
+                    <a class="ui blue circular label">
+                      200
+                    </a>
+                    <code>application/json</code>
+                  </div>
+                  <div class="content tabbed active">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-json">{
+    &#34;insurance_plan_details&#34;: [
+    {
+        &#34;member_id&#34;: &#34;456789&#34;,
+        &#34;tpa_id&#34;: &#34;TPAID0056&#34;,
+        &#34;plan_exclusions&#34;: null,
+        &#34;insurance_co_id&#34;: &#34;ICM00004&#34;,
+        &#34;tpa_name&#34;: &#34;ALFA LAVAL INDIA PVT LTD&#34;,
+        &#34;plan_notes&#34;: null,
+        &#34;insurance_co_name&#34;: &#34;Bhargavi insurance&#34;,
+        &#34;plan_id&#34;: 1,
+        &#34;plan_name&#34;: &#34;bhargavi plan&#34;,
+        &#34;category_id&#34;: 133,
+        &#34;category_name&#34;: &#34;Bhargavi n/p&#34;
+    }
+    ]
+}
+</code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+              </div>
+            
+          </div>
+        
+        </div>
+      <div class="ui hidden divider"></div>
+    
+  
+    
+      <div class="ui segments">
+        <div class="ui basic segment resource">
+          <div class="ui black huge ribbon label">
+            Create Appointment
+          </div>
+          
+        </div>
+
+        
+          
+<div class="ui grey horizontal small divider header" style="margin-top:0">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui orange micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block inverted center aligned header" id="appointments-create-appointment-create-appointment">
+              Create Appointment
+            </h3>
+            <div class="description"><p>This endpoint is used to create a new Appointment.</p>
+</div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui blue large button">
+                  <h3>POST</h3>
+                </div>
+                <a class="ui basic fluid request-url blue label">
+                  <code>http://localhost:8080/instahms/resources/availabilityview/saveappt.json</code>
+                </a>
+              </div>
+              
+              
+              
+                <div class="ui stacked segment">
+                  <div class="ui fluid transaction">
+                    <div class="title">
+                      <code></code>
+                    </div>
+                    <div class="content tabbed">
+                      <div class="ui top attached tabular menu">
+                        <a data-tab="body" class="active item">BODY</a>
+                        <a data-tab="schema" class="item">SCHEMA</a>
+                      </div>
+                      <div class="ui bottom attached active tab segment" data-tab="body">
+                        <pre style="white-space: inherit">
+                          <code class="language-">{
+    &#34;patient&#34;: {
+      &#34;mr_no&#34;: &#34;MR012841&#34;,
+      &#34;patient_name&#34;: &#34;xyz&#34;,
+      &#34;patient_contact&#34;: &#34;&#43;919876543211&#34;,
+      &#34;vip_status&#34;:&#34;Y&#34;,
+      &#34;scheduler_visit_type&#34;:&#34;M&#34;
+    },
+    &#34;appointment&#34;:{
+      &#34;category&#34;:&#34;DOC&#34;,
+      &#34;secondary_resource_id&#34;:&#34;DOC001&#34;,
+      &#34;center_id&#34;:7,
+      &#34;date&#34;:&#34;27-07-2017&#34;,
+      &#34;slot_time&#34;:&#34;04:00&#34;,
+      &#34;duration&#34;:15,
+      &#34;complaint&#34;:&#34;Feeling feverish&#34;,
+      &#34;remarks&#34;:&#34;&#34;,
+      &#34;status&#34;:&#34;confirmed&#34;,
+      &#34;presc_doc_id&#34;:&#34;DOC0083&#34;,
+      &#34;app_source_id&#34;:1,
+      &#34;additional_resources_insert&#34;:
+               [{&#34;resource_type&#34;:&#34;EQID&#34;,&#34;resource_id&#34;:&#34;22&#34;},
+                {&#34;resource_type&#34;:&#34;EQID&#34;,&#34;resource_id&#34;:&#34;33&#34;}],
+      &#34;practo_appointment_id&#34;:&#34;abcdef&#34;
+     },
+    &#34;repeats&#34;:{
+      &#34;repeat_every&#34;:1,
+      &#34;days_of_week&#34;:[2,4],
+      &#34;repeat_by&#34;:&#34;M&#34;,
+      &#34;end_occurances&#34;:5,
+      &#34;end_date&#34;:&#34;31-07-2018&#34;,
+      &#34;recurr_date&#34;:&#34;30-08-2017&#34;,
+      &#34;recurr_month_type&#34;:&#34;D_W&#34;
+    },
+    &#34;additional_info&#34;:{
+      &#34;dateofbirth&#34;:&#34;21-01-2000&#34;,
+      &#34;age&#34;:12,
+      &#34;age_in&#34;:&#34;Y&#34;,
+      &#34;patient_gender&#34;:&#34;M&#34;,
+      &#34;patient_category_id&#34;:28,
+      &#34;patient_address&#34;: &#34;xyz&#34;,
+      &#34;patient_area&#34;:&#34;xyz&#34;,
+      &#34;patient_city&#34;:&#34;CT0088&#34;,
+      &#34;patient_state&#34;:&#34;ST0017&#34;,
+      &#34;patient_country&#34;:&#34;CM0001&#34;,
+      &#34;patient_nationality&#34;:&#34;CM0001&#34;,
+      &#34;citizen_id&#34;:&#34;SSN001742&#34;,
+      &#34;email_id&#34;:&#34;abc@xyz.com&#34;,
+      &#34;primary_sponsor_id&#34;:&#34;TPAID0094&#34;,
+      &#34;primary_insurance_co&#34;:&#34;ICM00008&#34;,
+      &#34;plan_type_id&#34;:137,
+      &#34;plan_id&#34;:16,
+      &#34;member_id&#34;:&#34;123&#34;
+    },
+    &#34;appointment_plan_id&#34;:1
+}
+</code>
+                        </pre>
+                      </div>
+                      <div class="ui bottom attached tab segment" data-tab="schema">
+                        <pre style="white-space: inherit">
+                          <code class="language-json"></code>
+                        </pre>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>application/json</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui blue segment">
+                  <div class="title" style="margin-bottom: 1rem;">
+                    <a class="ui blue circular label">
+                      200
+                    </a>
+                    <code>application/json</code>
+                  </div>
+                  <div class="content tabbed active">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-json">{
+    &#34;patient&#34;: {
+        &#34;mr_no&#34;: &#34;MR012841&#34;,
+        &#34;patient_name&#34;: &#34;xyz&#34;,
+        &#34;patient_contact&#34;: &#34;&#43;919876543211&#34;,
+        &#34;vip_status&#34;: &#34;Y&#34;,
+        &#34;scheduler_visit_type&#34;: &#34;M&#34;
+    },
+    &#34;repeats&#34;: {
+        &#34;repeat_every&#34;: 1,
+        &#34;days_of_week&#34;: [
+        2,
+        4
+        ],
+        &#34;repeat_by&#34;: &#34;M&#34;,
+        &#34;end_occurances&#34;: 5,
+        &#34;end_date&#34;: &#34;31-07-2018&#34;,
+        &#34;recurr_date&#34;: &#34;30-08-2017&#34;,
+        &#34;recurr_month_type&#34;: &#34;D_W&#34;
+    },
+    &#34;additional_info&#34;: {
+        &#34;dateofbirth&#34;: &#34;21-01-2000&#34;,
+        &#34;age&#34;: 12,
+        &#34;age_in&#34;: &#34;Y&#34;,
+        &#34;patient_gender&#34;: &#34;M&#34;,
+        &#34;patient_category_id&#34;: 28,
+        &#34;patient_address&#34;: &#34;xyz&#34;,
+        &#34;patient_area&#34;: &#34;xyz&#34;,
+        &#34;patient_city&#34;: &#34;CT0088&#34;,
+        &#34;patient_state&#34;: &#34;ST0017&#34;,
+        &#34;patient_country&#34;: &#34;CM0001&#34;,
+        &#34;patient_nationality&#34;: &#34;CM0001&#34;,
+        &#34;citizen_id&#34;: &#34;SSN001742&#34;,
+        &#34;email_id&#34;: &#34;abc@xyz.com&#34;,
+        &#34;primary_sponsor_id&#34;: &#34;TPAID0094&#34;,
+        &#34;primary_insurance_co&#34;: &#34;ICM00008&#34;,
+        &#34;plan_type_id&#34;: 137,
+        &#34;plan_id&#34;: 16,
+        &#34;member_id&#34;: &#34;123&#34;
+        },
+    &#34;appointment_plan_id&#34;: 1,
+        &#34;appointments&#34;: [
+        {
+            &#34;category&#34;: &#34;DOC&#34;,
+            &#34;secondary_resource_id&#34;: &#34;DOC001&#34;,
+            &#34;center_id&#34;: 7,
+            &#34;date&#34;: &#34;27-07-2017&#34;,
+            &#34;slot_time&#34;: &#34;04:00&#34;,
+            &#34;duration&#34;: 15,
+            &#34;complaint&#34;: &#34;Feeling feverish&#34;,
+            &#34;remarks&#34;: &#34;&#34;,
+            &#34;status&#34;: &#34;confirmed&#34;,
+            &#34;presc_doc_id&#34;: &#34;DOC0083&#34;,
+            &#34;app_source_id&#34;: 1,
+            &#34;additional_resources_insert&#34;: [
+            {
+                &#34;resource_type&#34;: &#34;EQID&#34;,
+                &#34;resource_id&#34;: &#34;22&#34;
+            },
+            {
+                &#34;resource_type&#34;: &#34;EQID&#34;,
+                &#34;resource_id&#34;: &#34;33&#34;
+            }
+            ],
+    &#34;practo_appointment_id&#34;: &#34;abcdef&#34;,
+    &#34;appointment_ids_list&#34;: [
+        83277,
+        83278,
+        83279,
+        83280,
+        83281
+    ]
+    }
+    ]
+}
+</code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+              </div>
+            
+              <h4 class="ui horizontal divider">
+                REQUEST
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui blue large button">
+                  <h3>POST</h3>
+                </div>
+                <a class="ui basic fluid request-url blue label">
+                  <code>http://localhost:8080/instahms/resources/availabilityview/saveappt.json</code>
+                </a>
+              </div>
+              
+              
+              
+                <div class="ui stacked segment">
+                  <div class="ui fluid transaction">
+                    <div class="title">
+                      <code></code>
+                    </div>
+                    <div class="content tabbed">
+                      <div class="ui top attached tabular menu">
+                        <a data-tab="body" class="active item">BODY</a>
+                        <a data-tab="schema" class="item">SCHEMA</a>
+                      </div>
+                      <div class="ui bottom attached active tab segment" data-tab="body">
+                        <pre style="white-space: inherit">
+                          <code class="language-">{
+    &#34;patient&#34;: {
+      &#34;mr_no&#34;: &#34;MR012841&#34;,
+      &#34;patient_name&#34;: &#34;xyz&#34;,
+      &#34;patient_contact&#34;: &#34;&#43;919876543211&#34;,
+      &#34;vip_status&#34;:&#34;Y&#34;,
+      &#34;scheduler_visit_type&#34;:&#34;M&#34;
+    },
+    &#34;appointment&#34;:{
+      &#34;category&#34;:&#34;DOC&#34;,
+      &#34;secondary_resource_id&#34;:&#34;DOC001&#34;,
+      &#34;center_id&#34;:7,
+      &#34;date&#34;:&#34;27-07-2017&#34;,
+      &#34;slot_time&#34;:&#34;04:00&#34;,
+      &#34;duration&#34;:15,
+      &#34;complaint&#34;:&#34;Feeling feverish&#34;,
+      &#34;remarks&#34;:&#34;&#34;,
+      &#34;status&#34;:&#34;confirmed&#34;,
+      &#34;presc_doc_id&#34;:&#34;DOC0083&#34;,
+      &#34;app_source_id&#34;:1,
+      &#34;additional_resources_insert&#34;:
+               [{&#34;resource_type&#34;:&#34;EQID&#34;,&#34;resource_id&#34;:&#34;22&#34;},
+                {&#34;resource_type&#34;:&#34;EQID&#34;,&#34;resource_id&#34;:&#34;33&#34;}],
+      &#34;practo_appointment_id&#34;:&#34;abcdef&#34;
+     },
+    &#34;repeats&#34;:{
+      &#34;repeat_every&#34;:1,
+      &#34;days_of_week&#34;:[2,4],
+      &#34;repeat_by&#34;:&#34;M&#34;,
+      &#34;end_occurances&#34;:5,
+      &#34;end_date&#34;:&#34;31-07-2018&#34;,
+      &#34;recurr_date&#34;:&#34;30-08-2017&#34;,
+      &#34;recurr_month_type&#34;:&#34;D_W&#34;
+    },
+    &#34;additional_info&#34;:{
+      &#34;dateofbirth&#34;:&#34;21-01-2000&#34;,
+      &#34;age&#34;:12,
+      &#34;age_in&#34;:&#34;Y&#34;,
+      &#34;patient_gender&#34;:&#34;M&#34;,
+      &#34;patient_category_id&#34;:28,
+      &#34;patient_address&#34;: &#34;xyz&#34;,
+      &#34;patient_area&#34;:&#34;xyz&#34;,
+      &#34;patient_city&#34;:&#34;CT0088&#34;,
+      &#34;patient_state&#34;:&#34;ST0017&#34;,
+      &#34;patient_country&#34;:&#34;CM0001&#34;,
+      &#34;patient_nationality&#34;:&#34;CM0001&#34;,
+      &#34;citizen_id&#34;:&#34;SSN001742&#34;,
+      &#34;email_id&#34;:&#34;abc@xyz.com&#34;,
+      &#34;primary_sponsor_id&#34;:&#34;TPAID0094&#34;,
+      &#34;primary_insurance_co&#34;:&#34;ICM00008&#34;,
+      &#34;plan_type_id&#34;:137,
+      &#34;plan_id&#34;:16,
+      &#34;member_id&#34;:&#34;123&#34;
+    },
+    &#34;appointment_plan_id&#34;:1
+}
+</code>
+                        </pre>
+                      </div>
+                      <div class="ui bottom attached tab segment" data-tab="schema">
+                        <pre style="white-space: inherit">
+                          <code class="language-json"></code>
+                        </pre>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>application/json</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui orange segment">
+                  <div class="title" style="margin-bottom: 1rem;">
+                    <a class="ui orange circular label">
+                      404
+                    </a>
+                    <code>application/json</code>
+                  </div>
+                  <div class="content tabbed active">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-json">{
+    &#34;error&#34;: {
+        &#34;status&#34;: 404,
+        &#34;displayMessage&#34;: &#34;Error message&#34;
+    }
+}
+</code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+              </div>
+            
+          </div>
+        
+        </div>
+      <div class="ui hidden divider"></div>
+    
+  
+    
+      <div class="ui segments">
+        <div class="ui basic segment resource">
+          <div class="ui black huge ribbon label">
+            View Appointment
+          </div>
+          
+        </div>
+
+        
+          
+<div class="ui grey horizontal small divider header" style="margin-top:0">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui orange micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block inverted center aligned header" id="appointments-view-appointment-view-appointment">
+              View Appointment
+            </h3>
+            <div class="description"><p>This endpoint is used to view appointment details.</p>
+</div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui green large button">
+                  <h3>GET</h3>
+                </div>
+                <a class="ui basic fluid request-url green label">
+                  <code>http://localhost:8080/instahms/resources/calendarview/viewappt.json{?appointment_id,res_sch_category}</code>
+                </a>
+              </div>
+              
+                <table class="ui celled definition table">
+                  <thead>
+                    <tr>
+                      <th colspan="4">Parameters</th>
+                    </tr>
+                  <thead>
+                  <tbody>
+                    
+                      
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label black" data-content="required" data-position="top center"></i>
+      </td>
+      <td><code>appointment_id</code></td>
+      <td class="center aligned">
+        <code>number</code>
+        <code class="ui label">79886</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>appointment ID</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label black" data-content="required" data-position="top center"></i>
+      </td>
+      <td><code>res_sch_category</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">DOC</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>Category of resource</p>
+
+        
+      </td>
+    </tr>
+  
+
+                    
+                    
+                  </tbody>
+                </table>
+              
+              
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>application/json</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui blue segment">
+                  <div class="title" style="margin-bottom: 1rem;">
+                    <a class="ui blue circular label">
+                      200
+                    </a>
+                    <code>application/json</code>
+                  </div>
+                  <div class="content tabbed active">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-json">{
+    &#34;patient&#34;: {
+      &#34;mr_no&#34;: &#34;MR012841&#34;,
+      &#34;patient_name&#34;: &#34;xyz&#34;,
+      &#34;patient_contact&#34;: &#34;&#43;919876543211&#34;,
+      &#34;vip_status&#34;:&#34;Y&#34;,
+      &#34;scheduler_visit_type&#34;:&#34;M&#34;
+    },
+    &#34;appointment&#34;:{
+      &#34;appointment_id&#34;:79886,
+      &#34;category&#34;:&#34;DOC&#34;,
+      &#34;secondary_resource_id&#34;:&#34;DOC001&#34;,
+      &#34;center_id&#34;:7,
+      &#34;date&#34;:&#34;27-07-2017&#34;,
+      &#34;slot_time&#34;:&#34;04:00&#34;,
+      &#34;duration&#34;:15,
+      &#34;complaint&#34;:&#34;Feeling feverish&#34;,
+      &#34;remarks&#34;:&#34;&#34;,
+      &#34;status&#34;:&#34;confirmed&#34;,
+      &#34;presc_doc_id&#34;:&#34;DOC0083&#34;,
+      &#34;app_source_id&#34;:1,
+      &#34;additional_resources&#34;:[
+            {
+                &#34;resource_type&#34;:&#34;EQID&#34;,
+                &#34;resource_id&#34;:65
+            },
+            {
+                &#34;resource_type&#34;:&#34;EQID&#34;,
+                &#34;resource_id&#34;:66
+            }
+      ]
+     },
+    &#34;repeats&#34;:{
+      &#34;repeat_every&#34;:1,
+      &#34;days_of_week&#34;:[2,4],
+      &#34;repeat_by&#34;:&#34;M&#34;,
+      &#34;end_occurances&#34;:5,
+      &#34;end_date&#34;:&#34;31-07-2018&#34;,
+      &#34;recurr_date&#34;:&#34;30-08-2017&#34;,
+      &#34;recurr_month_type&#34;:&#34;D_W&#34;
+    },
+    &#34;additional_info&#34;:{
+      &#34;dateofbirth&#34;:&#34;01-21-2000&#34;,
+      &#34;age&#34;:&#34;&#34;,
+      &#34;age_in&#34;:&#34;,
+      &#34;patient_gender&#34;:&#34;M&#34;,
+      &#34;patient_category_id&#34;:28,
+      &#34;patient_address&#34;: &#34;&#34;,
+      &#34;patient_area&#34;:&#34;&#34;,
+      &#34;patient_city&#34;:&#34;CT0088&#34;,
+      &#34;patient_state&#34;:&#34;ST0017&#34;,
+      &#34;country&#34;:&#34;CM0001&#34;,
+      &#34;email_id&#34;:&#34;abc@xyz.com&#34;,
+      &#34;primary_sponsor_id&#34;:&#34;TPAID0094&#34;,
+      &#34;primary_insurance_co&#34;:&#34;ICM00008&#34;,
+      &#34;plan_type_id&#34;:137,
+      &#34;plan_id&#34;:16,
+      &#34;member_id&#34;:&#34;123&#34;
+    }
+}
+</code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+              </div>
+            
+              <h4 class="ui horizontal divider">
+                REQUEST
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui green large button">
+                  <h3>GET</h3>
+                </div>
+                <a class="ui basic fluid request-url green label">
+                  <code>http://localhost:8080/instahms/resources/calendarview/viewappt.json{?appointment_id,res_sch_category}</code>
+                </a>
+              </div>
+              
+                <table class="ui celled definition table">
+                  <thead>
+                    <tr>
+                      <th colspan="4">Parameters</th>
+                    </tr>
+                  <thead>
+                  <tbody>
+                    
+                      
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label black" data-content="required" data-position="top center"></i>
+      </td>
+      <td><code>appointment_id</code></td>
+      <td class="center aligned">
+        <code>number</code>
+        <code class="ui label">79886</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>appointment ID</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label black" data-content="required" data-position="top center"></i>
+      </td>
+      <td><code>res_sch_category</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">DOC</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>Category of resource</p>
+
+        
+      </td>
+    </tr>
+  
+
+                    
+                    
+                  </tbody>
+                </table>
+              
+              
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>application/json</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui orange segment">
+                  <div class="title" style="margin-bottom: 1rem;">
+                    <a class="ui orange circular label">
+                      404
+                    </a>
+                    <code>application/json</code>
+                  </div>
+                  <div class="content tabbed active">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-json">{
+    &#34;error&#34;: {
+        &#34;status&#34;: 404,
+        &#34;displayMessage&#34;: &#34;Error message&#34;
+    }
+}
+</code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+              </div>
+            
+          </div>
+        
+        </div>
+      <div class="ui hidden divider"></div>
+    
+  
+    
+      <div class="ui segments">
+        <div class="ui basic segment resource">
+          <div class="ui black huge ribbon label">
+            Edit/Reschedule Appointment
+          </div>
+          
+        </div>
+
+        
+          
+<div class="ui grey horizontal small divider header" style="margin-top:0">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui orange micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block inverted center aligned header" id="appointments-edit-reschedule-appointment-edit-reschedule-appointment">
+              Edit/Reschedule Appointment
+            </h3>
+            <div class="description"><p>This endpoint is used to update an existing Appointment.
+This endpoint can also be used to reschedule an existing Appointment. For
+latter use second example of request body.</p>
+</div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui blue large button">
+                  <h3>POST</h3>
+                </div>
+                <a class="ui basic fluid request-url blue label">
+                  <code>http://localhost:8080/instahms/resources/calendarview/editappt.json</code>
+                </a>
+              </div>
+              
+              
+              
+                <div class="ui stacked segment">
+                  <div class="ui fluid transaction">
+                    <div class="title">
+                      <code></code>
+                    </div>
+                    <div class="content tabbed">
+                      <div class="ui top attached tabular menu">
+                        <a data-tab="body" class="active item">BODY</a>
+                        <a data-tab="schema" class="item">SCHEMA</a>
+                      </div>
+                      <div class="ui bottom attached active tab segment" data-tab="body">
+                        <pre style="white-space: inherit">
+                          <code class="language-">{
+    &#34;patient&#34;: {
+      &#34;mr_no&#34;: &#34;MR012841&#34;,
+      &#34;patient_name&#34;: &#34;Sanjana&#34;,
+      &#34;patient_contact&#34;: &#34;&#43;919876543211&#34;,
+      &#34;vip_status&#34;:&#34;Y&#34;,
+      &#34;scheduler_visit_type&#34;:&#34;M&#34;
+    },
+    &#34;appointment&#34;:{
+      &#34;appointment_id&#34;:&#34;123&#34;,
+      &#34;category&#34;:&#34;DOC&#34;,
+      &#34;secondary_resource_id&#34;:&#34;DOC001&#34;,
+      &#34;department_id&#34;:&#34;DEPT123&#34;,
+      &#34;date&#34;:&#34;27-07-2017&#34;,
+      &#34;slot_time&#34;:&#34;04:00&#34;,
+      &#34;duration&#34;:&#34;15&#34;,
+      &#34;complaint&#34;:&#34;Fever&#34;,
+      &#34;remarks&#34;:&#34;xyz&#34;,
+      &#34;status&#34;:&#34;confirmed&#34;,
+      &#34;presc_doc_id&#34;:&#34;DOC0083&#34;,
+      &#34;app_source_id&#34;:1,
+      &#34;additional_resources_insert&#34;:
+               [{&#34;resource_type&#34;:&#34;EQID&#34;,&#34;resource_id&#34;:&#34;21&#34;},
+                {&#34;resource_type&#34;:&#34;EQID&#34;,&#34;resource_id&#34;:&#34;31&#34;}],
+      &#34;additional_resources_delete&#34;:
+               [{&#34;resource_type&#34;:&#34;EQID&#34;,&#34;resource_id&#34;:&#34;22&#34;}],
+      &#34;practo_appointment_id&#34;:&#34;abcdef&#34;
+     },
+    &#34;additional_info&#34;:{
+      &#34;dateofbirth&#34;:&#34;27-12-2000&#34;,
+      &#34;age&#34;:12,
+      &#34;agein&#34;:&#34;Y&#34;,
+      &#34;patient_gender&#34;:&#34;M&#34;,
+      &#34;patient_category_id&#34;:28,
+      &#34;patient_address&#34;: &#34;xyz&#34;,
+      &#34;patient_area&#34;:&#34;xyz&#34;,
+      &#34;patient_city&#34;:&#34;CT0088&#34;,
+      &#34;patient_state&#34;:&#34;ST0017&#34;,
+      &#34;country&#34;:&#34;CM0001&#34;,
+      &#34;email_id&#34;:&#34;abc@xyz.com&#34;,
+      &#34;primary_sponsor_id&#34;:&#34;TPAID0094&#34;,
+      &#34;primary_insurance_co&#34;:&#34;ICM00008&#34;,
+      &#34;category_id&#34;:137,
+      &#34;plan_id&#34;:16,
+      &#34;member_id&#34;:&#34;123&#34;
+    }
+}
+</code>
+                        </pre>
+                      </div>
+                      <div class="ui bottom attached tab segment" data-tab="schema">
+                        <pre style="white-space: inherit">
+                          <code class="language-json"></code>
+                        </pre>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>application/json</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui blue segment">
+                  <div class="title" style="margin-bottom: 1rem;">
+                    <a class="ui blue circular label">
+                      200
+                    </a>
+                    <code></code>
+                  </div>
+                  <div class="content tabbed active">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-"></code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+              </div>
+            
+              <h4 class="ui horizontal divider">
+                REQUEST
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui blue large button">
+                  <h3>POST</h3>
+                </div>
+                <a class="ui basic fluid request-url blue label">
+                  <code>http://localhost:8080/instahms/resources/calendarview/editappt.json</code>
+                </a>
+              </div>
+              
+              
+              
+                <div class="ui stacked segment">
+                  <div class="ui fluid transaction">
+                    <div class="title">
+                      <code></code>
+                    </div>
+                    <div class="content tabbed">
+                      <div class="ui top attached tabular menu">
+                        <a data-tab="body" class="active item">BODY</a>
+                        <a data-tab="schema" class="item">SCHEMA</a>
+                      </div>
+                      <div class="ui bottom attached active tab segment" data-tab="body">
+                        <pre style="white-space: inherit">
+                          <code class="language-">{
+    &#34;patient&#34;: {
+      &#34;mr_no&#34;: &#34;MR012841&#34;,
+      &#34;patient_name&#34;: &#34;Sanjana&#34;,
+      &#34;patient_contact&#34;: &#34;&#43;919876543211&#34;,
+      &#34;vip_status&#34;:&#34;Y&#34;,
+      &#34;scheduler_visit_type&#34;:&#34;M&#34;
+    },
+    &#34;appointment&#34;:{
+      &#34;appointment_id&#34;:&#34;123&#34;,
+      &#34;category&#34;:&#34;DOC&#34;,
+      &#34;secondary_resource_id&#34;:&#34;DOC001&#34;,
+      &#34;department_id&#34;:&#34;DEPT123&#34;,
+      &#34;date&#34;:&#34;27-07-2017&#34;,
+      &#34;slot_time&#34;:&#34;04:00&#34;,
+      &#34;duration&#34;:&#34;15&#34;,
+      &#34;complaint&#34;:&#34;Fever&#34;,
+      &#34;remarks&#34;:&#34;xyz&#34;,
+      &#34;status&#34;:&#34;confirmed&#34;,
+      &#34;presc_doc_id&#34;:&#34;DOC0083&#34;,
+      &#34;app_source_id&#34;:1,
+      &#34;additional_resources_insert&#34;:
+               [{&#34;resource_type&#34;:&#34;EQID&#34;,&#34;resource_id&#34;:&#34;21&#34;},
+                {&#34;resource_type&#34;:&#34;EQID&#34;,&#34;resource_id&#34;:&#34;31&#34;}],
+      &#34;additional_resources_delete&#34;:
+               [{&#34;resource_type&#34;:&#34;EQID&#34;,&#34;resource_id&#34;:&#34;22&#34;}],
+      &#34;practo_appointment_id&#34;:&#34;abcdef&#34;
+     },
+    &#34;additional_info&#34;:{
+      &#34;dateofbirth&#34;:&#34;27-12-2000&#34;,
+      &#34;age&#34;:12,
+      &#34;agein&#34;:&#34;Y&#34;,
+      &#34;patient_gender&#34;:&#34;M&#34;,
+      &#34;patient_category_id&#34;:28,
+      &#34;patient_address&#34;: &#34;xyz&#34;,
+      &#34;patient_area&#34;:&#34;xyz&#34;,
+      &#34;patient_city&#34;:&#34;CT0088&#34;,
+      &#34;patient_state&#34;:&#34;ST0017&#34;,
+      &#34;country&#34;:&#34;CM0001&#34;,
+      &#34;email_id&#34;:&#34;abc@xyz.com&#34;,
+      &#34;primary_sponsor_id&#34;:&#34;TPAID0094&#34;,
+      &#34;primary_insurance_co&#34;:&#34;ICM00008&#34;,
+      &#34;category_id&#34;:137,
+      &#34;plan_id&#34;:16,
+      &#34;member_id&#34;:&#34;123&#34;
+    }
+}
+</code>
+                        </pre>
+                      </div>
+                      <div class="ui bottom attached tab segment" data-tab="schema">
+                        <pre style="white-space: inherit">
+                          <code class="language-json"></code>
+                        </pre>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>application/json</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui orange segment">
+                  <div class="title" style="margin-bottom: 1rem;">
+                    <a class="ui orange circular label">
+                      404
+                    </a>
+                    <code>application/json</code>
+                  </div>
+                  <div class="content tabbed active">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-json">{
+    &#34;error&#34;: {
+        &#34;status&#34;: 404,
+        &#34;displayMessage&#34;: &#34;Entity with the given id doesn&#39;t exist&#34;
+    }
+}
+</code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+              </div>
+            
+              <h4 class="ui horizontal divider">
+                REQUEST
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui blue large button">
+                  <h3>POST</h3>
+                </div>
+                <a class="ui basic fluid request-url blue label">
+                  <code>http://localhost:8080/instahms/resources/calendarview/editappt.json</code>
+                </a>
+              </div>
+              
+              
+              
+                <div class="ui stacked segment">
+                  <div class="ui fluid transaction">
+                    <div class="title">
+                      <code></code>
+                    </div>
+                    <div class="content tabbed">
+                      <div class="ui top attached tabular menu">
+                        <a data-tab="body" class="active item">BODY</a>
+                        <a data-tab="schema" class="item">SCHEMA</a>
+                      </div>
+                      <div class="ui bottom attached active tab segment" data-tab="body">
+                        <pre style="white-space: inherit">
+                          <code class="language-">{
+    &#34;appointment_id&#34;: &#34;1234&#34;,
+    &#34;date&#34;: &#34;12-09-2017&#34;,
+    &#34;slot_time&#34;: &#34;17:24&#34;
+}
+</code>
+                        </pre>
+                      </div>
+                      <div class="ui bottom attached tab segment" data-tab="schema">
+                        <pre style="white-space: inherit">
+                          <code class="language-json"></code>
+                        </pre>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>application/json</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui blue segment">
+                  <div class="title" style="margin-bottom: 1rem;">
+                    <a class="ui blue circular label">
+                      200
+                    </a>
+                    <code></code>
+                  </div>
+                  <div class="content tabbed active">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-"></code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+              </div>
+            
+              <h4 class="ui horizontal divider">
+                REQUEST
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui blue large button">
+                  <h3>POST</h3>
+                </div>
+                <a class="ui basic fluid request-url blue label">
+                  <code>http://localhost:8080/instahms/resources/calendarview/editappt.json</code>
+                </a>
+              </div>
+              
+              
+              
+                <div class="ui stacked segment">
+                  <div class="ui fluid transaction">
+                    <div class="title">
+                      <code></code>
+                    </div>
+                    <div class="content tabbed">
+                      <div class="ui top attached tabular menu">
+                        <a data-tab="body" class="active item">BODY</a>
+                        <a data-tab="schema" class="item">SCHEMA</a>
+                      </div>
+                      <div class="ui bottom attached active tab segment" data-tab="body">
+                        <pre style="white-space: inherit">
+                          <code class="language-">{
+    &#34;appointment_id&#34;: &#34;1234&#34;,
+    &#34;date&#34;: &#34;12-09-2017&#34;,
+    &#34;slot_time&#34;: &#34;17:24&#34;
+}
+</code>
+                        </pre>
+                      </div>
+                      <div class="ui bottom attached tab segment" data-tab="schema">
+                        <pre style="white-space: inherit">
+                          <code class="language-json"></code>
+                        </pre>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>application/json</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui orange segment">
+                  <div class="title" style="margin-bottom: 1rem;">
+                    <a class="ui orange circular label">
+                      404
+                    </a>
+                    <code>application/json</code>
+                  </div>
+                  <div class="content tabbed active">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-json">{
+    &#34;error&#34;: {
+        &#34;status&#34;: 404,
+        &#34;displayMessage&#34;: &#34;Entity with the given id doesn&#39;t exist&#34;
+    }
+}
+</code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+              </div>
+            
+          </div>
+        
+        </div>
+      <div class="ui hidden divider"></div>
+    
+  
+    
+      <div class="ui segments">
+        <div class="ui basic segment resource">
+          <div class="ui black huge ribbon label">
+            Status Update for Appointment
+          </div>
+          
+        </div>
+
+        
+          
+<div class="ui grey horizontal small divider header" style="margin-top:0">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui orange micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block inverted center aligned header" id="appointments-status-update-for-appointment-status-update-for-appointment">
+              Status Update for Appointment
+            </h3>
+            <div class="description"><p>This endpoint is used to change the status of an existing Appointment.</p>
+</div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui blue large button">
+                  <h3>POST</h3>
+                </div>
+                <a class="ui basic fluid request-url blue label">
+                  <code>http://localhost:8080/instahms/resources/calendarview/updateapptstatus.json</code>
+                </a>
+              </div>
+              
+              
+              
+                <div class="ui stacked segment">
+                  <div class="ui fluid transaction">
+                    <div class="title">
+                      <code></code>
+                    </div>
+                    <div class="content tabbed">
+                      <div class="ui top attached tabular menu">
+                        <a data-tab="body" class="active item">BODY</a>
+                        <a data-tab="schema" class="item">SCHEMA</a>
+                      </div>
+                      <div class="ui bottom attached active tab segment" data-tab="body">
+                        <pre style="white-space: inherit">
+                          <code class="language-">{
+    &#34;update_app_status&#34;:[
+    {
+        &#34;appointment_id&#34;: &#34;82512&#34;,
+        &#34;appointment_status&#34;:&#34;Cancel&#34;,
+        &#34;cancel_reason&#34;: &#34; not available&#34;,
+        &#34;cancel_type&#34; :&#34;Other&#34;,
+        &#34;category&#34;:&#34;DOC&#34;
+    },
+    {
+        &#34;appointment_id&#34;: &#34;82513&#34;,
+        &#34;appointment_status&#34;:&#34;Confirm&#34;,
+        &#34;category&#34;:&#34;DOC&#34;
+    },
+    {
+       &#34;appointment_id&#34;: &#34;82513&#34;,
+        &#34;appointment_status&#34;:&#34;Noshow&#34;,
+        &#34;category&#34;:&#34;DOC&#34;
+    },
+    {
+       &#34;appointment_id&#34;: &#34;82513&#34;,
+        &#34;appointment_status&#34;:&#34;Completed&#34;,
+        &#34;category&#34;:&#34;DOC&#34;
+    }
+    ]
+}
+</code>
+                        </pre>
+                      </div>
+                      <div class="ui bottom attached tab segment" data-tab="schema">
+                        <pre style="white-space: inherit">
+                          <code class="language-json"></code>
+                        </pre>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>application/json</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui blue segment">
+                  <div class="title" style="margin-bottom: 1rem;">
+                    <a class="ui blue circular label">
+                      200
+                    </a>
+                    <code></code>
+                  </div>
+                  <div class="content tabbed active">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-"></code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+              </div>
+            
+              <h4 class="ui horizontal divider">
+                REQUEST
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui blue large button">
+                  <h3>POST</h3>
+                </div>
+                <a class="ui basic fluid request-url blue label">
+                  <code>http://localhost:8080/instahms/resources/calendarview/updateapptstatus.json</code>
+                </a>
+              </div>
+              
+              
+              
+                <div class="ui stacked segment">
+                  <div class="ui fluid transaction">
+                    <div class="title">
+                      <code></code>
+                    </div>
+                    <div class="content tabbed">
+                      <div class="ui top attached tabular menu">
+                        <a data-tab="body" class="active item">BODY</a>
+                        <a data-tab="schema" class="item">SCHEMA</a>
+                      </div>
+                      <div class="ui bottom attached active tab segment" data-tab="body">
+                        <pre style="white-space: inherit">
+                          <code class="language-">{
+    &#34;update_app_status&#34;:[
+    {
+        &#34;appointment_id&#34;: &#34;82512&#34;,
+        &#34;appointment_status&#34;:&#34;Cancel&#34;,
+        &#34;cancel_reason&#34;: &#34; not available&#34;,
+        &#34;cancel_type&#34; :&#34;Other&#34;,
+        &#34;category&#34;:&#34;DOC&#34;
+    },
+    {
+        &#34;appointment_id&#34;: &#34;82513&#34;,
+        &#34;appointment_status&#34;:&#34;Confirm&#34;,
+        &#34;category&#34;:&#34;DOC&#34;
+    },
+    {
+       &#34;appointment_id&#34;: &#34;82513&#34;,
+        &#34;appointment_status&#34;:&#34;Noshow&#34;,
+        &#34;category&#34;:&#34;DOC&#34;
+    },
+    {
+       &#34;appointment_id&#34;: &#34;82513&#34;,
+        &#34;appointment_status&#34;:&#34;Completed&#34;,
+        &#34;category&#34;:&#34;DOC&#34;
+    }
+    ]
+}
+</code>
+                        </pre>
+                      </div>
+                      <div class="ui bottom attached tab segment" data-tab="schema">
+                        <pre style="white-space: inherit">
+                          <code class="language-json"></code>
+                        </pre>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>application/json</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui orange segment">
+                  <div class="title" style="margin-bottom: 1rem;">
+                    <a class="ui orange circular label">
+                      404
+                    </a>
+                    <code>application/json</code>
+                  </div>
+                  <div class="content tabbed active">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-json">{
+    &#34;error&#34;: {
+        &#34;status&#34;: 404,
+        &#34;displayMessage&#34;: &#34;Entity with the given id doesn&#39;t exist&#34;
+    }
+}
+</code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+              </div>
+            
+          </div>
+        
+        </div>
+      <div class="ui hidden divider"></div>
+    
+  
+    
+      <div class="ui segments">
+        <div class="ui basic segment resource">
+          <div class="ui black huge ribbon label">
+            Previous Appointment
+          </div>
+          
+        </div>
+
+        
+          
+<div class="ui grey horizontal small divider header" style="margin-top:0">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui orange micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block inverted center aligned header" id="appointments-previous-appointment-previous-appointment">
+              Previous Appointment
+            </h3>
+            <div class="description"><p>This endpoint is used to get previous appointment details.</p>
+</div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui green large button">
+                  <h3>GET</h3>
+                </div>
+                <a class="ui basic fluid request-url green label">
+                  <code>http://localhost:8080/instahms/resources/previousappt.json{?mr_no,category,appointment_id}</code>
+                </a>
+              </div>
+              
+                <table class="ui celled definition table">
+                  <thead>
+                    <tr>
+                      <th colspan="4">Parameters</th>
+                    </tr>
+                  <thead>
+                  <tbody>
+                    
+                      
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label black" data-content="required" data-position="top center"></i>
+      </td>
+      <td><code>mr_no</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">MR013578</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>MR Number</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label black" data-content="required" data-position="top center"></i>
+      </td>
+      <td><code>category</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">DOC</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>Category of resource</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label black" data-content="required" data-position="top center"></i>
+      </td>
+      <td><code>appointment_id</code></td>
+      <td class="center aligned">
+        <code>integer</code>
+        <code class="ui label">83232</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>Appointment Id</p>
+
+        
+      </td>
+    </tr>
+  
+
+                    
+                    
+                  </tbody>
+                </table>
+              
+              
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>application/json</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui blue segment">
+                  <div class="title" style="margin-bottom: 1rem;">
+                    <a class="ui blue circular label">
+                      200
+                    </a>
+                    <code>application/json</code>
+                  </div>
+                  <div class="content tabbed active">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-json">{
+    &#34;doctor_name&#34;: &#34;Center Doc1&#34;,
+    &#34;appointment_time&#34;: &#34;18:15:00&#34;,
+    &#34;appointment_date&#34;: &#34;03-04-2018&#34;,
+    &#34;appointment_datetime&#34;: &#34;16-04-2018 09:45:00&#34;,
+    &#34;appointment_id&#34;: &#34;83232&#34;
+}
+</code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+              </div>
+            
+              <h4 class="ui horizontal divider">
+                REQUEST
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui green large button">
+                  <h3>GET</h3>
+                </div>
+                <a class="ui basic fluid request-url green label">
+                  <code>http://localhost:8080/instahms/resources/previousappt.json{?mr_no,category,appointment_id}</code>
+                </a>
+              </div>
+              
+                <table class="ui celled definition table">
+                  <thead>
+                    <tr>
+                      <th colspan="4">Parameters</th>
+                    </tr>
+                  <thead>
+                  <tbody>
+                    
+                      
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label black" data-content="required" data-position="top center"></i>
+      </td>
+      <td><code>mr_no</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">MR013578</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>MR Number</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label black" data-content="required" data-position="top center"></i>
+      </td>
+      <td><code>category</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">DOC</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>Category of resource</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label black" data-content="required" data-position="top center"></i>
+      </td>
+      <td><code>appointment_id</code></td>
+      <td class="center aligned">
+        <code>integer</code>
+        <code class="ui label">83232</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>Appointment Id</p>
+
+        
+      </td>
+    </tr>
+  
+
+                    
+                    
+                  </tbody>
+                </table>
+              
+              
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>application/json</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui orange segment">
+                  <div class="title" style="margin-bottom: 1rem;">
+                    <a class="ui orange circular label">
+                      404
+                    </a>
+                    <code>application/json</code>
+                  </div>
+                  <div class="content tabbed active">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-json">{
+    &#34;error&#34;: {
+        &#34;status&#34;: 404,
+        &#34;displayMessage&#34;: &#34;Error message&#34;
+    }
+}
+</code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+              </div>
+            
+          </div>
+        
+        </div>
+      <div class="ui hidden divider"></div>
+    
+  
+
+
+      </div>
+    </div>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.1/components/accordion.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.1/components/tab.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.1/components/transition.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.1/components/popup.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.13.0/prism.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.13.0/components/prism-json.min.js"></script>
+    <script type="text/javascript">
+      $(function() {
+        $('.ui.accordion').accordion({ animateChildren: false, duration: 0 });
+        $('.content.tabbed').each(function(index) {
+          $('.ui.tabular .item', $(this)).tab({ context: $(this) });
+        });
+        $('.ui.vertical.menu').on('click', '.item', function() {
+          $('.ui.vertical.menu .item').removeClass('active');
+          $(this).addClass('active');
+        });
+        $('.ui.empty.circular.label').popup();
+      });
+    </script>
+  </body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

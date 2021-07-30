@@ -1,0 +1,41 @@
+-- liquibase formatted sql
+-- changeset utkarshjindal:deprecating-mod_blood_bank
+SET client_min_messages = error;
+
+DROP TABLE IF EXISTS donor_blood_component CASCADE;
+DROP TABLE IF EXISTS donor_blood_discard CASCADE;
+DROP TABLE IF EXISTS donor_blood_grouping CASCADE;
+DROP TABLE IF EXISTS donor_blood_issue CASCADE;
+DROP TABLE IF EXISTS donor_blood_request CASCADE;
+DROP TABLE IF EXISTS donor_collection_det CASCADE;
+DROP TABLE IF EXISTS donor_registration CASCADE;
+DROP TABLE IF EXISTS bagtype_master CASCADE;
+DROP TABLE IF EXISTS blood_components_master CASCADE;
+DROP TABLE IF EXISTS blood_discard_reasons_master CASCADE;
+DROP TABLE IF EXISTS blood_donation_type_master CASCADE;
+DROP TABLE IF EXISTS blood_group_master CASCADE;
+DROP TABLE IF EXISTS blood_requests_purpose_master CASCADE;
+DROP TABLE IF EXISTS collection_bar_code_print_templates CASCADE;
+DROP TABLE IF EXISTS collection_cards CASCADE;
+DROP TABLE IF EXISTS component_bar_code_print_templates CASCADE;
+DROP TABLE IF EXISTS rhtype_master CASCADE;
+DROP TABLE IF EXISTS venipuncture_site_master CASCADE;
+DROP SEQUENCE IF EXISTS donor_blood_component_seq;
+DROP SEQUENCE IF EXISTS donor_blood_discard_seq;
+DROP SEQUENCE IF EXISTS donor_blood_grouping_seq;
+DROP SEQUENCE IF EXISTS donor_blood_issue_seq;
+DROP SEQUENCE IF EXISTS donor_blood_request_seq;
+DROP SEQUENCE IF EXISTS donor_collection_det_seq;
+DROP SEQUENCE IF EXISTS donor_registration_seq;
+DROP SEQUENCE IF EXISTS bagtype_master_seq;
+DROP SEQUENCE IF EXISTS blood_components_master_seq;
+DROP SEQUENCE IF EXISTS blood_discard_reasons_master_seq;
+DROP SEQUENCE IF EXISTS blood_donation_type_master_seq;
+DROP SEQUENCE IF EXISTS blood_group_master_seq;
+DROP SEQUENCE IF EXISTS blood_requests_purpose_master_seq;
+DROP SEQUENCE IF EXISTS collection_bar_code_print_templates_seq;
+DROP SEQUENCE IF EXISTS collection_cards_seq;
+DROP SEQUENCE IF EXISTS component_bar_code_print_templates_seq;
+DROP SEQUENCE IF EXISTS rhtype_master_seq;
+DROP SEQUENCE IF EXISTS venipuncture_site_master_seq;
+DELETE FROM modules_activated WHERE module_id = 'mod_blood_bank';

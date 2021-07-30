@@ -1,0 +1,129 @@
+#
+# Cron jobs for insta HMS
+#
+# m h dom mon dow user	command
+
+APP=__app__
+TOMCAT_HOME=__tomcat_home__
+BIN=__apphome__/insta__app__/WEB-INF/install/bin
+LOGDIR=/var/log/insta/__app__
+HMS_WORK_HOME=__hmsworkhome__
+
+#############################################
+# Frequent jobs: less than hourly
+#############################################
+
+# Check health of tomcat (pid/out of memory) and restart if required every 2 minutes
+*/2 * * * * 	__hmsuser__	sudo $BIN/tomcat_monitor.sh >> $LOGDIR/tomcat_monitor.log 2>&1
+
+# every 5 minutes, run focus/tally sync.
+#*/5 * * * *		__hmsuser__	sudo $BIN/accounting_sync.sh	>> $LOGDIR/accounting_sync.log 2>&1
+
+#############################################
+# Hourly jobs: ordered by the minute (use 1-9 for the minute range)
+#############################################
+
+# *:05 (hourly): check for licence validity.
+5 * * * *		__hmsuser__	sudo $BIN/licence_check.sh >> $LOGDIR/licence_check.log
+
+# *:06 (hourly): check and sync users
+6 * * * *		__hmsuser__	sudo $BIN/sync_users.sh >> $LOGDIR/sync_users.log 2>&1
+
+# half-hourly check for if dialysis_poll_dbb27 is running: only if dialysis module dbb27 is enabled
+#__mod_dialysis_dbb27__1,31 * * * *     __hmsuser__	sudo $BIN/dialysis_poll_dbb27.pl
+
+# half-hourly check for if dialysis_poll_dbb06 is running: only if dialysis module dbb06 is enabled
+#__mod_dialysis_dbb06__2,32 * * * *     __hmsuser__	sudo $BIN/dialysis_poll_dbb06.pl --poll 20
+
+# half-hourly check for starting up log monitor: only for default app, ie, hms
+#__default_app__3,31 * * * *	__hmsuser__	sudo $BIN/logmon.pl --tomcat_home=$TOMCAT_HOME > /dev/null
+
+##################################
+# Daily jobs: ordered by the hour+minute. Use 10-29 for the minute range to avoid
+# collision with hourly jobs, except for special cases.
+##################################
+
+# 00:55 daily: daily/weekly/monthly backup for PITR
+55 0 * * *		__hmsuser__  sudo flock -n /tmp/backup.lock $BIN/backup >> $LOGDIR/backup.log 2>&1
+
+# *:? (4 times a day, 6hr gap) for local servers: sync a backup to apps/hub
+# (there is a random sleep, so this can fire anytime between 0 and 59)
+0 3,9,15,21 * * *		__hmsuser__	sudo $BIN/cloudbkp >> $LOGDIR/cloudbkp.log 2>&1
+
+# 01:13 daily Cleanup old tomcat logs
+13 1 * * *		__hmsuser__	sudo $BIN/log_cleanup.sh >> $LOGDIR/log_cleanup.log 2>&1
+
+# 01:14 daily Cleanup hl7 old records
+14 1 * * *		__hmsuser__	sudo $BIN/hl7_cleanup.sh >> $LOGDIR/hl7_cleanup.log 2>&1
+
+# 00:45 daily: Attempt an auto-upgrade
+45 00 * * *		__hmsuser__	sudo $BIN/auto_upgrade.sh >> $LOGDIR/auto_upgrade.log 2>&1
+
+# 00:50 daily: Signalled auto-restart (this checks whether upgrade is in progress for safety)
+50 00 * * *		__hmsuser__	sudo $BIN/auto_restart.sh >> $LOGDIR/auto_restart.log 2>&1
+
+# 05:10 Daily hot-backup for HA/HB
+10 5 * * *		__hmsuser__	sudo $BIN/hot_backup.sh >> $LOGDIR/hot_backup.log 2>&1
+
+# 21:10 (9:10 pm),18:10,16:10 daily: Check and retrieve the latest upgrade build.
+# 21:10 is the usual expected download, 18:10 is to catch any late deployments,
+# 16:10 is to guard against customers shutting off internet during non-working hours.
+10 16,18,21 * * *		__hmsuser__	sudo $BIN/get_latest.sh >> $LOGDIR/get_latest.log 2>&1
+
+# Check the streaming status from the Primary Node If there is a replication setup
+
+10 10,15,18 * * *               __hmsuser__    sudo $BIN/streamingcheckmaster.sh >> $LOGDIR/streamingcheckmaster.log 2>&1
+
+# Check the Replication Lag  from the Secondary Node If there is a replication server
+
+10 10,15,18 * * *               __hmsuser__    sudo $BIN/streamingcheckslave.sh >> $LOGDIR/streamingcheckslave.log 2>&1
+
+# 18:10 and 21:10 daily: Collect the complaint logs from every server
+10 18,21 * * *		__hmsuser__	sudo $BIN/getOpenComplaints.sh  >> $LOGDIR/get_complaints.log 2>&1
+
+# 22:10 daily: Consolidate and send the complaint logs to customer support team
+10 22 * * *		__hmsuser__	sudo $BIN/sendOpenComplaints.sh  >> $LOGDIR/send_complaints.log 2>&1
+
+# 23:25 daily: Run basic health checks and report them if required
+25 23 * * *		__hmsuser__	sudo $BIN/healthcheck.sh  >> $LOGDIR/healthcheck.log 2>&1
+
+#2:15 daily: SSL expiry check of certificates
+#15 2 * * * 		__hmsuser__ 	sudo $BIN/check_ssl_cert_expiry.sh	>>$LOGDIR/check_ssl_cert_expiry.err.log  2>&1
+
+##################################
+# Weekly/monthly jobs: use min as 30-59.
+##################################
+
+# 06:00 monthly Store stock checkpoint created 1st of every month
+0 6 1 * *      __hmsuser__    sudo $BIN/store_checkpoint.sh
+
+# 04:40 monthly on the 20th: Forced restart (this checks whether upgrade is in progress for safety)
+# Disabled: this can cause problems if application is being used.
+# 40 4 20 * *		__hmsuser__	sudo $BIN/auto_restart.sh force
+
+# 04:30 weekly: run a vaccum on the DB: this can take up to half an hour
+# It checks for upgrade in progress and skips
+30 4 * * __weekbeg__		__hmsuser__	sudo $BIN/vacuum.sh >> $LOGDIR/vacuum.log 2>&1
+
+#
+# Add cron-jobs in corresponding sections (hourly,daily,others)
+# Don't add at the end.
+#
+
+##################################
+# CEO Dashboard
+##################################
+1 */4 * * * __hmsuser__	sudo $BIN/ceo_dashboard.sh >> $LOGDIR/ceo_dashboard.log 2>&1
+
+### zip  the webapps directory of all customer server to /opt
+
+10 16  *  *  *     __hmsuser__     sudo  zip -r /var/backups/webapps.zip /root/webapps/ >> $LOGDIR/webappsbackup.log 2>&1
+
+### zip  the ssl directory of the server to /opt
+
+30 16  *  *  *   __hmsuser__      sudo  zip -r   /var/backups/ssl.zip  /root/ssl/  >> $LOGDIR/sslbackup.log 2>&1
+
+###  zip  the vpn directory of the server to /opt
+
+35 16  *  *  *   __hmsuser__      sudo  zip -r    /var/backups/vpn.zip  /root/vpn/   >> $LOGDIR/vpnbackup.log 2>&1
+

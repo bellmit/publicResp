@@ -1,0 +1,2714 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Insta In Patients API</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.4/semantic.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/themes/prism-okaidia.min.css" />
+    <style>
+      blockquote {
+        border-left: solid 4px #eee;
+        padding-left: 8px;
+        font-style: italic;
+        margin-left: 0;
+        padding: 8px;
+      }
+
+      .ui.micro.label {
+        font-size: .25rem;
+      }
+
+      .ui.transaction.accordion .title {
+        text-align: center;
+      }
+
+      .ui.transaction.accordion .content {
+        border-top: solid 1px #ddd !important;
+        border-bottom: solid 1px #ddd !important;
+        background-color: rgba(0,0,0,.03);
+        padding: 0.5em 1em !important;
+      }
+
+      .ui.transaction.accordion .content.active {
+        margin-top: 0.5em;
+      }
+
+      .ui.basic.label {
+        text-align: left;
+        overflow: auto;
+      }
+      
+      .ui.basic.label.request-url {
+        user-select: text;
+      }
+
+      .resource .ui.sub.header {
+        text-transform: none;
+      }
+
+      .sidenav .ui.fluid.accordion .title {
+        padding-left: 0.5rem;
+      }
+      .sidenav .ui.fluid.accordion .title:not(:first-child) {
+        border-top: 1px solid #e0e0ec;        
+      }
+
+      .sidenav .ui.fluid.accordion .content {
+        padding: 0 0 0 2rem !important;
+        margin: 0;
+      }
+
+      .sidenav .ui.fluid.accordion .content .ui.secondary.menu {
+        margin: 0;
+      }
+
+      .sidenav .ui.fluid.accordion .content .ui.secondary.menu a.item{
+        margin: 0 0.75rem 0.5rem 0;
+      }
+      .sidenav .ui.fluid.accordion .content a.item > .label{
+        margin-top: 0.1rem;
+      }
+
+      @media only screen and (min-width: 768px) {
+        .sidewrap {
+          margin-right: 2rem;
+          border-right: 1px solid #b4b4be;
+          background-color: #f7f7fa;
+        }
+
+        .sidenav {
+          left: 0;
+          top: 0;
+          width: inherit;
+          position: fixed !important;
+          height: 100% !important;
+          overflow-y: auto !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="ui padded grid">
+      <div class="sidewrap four wide computer five wide tablet sixteen wide mobile column">
+        <div class="sidenav">
+          
+<a href="#introduction">
+  <h3 class="ui header centered" style="margin: 0;padding: 1rem 0;border-bottom: solid 1px #b4b4be;">
+    <img class="ui tiny image" src="data:image/png;base64,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"/>
+    <div class="content" style="padding:0;">
+      &nbsp;
+      <div class="sub header">Hospital Management System</div>
+    </div>
+  </h3>
+</a>
+
+
+<div class="ui accordion fluid">
+  
+    
+    <div class="title active">
+      <i class="dropdown icon"></i>
+      
+        <strong>IP List</strong>
+      
+    </div>
+    <div class="content active">
+      <div class="ui fluid secondary vertical menu">
+      
+        <a class="item green" href="#ip-list-get-ip-list">
+          <i class="ui green empty circular label"></i>
+          
+            <span>Get IP list</span>
+          
+        </a>
+      
+      </div>
+    </div>
+    
+  
+    
+    <div class="title ">
+      <i class="dropdown icon"></i>
+      
+        <strong>Advance Filter Data</strong>
+      
+    </div>
+    <div class="content ">
+      <div class="ui fluid secondary vertical menu">
+      
+        <a class="item green" href="#advance-filter-data-get-filter-data-for-advance-search">
+          <i class="ui green empty circular label"></i>
+          
+            <span>Get Filter Data for Advance Search</span>
+          
+        </a>
+      
+      </div>
+    </div>
+    
+  
+    
+    <div class="title ">
+      <i class="dropdown icon"></i>
+      
+        <strong>Advance Search Records</strong>
+      
+    </div>
+    <div class="content ">
+      <div class="ui fluid secondary vertical menu">
+      
+        <a class="item green" href="#advance-search-records-get-advance-search-records">
+          <i class="ui green empty circular label"></i>
+          
+            <span>Get Advance Search Records</span>
+          
+        </a>
+      
+      </div>
+    </div>
+    
+  
+</div>
+
+
+<div class="ui horizontal divider">
+  <a href="#discharge-summary">Discharge Summary</a>
+</div>
+
+<div class="ui accordion fluid">
+  
+    
+    <div class="title active">
+      <i class="dropdown icon"></i>
+      
+        <strong>Get All Visits</strong>
+      
+    </div>
+    <div class="content active">
+      <div class="ui fluid secondary vertical menu">
+      
+        <a class="item green" href="#discharge-summary-get-all-visits-get-all-active-inactive-visits">
+          <i class="ui green empty circular label"></i>
+          
+            <span>Get All Active/Inactive visits</span>
+          
+        </a>
+      
+      </div>
+    </div>
+    
+  
+    
+    <div class="title ">
+      <i class="dropdown icon"></i>
+      
+        <strong>Get All Templates</strong>
+      
+    </div>
+    <div class="content ">
+      <div class="ui fluid secondary vertical menu">
+      
+        <a class="item green" href="#discharge-summary-get-all-templates-get-all-active-templates">
+          <i class="ui green empty circular label"></i>
+          
+            <span>Get All Active Templates</span>
+          
+        </a>
+      
+      </div>
+    </div>
+    
+  
+    
+    <div class="title ">
+      <i class="dropdown icon"></i>
+      
+        <strong>Get Template Content, for Rich Text</strong>
+      
+    </div>
+    <div class="content ">
+      <div class="ui fluid secondary vertical menu">
+      
+        <a class="item green" href="#discharge-summary-get-template-content-for-rich-text-get-template-content-for-the-selected-visit">
+          <i class="ui green empty circular label"></i>
+          
+            <span>Get template content for the selected visit</span>
+          
+        </a>
+      
+      </div>
+    </div>
+    
+  
+    
+    <div class="title ">
+      <i class="dropdown icon"></i>
+      
+        <strong>Get Template Content, for HVF</strong>
+      
+    </div>
+    <div class="content ">
+      <div class="ui fluid secondary vertical menu">
+      
+        <a class="item green" href="#discharge-summary-get-template-content-for-hvf-get-template-content-for-the-selected-visit">
+          <i class="ui green empty circular label"></i>
+          
+            <span>Get template content for the selected visit</span>
+          
+        </a>
+      
+      </div>
+    </div>
+    
+  
+    
+    <div class="title ">
+      <i class="dropdown icon"></i>
+      
+        <strong>Discharge Value List</strong>
+      
+    </div>
+    <div class="content ">
+      <div class="ui fluid secondary vertical menu">
+      
+        <a class="item green" href="#discharge-summary-discharge-value-list-get-insert-discharge-value-list">
+          <i class="ui green empty circular label"></i>
+          
+            <span>Get Insert Discharge Value List</span>
+          
+        </a>
+      
+      </div>
+    </div>
+    
+  
+    
+    <div class="title ">
+      <i class="dropdown icon"></i>
+      
+        <strong>Get Selected Item Details</strong>
+      
+    </div>
+    <div class="content ">
+      <div class="ui fluid secondary vertical menu">
+      
+        <a class="item green" href="#discharge-summary-get-selected-item-details-list-of-tokens-for-selected-items">
+          <i class="ui green empty circular label"></i>
+          
+            <span>List of tokens for selected Items</span>
+          
+        </a>
+      
+      </div>
+    </div>
+    
+  
+    
+    <div class="title ">
+      <i class="dropdown icon"></i>
+      
+        <strong>Get Selected Item Details</strong>
+      
+    </div>
+    <div class="content ">
+      <div class="ui fluid secondary vertical menu">
+      
+        <a class="item green" href="#discharge-summary-get-selected-item-details-list-of-tokens-for-selected-items">
+          <i class="ui green empty circular label"></i>
+          
+            <span>List of tokens for selected Items</span>
+          
+        </a>
+      
+      </div>
+    </div>
+    
+  
+    
+    <div class="title ">
+      <i class="dropdown icon"></i>
+      
+        <strong>Process Selected Tokens</strong>
+      
+    </div>
+    <div class="content ">
+      <div class="ui fluid secondary vertical menu">
+      
+        <a class="item green" href="#discharge-summary-process-selected-tokens-process-selected-tokens-with-corresponding-template">
+          <i class="ui green empty circular label"></i>
+          
+            <span>Process selected tokens with corresponding template</span>
+          
+        </a>
+      
+      </div>
+    </div>
+    
+  
+    
+    <div class="title ">
+      <i class="dropdown icon"></i>
+      
+        <strong>Save And Signoff</strong>
+      
+    </div>
+    <div class="content ">
+      <div class="ui fluid secondary vertical menu">
+      
+        <a class="item blue" href="#discharge-summary-save-and-signoff-save-or-save-and-signoff">
+          <i class="ui blue empty circular label"></i>
+          
+            <span>Save or Save and Signoff</span>
+          
+        </a>
+      
+      </div>
+    </div>
+    
+  
+    
+    <div class="title ">
+      <i class="dropdown icon"></i>
+      
+        <strong>Delete Discharge Summary</strong>
+      
+    </div>
+    <div class="content ">
+      <div class="ui fluid secondary vertical menu">
+      
+        <a class="item blue" href="#discharge-summary-delete-discharge-summary-delete-discharge-summary-for-a-visit">
+          <i class="ui blue empty circular label"></i>
+          
+            <span>Delete Discharge Summary for a visit</span>
+          
+        </a>
+      
+      </div>
+    </div>
+    
+  
+    
+    <div class="title ">
+      <i class="dropdown icon"></i>
+      
+        <strong>Revert Finalized Discharge Summary</strong>
+      
+    </div>
+    <div class="content ">
+      <div class="ui fluid secondary vertical menu">
+      
+        <a class="item blue" href="#discharge-summary-revert-finalized-discharge-summary-revert-finalized-discharge-summary-for-a-visit">
+          <i class="ui blue empty circular label"></i>
+          
+            <span>Revert Finalized Discharge Summary for a visit</span>
+          
+        </a>
+      
+      </div>
+    </div>
+    
+  
+</div>
+
+
+        </div>
+      </div>
+      <div class="eleven wide computer ten wide tablet sixteen wide mobile column">
+        
+<div class="ui hidden divider header"></div>
+<h1 class="ui huge header" id="introduction">Insta In Patients API</h1>
+<hr class="ui divider">
+<div class="description">
+  <p>This document defines the API endpoints for incoming patient lists.</p>
+
+</div>
+
+        <div class="ui hidden divider"></div>
+        
+
+  <div class="ui horizontal divider" >
+    
+  </div>
+  <div class="ui header center aligned">
+    <div class="ui header">
+      <div class="sub header">
+        
+      </div>
+    </div>
+  </div>
+  
+    
+      <div class="ui segments">
+        <div class="ui basic segment resource">
+          <div class="ui black huge ribbon label">
+            IP List
+          </div>
+          
+        </div>
+
+        
+          
+<div class="ui grey horizontal small divider header" style="margin-top:0">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui orange micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block inverted center aligned header" id="ip-list-get-ip-list">
+              Get IP list
+            </h3>
+            <div class="description"><p>This endpoint gives list of all IP patients with their details.</p>
+</div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui green large button">
+                  <h3>GET</h3>
+                </div>
+                <a class="ui basic fluid request-url green label">
+                  <code>http://localhost:8080/instahms/inpatients/list.json?status=&amp;page_num=&amp;page_size=&amp;sort_order=&amp;sort_reverse=&amp;search_id=&amp;find_string=</code>
+                </a>
+              </div>
+              
+                <table class="ui celled definition table">
+                  <thead>
+                    <tr>
+                      <th colspan="4">Parameters</th>
+                    </tr>
+                  <thead>
+                  <tbody>
+                    
+                      
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label grey" data-content="optional" data-position="top center"></i>
+      </td>
+      <td><code>page_num</code></td>
+      <td class="center aligned">
+        <code>int</code>
+        
+        
+      </td>
+      <td class="eight wide">
+        <p>1 (which page number to fetch)</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label grey" data-content="optional" data-position="top center"></i>
+      </td>
+      <td><code>page_size</code></td>
+      <td class="center aligned">
+        <code>int</code>
+        
+        
+      </td>
+      <td class="eight wide">
+        <p>20 (number of items in a page)</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label grey" data-content="optional" data-position="top center"></i>
+      </td>
+      <td><code>sort_order</code></td>
+      <td class="center aligned">
+        <code>String</code>
+        
+        
+      </td>
+      <td class="eight wide">
+        <p>&ldquo;mr no&rdquo; (name of the field on which to sort)</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label grey" data-content="optional" data-position="top center"></i>
+      </td>
+      <td><code>sort_reverse</code></td>
+      <td class="center aligned">
+        <code>Boolean</code>
+        
+        
+      </td>
+      <td class="eight wide">
+        <p>true (sort in ascending or descending; will only work if sortOrder is specified)</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label grey" data-content="optional" data-position="top center"></i>
+      </td>
+      <td><code>search_id</code></td>
+      <td class="center aligned">
+        <code>int</code>
+        
+        
+      </td>
+      <td class="eight wide">
+        <p>10 (id of the search name, when present ignore query params get the patient list based on this parameter)</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label grey" data-content="optional" data-position="top center"></i>
+      </td>
+      <td><code>find_string</code></td>
+      <td class="center aligned">
+        <code>String</code>
+        
+        
+      </td>
+      <td class="eight wide">
+        <p>&ldquo;Anup&rdquo; (search by mrno or patientname or patient phone)</p>
+
+        
+      </td>
+    </tr>
+  
+
+                    
+                    
+                  </tbody>
+                </table>
+              
+              
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>application/json</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui blue segment">
+                  <div class="title" style="margin-bottom: 1rem;">
+                    <a class="ui blue circular label">
+                      200
+                    </a>
+                    <code>application/json</code>
+                  </div>
+                  <div class="content tabbed active">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-json">{
+    &#34;patients&#34;: [
+        {
+            &#34;mr_no&#34;: &#34;MR008522&#34;,
+            &#34;full_name&#34;: &#34;Mr. Sonam &#34;,
+            &#34;patient_name&#34;: &#34;Rajeswari&#34;,
+            &#34;middle_name&#34;: null,
+            &#34;last_name&#34;: &#34;R.&#34;,
+            &#34;patient_gender&#34;: &#34;M&#34;,
+            &#34;patient_phone&#34;: &#34;35435&#34;,
+            &#34;country_code&#34;: null,
+            &#34;age&#34;: 24,
+            &#34;age_text&#34;: &#34;Y&#34;,
+            &#34;dob&#34;: null,
+            &#34;visits&#34;: [
+                {
+                    &#34;visit_id&#34;: &#34;IP000648&#34;,
+                    &#34;discharge_status&#34;: &#34;N&#34;,
+                    &#34;ward_name&#34;: &#34;General 1&#34;,
+                    &#34;bed_name&#34;: &#34;GENERAL2&#34;,
+                }
+            ]
+        },
+        {
+            &#34;mr_no&#34;: &#34;MR008531&#34;,
+            &#34;full_name&#34;: &#34;Mrs. Sonam Ippp &#34;,
+            &#34;patient_name&#34;: &#34;raja&#34;,
+            &#34;middle_name&#34;: babu,
+            &#34;last_name&#34;: &#34;R.&#34;,
+            &#34;patient_gender&#34;: &#34;F&#34;,
+            &#34;patient_phone&#34;: &#34;45645&#34;,
+            &#34;country_code&#34;: null,
+            &#34;age&#34;: 35,
+            &#34;age_text&#34;: &#34;Y&#34;,
+            &#34;dob&#34;: null,
+            &#34;visits&#34;: [
+                {
+                    &#34;visit_id&#34;: &#34;IP000649&#34;,
+                    &#34;discharge_status&#34;: &#34;N&#34;,
+                    &#34;ward_name&#34;: &#34;General 1&#34;,
+                    &#34;bed_name&#34;: &#34;GENERAL5&#34;
+                }
+            ]
+        },
+        {
+            &#34;mr_no&#34;: &#34;MR011565&#34;,
+            &#34;full_name&#34;: &#34;Mr. Betta &#34;,
+            &#34;patient_name&#34;: &#34;sajan&#34;,
+            &#34;middle_name&#34;: singh,
+            &#34;last_name&#34;: null,
+            &#34;patient_gender&#34;: &#34;M&#34;,
+            &#34;patient_phone&#34;: &#34;97&#34;,
+            &#34;country_code&#34;: null,
+            &#34;age&#34;: 30,
+            &#34;age_text&#34;: &#34;Y&#34;,
+            &#34;dob&#34;: null,
+            &#34;visits&#34;: [
+                {
+                    &#34;visit_id&#34;: &#34;IP000668&#34;,
+                    &#34;discharge_status&#34;: &#34;N&#34;,
+                    &#34;ward_name&#34;: &#34;Ward ICU&#34;,
+                    &#34;bed_name&#34;: &#34;ICU7&#34;
+                }
+            ]
+        }
+    ],
+  &#34;page_size&#34;: 15,
+  &#34;page_num&#34;: 1,
+  &#34;total_records&#34;: 150
+}
+
+</code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+              </div>
+            
+          </div>
+        
+        </div>
+      <div class="ui hidden divider"></div>
+    
+  
+    
+      <div class="ui segments">
+        <div class="ui basic segment resource">
+          <div class="ui black huge ribbon label">
+            Advance Filter Data
+          </div>
+          
+        </div>
+
+        
+          
+<div class="ui grey horizontal small divider header" style="margin-top:0">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui orange micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block inverted center aligned header" id="advance-filter-data-get-filter-data-for-advance-search">
+              Get Filter Data for Advance Search
+            </h3>
+            <div class="description"><p>This endpoint gives list of data which is used as filter in Advance Search.</p>
+</div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui green large button">
+                  <h3>GET</h3>
+                </div>
+                <a class="ui basic fluid request-url green label">
+                  <code>http://localhost:8080/instahms/inpatients/getFilterData.json</code>
+                </a>
+              </div>
+              
+              
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>application/json</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui blue segment">
+                  <div class="title" style="margin-bottom: 1rem;">
+                    <a class="ui blue circular label">
+                      200
+                    </a>
+                    <code>application/json</code>
+                  </div>
+                  <div class="content tabbed active">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-json">{
+    &#34;visit_status&#34;: {
+        &#34;Active&#34;: &#34;A&#34;,
+        &#34;Inactive&#34;: &#34;I&#34;
+    },
+    &#34;discharge_status&#34;: {
+        &#34;Financial Discharge Pending&#34;: &#34;C&#34;,
+        &#34;Clinical Discharge Pending&#34;: &#34;I&#34;,
+        &#34;Discharge Not Initaited&#34;: &#34;N&#34;
+    },
+    &#34;bill_status&#34;:{
+        &#34;Finalized&#34;: &#34;F&#34;,
+        &#34;Open&#34;: &#34;A&#34;,
+        &#34;Closed&#34;: &#34;C&#34;
+    },
+    &#34;departments&#34;: [
+        {
+            &#34;dept_id&#34;: &#34;DEP0001&#34;,
+            &#34;dept_name&#34;: &#34;ANAESTHESIOLOGY&#34;
+        },
+        {
+            &#34;dept_id&#34;: &#34;DEP0002&#34;,
+            &#34;dept_name&#34;: &#34;APIDept1&#34;
+        },
+        {
+            &#34;dept_id&#34;: &#34;DEP0003&#34;,
+            &#34;dept_name&#34;: &#34;Accident &amp; Emergency&#34;
+        },
+        {
+            &#34;dept_id&#34;: &#34;DEP0004&#34;,
+            &#34;dept_name&#34;: &#34;Andrology&#34;
+        }
+    ],
+    &#34;doctors&#34;: [
+        {
+            &#34;doctor_id&#34;: &#34;DOC0115&#34;,
+            &#34;doctor_name&#34;: &#34; MRS.PRIYANKA SINGH&#34;
+        },
+        {
+            &#34;doctor_id&#34;: &#34;DOC0232&#34;,
+            &#34;doctor_name&#34;: &#34; ASMITHA&#34;
+        },
+        {
+            &#34;doctor_id&#34;: &#34;DOC0198&#34;,
+            &#34;doctor_name&#34;: &#34; Cen Doc2&#34;
+        },
+        {
+            &#34;doctor_id&#34;: &#34;DOC0118&#34;,
+            &#34;doctor_name&#34;: &#34; DR  Ajit Mehta&#34;
+        },
+        {
+            &#34;doctor_id&#34;: &#34;DOC0123&#34;,
+            &#34;doctor_name&#34;: &#34; DR  Prasad Shah&#34;
+        }
+    ],
+    &#34;wards&#34;: [
+        {
+            &#34;ward_no&#34;: &#34;WARD0014&#34;,
+            &#34;ward_name&#34;: &#34;GENERAL&#34;
+        },    
+        {
+            &#34;ward_no&#34;: &#34;WARD0015&#34;,
+            &#34;ward_name&#34;: &#34;Private&#34;
+        },    
+        {
+            &#34;ward_no&#34;: &#34;WARD0016&#34;,
+            &#34;ward_name&#34;: &#34;Semi Private&#34;
+        },
+        {
+            &#34;ward_no&#34;: &#34;WARD0017&#34;,
+            &#34;ward_name&#34;: &#34;Ultra Deluxe&#34;
+        }
+    ]
+}
+
+</code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+              </div>
+            
+          </div>
+        
+        </div>
+      <div class="ui hidden divider"></div>
+    
+  
+    
+      <div class="ui segments">
+        <div class="ui basic segment resource">
+          <div class="ui black huge ribbon label">
+            Advance Search Records
+          </div>
+          
+        </div>
+
+        
+          
+<div class="ui grey horizontal small divider header" style="margin-top:0">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui orange micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block inverted center aligned header" id="advance-search-records-get-advance-search-records">
+              Get Advance Search Records
+            </h3>
+            <div class="description"><p>This endpoint gives list of records from Advance Search.</p>
+</div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui green large button">
+                  <h3>GET</h3>
+                </div>
+                <a class="ui basic fluid request-url green label">
+                  <code>http://localhost:8080/instahms/inpatients/advanceFilterList.json</code>
+                </a>
+              </div>
+              
+              
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>application/json</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui blue segment">
+                  <div class="title" style="margin-bottom: 1rem;">
+                    <a class="ui blue circular label">
+                      200
+                    </a>
+                    <code>application/json</code>
+                  </div>
+                  <div class="content tabbed active">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-json">{
+    &#34;patients&#34;: [
+        {
+            &#34;mr_no&#34;: &#34;MR008522&#34;,
+            &#34;full_name&#34;: &#34;Mrs. Jayalakshmi  &#34;,
+            &#34;patient_name&#34;: &#34;Bhai&#34;,
+            &#34;middle_name&#34;: &#34;bro&#34;,
+            &#34;last_name&#34;: &#34;anna&#34;,
+            &#34;patient_gender&#34;: &#34;M&#34;,
+            &#34;patient_phone&#34;: &#34;9841351006&#34;,
+            &#34;country_code&#34;: &#43;91,
+            &#34;age&#34;: 35,
+            &#34;age_text&#34;: &#34;Y&#34;,
+            &#34;dob&#34;: null,
+            &#34;visits&#34;: [
+                {
+                    &#34;visit_id&#34;: &#34;IP000532&#34;,
+                    &#34;discharge_status&#34;: &#34;N&#34;,
+                    &#34;visit_status&#34;: &#34;A&#34;,
+                    &#34;ward_name&#34;: null,
+                    &#34;bed_name&#34;: null,
+                    &#34;doctor_name&#34;: &#34;DR.BHIMASHANKAR&#34;,
+                    &#34;visit_date&#34;: &#34;21-12-2015&#34;,
+                    &#34;visit_status&#34;: &#34;A&#34;,
+                    &#34;dep_name&#34;: &#34;CARDIOLOGY&#34;
+                },
+                {
+                    &#34;visit_id&#34;: &#34;IP000440&#34;,
+                    &#34;discharge_status&#34;: &#34;D&#34;,
+                    &#34;visit_status&#34;: &#34;I&#34;,
+                    &#34;ward_name&#34;: null,
+                    &#34;bed_name&#34;: null,
+                    &#34;doctor_name&#34;: null,
+                    &#34;visit_date&#34;: &#34;07-12-2009&#34;,
+                    &#34;visit_status&#34;: &#34;I&#34;,
+                    &#34;dep_name&#34;: &#34;Laboratory&#34;
+                }
+            ],
+            &#34;bills&#34;: [
+                {
+                    &#34;visit_id&#34;: &#34;IP000532&#34;,
+                    &#34;bill_no&#34;: &#34;BL1222126&#34;,
+                    &#34;bill_status&#34;: &#34;F&#34;,
+                    &#34;payment_status&#34;: &#34;U&#34;
+                },
+                {
+                    &#34;visit_id&#34;: &#34;IP000440&#34;,
+                    &#34;bill_no&#34;: &#34;BL1222129&#34;,
+                    &#34;bill_status&#34;: &#34;F&#34;,
+                    &#34;payment_status&#34;: &#34;U&#34;
+                }
+            ]
+        },
+        {
+            &#34;mr_no&#34;: &#34;MR008525&#34;,
+            &#34;full_name&#34;: &#34;Mrs. anup  &#34;,
+            &#34;patient_gender&#34;: &#34;M&#34;,
+            &#34;patient_phone&#34;: &#34;9841351006&#34;,
+            &#34;country_code&#34;: &#43;91,
+            &#34;age&#34;: 35,
+            &#34;age_text&#34;: &#34;Y&#34;,
+            &#34;dob&#34;: null,
+            &#34;visits&#34;: [
+                {
+                    &#34;visit_id&#34;: &#34;IP000539&#34;,
+                    &#34;discharge_status&#34;: &#34;N&#34;,
+                    &#34;ward_name&#34;: null,
+                    &#34;bed_name&#34;: null,
+                    &#34;doctor_name&#34;: null,
+                    &#34;visit_date&#34;: &#34;07-12-2009&#34;,
+                    &#34;visit_status&#34;: &#34;I&#34;,
+                    &#34;dep_name&#34;: &#34;Laboratory&#34;
+                },
+                {
+                    &#34;visit_id&#34;: &#34;IP000441&#34;,
+                    &#34;discharge_status&#34;: &#34;D&#34;,
+                    &#34;ward_name&#34;: null,
+                    &#34;bed_name&#34;: null,
+                    &#34;doctor_name&#34;: null,
+                    &#34;visit_date&#34;: &#34;07-12-2009&#34;,
+                    &#34;visit_status&#34;: &#34;I&#34;,
+                    &#34;dep_name&#34;: &#34;Laboratory&#34;
+                }
+            ],
+            &#34;bills&#34;: [
+                {
+                    &#34;visit_id&#34;: &#34;IP000539&#34;,
+                    &#34;bill_no&#34;: &#34;BL1222126&#34;,
+                    &#34;bill_status&#34;: &#34;F&#34;,
+                    &#34;payment_status&#34;: &#34;U&#34;
+                },
+                {
+                    &#34;visit_id&#34;: &#34;IP000441&#34;,
+                    &#34;bill_no&#34;: &#34;BL1222129&#34;,
+                    &#34;bill_status&#34;: &#34;F&#34;,
+                    &#34;payment_status&#34;: &#34;U&#34;
+                }
+            ]
+        }            
+    ]
+}
+
+</code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+              </div>
+            
+          </div>
+        
+        </div>
+      <div class="ui hidden divider"></div>
+    
+  
+
+  <div class="ui horizontal divider" id="discharge-summary">
+    Discharge Summary
+  </div>
+  <div class="ui header center aligned">
+    <div class="ui header">
+      <div class="sub header">
+        
+      </div>
+    </div>
+  </div>
+  
+    
+      <div class="ui segments">
+        <div class="ui basic segment resource">
+          <div class="ui black huge ribbon label">
+            Get All Visits
+          </div>
+          
+        </div>
+
+        
+          
+<div class="ui grey horizontal small divider header" style="margin-top:0">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui orange micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block inverted center aligned header" id="discharge-summary-get-all-visits-get-all-active-inactive-visits">
+              Get All Active/Inactive visits
+            </h3>
+            <div class="description"><p>This endpoint gives list of all active/inactive visits against given mrno.</p>
+</div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui green large button">
+                  <h3>GET</h3>
+                </div>
+                <a class="ui basic fluid request-url green label">
+                  <code>http://localhost:8080/instahms/inpatients/dischargesummary/getAllVisits.json</code>
+                </a>
+              </div>
+              
+                <table class="ui celled definition table">
+                  <thead>
+                    <tr>
+                      <th colspan="4">Parameters</th>
+                    </tr>
+                  <thead>
+                  <tbody>
+                    
+                      
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label black" data-content="required" data-position="top center"></i>
+      </td>
+      <td><code>mr_no</code></td>
+      <td class="center aligned">
+        <code></code>
+        
+        
+      </td>
+      <td class="eight wide">
+        <p>&ldquo;MR012820&rdquo; (All visit against given Mr No)</p>
+
+        
+      </td>
+    </tr>
+  
+
+                    
+                    
+                  </tbody>
+                </table>
+              
+              
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>application/json</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui blue segment">
+                  <div class="title" style="margin-bottom: 1rem;">
+                    <a class="ui blue circular label">
+                      200
+                    </a>
+                    <code>application/json</code>
+                  </div>
+                  <div class="content tabbed active">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-json">{
+    &#34;visit_details&#34;: [
+        {
+            &#34;patient_discharge_status&#34;: &#34;D&#34;,
+            &#34;discharge_doctor_id&#34;: &#34;DOC0232&#34;,
+            &#34;status&#34;: &#34;A&#34;,
+            &#34;visit_time&#34;: &#34;18:10:24&#34;,
+            &#34;visit_date&#34;: &#34;2017-07-10&#34;,
+            &#34;discharge_finalized_user&#34;: &#34;&#34;,
+            &#34;discharge_format&#34;: null,
+            &#34;dept_name&#34;: &#34;General&#34;,
+            &#34;discharge_doc_id&#34;: null,
+            &#34;discharge_time&#34;: &#34;12:33:00&#34;,
+            &#34;last_updated_by&#34;: &#34;&#34;,
+            &#34;discharge_date&#34;: &#34;2017-08-02&#34;,
+            &#34;doctor_id&#34;: &#34;DOC0232&#34;,
+            &#34;discharge_doctor_name&#34;: &#34;ASMITHA&#34;,
+            &#34;bed_name&#34;: &#34;first14&#34;,
+            &#34;patient_id&#34;: &#34;IP000806&#34;,
+            &#34;loggedin_docornurse_visit&#34;: &#34;Y&#34;,
+            &#34;report_status&#34;: &#34;Open&#34;,
+            &#34;doctor_name&#34;: &#34;ASMITHA&#34;,
+            &#34;ward_name&#34;: &#34;Arjun&#34;,
+            &#34;visit_type&#34;: &#34;i&#34;            
+        },
+        {
+            &#34;status&#34;: &#34;A&#34;,
+            &#34;doctor_id&#34;: &#34;DOC0125&#34;,
+            &#34;visit_time&#34;: &#34;18:12:39&#34;,
+            &#34;discharge_date&#34;: &#34;2017-07-09&#34;,
+            &#34;visit_date&#34;: &#34;2017-07-10&#34;,
+            &#34;dept_name&#34;: &#34;CARDIOLOGY&#34;,
+            &#34;discharge_finalized_user&#34;: null,
+            &#34;last_updated_by&#34;: &#34;InstaAdmin&#34;,
+            &#34;ward_name&#34;: &#34;Shilpi&#34;,
+            &#34;discharge_format&#34;: &#34;T&#34;,
+            &#34;discharge_doctor_name&#34;: &#34;DR  Prasad Shah  &#34;,
+            &#34;doctor_name&#34;: &#34;DR  Prasad Shah  &#34;,
+            &#34;discharge_doc_id&#34;: 116,
+            &#34;patient_id&#34;: &#34;IP000807&#34;,
+            &#34;discharge_time&#34;: &#34;19:32:00&#34;,
+            &#34;loggedin_docornurse_visit&#34;: &#34;Y&#34;,
+            &#34;patient_discharge_status&#34;: &#34;N&#34;,
+            &#34;report_status&#34;: &#34;Open&#34;,
+            &#34;discharge_doctor_id&#34;: &#34;DOC0125&#34;,
+            &#34;bed_name&#34;: &#34;SEMI PRIVATE47&#34;,
+            &#34;visit_type&#34;: &#34;i&#34;
+        }
+    ],
+    &#34;rights_for_inactive_visit&#34;: &#34;Y&#34;
+}
+
+</code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+              </div>
+            
+          </div>
+        
+        </div>
+      <div class="ui hidden divider"></div>
+    
+  
+    
+      <div class="ui segments">
+        <div class="ui basic segment resource">
+          <div class="ui black huge ribbon label">
+            Get All Templates
+          </div>
+          
+        </div>
+
+        
+          
+<div class="ui grey horizontal small divider header" style="margin-top:0">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui orange micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block inverted center aligned header" id="discharge-summary-get-all-templates-get-all-active-templates">
+              Get All Active Templates
+            </h3>
+            <div class="description"><p>This endpoint gives list of all active templates.</p>
+</div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui green large button">
+                  <h3>GET</h3>
+                </div>
+                <a class="ui basic fluid request-url green label">
+                  <code>http://localhost:8080/instahms/inpatients/dischargesummary/getTemplates.json</code>
+                </a>
+              </div>
+              
+              
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>application/json</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui blue segment">
+                  <div class="title" style="margin-bottom: 1rem;">
+                    <a class="ui blue circular label">
+                      200
+                    </a>
+                    <code>application/json</code>
+                  </div>
+                  <div class="content tabbed active">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-json">{
+    &#34;templates&#34;: [
+        {
+            &#34;title&#34; : &#34;TREATMENT SUMMARY&#34;,
+            &#34;format&#34; : &#34;F&#34;,
+            &#34;id&#34; : &#34;frm4&#34;,
+            &#34;caption&#34;: &#34;OPERATION ROOM DISCHARGE SUMMARY&#34;
+        }
+        {
+            &#34;title&#34; : &#34;Discharge Summary&#34;,
+            &#34;format&#34; : &#34;F&#34;,
+            &#34;id&#34; : &#34;frm5&#34;,
+            &#34;title&#34;: &#34;DISCHARGE SUMMARY&#34;
+        }
+        {
+            &#34;title&#34; : &#34;INtlab&#34;,
+            &#34;format&#34; : &#34;T&#34;,
+            &#34;id&#34; : &#34;FORMAT0001&#34;,
+            &#34;caption&#34;: &#34;New-intlab&#34;
+        }
+    ]
+}
+
+</code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+              </div>
+            
+          </div>
+        
+        </div>
+      <div class="ui hidden divider"></div>
+    
+  
+    
+      <div class="ui segments">
+        <div class="ui basic segment resource">
+          <div class="ui black huge ribbon label">
+            Get Template Content, for Rich Text
+          </div>
+          
+        </div>
+
+        
+          
+<div class="ui grey horizontal small divider header" style="margin-top:0">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui orange micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block inverted center aligned header" id="discharge-summary-get-template-content-for-rich-text-get-template-content-for-the-selected-visit">
+              Get template content for the selected visit
+            </h3>
+            <div class="description"><p>This endpoint gives template content of the selected visit and template.</p>
+</div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui green large button">
+                  <h3>GET</h3>
+                </div>
+                <a class="ui basic fluid request-url green label">
+                  <code>http://localhost:8080/instahms/inpatients/dischargesummary/getTemplateContent.json?discharge_doc_id=5&amp;id=frm1&amp;discharge_format=T</code>
+                </a>
+              </div>
+              
+                <table class="ui celled definition table">
+                  <thead>
+                    <tr>
+                      <th colspan="4">Parameters</th>
+                    </tr>
+                  <thead>
+                  <tbody>
+                    
+                      
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label black" data-content="required" data-position="top center"></i>
+      </td>
+      <td><code>discharge_doc_id</code></td>
+      <td class="center aligned">
+        <code></code>
+        
+        
+      </td>
+      <td class="eight wide">
+        <p>5 (Doc id if the template is already saved. Pass it only, if it is not null.)</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label black" data-content="required" data-position="top center"></i>
+      </td>
+      <td><code>discharge_format</code></td>
+      <td class="center aligned">
+        <code></code>
+        
+        
+      </td>
+      <td class="eight wide">
+        <p>&ldquo;T&rdquo; (Type of the template.)</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label black" data-content="required" data-position="top center"></i>
+      </td>
+      <td><code>id</code></td>
+      <td class="center aligned">
+        <code></code>
+        
+        
+      </td>
+      <td class="eight wide">
+        <p>&ldquo;FORMAT0001&rdquo; (id of a template. Pass only if discharge_doc_id is null)</p>
+
+        
+      </td>
+    </tr>
+  
+
+                    
+                    
+                  </tbody>
+                </table>
+              
+              
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>application/json</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui blue segment">
+                  <div class="title" style="margin-bottom: 1rem;">
+                    <a class="ui blue circular label">
+                      200
+                    </a>
+                    <code>application/json</code>
+                  </div>
+                  <div class="content tabbed active">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-json">{
+    &#34;template_content&#34;: [
+        {
+            &#34;report_file&#34;: &#34;&lt;div class=\&#34;patientHeader\&#34;&gt;\r\n&lt;table style=\&#34;width: 100%;\&#34; border=\&#34;0\&#34; cellspacing=\&#34;0\&#34; cellpadding=\&#34;0\&#34;&gt;\r\n&lt;tbody&gt;\r\n&lt;!-- [#escape x as x?html] --&gt; \r\n&lt;tr&gt;\r\n&lt;td valign=\&#34;top\&#34;&gt;\r\n&lt;table style=\&#34;width: 100%;\&#34; border=\&#34;0\&#34; cellspacing=\&#34;0\&#34; cellpadding=\&#34;1\&#34;&gt;\r\n&lt;tbody&gt;\r\n&lt;tr&gt;\r\n&lt;td align=\&#34;left\&#34; valign=\&#34;top\&#34;&gt;Name:&lt;/td&gt;\r\n&lt;td align=\&#34;left\&#34; valign=\&#34;top\&#34;&gt;${visitdetails.full_name!}&lt;/td&gt;\r\n&lt;/tr&gt;\r\n&lt;tr&gt;\r\n&lt;td align=\&#34;left\&#34; valign=\&#34;top\&#34;&gt;Age/Gender:&lt;/td&gt;\r\n&lt;td align=\&#34;left\&#34; valign=\&#34;top\&#34;&gt;${visitdetails.age!} ${visitdetails.agein!}/${visitdetails.patient_gender!}&lt;/td&gt;\r\n&lt;/tr&gt;\r\n&lt;tr&gt;\r\n&lt;td align=\&#34;left\&#34; valign=\&#34;top\&#34;&gt;Address:&lt;/td&gt;\r\n&lt;td align=\&#34;left\&#34; valign=\&#34;top\&#34;&gt;${visitdetails.patient_address!}&lt;/td&gt;\r\n&lt;/tr&gt;\r\n&lt;tr&gt;\r\n&lt;td align=\&#34;left\&#34; valign=\&#34;top\&#34;&gt;Location:&lt;/td&gt;\r\n&lt;td align=\&#34;left\&#34; valign=\&#34;top\&#34;&gt;${visitdetails.cityname!}, ${visitdetails.statename!}&lt;/td&gt;\r\n&lt;/tr&gt;\r\n&lt;tr&gt;\r\n&lt;td align=\&#34;left\&#34; valign=\&#34;top\&#34;&gt;Doctor:&lt;/td&gt;\r\n&lt;td align=\&#34;left\&#34; valign=\&#34;top\&#34;&gt;${visitdetails.doctor_name!}&lt;/td&gt;\r\n&lt;/tr&gt;\r\n&lt;tr&gt;\r\n&lt;td align=\&#34;left\&#34; valign=\&#34;top\&#34;&gt;Department:&lt;/td&gt;\r\n&lt;td align=\&#34;left\&#34; valign=\&#34;top\&#34;&gt;${visitdetails.dept_name!}&lt;/td&gt;\r\n&lt;/tr&gt;\r\n&lt;!-- [#if (visitdetails.org_name!&#39;GENERAL&#39;)!=&#39;GENERAL&#39;] --&gt; \r\n&lt;tr&gt;\r\n&lt;td align=\&#34;left\&#34; valign=\&#34;top\&#34;&gt;Rate Plan:&lt;/td&gt;\r\n&lt;td align=\&#34;left\&#34; valign=\&#34;top\&#34;&gt;${visitdetails.org_name}&lt;/td&gt;\r\n&lt;/tr&gt;\r\n&lt;!-- [/#if] --&gt; &lt;!-- [#if ((visitdetails.tpa_name!&#39;&#39;)!=&#39;&#39;)] --&gt; \r\n&lt;tr&gt;\r\n&lt;td align=\&#34;left\&#34; valign=\&#34;top\&#34;&gt;Sponsor:&lt;/td&gt;\r\n&lt;td align=\&#34;left\&#34; valign=\&#34;top\&#34;&gt;${visitdetails.tpa_name!}&lt;/td&gt;\r\n&lt;/tr&gt;\r\n&lt;!-- [/#if] --&gt; &lt;!-- [#if visitdetails.visit_type == &#39;i&#39;]] --&gt; &lt;!-- [#if ((visitdetails.referred_to_hosp!&#39;&#39;)!=&#39;&#39;)] --&gt; \r\n&lt;tr&gt;\r\n&lt;td align=\&#34;left\&#34; valign=\&#34;top\&#34;&gt;Referred To:&lt;/td&gt;\r\n&lt;td align=\&#34;left\&#34; valign=\&#34;top\&#34;&gt;${visitdetails.referred_to_hosp!}&lt;/td&gt;\r\n&lt;/tr&gt;\r\n&lt;!-- [/#if] --&gt; &lt;!-- [/#if] --&gt;\r\n&lt;/tbody&gt;\r\n&lt;/table&gt;\r\n&lt;/td&gt;\r\n&lt;td width=\&#34;45%\&#34; align=\&#34;right\&#34; valign=\&#34;top\&#34;&gt;\r\n&lt;table style=\&#34;empty-cells: none; width: 100%;\&#34; border=\&#34;0\&#34; cellspacing=\&#34;0\&#34; cellpadding=\&#34;1\&#34;&gt;\r\n&lt;tbody&gt;\r\n&lt;!-- [#if ((label!&#39;&#39;)!=&#39;&#39;)] --&gt; \r\n&lt;tr&gt;\r\n&lt;td align=\&#34;left\&#34; valign=\&#34;top\&#34;&gt;${label1!}&lt;/td&gt;\r\n&lt;td align=\&#34;left\&#34; valign=\&#34;top\&#34;&gt;${labelvalue1!}&lt;/td&gt;\r\n&lt;/tr&gt;\r\n&lt;!-- [/#if] --&gt; &lt;!-- [#if ((label2!&#39;&#39;)!=&#39;&#39;)] --&gt; \r\n&lt;tr&gt;\r\n&lt;td align=\&#34;left\&#34; valign=\&#34;top\&#34;&gt;${label2!}&lt;/td&gt;\r\n&lt;td align=\&#34;left\&#34; valign=\&#34;top\&#34;&gt;${labelvalue2!}&lt;/td&gt;\r\n&lt;/tr&gt;\r\n&lt;!-- [/#if] --&gt; \r\n&lt;tr&gt;\r\n&lt;td align=\&#34;left\&#34; valign=\&#34;top\&#34;&gt;MR No:&lt;/td&gt;\r\n&lt;td align=\&#34;left\&#34; valign=\&#34;top\&#34;&gt;${visitdetails.mr_no}&lt;/td&gt;\r\n&lt;/tr&gt;\r\n&lt;tr&gt;\r\n&lt;td align=\&#34;left\&#34; valign=\&#34;top\&#34;&gt;Visit ID:&lt;/td&gt;\r\n&lt;td align=\&#34;left\&#34; valign=\&#34;top\&#34;&gt;${visitdetails.patient_id}&lt;/td&gt;\r\n&lt;/tr&gt;\r\n&lt;tr&gt;\r\n&lt;td align=\&#34;left\&#34; valign=\&#34;top\&#34;&gt;[#if (visitdetails.visit_type)! = &#39;i&#39;]Admission Date: \t\t\t\t\t\t\t[#else]Visit Date: \t\t\t\t\t\t\t[/#if]&lt;/td&gt;\r\n&lt;td align=\&#34;left\&#34; valign=\&#34;top\&#34;&gt;${visitdetails.reg_date!} ${visitdetails.reg_time!}&lt;/td&gt;\r\n&lt;/tr&gt;\r\n&lt;tr&gt;\r\n&lt;!-- [#assign disType=(visitdetails.discharge_type)!&#39;&#39;] --&gt;\r\n&lt;td align=\&#34;left\&#34; valign=\&#34;top\&#34;&gt;[#if disType == &#39;Expiry&#39;] \t\t\t\t\t\t\tDeath Date: \t\t\t\t\t\t[#else]Discharge Date: \t\t\t\t\t\t[/#if]&lt;/td&gt;\r\n&lt;td align=\&#34;left\&#34; valign=\&#34;top\&#34;&gt;[#if disType == &#39;Expiry&#39;] \t\t\t\t\t\t\t\t${visitdetails.death_date!} ${visitdetails.death_time!} \t\t\t\t\t\t\t[#else] \t\t\t\t\t\t\t\t${visitdetails.discharge_date!} ${visitdetails.discharge_time!} \t\t\t\t\t\t\t[/#if]&lt;/td&gt;\r\n&lt;/tr&gt;\r\n&lt;!--\t[#if visitdetails.visit_type = &#39;i&#39;] --&gt; \r\n&lt;tr&gt;\r\n&lt;td align=\&#34;left\&#34; valign=\&#34;top\&#34;&gt;Ward/Bed:&lt;/td&gt;\r\n&lt;td align=\&#34;left\&#34; valign=\&#34;top\&#34;&gt;[#if (modules_activated.mod_ipservices!&#39;&#39;) == &#39;Y&#39;] \t\t\t\t\t\t\t\t[#if (visitdetails.alloc_bed_name!&#39;&#39;)==&#39;&#39; ](Not Allocated) \t\t\t\t\t\t\t\t[#else]${(visitdetails.alloc_ward_name)!}/${(visitdetails.alloc_bed_name)!} \t\t\t\t\t\t\t\t[/#if] \t\t\t\t\t\t\t[#else] \t\t\t\t\t\t\t\t${(visitdetails.reg_ward_name)!}/${(visitdetails.bill_bed_type)!} \t\t\t\t\t\t\t[/#if]&lt;/td&gt;\r\n&lt;/tr&gt;\r\n&lt;!-- [/#if] --&gt; &lt;!-- [#if ((visitdetails.refdoctorname!&#39;&#39;)!=&#39;&#39;)] --&gt; \r\n&lt;tr&gt;\r\n&lt;td style=\&#34;width: 40%;\&#34; align=\&#34;left\&#34; valign=\&#34;top\&#34;&gt;Referred By:&lt;/td&gt;\r\n&lt;td style=\&#34;width: 60%;\&#34; align=\&#34;left\&#34; valign=\&#34;top\&#34;&gt;${(visitdetails.refdoctorname)!}&lt;/td&gt;\r\n&lt;/tr&gt;\r\n&lt;!-- [/#if] --&gt;\r\n&lt;/tbody&gt;\r\n&lt;/table&gt;\r\n&lt;/td&gt;\r\n&lt;/tr&gt;\r\n&lt;!-- [/#escape] --&gt;\r\n&lt;/tbody&gt;\r\n&lt;/table&gt;\r\n&lt;/div&gt;\r\n&lt;div&gt;&lt;!-- [#assign empty=[] ] --&gt; \r\n&lt;table style=\&#34;margin-top: 20px; width: 100%;\&#34; border=\&#34;0\&#34; cellspacing=\&#34;0\&#34; cellpadding=\&#34;0\&#34; align=\&#34;center\&#34;&gt;\r\n&lt;tbody&gt;\r\n&lt;tr&gt;\r\n&lt;td colspan=\&#34;2\&#34; align=\&#34;center\&#34;&gt;&lt;strong&gt;${form_title?html}&lt;/strong&gt;&lt;/td&gt;\r\n&lt;/tr&gt;\r\n&lt;tr height=\&#34;30px\&#34;&gt;\r\n&lt;td&gt;&amp;nbsp;&lt;/td&gt;\r\n&lt;/tr&gt;\r\n&lt;!--\t[#list fieldvalues as values] --&gt; &lt;!--\t[#if ((values.field_value)!&#39;&#39;) != &#39;&#39;] --&gt; \r\n&lt;tr&gt;\r\n&lt;td colspan=\&#34;2\&#34;&gt;&lt;strong&gt;${(values.caption)?html}&lt;/strong&gt;&lt;/td&gt;\r\n&lt;/tr&gt;\r\n&lt;tr&gt;\r\n&lt;td colspan=\&#34;2\&#34;&gt;&amp;nbsp;&lt;/td&gt;\r\n&lt;/tr&gt;\r\n&lt;tr&gt;\r\n&lt;td width=\&#34;30px\&#34;&gt;&amp;nbsp;&lt;/td&gt;\r\n&lt;td&gt;${(((values.field_value)?html)?replace(\&#34;\n\&#34;,\&#34;&lt;br /&gt;\&#34;))?replace(\&#34;--break--\&#34;, &#39;\r\n&lt;p class=\&#34;pagebreak\&#34;&gt;&amp;nbsp;&lt;/p&gt;\r\n&#39;)}&lt;/td&gt;\r\n&lt;/tr&gt;\r\n&lt;tr&gt;\r\n&lt;td colspan=\&#34;2\&#34;&gt;&amp;nbsp;&lt;/td&gt;\r\n&lt;/tr&gt;\r\n&lt;!--\t[/#if] --&gt; &lt;!--\t[/#list] --&gt;\r\n&lt;/tbody&gt;\r\n&lt;/table&gt;\r\n&lt;/div&gt;\r\n&lt;div id=\&#34;followupDetailsDiv\&#34;&gt;&lt;!-- [#list dischargedetails as followupdetails] --&gt; &lt;!-- [#assign fdetails=(followupdetails.followup_doctorname)!&#39;notexists&#39;] --&gt; &lt;!-- [#break] --&gt; &lt;!-- [/#list]--&gt; \r\n&lt;table style=\&#34;margin-top: 20px; width: 100%;\&#34; border=\&#34;0\&#34; cellspacing=\&#34;0\&#34; cellpadding=\&#34;0\&#34; align=\&#34;center\&#34;&gt;\r\n&lt;tbody&gt;\r\n&lt;!-- [#if fdetails!=&#39;notexists&#39;] --&gt; \r\n&lt;tr&gt;\r\n&lt;td colspan=\&#34;3\&#34; align=\&#34;left\&#34;&gt;&lt;strong&gt;Follow Up Details&lt;/strong&gt;&lt;/td&gt;\r\n&lt;/tr&gt;\r\n&lt;tr style=\&#34;height: 10px;\&#34;&gt;\r\n&lt;td colspan=\&#34;3\&#34; width=\&#34;5px\&#34;&gt;&amp;nbsp;&lt;/td&gt;\r\n&lt;/tr&gt;\r\n&lt;!-- [#list dischargedetails as followupdetails] --&gt; \r\n&lt;tr&gt;\r\n&lt;td width=\&#34;15%\&#34;&gt;${(followupdetails.followup_date)!}&lt;/td&gt;\r\n&lt;td width=\&#34;25%\&#34;&gt;${((followupdetails.followup_doctorname)!)?html}&lt;/td&gt;\r\n&lt;td width=\&#34;60%\&#34;&gt;${((followupdetails.followup_remarks)!)?html}&lt;/td&gt;\r\n&lt;/tr&gt;\r\n&lt;!-- [/#list] --&gt; \r\n&lt;tr style=\&#34;height: 15px;\&#34;&gt;\r\n&lt;td&gt;&amp;nbsp;&lt;/td&gt;\r\n&lt;/tr&gt;\r\n&lt;!-- [/#if] --&gt; &lt;!-- [#if visitdetails.signatory_username?has_content] --&gt; \r\n&lt;tr&gt;\r\n&lt;td colspan=\&#34;3\&#34; align=\&#34;left\&#34;&gt;&lt;img src=\&#34;/instahms107/master/UserImage.do?_method=view&amp;amp;doctor_id=${visitdetails.signatory_username}\&#34; alt=\&#34;\&#34; /&gt;&lt;/td&gt;\r\n&lt;/tr&gt;\r\n&lt;!-- [/#if] --&gt; \r\n&lt;tr&gt;\r\n&lt;td colspan=\&#34;3\&#34; align=\&#34;left\&#34;&gt;&lt;strong&gt;Doctor&#39;s Signature&lt;/strong&gt;&lt;/td&gt;\r\n&lt;/tr&gt;\r\n&lt;tr&gt;\r\n&lt;td colspan=\&#34;3\&#34;&gt;&lt;!--\t[#list dischargedetails as doctors] --&gt; ${((doctors.discharge_doctor)!)?html} ${((doctors.discharge_doctor_specialization)!)?html} \t\t\t\t&lt;!--\t\t[#break] --&gt; &lt;!--\t[/#list] --&gt;&lt;/td&gt;\r\n&lt;/tr&gt;\r\n&lt;/tbody&gt;\r\n&lt;/table&gt;\r\n&lt;/div&gt;&#34;
+        }
+    ],
+    &#34;followup_details&#34;: [
+        {
+            &#34;doctor_name&#34;: &#34;DR.ASHOK PATIL&#34;,
+            &#34;followup_date&#34;: &#34;17-07-2017&#34;,
+            &#34;followup_id&#34;: &#34;FUD0080&#34;,
+            &#34;followup_remarks&#34;: &#34;asdasda&#34;,
+            &#34;followup_doctor_id&#34;: &#34;DOC0038&#34;
+        },
+        {
+            &#34;doctor_name&#34;: &#34; MRS.PRIYANKA SINGH&#34;,
+            &#34;followup_doctor_id&#34;: &#34;DOC0115&#34;,
+            &#34;followup_date&#34;: &#34;21-07-2017&#34;,
+            &#34;followup_id&#34;: &#34;FUD0081&#34;,
+            &#34;followup_remarks&#34;: &#34;asxascx&#34;
+        }
+    ]
+} 
+
+</code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+              </div>
+            
+          </div>
+        
+        </div>
+      <div class="ui hidden divider"></div>
+    
+  
+    
+      <div class="ui segments">
+        <div class="ui basic segment resource">
+          <div class="ui black huge ribbon label">
+            Get Template Content, for HVF
+          </div>
+          
+        </div>
+
+        
+          
+<div class="ui grey horizontal small divider header" style="margin-top:0">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui orange micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block inverted center aligned header" id="discharge-summary-get-template-content-for-hvf-get-template-content-for-the-selected-visit">
+              Get template content for the selected visit
+            </h3>
+            <div class="description"><p>This endpoint gives template content of the selected visit and template.</p>
+</div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui green large button">
+                  <h3>GET</h3>
+                </div>
+                <a class="ui basic fluid request-url green label">
+                  <code>http://localhost:8080/instahms/inpatients/dischargesummary/getTemplateContent.json?discharge_doc_id=5&amp;id=frm1&amp;discharge_format=F</code>
+                </a>
+              </div>
+              
+                <table class="ui celled definition table">
+                  <thead>
+                    <tr>
+                      <th colspan="4">Parameters</th>
+                    </tr>
+                  <thead>
+                  <tbody>
+                    
+                      
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label black" data-content="required" data-position="top center"></i>
+      </td>
+      <td><code>discharge_doc_id</code></td>
+      <td class="center aligned">
+        <code></code>
+        
+        
+      </td>
+      <td class="eight wide">
+        <p>5 (Doc id if the template is already saved. Pass it only, if it is not null.)</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label black" data-content="required" data-position="top center"></i>
+      </td>
+      <td><code>discharge_format</code></td>
+      <td class="center aligned">
+        <code></code>
+        
+        
+      </td>
+      <td class="eight wide">
+        <p>&ldquo;F&rdquo; (Type of the template.)</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label black" data-content="required" data-position="top center"></i>
+      </td>
+      <td><code>id</code></td>
+      <td class="center aligned">
+        <code></code>
+        
+        
+      </td>
+      <td class="eight wide">
+        <p>&ldquo;frm1&rdquo; (id of a template. Pass only if discharge_doc_id is null)</p>
+
+        
+      </td>
+    </tr>
+  
+
+                    
+                    
+                  </tbody>
+                </table>
+              
+              
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>application/json</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui blue segment">
+                  <div class="title" style="margin-bottom: 1rem;">
+                    <a class="ui blue circular label">
+                      200
+                    </a>
+                    <code>application/json</code>
+                  </div>
+                  <div class="content tabbed active">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-json">{
+    &#34;template_content&#34;: [
+        {
+            &#34;caption&#34;: &#34;Final Diagnosis&#34;,
+            &#34;field_value&#34;: &#34;Bilateral Contracted Kidney - CKD Stage V on MHD thrice a week\r\nRight IJVC Access\r\nHypertension\r\nAnemia of CKD&#34;,
+            &#34;no_of_lines&#34;: 3,
+            &#34;field_id&#34;: &#34;fld21&#34;,
+            &#34;username&#34;: &#34;InstaAdmin&#34;,
+            &#34;template_name&#34;: &#34;DISCHARGE SUMMARY&#34;
+        },
+        {
+            &#34;field_value&#34;: &#34;Patient evaluated and found to have advanced renal failure recently , has come for further evaluation and management.&#34;,
+            &#34;caption&#34;: &#34;Chief Complaints&#34;,
+            &#34;no_of_lines&#34;: 3,
+            &#34;field_id&#34;: &#34;fld1&#34;,
+            &#34;username&#34;: &#34;InstaAdmin&#34;,
+            &#34;template_name&#34;: &#34;DISCHARGE SUMMARY&#34;,
+        }
+    ],
+    &#34;followup_details&#34;: [
+        {
+            &#34;followup_date&#34;: &#34;02-08-2017&#34;,
+            &#34;doctor_name&#34;: &#34; MRS.PRIYANKA SINGH&#34;,
+            &#34;followup_doctor_id&#34;: &#34;DOC0115&#34;,
+            &#34;followup_remarks&#34;: &#34;jbjj&#34;,
+            &#34;followup_id&#34;: &#34;FUD0083&#34;
+        },
+        {
+            &#34;followup_remarks&#34;: &#34;ninkjikj &#34;,
+            &#34;followup_doctor_id&#34;: &#34;DOC0125&#34;,
+            &#34;followup_date&#34;: &#34;02-08-2017&#34;,
+            &#34;doctor_name&#34;: &#34;DR  Prasad Shah  &#34;,
+            &#34;followup_id&#34;: &#34;FUD0084&#34;
+        }
+    ]
+} 
+
+</code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+              </div>
+            
+          </div>
+        
+        </div>
+      <div class="ui hidden divider"></div>
+    
+  
+    
+      <div class="ui segments">
+        <div class="ui basic segment resource">
+          <div class="ui black huge ribbon label">
+            Discharge Value List
+          </div>
+          
+        </div>
+
+        
+          
+<div class="ui grey horizontal small divider header" style="margin-top:0">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui orange micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block inverted center aligned header" id="discharge-summary-discharge-value-list-get-insert-discharge-value-list">
+              Get Insert Discharge Value List
+            </h3>
+            <div class="description"><p>This endpoint gives all list of all possible discharge value.</p>
+</div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui green large button">
+                  <h3>GET</h3>
+                </div>
+                <a class="ui basic fluid request-url green label">
+                  <code>http://localhost:8080/instahms/inpatients/dischargesummary/getDischargeValueItems.json</code>
+                </a>
+              </div>
+              
+              
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>application/json</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui blue segment">
+                  <div class="title" style="margin-bottom: 1rem;">
+                    <a class="ui blue circular label">
+                      200
+                    </a>
+                    <code>application/json</code>
+                  </div>
+                  <div class="content tabbed active">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-json">{
+    &#34;service_detail&#34; : &#34;Services&#34;,
+    &#34;doctor_note&#34; : &#34;Doctor Notes&#34;,
+    &#34;medicine_detail&#34; : &#34;Medicines&#34;,
+    &#34;operation_detail&#34; : &#34;Operations&#34;,
+    &#34;ot_detail&#34; : &#34;OT Sections&#34;,
+    &#34;dicharge_medication&#34; : &#34;Discharge Medications&#34;,
+    &#34;inv_detail&#34; : &#34;Investigations&#34;,
+    &#34;vital_detail&#34; : &#34;Vitals&#34;,
+    &#34;past_inv_detail&#34; : &#34;Past Investigations(last 3 month)&#34;,
+    &#34;ip_record&#34; : &#34;Ip Record Sections&#34;,
+    &#34;diag_detail&#34; : &#34;Diagnoses&#34;,
+    &#34;generic_form&#34; : &#34;Patient Generic Forms&#34;
+}
+
+</code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+              </div>
+            
+          </div>
+        
+        </div>
+      <div class="ui hidden divider"></div>
+    
+  
+    
+      <div class="ui segments">
+        <div class="ui basic segment resource">
+          <div class="ui black huge ribbon label">
+            Get Selected Item Details
+          </div>
+          
+        </div>
+
+        
+          
+<div class="ui grey horizontal small divider header" style="margin-top:0">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui orange micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block inverted center aligned header" id="discharge-summary-get-selected-item-details-list-of-tokens-for-selected-items">
+              List of tokens for selected Items
+            </h3>
+            <div class="description"><p>This endpoint is used to fetch all available tokens for the selected items.</p>
+</div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui green large button">
+                  <h3>GET</h3>
+                </div>
+                <a class="ui basic fluid request-url green label">
+                  <code>http://localhost:8080/instahms/inpatients/dischargesummary/getSelectedItemDetails.json</code>
+                </a>
+              </div>
+              
+                <table class="ui celled definition table">
+                  <thead>
+                    <tr>
+                      <th colspan="4">Parameters</th>
+                    </tr>
+                  <thead>
+                  <tbody>
+                    
+                      
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label black" data-content="required" data-position="top center"></i>
+      </td>
+      <td><code>selected_item (Mandatory, String) - &#34;inv_detail&#34;</code></td>
+      <td class="center aligned">
+        <code>Selected item detail id</code>
+        
+        
+      </td>
+      <td class="eight wide">
+        -
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label black" data-content="required" data-position="top center"></i>
+      </td>
+      <td><code>patient_id</code></td>
+      <td class="center aligned">
+        <code></code>
+        
+        
+      </td>
+      <td class="eight wide">
+        <p>&ldquo;IP000754&rdquo; (Selected visit id)</p>
+
+        
+      </td>
+    </tr>
+  
+
+                    
+                    
+                  </tbody>
+                </table>
+              
+              
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>application/json</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui blue segment">
+                  <div class="title" style="margin-bottom: 1rem;">
+                    <a class="ui blue circular label">
+                      200
+                    </a>
+                    <code>application/json</code>
+                  </div>
+                  <div class="content tabbed active">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-json">{
+    &#34;inv_detail&#34;: [
+        {
+            &#34;prescribed_id&#34;: 42346,
+            &#34;test_id&#34;: &#34;DGC1141&#34;,
+            &#34;test_name&#34;: &#34;24 HR URINE UREA&#34;
+        }
+        {
+            &#34;prescribed_id&#34;: 42347,
+            &#34;test_id&#34;: &#34;DGC0288&#34;,
+            &#34;test_name&#34;: &#34;A F B SMEAR&#34;
+        }
+        {
+            &#34;prescribed_id&#34;: 42345,
+            &#34;test_id&#34;: &#34;DGC1142&#34;,
+            &#34;test_name&#34;: &#34;ADENOSINE DE AMINASE&#34;
+        }
+    ]
+}
+
+</code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+              </div>
+            
+          </div>
+        
+        </div>
+      <div class="ui hidden divider"></div>
+    
+  
+    
+      <div class="ui segments">
+        <div class="ui basic segment resource">
+          <div class="ui black huge ribbon label">
+            Get Selected Item Details
+          </div>
+          
+        </div>
+
+        
+          
+<div class="ui grey horizontal small divider header" style="margin-top:0">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui orange micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block inverted center aligned header" id="discharge-summary-get-selected-item-details-list-of-tokens-for-selected-items">
+              List of tokens for selected Items
+            </h3>
+            <div class="description"><p>This endpoint is used to fetch all available tokens for the selected items.</p>
+</div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui green large button">
+                  <h3>GET</h3>
+                </div>
+                <a class="ui basic fluid request-url green label">
+                  <code>http://localhost:8080/instahms/inpatients/dischargesummary/getSelectedItemDetails.json</code>
+                </a>
+              </div>
+              
+                <table class="ui celled definition table">
+                  <thead>
+                    <tr>
+                      <th colspan="4">Parameters</th>
+                    </tr>
+                  <thead>
+                  <tbody>
+                    
+                      
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label black" data-content="required" data-position="top center"></i>
+      </td>
+      <td><code>selected_item (Mandatory, String) - &#34;inv_detail&#34;</code></td>
+      <td class="center aligned">
+        <code>Selected item detail id</code>
+        
+        
+      </td>
+      <td class="eight wide">
+        -
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label black" data-content="required" data-position="top center"></i>
+      </td>
+      <td><code>patient_id</code></td>
+      <td class="center aligned">
+        <code></code>
+        
+        
+      </td>
+      <td class="eight wide">
+        <p>&ldquo;IP000754&rdquo; (Selected visit id)</p>
+
+        
+      </td>
+    </tr>
+  
+
+                    
+                    
+                  </tbody>
+                </table>
+              
+              
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>application/json</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui blue segment">
+                  <div class="title" style="margin-bottom: 1rem;">
+                    <a class="ui blue circular label">
+                      200
+                    </a>
+                    <code>application/json</code>
+                  </div>
+                  <div class="content tabbed active">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-json">{
+    &#34;inv_detail&#34;: [
+        {
+            &#34;prescribed_id&#34;: 42346,
+            &#34;test_id&#34;: &#34;DGC1141&#34;,
+            &#34;test_name&#34;: &#34;24 HR URINE UREA&#34;
+        }
+        {
+            &#34;prescribed_id&#34;: 42347,
+            &#34;test_id&#34;: &#34;DGC0288&#34;,
+            &#34;test_name&#34;: &#34;A F B SMEAR&#34;
+        }
+        {
+            &#34;prescribed_id&#34;: 42345,
+            &#34;test_id&#34;: &#34;DGC1142&#34;,
+            &#34;test_name&#34;: &#34;ADENOSINE DE AMINASE&#34;
+        }
+    ]
+}
+
+</code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+              </div>
+            
+          </div>
+        
+        </div>
+      <div class="ui hidden divider"></div>
+    
+  
+    
+      <div class="ui segments">
+        <div class="ui basic segment resource">
+          <div class="ui black huge ribbon label">
+            Process Selected Tokens
+          </div>
+          
+        </div>
+
+        
+          
+<div class="ui grey horizontal small divider header" style="margin-top:0">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui orange micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block inverted center aligned header" id="discharge-summary-process-selected-tokens-process-selected-tokens-with-corresponding-template">
+              Process selected tokens with corresponding template
+            </h3>
+            <div class="description"><p>This endpoint is used to process the selected tokens with the corresponding template.</p>
+</div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui green large button">
+                  <h3>GET</h3>
+                </div>
+                <a class="ui basic fluid request-url green label">
+                  <code>http://localhost:8080/instahms/inpatients/dischargesummary/processSelectedTokens.json</code>
+                </a>
+              </div>
+              
+                <table class="ui celled definition table">
+                  <thead>
+                    <tr>
+                      <th colspan="4">Parameters</th>
+                    </tr>
+                  <thead>
+                  <tbody>
+                    
+                      
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label black" data-content="required" data-position="top center"></i>
+      </td>
+      <td><code>itemKey</code></td>
+      <td class="center aligned">
+        <code></code>
+        
+        
+      </td>
+      <td class="eight wide">
+        <p>&ldquo;inv_detail&rdquo; (Identification of selected item)</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label black" data-content="required" data-position="top center"></i>
+      </td>
+      <td><code>itemValue</code></td>
+      <td class="center aligned">
+        <code></code>
+        
+        
+      </td>
+      <td class="eight wide">
+        <p>&ldquo;42345&rdquo; (Id of selected tokens)</p>
+
+        
+      </td>
+    </tr>
+  
+
+                    
+                    
+                  </tbody>
+                </table>
+              
+              
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>application/json</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui blue segment">
+                  <div class="title" style="margin-bottom: 1rem;">
+                    <a class="ui blue circular label">
+                      200
+                    </a>
+                    <code>application/json</code>
+                  </div>
+                  <div class="content tabbed active">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-json">{
+&#34;token_html&#34;: &#34;&lt;!--  --&gt;\n\n&lt;!--  --&gt;\n&lt;!--  --&gt;\n\t&lt;h3&gt;Test one&lt;/h3&gt;\n&lt;!--  --&gt;\n&lt;!--  --&gt;\n\t\t&lt;table&gt;\n\t\t\t&lt;tbody&gt;\n\t\t\t\t&lt;tr&gt;\n\t\t\t\t\t&lt;th&gt;Result&lt;/th&gt;\n\t\t\t\t\t&lt;th&gt;Units&lt;/th&gt;\n\t\t\t\t\t&lt;th&gt;Severity&lt;/th&gt;\n\t\t\t\t\t&lt;th&gt;Reference Range&lt;/th&gt;\n\t\t\t\t&lt;/tr&gt;\t\n\t\t\t\t&lt;!--  --&gt;\n\t\t\t\t\t&lt;!--  --&gt;\n\t\t\t\t\t\t&lt;tr&gt;\n\t\t\t\t\t\t\t&lt;td&gt;r1&lt;/td&gt;\n\t\t\t\t\t\t\t&lt;td&gt;&lt;/td&gt;\n\t\t\t\t\t\t\t&lt;td&gt;Y&lt;/td&gt;\n\t\t\t\t\t\t\t&lt;td&gt;&lt;/td&gt;\t\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t&lt;/tr&gt;\n\t\t\t\t\t&lt;!--  --&gt;\n\t\t\t\t&lt;!--  --&gt;\n\t\t\t\t\t&lt;!--  --&gt;\n\t\t\t\t\t\t&lt;tr&gt;\n\t\t\t\t\t\t\t&lt;td&gt;r2&lt;/td&gt;\n\t\t\t\t\t\t\t&lt;td&gt;kg&lt;/td&gt;\n\t\t\t\t\t\t\t&lt;td&gt;##&lt;/td&gt;\n\t\t\t\t\t\t\t&lt;td&gt;&lt;/td&gt;\t\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t&lt;/tr&gt;\n\t\t\t\t\t&lt;!--  --&gt;\n\t\t\t\t&lt;!--  --&gt;\t\t\n\t\t\t&lt;/tbody&gt;\n\t\t&lt;/table&gt;\n\t\t\n&lt;!-- &lt;!--  --&gt;\n\n&lt;p&gt; Key: *=Abnormal Low, **=Critical Low,***=Improbable Low,&lt;br/&gt; #=Abnormal High, ##=Critical High, ###=Improbable High&lt;/p&gt;&#34;
+}
+
+</code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+              </div>
+            
+          </div>
+        
+        </div>
+      <div class="ui hidden divider"></div>
+    
+  
+    
+      <div class="ui segments">
+        <div class="ui basic segment resource">
+          <div class="ui black huge ribbon label">
+            Save And Signoff
+          </div>
+          
+        </div>
+
+        
+          
+<div class="ui grey horizontal small divider header" style="margin-top:0">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui orange micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block inverted center aligned header" id="discharge-summary-save-and-signoff-save-or-save-and-signoff">
+              Save or Save and Signoff
+            </h3>
+            <div class="description"><p>This endpoint is used to save or save and signoff the contents of the discharge summary(HVF,Template and PDF).</p>
+</div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui blue large button">
+                  <h3>POST</h3>
+                </div>
+                <a class="ui basic fluid request-url blue label">
+                  <code>http://localhost:8080/instahms/inpatients/dischargesummary/saveAndSignoff.json</code>
+                </a>
+              </div>
+              
+              
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>application/json</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui blue segment">
+                  <div class="title" style="margin-bottom: 1rem;">
+                    <a class="ui blue circular label">
+                      200
+                    </a>
+                    <code>application/json</code>
+                  </div>
+                  <div class="content tabbed active">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-json">{
+&#34;visit_details&#34;: {
+    &#34;mr_no&#34;: &#34;MR012836&#34;,
+    &#34;patient_id&#34;: &#34;IP000754&#34;,
+    &#34;discharge_format&#34;: &#34;T&#34;,
+    &#34;format_id&#34;: &#34;FORMAT0001&#34;,
+    &#34;discharge_doc_id&#34;: 5,
+    &#34;discharge_doctor_id&#34;: &#34;DOC0006&#34;,
+    &#34;discharge_date&#34;: &#34;02-07-2015&#34;,
+    &#34;discharge_time&#34;: &#34;03:55&#34;
+    &#34;is_signoff&#34;: &#34;Y&#34;
+},
+&#34;document_details&#34;: {
+    &#34;richtext&#34;: [
+        {
+            &#34;report_file&#34;: &#34;&lt;p&gt;sabka malik ek hai&lt;/p&gt;&#34;
+            &#34;pheader_template_id&#34;: &#34;&#34;
+        }
+    ],
+    &#34;hvf&#34;: [
+        {
+            &#34;field_id&#34;: &#34;fld001&#34;
+            &#34;field_value&#34;: &#34;ABCD&#34;
+        },
+        {
+            &#34;field_id&#34;: &#34;fld004&#34;
+            &#34;field_value&#34;: &#34;XYZ&#34;
+        },
+        {
+            &#34;field_id&#34;: &#34;fld008&#34;
+            &#34;field_value&#34;: &#34;Bang Bang&#34;
+        }
+    ],
+    &#34;followupdetails&#34;: [
+        {
+            &#34;followup_id&#34;: &#34;FUD0008&#34;
+            &#34;followup_status&#34; : &#34;newadded&#34;
+            &#34;followup_doctor_id&#34;: &#34;DOC001&#34;
+            &#34;followup_date&#34;: &#34;02-07-2015&#34;
+            &#34;followup_remarks&#34;: &#34;Xyz&#34;
+        },
+        {
+            &#34;followup_id&#34;: &#34;FUD0009&#34;
+            &#34;followup_status&#34; : &#34;deleted&#34;
+            &#34;followup_doctor_id&#34;: &#34;DOC002&#34;
+            &#34;followup_date&#34;: &#34;02-07-2014&#34;
+            &#34;followup_remarks&#34;: &#34;something&#34;
+        },
+        {
+            &#34;followup_id&#34;: &#34;FUD0008&#34;
+            &#34;followup_status&#34; : &#34;exists&#34;
+            &#34;followup_doctor_id&#34;: &#34;DOC003&#34;
+            &#34;followup_date&#34;: &#34;02-07-2017&#34;
+            &#34;followup_remarks&#34;: &#34;Abc&#34;
+        }
+    ]
+}
+
+</code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+              </div>
+            
+          </div>
+        
+        </div>
+      <div class="ui hidden divider"></div>
+    
+  
+    
+      <div class="ui segments">
+        <div class="ui basic segment resource">
+          <div class="ui black huge ribbon label">
+            Delete Discharge Summary
+          </div>
+          
+        </div>
+
+        
+          
+<div class="ui grey horizontal small divider header" style="margin-top:0">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui orange micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block inverted center aligned header" id="discharge-summary-delete-discharge-summary-delete-discharge-summary-for-a-visit">
+              Delete Discharge Summary for a visit
+            </h3>
+            <div class="description"><p>This endpoint is used to delete the existing Discharge Summary</p>
+</div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui blue large button">
+                  <h3>POST</h3>
+                </div>
+                <a class="ui basic fluid request-url blue label">
+                  <code>http://localhost:8080/instahms/inpatients/dischargesummary/deleteDischargeSummary.json</code>
+                </a>
+              </div>
+              
+              
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>application/json</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui blue segment">
+                  <div class="title" style="margin-bottom: 1rem;">
+                    <a class="ui blue circular label">
+                      200
+                    </a>
+                    <code>application/json</code>
+                  </div>
+                  <div class="content tabbed active">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-json">{
+&#34;discharge_doc_details&#34;: {
+    &#34;patient_id&#34;: &#34;IP000754&#34;
+    &#34;discharge_doc_id&#34;: 5
+    &#34;discharge_format&#34;: T
+}
+}
+
+</code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+              </div>
+            
+          </div>
+        
+        </div>
+      <div class="ui hidden divider"></div>
+    
+  
+    
+      <div class="ui segments">
+        <div class="ui basic segment resource">
+          <div class="ui black huge ribbon label">
+            Revert Finalized Discharge Summary
+          </div>
+          
+        </div>
+
+        
+          
+<div class="ui grey horizontal small divider header" style="margin-top:0">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui orange micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block inverted center aligned header" id="discharge-summary-revert-finalized-discharge-summary-revert-finalized-discharge-summary-for-a-visit">
+              Revert Finalized Discharge Summary for a visit
+            </h3>
+            <div class="description"><p>This endpoint is used to revert the finalized Discharge Summary</p>
+</div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui blue large button">
+                  <h3>POST</h3>
+                </div>
+                <a class="ui basic fluid request-url blue label">
+                  <code>http://localhost:8080/instahms/inpatients/dischargesummary/revertFinalized.json</code>
+                </a>
+              </div>
+              
+              
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>application/json</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui blue segment">
+                  <div class="title" style="margin-bottom: 1rem;">
+                    <a class="ui blue circular label">
+                      200
+                    </a>
+                    <code>application/json</code>
+                  </div>
+                  <div class="content tabbed active">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-json">{
+&#34;discharge_doc_details&#34;: {
+    &#34;patient_id&#34;: &#34;IP000754&#34;
+    &#34;discharge_doc_id&#34;: 5
+}
+}
+
+</code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+              </div>
+            
+          </div>
+        
+        </div>
+      <div class="ui hidden divider"></div>
+    
+  
+
+
+      </div>
+    </div>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.1/components/accordion.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.1/components/tab.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.1/components/transition.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.1/components/popup.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.13.0/prism.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.13.0/components/prism-json.min.js"></script>
+    <script type="text/javascript">
+      $(function() {
+        $('.ui.accordion').accordion({ animateChildren: false, duration: 0 });
+        $('.content.tabbed').each(function(index) {
+          $('.ui.tabular .item', $(this)).tab({ context: $(this) });
+        });
+        $('.ui.vertical.menu').on('click', '.item', function() {
+          $('.ui.vertical.menu .item').removeClass('active');
+          $(this).addClass('active');
+        });
+        $('.ui.empty.circular.label').popup();
+      });
+    </script>
+  </body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

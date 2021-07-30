@@ -1,0 +1,356 @@
+#!/bin/bash
+
+#
+# Network reports configuration
+#
+
+#
+# The minimum version required for us to be able to sync the data. The
+# report view structures must be same as the current version.
+#
+MIN_CENTER_VER=8.0.0
+
+#
+# A list of supported network reports and their attributes. The name of each
+# variable below must start with NWR_ and each one must be different. The following
+# parameters must exist in each report's config:
+#	rpt_view
+#	copy_table
+#	primary_key
+#	mod_time
+#	center_field
+#
+
+NWR_BC=`cat <<EOF
+	rpt_view=rpt_bill_charge_view
+	copy_table=rpt_nw_bill_charge
+	primary_key=charge_id
+	mod_time=mod_time
+	center_field=center_name
+EOF`
+
+NWR_BILL=`cat <<EOF
+	rpt_view=rpt_bill_view
+	copy_table=rpt_nw_bill
+	primary_key=bill_no
+	mod_time=mod_time
+	center_field=center_name
+EOF`
+
+NWR_REV=`cat <<EOF
+	rpt_view=rpt_revenue_report_view
+	copy_table=rpt_nw_revenue_report
+	primary_key=charge_id
+	mod_time=mod_time
+	center_field=center_name
+EOF`
+
+NWR_COLL=`cat <<EOF
+	rpt_view=rpt_collection_details_view
+	copy_table=rpt_nw_collection_details
+	primary_key=receipt_no
+	mod_time=mod_time
+	center_field=
+EOF`
+
+NWR_PAT=`cat <<EOF
+	rpt_view=rpt_patient_details_view
+	copy_table=rpt_nw_patient_details
+	primary_key=mr_no
+	mod_time=mod_time
+	center_field=
+EOF`
+
+NWR_VISIT=`cat <<EOF
+	rpt_view=rpt_visit_details_view
+	copy_table=rpt_nw_visit_details
+	primary_key=patient_id
+	mod_time=mod_time
+	center_field=center_name
+EOF`
+
+
+
+####################
+# The masters used in the above reports.
+# constraint -- constraint to be dropped.
+# column -- column used to delete duplicates on the table.
+####################
+
+NWM_DOCTOR=`cat <<EOF
+	table=doctors
+	constraints="doctors_pkey"
+	column=doctor_name
+EOF`
+
+NWM_REF=`cat <<EOF
+	table=referral
+	constraints="referral_pkey"
+	column=referal_name
+EOF`
+
+NWM_SER_DEPT=`cat <<EOF
+	table=services_departments
+	constraints="services_departments_pkey"
+	column=department
+EOF`
+
+NWM_DIA_DEPT=`cat <<EOF
+	table=diagnostics_departments
+	constraints="diagnostics_departments_pkey diagnostics_departments_ddept_name_key"
+	column=ddept_name
+EOF`
+
+NWM_DEPT=`cat <<EOF
+	table=department
+	constraints="department_pkey department_dept_name_key"
+	column=dept_name
+EOF`
+
+NWM_PRIOR_AUTH=`cat <<EOF
+	table=prior_auth_modes
+	constraints="prior_auth_modes_pkey prior_auth_modes_prior_auth_mode_name_key"
+	column=prior_auth_mode_name
+EOF`
+
+NWM_CG_CON=`cat <<EOF
+	table=chargegroup_constants
+	constraints="chargegroup_constants_pkey"
+	column=chargegroup_name
+EOF`
+
+NWM_CH_CON=`cat <<EOF
+	table=chargehead_constants
+	constraints="chargehead_constants_pkey"
+	column=chargehead_name
+EOF`
+
+NWM_BILL_AH=`cat <<EOF
+	table=bill_account_heads
+	constraints="bill_account_heads_pkey"
+	column=account_head_name
+EOF`
+
+NWM_AG=`cat <<EOF
+	table=account_group_master
+	constraints="account_group_master_pkey account_group_master_acname_key"
+	column=account_group_name
+EOF`
+
+
+NWM_SERVICE_GROUPS=`cat <<EOF
+	table=service_groups
+	constraints="service_groups_pkey"
+	column=service_group_name
+EOF`
+
+NWM_SERVICE_SUB_GROUPS=`cat <<EOF
+	table=service_sub_groups
+	constraints="service_sub_groups_pkey"
+	column=service_sub_group_name
+EOF`
+
+NWM_USER=`cat <<EOF
+	table=u_user
+	constraints=""
+	column=emp_username
+EOF`
+
+NWM_DISCOUNT_AUTH=`cat <<EOF
+	table=discount_authorizer
+	constraints="discount_authorizer_pkey"
+	column=disc_auth_name
+EOF`
+
+NWM_CONSULTION_TYPES=`cat <<EOF
+	table=consultation_types
+	constraints="consultation_types_pkey"
+	column=consultation_type
+EOF`
+
+NWM_MRD_CODE_TYPES=`cat <<EOF
+	table=mrd_supported_code_types
+	constraints="mrd_supported_code_types_pkey"
+	column=code_type
+EOF`
+
+NWM_INS_DENIAL_CODES=`cat <<EOF
+	table=insurance_denial_codes
+	constraints="insurance_denial_codes_pkey"
+	column=denial_code
+EOF`
+
+NWM_PATIENT_CATEGORY=`cat <<EOF
+	table=patient_category_master
+	constraints="patient_category_master_pkey"
+	column=category_name
+EOF`
+
+NWM_AREA=`cat <<EOF
+	table=area_master
+	constraints="area_master_pkey"
+	column=area_name
+EOF`
+
+NWM_CITY=`cat <<EOF
+	table=city
+	constraints="city_pkey"
+	column=city_name
+EOF`
+
+NWM_STATE=`cat <<EOF
+	table=state_master
+	constraints="state_master_pkey"
+	column=state_name
+EOF`
+
+NWM_COUNTRY=`cat <<EOF
+	table=country_master
+	constraints="country_master_pkey"
+	column=country_name
+EOF`
+
+NWM_RELIGION=`cat <<EOF
+	table=religion
+	constraints=""
+	column=religion_name
+EOF`
+
+NWM_OCCUPATION=`cat <<EOF
+	table=occupation
+	constraints=""
+	column=occupation
+EOF`
+
+NWM_OP_TYPENAMES=`cat <<EOF
+	table=op_type_names
+	constraints="op_type_names_pkey"
+	column=op_type_name
+EOF`
+
+NWM_DEPT_UNIT=`cat <<EOF
+	table=dept_unit_master
+	constraints="dept_unit_master_pkey"
+	column=unit_name
+EOF`
+
+NWM_ORG=`cat <<EOF
+	table=organization_details
+	constraints="organization_details_pkey"
+	column=org_name
+EOF`
+
+NWM_TPA=`cat <<EOF
+	table=tpa_master
+	constraints="tpa_master_pkey"
+	column=tpa_name
+EOF`
+
+NWM_INS_PLAN=`cat <<EOF
+	table=insurance_plan_main
+	constraints="insurance_plan_main_pkey"
+	column=plan_name
+EOF`
+
+NWM_INS_CATEGORY=`cat <<EOF
+	table=insurance_category_master
+	constraints="insurance_category_master_pkey"
+	column=category_name
+EOF`
+
+NWM_INS_COMPANY=`cat <<EOF
+	table=insurance_company_master
+	constraints="insurance_company_master_pkey"
+	column=insurance_co_name
+EOF`
+
+NWM_BEDTYPES=`cat <<EOF
+	table=bed_types
+	constraints="bedtype_pkey"
+	column=bed_type_name
+EOF`
+
+NWM_BEDNAMES=`cat <<EOF
+	table=bed_names
+	constraints="bed_names_pkey"
+	column=bed_name
+EOF`
+
+NWM_WARDNAMES=`cat <<EOF
+	table=ward_names
+	constraints="ward_names_pkey"
+	column=ward_name
+EOF`
+
+NWM_COMPLAINT=`cat <<EOF
+	table=complaintmaster
+	constraints="complaintmaster_pkey"
+	column=complaint
+EOF`
+
+NWM_PAYMENT_MODES=`cat <<EOF
+	table=payment_mode_master
+	constraints="payment_mode_master_pkey payment_mode_master_unq set"
+	column=payment_mode
+EOF`
+
+NWM_SPONSOR_PROCEDURE_LIMIT=`cat <<EOF
+	table=sponsor_procedure_limit
+	constraints="sponsor_procedure_limit_pk"
+	column=procedure_name
+EOF`
+
+NWM_DYNAPACKAGE=`cat <<EOF
+	table=dyna_packages
+	constraints="dyna_packages_pkey dyna_packages_name_unique"
+	column=dyna_package_name
+EOF`
+
+NWM_CARDTYPES=`cat <<EOF
+	table=card_type_master
+	constraints="card_type_master_pkey"
+	column=card_type
+EOF`
+
+NWM_CURRENCY=`cat <<EOF
+	table=foreign_currency
+	constraints="foreign_currency_pkey"
+	column=currency
+EOF`
+
+NWM_MISC_PAYEES=`cat <<EOF
+	table=misc_payees
+	constraints=""
+	column=misc_payee_name
+EOF`
+
+NWM_OUTHOUSE=`cat <<EOF
+	table=outhouse_master
+	constraints="outhouse_master_pkey"
+	column=oh_name
+EOF`
+
+NWM_SUPPLIER=`cat <<EOF
+	table=supplier_master
+	constraints="supplier_master_pkey supp_cat_id_fkey"
+	column=supplier_name
+EOF`
+
+NWM_INCOMING_HOSP=`cat <<EOF
+	table=incoming_hospitals
+	constraints="incoming_hospitals_pkey"
+	column=hospital_name
+EOF`
+
+NWM_COUNTERS=`cat <<EOF
+	table=counters
+	constraints="counters_pkey counters_counter_no_key"
+	column=counter_no
+EOF`
+
+NWM_CENTERS=`cat <<EOF
+	table=hospital_center_master
+	constraints="center_pkey"
+	column=center_name
+EOF`
+

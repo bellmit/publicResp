@@ -1,0 +1,16 @@
+<xml version="1.0" encoding="UTF-8">
+
+<suite name="Consultation" verbose="1">
+	<test name="prescriptions">
+		<classes>
+			<class
+				name="testng.com.insta.hms.core.clinical.consultation.prescriptions.PrescriptionsServiceTest" >
+				<methods>
+					<exclude name="getSessionServiceAttributes" />
+					<exclude name="getHealthAuthorityPreferences" />
+				</methods>
+			</class>
+		</classes>
+	</test>
+</suite>
+</xml>

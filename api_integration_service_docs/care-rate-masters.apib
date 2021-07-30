@@ -1,0 +1,567 @@
+FORMAT: 1A
+HOST: http://polls.apiblueprint.org/
+
+# CaseRateMaster
+
+Case Rate Master API
+
+## Case Rate Master List Collection [/master/caserate/findByFilter.json]
+
+### Lists All Case Rates [GET]
+
++ Response 200 (application/json)
+
+        {
+            "page_size": 15,
+            "case_rate_main": [{
+                "insurance_company_name": "FHPL",
+                "code_description": "HYPOTHYRODISM",
+                "code_type": "ICD10",
+                "insurance_company_id": "ICM00003",
+                "plan_id": 9,
+                "status": "A",
+                "code": "E03.9",
+                "network_type_id": 133,
+                "count": 3,
+                "plan_name": "Sadhana Plan1",
+                "network_type_name": "Bhargavi n/p",
+                "case_rate_id": 5,
+                "case_rate_number": 1,
+                "amount": 3400
+            },
+            {
+                "insurance_company_name": "FHPL",
+                "code_description": "HYPOTHYRODISM",
+                "code_type": "ICD10",
+                "insurance_company_id": "ICM00003",
+                "plan_id": 9,
+                "status": "A",
+                "code": "E03.9",
+                "network_type_id": 133,
+                "count": 3,
+                "amount": 350,
+                "plan_name": "Sadhana Plan1",
+                "case_rate_id": 6,
+                "network_type_name": "Bhargavi n/p",
+                "case_rate_number": 1
+            }],
+            "page_number": 1,
+            "total_records": 2
+        }
+## Case Rate Master Empty List Collection [/empty/master/caserate/findByFilter.json]
+
+### Lists Empty Case Rates Response [GET]
+
++ Response 200 (application/json)
+
+        {
+            "page_size":15,
+            "case_rate_main":[],
+            "page_number":0,
+            "total_records":0
+        }
+
+## Insurance Company List Collection [/master/insurancecompanies/getInsuranceCompanyList.json]
+
+### Lists All Insurance Companies [GET]
+
++ Response 200 (application/json)
+
+        {
+            "insurance_companies": [
+                {
+                    "insurance_co_id": "ICM00003",
+                    "insurance_co_name": "LIC_Migration"
+                },
+                {
+                    "insurance_co_id": "ICM00004",
+                    "insurance_co_name": "Bhargavi insurance"
+                },
+                {
+                    "insurance_co_name": "Bajaj Insur Company co",
+                    "insurance_co_id": "ICM00005"
+                },
+                {
+                    "insurance_co_name": "Bajaj Allianz",
+                    "insurance_co_id": "ICM00006"
+                },
+                {
+                    "insurance_co_name": "Insurance_A",
+                    "insurance_co_id": "ICM00007"
+                },
+                {
+                    "insurance_co_name": "Shweta company1",
+                    "insurance_co_id": "ICM00008"
+                },
+                {
+                    "insurance_co_id": "ICM00009",
+                    "insurance_co_name": "Shweta company2"
+                },
+                {
+                    "insurance_co_id": "ICM00010",
+                    "insurance_co_name": "Shiva Com"
+                },
+                {
+                    "insurance_co_name": "Default Insurance Company",
+                    "insurance_co_id": "ICM00013"
+                },
+                {
+                    "insurance_co_name": "Corporate Company",
+                    "insurance_co_id": "ICM00011"
+                },
+                {
+                    "insurance_co_name": "National Company",
+                    "insurance_co_id": "ICM00012"
+                },
+                {
+                    "insurance_co_name": "sdf",
+                    "insurance_co_id": "ICM00015"
+                },
+                {
+                    "insurance_co_id": "ICM00016",
+                    "insurance_co_name": "H insurance company"
+                },
+                {
+                    "insurance_co_name": "insurance company 2",
+                    "insurance_co_id": "ICM00017"
+                },
+                {
+                    "insurance_co_id": "ICM00014",
+                    "insurance_co_name": "insurance company jd"
+                }
+            ]
+        }
+
+## Code Type List Collection [/master/codeType/getCodeTypeList.json]
+
+### Lists All Code Types [GET]
+
++ Response 200 (application/json)
+
+        {
+            "code_type_list": [
+                {
+                    "code_type": "HL7v3 Native"
+                },
+                {
+                    "code_type": "SNOMED CT"
+                },
+                {
+                    "code_type": "Universal Dental"
+                },
+                {
+                    "code_type": "Dental"
+                },
+                {
+                    "code_type": "ICD10"
+                },
+                {
+                    "code_type": "HCPCS"
+                },
+                {
+                    "code_type": "Encounter Start"
+                },
+                {
+                    "code_type": "IR-DRG"
+                },
+                {
+                    "code_type": "CPT"
+                },
+                {
+                    "code_type": "Encounter End"
+                },
+                {
+                    "code_type": "ICD9"
+                },
+                {
+                    "code_type": "ICD"
+                },
+                {
+                    "code_type": "Encounter Type"
+                },
+                {
+                    "code_type": "Text"
+                },
+                {
+                    "code_type": "Service"
+                },
+                {
+                    "code_type": "LOINC"
+                },
+                {
+                    "code_type": "Service Code"
+                },
+                {
+                    "code_type": "Drug"
+                },
+                {
+                    "code_type": "File"
+                },
+                {
+                    "code_type": "E&M"
+                }
+            ]
+        }
+        
+## Code Details By Code Type Collection [/master/codeType/getCodeDetailsByCodeType.json?codeType=LOINC]
+
+### Lists Code Details by Code Type [GET]
+
++ Response 200 (application/json)
+
+        {
+            "code_detail_list": [
+                {
+                    "code_desc": "FDSF",
+                    "code_type": "LOINC",
+                    "code": "A123",
+                    "status": "A"
+                },
+                {
+                    "code_desc": "SDFSVS",
+                    "code_type": "LOINC",
+                    "code": "A21321",
+                    "status": "A"
+                }
+            ]
+        }
+                
+## Categories By Plan Collection [/master/caserate/getCategoriesByPlanId.json?planId=9]
+
+### Categories By Plan [GET]
+
++ Response 200 (application/json)
+
+        {
+            "category_details": [
+                {
+                    "insurance_category_id": 8,
+                    "insurance_category_name": "Chronic"
+                },
+                {
+                    "insurance_category_name": "GP Consultation",
+                    "insurance_category_id": 1
+                },
+                {
+                    "insurance_category_id": 9,
+                    "insurance_category_name": "Service"
+                },
+                {
+                    "insurance_category_name": "Radiology",
+                    "insurance_category_id": 4
+                },
+                {
+                    "insurance_category_name": "Dental",
+                    "insurance_category_id": 6
+                },
+                {
+                    "insurance_category_name": "DRG",
+                    "insurance_category_id": -2
+                },
+                {
+                    "insurance_category_name": "Equipment",
+                    "insurance_category_id": 11
+                },
+                {
+                    "insurance_category_id": 0,
+                    "insurance_category_name": "Default"
+                },
+                {
+                    "insurance_category_name": "dietary ",
+                    "insurance_category_id": 10
+                },
+                {
+                    "insurance_category_name": "SP Consultation",
+                    "insurance_category_id": 2
+                },
+                {
+                    "insurance_category_name": "Laboratory",
+                    "insurance_category_id": 3
+                },
+                {
+                    "insurance_category_name": "Pharmacy",
+                    "insurance_category_id": 5
+                },
+                {
+                    "insurance_category_name": "Maternity",
+                    "insurance_category_id": 7
+                },
+                {
+                    "insurance_category_name": "General",
+                    "insurance_category_id": -1
+                }
+            ]
+        }
+        
+## Plans By Category Collection [/master/insuranceplans/getPlansByCategoryId.json?catgoryId=135&insuranceCompanyId=ICM00006]
+
+### Plans By Category [GET]
+
++ Response 200 (application/json)
+
+        {
+            "insurance_companies": [
+                {
+                    "plan_id": 9,
+                    "plan_name": "Sadhana Plan1"
+                },
+                {
+                    "plan_name": "Plan 10",
+                    "plan_id": 3
+                }
+            ]
+        }
+## Case Categories by CompanyId [/master/insuranceplans/getCategoriesByCompanyId.json?insuranceCompanyId=ICM00006]
+
+### Categories List [GET]
+
++ Response 200 (application/json)
+
+        {
+            "category_details": [
+                {
+                    "category_name": "Bajaj Allianzjx",
+                    "category_id": 134
+                },
+                {
+                    "category_name": "Type ABC",
+                    "category_id": 140
+                },
+                {
+                    "category_name": "Type1",
+                    "category_id": 141
+                },
+                {
+                    "category_name": "general",
+                    "category_id": 142
+                }
+            ]
+        }
+
+## Case Rate Details by Id [/master/caserate/show.json?case_rate_id=9]
+
+### Case Rate Details [GET]
+
++ Response 200 (application/json)
+
+        {
+            "bean": {
+                "created_by": "InstaAdmin",
+                "plan_id":9,
+                "modified_by":null,
+                "network_type_id":135,
+                "status":"A",
+                "insurance_company_id":"ICM00006",
+                "case_rate_id":1,
+                "code":"1212",
+                "code_type":"E&M",
+                "case_rate_number":1,
+                "modified_at":null,
+                "code_description":"gtfg"
+            },
+            "insuranceItemCategories":[{
+                "insurance_category_name":
+                "GP Consultation",
+                "insurance_category_id":1
+            },
+            {
+                "insurance_category_id":8,
+                "insurance_category_name":"Chronic"
+            },
+            {
+                "insurance_category_id":9,
+                "insurance_category_name":"Service"
+            },
+            {
+                "insurance_category_name":"Radiology",
+                "insurance_category_id":4
+            },
+            {
+                "insurance_category_name":"Dental",
+                "insurance_category_id":6
+            },
+            {
+                "insurance_category_name":"DRG",
+                "insurance_category_id":-2
+            },
+            {
+                "insurance_category_id":0,
+                "insurance_category_name":"Default"
+            },
+            {
+                "insurance_category_name":"SP Consultation",
+                "insurance_category_id":2
+            },
+            {
+                "insurance_category_name":"Laboratory",
+                "insurance_category_id":3
+            },
+            {
+                "insurance_category_name":"Pharmacy",
+                "insurance_category_id":5
+            },
+            {
+                "insurance_category_name":"Maternity",
+                "insurance_category_id":7
+            },
+            {
+                "insurance_category_name":"General",
+                "insurance_category_id":-1
+            }],
+            "list_case_rate_detail":[{
+                "case_rate_detail_id":1,
+                "created_by":"InstaAdmin",
+                "amount":1.00,
+                "modified_by":null,
+                "case_rate_id":1,
+                "modified_at":null,
+                "insurance_category_id":1
+            },
+            {
+                "case_rate_detail_id":2,
+                "created_by":"InstaAdmin",
+                "amount":1.00,
+                "modified_by":null,
+                "case_rate_id":1,
+                "modified_at":null,
+                "insurance_category_id":8
+            },
+            {
+                "case_rate_detail_id":2,
+                "created_by":"InstaAdmin",
+                "amount":1.00,
+                "modified_by":null,
+                "case_rate_id":1,
+                "modified_at":null,
+                "insurance_category_id":-2
+            }]
+        }
+        
+## Create Case Rate [/master/caserate/create.json]
+
+### Create Case Rate [POST]
+
++ Request (application/json)
+
+        {
+            "insurance_company_id" : "ICM00003",
+            "network_type_id" : 133,
+            "plan_id" : 9,
+            "code_type" : "ICD10",
+            "code" : "E03.9",
+            "code_description" : "HYPOTHYRODISM",
+            "case_rate_number" : 1,
+            "status" : "A",
+            "case_rate_detail" : [{
+                "insurance_category_id" : 4,
+                "amount" : 250.00
+            },
+            {
+                "insurance_category_id" : 5,
+                "amount" : 1250.00
+            }]
+        }
+
++ Response 201 (application/json)
+
+    + Body
+
+            {}
+
+## Create Case Rate [/master/caserate/create-error.json]
+
+### Create Case Rate [POST]
+
++ Request (application/json)
+
+        {
+            "insurance_company_id" : "ICM00003",
+            "network_type_id" : 133,
+            "plan_id" : 9,
+            "code_type" : "ICD10",
+            "code" : "E03.9",
+            "code_description" : "HYPOTHYRODISM",
+            "case_rate_number" : 1,
+            "status" : "A",
+            "case_rate_detail" : [{
+                "insurance_category_id" : 4,
+                "amount" : 250.00
+            },
+            {
+                "insurance_category_id" : 5,
+                "amount" : 1250.00
+            }]
+        }
+
++ Response 400 (application/json)
+
+    + Body
+
+            {}
+            
+## Update Case Rate [/master/caserate/update.json]
+
+### Update Case Rate [POST]
+
++ Request (application/json)
+
+        {
+            "case_rate_id" : 9,
+            "insurance_company_id" : "ICM00003",
+            "network_type_id" : 133,
+            "plan_id" : 9,
+            "code_type" : "ICD10",
+            "code" : "E03.9",
+            "code_description" : "HYPOTHYRODISM",
+            "case_rate_number" : 1,
+            "status" : "A",
+            "case_rate_detail" : [{
+                "case_rate_detail_id" : 11,
+                "insurance_category_id" : 4,
+                "amount" : 50.00
+            },
+            {
+            "case_rate_detail_id" : 12,
+            "insurance_category_id" : 6,
+            "amount" : 1250.00
+            }]
+        }
++ Response 200 (application/json)
+
+    + Body
+
+            {}
+
+## Update Case Rate [/master/caserate/update-error.json]
+
+### Update Case Rate [POST]
+
++ Request (application/json)
+
+        {
+            "case_rate_id" : 9,
+            "insurance_company_id" : "ICM00003",
+            "network_type_id" : 133,
+            "plan_id" : 9,
+            "code_type" : "ICD10",
+            "code" : "E03.9",
+            "code_description" : "HYPOTHYRODISM",
+            "case_rate_number" : 1,
+            "status" : "A",
+            "case_rate_detail" : [{
+                "case_rate_detail_id" : 11,
+                "insurance_category_id" : 4,
+                "amount" : 50.00
+            },
+            {
+            "case_rate_detail_id" : 12,
+            "insurance_category_id" : 6,
+            "amount" : 1250.00
+            }]
+        }
++ Response 400 (application/json)
+
+    + Body
+
+            {}
+

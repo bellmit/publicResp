@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:jpa="http://www.springframework.org/schema/data/jpa" xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans  
+		http://www.springframework.org/schema/beans/spring-beans.xsd  
+		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/mvc
+		http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/tx
+	    http://www.springframework.org/schema/tx/spring-tx.xsd">
+	    
+	    <!-- For Insta API(instaapps) related configuration -->
+	    
+	    <bean id="apiController" class="com.insta.hms.api.controllers.ApiController">
+			<property name = "authMode" value = "passthru"/>
+		</bean>
+		
+		<bean id="apiMasterDataController" class="com.insta.hms.api.controllers.ApiMasterDataController">
+			<property name="actionId" value="mas_doctors"/>
+		</bean>
+		
+		<bean id="apiSchedulerController" class="com.insta.hms.api.controllers.ApiSchedulerController">
+			<property name = "actionId" value = "doc_scheduler_available_slots"/>
+		</bean>
+		<bean id="accountingController" class="com.insta.hms.api.controllers.AccountingController">
+			<property name = "authMode" value = "passthru"/>
+		</bean>
+		<bean id="accountingEventsController" class="com.insta.hms.api.controllers.AccountingEventsController">
+			<property name = "authMode" value = "passthru"/>
+		</bean>
+		<bean id="CustomerController" class="com.insta.hms.api.controllers.CustomerController">
+			<property name="authMode" value="passthru" />
+		</bean>
+		<bean id="apiPrintController" class="com.insta.hms.api.controllers.ApiPrintController">
+			<property name = "authMode" value = "passthru"/>
+		</bean>
+		<bean id="apiMessagingController" class="com.insta.hms.api.controllers.ExternalMessageController">
+			<property name = "authMode" value = "passthru"/>
+		</bean>
+		<bean id="apiClaimHistoryController" class="com.insta.hms.api.controllers.ApiClaimHistoryController">
+			<property name = "authMode" value = "passthru"/>
+		</bean>
+        <bean id="APIStoresItemController" class="com.insta.hms.api.controllers.APIStoresItemController">
+			<property name="authMode" value="passthru" />
+		</bean>
+		<bean id="accountingHeadsListController" class="com.insta.hms.api.controllers.AccountingHeadsListController">
+			<property name = "authMode" value = "passthru"/>
+		</bean>
+		<bean id="RegistrationController" class="com.insta.hms.api.controllers.RegistrationController">
+			<property name = "authMode" value = "passthru"/>
+		</bean>
+	    <bean id="apiReferralDoctorController" class="com.insta.hms.api.controllers.ApiReferralDoctorController">
+		    <property name="actionId" value="passthru"/>
+	    </bean>
+		<bean id="apiRatePlanController" class="com.insta.hms.api.controllers.ApiRatePlanController">
+			<property name = "authMode" value = "passthru"/>
+		</bean>
+	  <bean id="apiInsurancePlanController" class="com.insta.hms.api.controllers.ApiInsurancePlanController">
+		   <property name = "authMode" value = "passthru"/>
+	  </bean>
+</beans>

@@ -1,0 +1,16 @@
+#
+# sr recovery conf file
+#
+
+# Specifies whether to start the server as a standby. In streaming replication, this should be set to on.
+standby_mode = 'on'
+
+# Specifies a connection string which is used for the standby server to connect with the primary.
+primary_conninfo      = 'host=__HA_OTHER_NODE__ port=5432 user=postgres'
+
+# Specifies a trigger file whose presence should cause streaming replication to
+# end (i.e., failover).
+trigger_file = '/tmp/pgsql.failover'
+
+#Specified that a new timeline need to be created at failover
+recovery_target_timeline='latest'

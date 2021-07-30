@@ -1,0 +1,299 @@
+FORMAT: 1A
+HOST: localhost:8080/instahms/
+
+# Insta Registration field preference
+
+Insta Registration field preference APIs
+
+## Registration field preference [/preferences]
+
+### get Display Preference Master [GET /displaypreferences/displaypreferencemaster.json{?center_group_id,page_id}]
+End point to get the registration field preferences(to be used in registration preference screen) with all the details about which properties of the field are editable
+
++ Parameters
+    + `center_group_id`: 0 (integer, required)
+    + `page_id`: op (String, required)
+    
++ Response 200 (application/json)
+
+        {
+        "sections":[
+            {
+            "section_id":1,
+            "section_display_name":"Basic Information",
+            "display_order":1,
+            "system_defined":"Y"
+            },
+            {
+            "section_id":2,
+            "section_display_name":"Additional Patient Information",
+            "display_order":2,
+            "system_defined":"Y"
+            }
+            ],
+        "fields":{
+            1:[
+                {
+                "field_name":"patient_salutation",
+                "sequence_no":1,
+                "start_newline":"N",
+                "mandatory":"Y",
+                "validation_expression":null,
+                "display_name":"Patient Salutation",
+                "field_width":1,
+                "display_name_editable":"N",
+                "section_changeable":"N",
+                "width_editable":"N",
+                "validation_pattern_editable":"N",
+                "removable":"N",
+                "mandatory":"Y"
+                },
+                {
+                "field_name":"patient_name",
+                "sequence_no":2,
+                "start_newline":"Y",
+                "mandatory":"Y",
+                "validation_expression":null,
+                "display_name":"Patient Name",
+                "field_width":1,
+                "display_name_editable":"N",
+                "section_changeable":"N",
+                "width_editable":"N",
+                "validation_pattern_editable":"N",
+                "removable":"N",
+                "mandatory":"Y"
+                }
+            ],
+            2:[
+                {
+                "field_name":"address",
+                "sequence_no":1,
+                "start_newline":"N",
+                "mandatory":"Y",
+                "validation_expression":null,
+                "display_name":"Address",
+                "field_width":2,
+                "display_name_editable":"N",
+                "section_changeable":"N",
+                "width_editable":"N",
+                "validation_pattern_editable":"N",
+                "removable":"N",
+                "mandatory":"Y"
+                },
+                {
+                "field_name":"area",
+                "sequence_no":2,
+                "start_newline":"N",
+                "mandatory":"Y",
+                "validation_expression":null,
+                "display_name":"Area",
+                "field_width":1,
+                "display_name_editable":"N",
+                "section_changeable":"N",
+                "width_editable":"N",
+                "validation_pattern_editable":"N",
+                "removable":"N",
+                "mandatory":"Y"
+                }
+            ]
+        }
+        }
+
+### get Display Preference [GET /patients/opregistration/displaypreference.json{?center_group_id,page_id}]
+End point to get the registration field preferences(to be used in registration screen)
+
++ Parameters
+    + `center_group_id`: 0 (integer, required)
+    + `page_id`: op (String, required)
++ Response 200 (application/json)
+
+        {
+        "sections":[
+            {
+            "section_id":1,
+            "section_display_name":"Basic Information",
+            "display_order":1,
+            "system_defined":"Y"
+            },
+            {
+            "section_id":2,
+            "section_display_name":"Additional Patient Information",
+            "display_order":2,
+            "system_defined":"Y"
+            }
+            ],
+        "fields":{
+            1:[
+                {
+                "field_name":"patient_salutation",
+                "sequence_no":1,
+                "start_newline":"N",
+                "mandatory":"Y",
+                "validation_expression":null,
+                "display_name":"Patient Salutation",
+                "field_width":1
+                },
+                {
+                "field_name":"patient_name",
+                "sequence_no":2,
+                "start_newline":"Y",
+                "mandatory":"Y",
+                "validation_expression":null,
+                "display_name":"Patient Name",
+                "field_width":1
+                }
+            ],
+            2:[
+                {
+                "field_name":"address",
+                "sequence_no":1,
+                "start_newline":"N",
+                "mandatory":"Y",
+                "validation_expression":null,
+                "display_name":"Address",
+                "field_width":2
+                },
+                {
+                "field_name":"area",
+                "sequence_no":2,
+                "start_newline":"N",
+                "mandatory":"Y",
+                "validation_expression":null,
+                "display_name":"Area",
+                "field_width":1
+                }
+            ]
+            }
+        }
+### Update sections [POST /preferences/updatesections]
+End point to get the update the section preferences
++ Request (application/json)
+
+        {
+            "center_group_id":0,
+            "page_id":"op",
+            "sections":[
+            {
+            "section_id":1,
+            "section_display_name":"Basic Information",
+            "display_order":1,
+            "system_defined":"Y"
+            },
+            {
+            "section_id":2,
+            "section_display_name":"Additional Patient Information",
+            "display_order":2,
+            "system_defined":"Y"
+            }
+            ]
+        }
+
++ Response 201 (application/json)
+
+    + Body
+    
+            {
+                "center_group_id":0,
+                "page_id":"op",
+                "sections":[
+                {
+                "section_id":1,
+                "section_display_name":"Basic Information",
+                "display_order":1,
+                "system_defined":"Y"
+                },
+                {
+                "section_id":2,
+                "section_display_name":"Additional Patient Information",
+                "display_order":2,
+                "system_defined":"Y"
+                }
+                ]
+            }
+
+
+### update Display Preference [POST /preferences/updatedisplaypreference]
+End point to update the Display Preference
++ Request (application/json)
+
+        {
+        "sections":[
+            {
+            "section_id":1,
+            "section_display_name":"Basic Information",
+            "display_order":1,
+            "system_defined":"Y"
+            },
+            {
+            "section_id":2,
+            "section_display_name":"Additional Patient Information",
+            "display_order":2,
+            "system_defined":"Y"
+            }
+            ],
+        "fields":{
+            1:[
+                {
+                "field_name":"patient_salutation",
+                "sequence_no":1,
+                "start_newline":"N",
+                "mandatory":"Y",
+                "validation_expression":null,
+                "display_name":"Patient Salutation",
+                "field_width":1
+                },
+                {
+                "field_name":"patient_name",
+                "sequence_no":2,
+                "start_newline":"Y",
+                "mandatory":"Y",
+                "validation_expression":null,
+                "display_name":"Patient Name",
+                "field_width":1
+                }
+                ]
+            }
+        }
+
++ Response 201 (application/json)
+
+    + Body
+    
+            {
+            "sections":[
+                {
+                "section_id":1,
+                "section_display_name":"Basic Information",
+                "display_order":1,
+                "system_defined":"Y"
+                },
+                {
+                "section_id":2,
+                "section_display_name":"Additional Patient Information",
+                "display_order":2,
+                "system_defined":"Y"
+                }
+                ],
+            "fields":{
+                1:[
+                    {
+                    "field_name":"patient_salutation",
+                    "sequence_no":1,
+                    "start_newline":"N",
+                    "mandatory":"Y",
+                    "validation_expression":null,
+                    "display_name":"Patient Salutation",
+                    "field_width":1
+                    },
+                    {
+                    "field_name":"patient_name",
+                    "sequence_no":2,
+                    "start_newline":"Y",
+                    "mandatory":"Y",
+                    "validation_expression":null,
+                    "display_name":"Patient Name",
+                    "field_width":1
+                    }
+                    ]
+                }
+            }

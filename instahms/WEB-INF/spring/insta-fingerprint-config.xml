@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+		xmlns:p="http://www.springframework.org/schema/p"
+		xmlns:context="http://www.springframework.org/schema/context"
+		xmlns:mvc="http://www.springframework.org/schema/mvc" 
+		xmlns:tx="http://www.springframework.org/schema/tx"
+		xmlns:jpa="http://www.springframework.org/schema/data/jpa" xmlns:aop="http://www.springframework.org/schema/aop"
+		xsi:schemaLocation="http://www.springframework.org/schema/beans  
+		http://www.springframework.org/schema/beans/spring-beans.xsd  
+		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/mvc
+		http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/tx
+	    http://www.springframework.org/schema/tx/spring-tx.xsd">
+	    
+	    
+	<bean id="fingerprintController" class="com.insta.hms.fpmodule.FingerprintController">
+		<property name = "authMode" value = "passthru"/>
+		<!-- <property name = "actionId" value = "new_fingerprint_registration"/> -->
+	</bean>
+	
+	<bean id="fingerprintApiService" class="com.insta.hms.fpmodule.FingerprintApiService" />
+	
+	<bean id="fingerprintRegistrationIndexController" class="com.insta.hms.fpmodule.FingerprintRegistrationIndexController">
+		<property name = "actionId" value = "fp_registration"/>
+		<!-- <property name = "actionId" value = "new_fingerprint_registration"/> -->
+	</bean>
+	<bean id="fingerprintVerificationIndexController" class="com.insta.hms.fpmodule.FingerprintVerificationIndexController">
+		<property name = "actionId" value = "fp_verification"/>
+		<!-- <property name = "actionId" value = "new_fingerprint_registration"/> -->
+	</bean>
+	<!-- ======== MASTER SCREENS FOR 'Purpose for FP Verification' master screen -->
+	<bean id="purposeFpVerificationController" class="com.insta.hms.fpmodule.PurposeFpVerificationController">
+		<property name = "actionId" value = "mas_purpose_fp_verification"/>
+	</bean>
+	
+</beans>

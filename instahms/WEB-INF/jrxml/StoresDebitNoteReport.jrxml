@@ -1,0 +1,611 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="grnreport" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="782" leftMargin="30" rightMargin="30" topMargin="40" bottomMargin="40" scriptletClass="com.insta.hms.common.JRCommonScriptlet">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="debitNo" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select pdn.received_debit_amt,pdn.debit_note_no,s.supplier_name,TO_CHAR(pdn.debit_note_date,'dd-MM-yyyy') AS debit_note_date,
+CASE WHEN pdn.discount_type = 'P' then ( select sdn1.discount_per * (0-sum((gd1.billed_qty/gd1.grn_pkg_size)*gd1.cost_price-gd1.discount+gd1.tax+(gd1.item_ced)))/100
+from store_debit_note sdn1 join store_grn_main gm1 using (debit_note_no)
+join store_grn_details gd1 using (grn_no)
+group by sdn1.debit_note_no,sdn1.discount_per
+having sdn1.debit_note_no = pdn.debit_note_no) ELSE pdn.discount END as rev_discount ,
+CASE WHEN pdn.discount_type = 'P' then ( select sdn2.discount_per * (0-sum((png1.billed_qty/png1.grn_pkg_size)*png1.orig_debit_rate-png1.orig_discount+png1.orig_tax+(png1.item_ced)))/100
+from store_debit_note sdn2 join store_grn_main gm2 using(debit_note_no)
+join store_grn_details png1 using (grn_no)
+group by sdn2.debit_note_no, sdn2.discount_per having sdn2.debit_note_no = pdn.debit_note_no) ELSE pdn.discount END as dbt_discount,
+pdn.round_off,pdn.other_charges,pdn.other_charges_remarks,pdn.remarks,
+mm.manf_mnemonic,mm.manf_name,medicine_name,png.batch_no,TO_CHAR(PNG.EXP_DT,'MON-YYYY') AS EXP_DATE,(0-((png.billed_qty/png.grn_pkg_size)*png.orig_debit_rate)) as amt,(0-(png.billed_qty/png.grn_pkg_size)) as qty,png.cost_price,
+(0-png.orig_discount) as itemdiscount,png.tax_rate,(0-png.orig_tax) as tax,
+(0-((png.billed_qty/png.grn_pkg_size)*png.orig_debit_rate-png.orig_discount+png.orig_tax+png.item_ced)) as totamt,(0-((png.billed_qty/png.grn_pkg_size)*png.cost_price-png.discount+png.tax+(png.item_ced))) as totrecamt, st.dept_name
+from store_debit_note pdn
+join supplier_master s on supplier_code=pdn.supplier_id
+join store_grn_main pngm using(debit_note_no)
+join store_grn_details png using(grn_no)
+join store_item_details pmd using(medicine_id)
+join manf_master mm on mm.manf_code=pmd.manf_name
+join stores st on st.dept_id = pdn.store_id
+where pdn.debit_note_no=$P{debitNo}]]>
+	</queryString>
+	<field name="medicine_name" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="debit_note_no" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="debit_note_date" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="other_charges_remarks" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="batch_no" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="exp_date" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="supplier_name" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="dbt_discount" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="rev_discount" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="other_charges" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="remarks" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="manf_mnemonic" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="qty" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="amt" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="cost_price" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="tax_rate" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="tax" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="itemdiscount" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="round_off" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="received_debit_amt" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="totamt" class="java.math.BigDecimal"/>
+	<field name="totrecamt" class="java.math.BigDecimal"/>
+	<field name="dept_name" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<variable name="bqty" class="java.math.BigDecimal" resetType="Group" resetGroup="grnheader" calculation="Sum">
+		<variableExpression><![CDATA[$F{qty}]]></variableExpression>
+	</variable>
+	<variable name="stotamt" class="java.math.BigDecimal" resetType="Group" resetGroup="grnheader" calculation="Sum">
+		<variableExpression><![CDATA[$F{totamt}]]></variableExpression>
+	</variable>
+	<variable name="stotrecamt" class="java.math.BigDecimal" resetType="Group" resetGroup="grnheader" calculation="Sum">
+		<variableExpression><![CDATA[$F{totrecamt}]]></variableExpression>
+	</variable>
+	<variable name="sdisc" class="java.math.BigDecimal" resetType="Group" resetGroup="grnheader" calculation="Sum">
+		<variableExpression><![CDATA[$F{itemdiscount}]]></variableExpression>
+	</variable>
+	<variable name="samt" class="java.math.BigDecimal" resetType="Group" resetGroup="grnheader" calculation="Sum">
+		<variableExpression><![CDATA[$F{amt}]]></variableExpression>
+	</variable>
+	<variable name="stax" class="java.math.BigDecimal" resetType="Group" resetGroup="grnheader" calculation="Sum">
+		<variableExpression><![CDATA[$F{tax}]]></variableExpression>
+	</variable>
+	<group name="grndetails">
+		<groupExpression><![CDATA[]]></groupExpression>
+		<groupHeader>
+			<band height="86">
+				<staticText>
+					<reportElement key="staticText-1" x="0" y="1" width="775" height="27"/>
+					<box>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="15" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[ Stores Return Debit Note
+]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement key="textField-54" x="105" y="34" width="113" height="20"/>
+					<box leftPadding="3"/>
+					<textElement verticalAlignment="Middle">
+						<font size="10" isBold="true" isItalic="false" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{debit_note_no}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement key="staticText-17" x="15" y="34" width="90" height="20"/>
+					<box leftPadding="3"/>
+					<textElement verticalAlignment="Middle"/>
+					<text><![CDATA[Debit Note Num :]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-17" x="300" y="34" width="90" height="20"/>
+					<box leftPadding="3"/>
+					<textElement verticalAlignment="Middle"/>
+					<text><![CDATA[Debit Date:
+]]></text>
+				</staticText>
+				<textField isBlankWhenNull="false">
+					<reportElement key="textField-54" x="390" y="34" width="113" height="20"/>
+					<box leftPadding="3"/>
+					<textElement verticalAlignment="Middle"/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{debit_note_date}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement key="staticText-17" x="569" y="34" width="90" height="20"/>
+					<box leftPadding="3"/>
+					<textElement verticalAlignment="Middle"/>
+					<text><![CDATA[Supplier:
+]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-18" x="300" y="54" width="90" height="20"/>
+					<box leftPadding="3"/>
+					<textElement verticalAlignment="Middle"/>
+					<text><![CDATA[Remarks:
+]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement key="textField-54" x="659" y="34" width="113" height="20"/>
+					<box leftPadding="3"/>
+					<textElement verticalAlignment="Middle">
+						<font isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{supplier_name}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement key="textField-53" x="415" y="54" width="360" height="20"/>
+					<box leftPadding="3"/>
+					<textElement verticalAlignment="Middle"/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{remarks}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="18" y="61" width="80" height="20"/>
+					<textElement/>
+					<text><![CDATA[Store Name:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="105" y="60" width="176" height="20"/>
+					<textElement>
+						<font isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{dept_name}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<group name="grnheader">
+		<groupExpression><![CDATA[]]></groupExpression>
+		<groupHeader>
+			<band height="30">
+				<staticText>
+					<reportElement key="staticText-24" mode="Opaque" x="0" y="0" width="30" height="29" backcolor="#FFFFFF"/>
+					<box topPadding="2" leftPadding="2"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[#]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-25" mode="Opaque" x="30" y="0" width="120" height="29" backcolor="#FFFFFF"/>
+					<box topPadding="2" leftPadding="2"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[Item  Name]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-26" mode="Opaque" x="223" y="1" width="48" height="29" backcolor="#FFFFFF"/>
+					<box topPadding="2" leftPadding="2"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[Batch No]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-27" mode="Opaque" x="150" y="0" width="50" height="29" backcolor="#FFFFFF"/>
+					<box topPadding="2" leftPadding="2"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[Mfr]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-28" mode="Opaque" x="271" y="0" width="60" height="29" backcolor="#FFFFFF"/>
+					<box topPadding="2" rightPadding="2"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[Expiry Dt]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-30" mode="Opaque" x="446" y="0" width="55" height="29" backcolor="#FFFFFF"/>
+					<box topPadding="2" rightPadding="2"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[Disc]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-31" mode="Opaque" x="516" y="0" width="60" height="29" backcolor="#FFFFFF"/>
+					<box topPadding="2" rightPadding="2"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[VAT %]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-33" mode="Opaque" x="571" y="0" width="60" height="29" backcolor="#FFFFFF"/>
+					<box topPadding="2" rightPadding="2"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[VAT]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-34" mode="Opaque" x="331" y="0" width="55" height="29" backcolor="#FFFFFF"/>
+					<box topPadding="2" rightPadding="2"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[Qty]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-35" mode="Opaque" x="386" y="0" width="60" height="29" backcolor="#FFFFFF"/>
+					<box topPadding="2" rightPadding="2"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[Rate]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-37" mode="Opaque" x="631" y="0" width="70" height="29" backcolor="#FFFFFF"/>
+					<box topPadding="2" rightPadding="2"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[Orig.Amt]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-37" mode="Opaque" x="701" y="0" width="70" height="29" backcolor="#FFFFFF"/>
+					<box topPadding="2" rightPadding="2"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[Rev.Amt]]></text>
+				</staticText>
+				<line>
+					<reportElement x="0" y="29" width="775" height="1"/>
+				</line>
+				<line>
+					<reportElement x="0" y="1" width="775" height="1"/>
+				</line>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="135">
+				<textField isStretchWithOverflow="true" pattern="#0.00" isBlankWhenNull="true">
+					<reportElement x="331" y="5" width="55" height="15"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{bqty}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="281" y="5" width="50" height="15"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[Total:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" pattern="#0.00" isBlankWhenNull="true">
+					<reportElement x="446" y="5" width="55" height="15" printWhenGroupChanges="grnheader"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{REPORT_SCRIPTLET}.decFormat($V{sdisc})]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#0.00" isBlankWhenNull="true">
+					<reportElement x="631" y="5" width="70" height="15"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{REPORT_SCRIPTLET}.decFormat($V{stotamt})]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#0.00" isBlankWhenNull="true">
+					<reportElement x="701" y="5" width="70" height="15"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{REPORT_SCRIPTLET}.decFormat($V{stotrecamt})]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#0.00" isBlankWhenNull="true">
+					<reportElement x="571" y="5" width="60" height="15"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{REPORT_SCRIPTLET}.decFormat($V{stax})]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="0" y="2" width="775" height="1"/>
+				</line>
+				<line>
+					<reportElement x="0" y="22" width="775" height="1"/>
+				</line>
+				<staticText>
+					<reportElement key="staticText-17" x="28" y="61" width="90" height="20"/>
+					<box leftPadding="3"/>
+					<textElement verticalAlignment="Middle"/>
+					<text><![CDATA[Other Disc. Orig:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-18" x="28" y="41" width="90" height="20"/>
+					<box leftPadding="3"/>
+					<textElement verticalAlignment="Middle"/>
+					<text><![CDATA[Round-off:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-18" x="28" y="80" width="90" height="20"/>
+					<box leftPadding="3"/>
+					<textElement verticalAlignment="Middle"/>
+					<text><![CDATA[Other Disc. Rev:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+					<reportElement key="textField-54" x="118" y="61" width="75" height="20"/>
+					<box leftPadding="3"/>
+					<textElement verticalAlignment="Middle"/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{REPORT_SCRIPTLET}.decFormat($F{dbt_discount})]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#0.00" isBlankWhenNull="false">
+					<reportElement key="textField-54" x="118" y="80" width="75" height="20"/>
+					<box leftPadding="3"/>
+					<textElement verticalAlignment="Middle"/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{REPORT_SCRIPTLET}.decFormat($F{rev_discount})]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#0.00" isBlankWhenNull="true">
+					<reportElement key="textField-53" x="118" y="41" width="113" height="20"/>
+					<box leftPadding="3"/>
+					<textElement verticalAlignment="Middle"/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{REPORT_SCRIPTLET}.decFormat($F{round_off})]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement key="staticText-17" x="361" y="42" width="90" height="20"/>
+					<box leftPadding="3"/>
+					<textElement verticalAlignment="Middle"/>
+					<text><![CDATA[Other Charges:
+]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-18" x="329" y="61" width="120" height="20"/>
+					<box leftPadding="3"/>
+					<textElement verticalAlignment="Middle"/>
+					<text><![CDATA[Original Debit Amount:
+]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+					<reportElement key="textField-54" x="451" y="42" width="50" height="20"/>
+					<box leftPadding="3"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle"/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{REPORT_SCRIPTLET}.decFormat($F{other_charges})]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement key="textField-53" x="451" y="61" width="113" height="20"/>
+					<box leftPadding="3"/>
+					<textElement verticalAlignment="Middle">
+						<font isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{REPORT_SCRIPTLET}.decFormat($V{stotamt}.add($F{other_charges}).add($F{round_off}).subtract($F{dbt_discount}))]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="502" y="41" width="211" height="20"/>
+					<textElement verticalAlignment="Middle"/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{other_charges_remarks}.equals("")?"":"("+$F{other_charges_remarks}+")"]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="9" y="113" width="191" height="20"/>
+					<textElement/>
+					<text><![CDATA[(Signature of Supplier/representative)
+]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-18" x="329" y="80" width="120" height="20"/>
+					<box leftPadding="3"/>
+					<textElement verticalAlignment="Middle"/>
+					<text><![CDATA[Revised Debit Amount:
+]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement key="textField-53" x="451" y="80" width="98" height="20"/>
+					<box leftPadding="3"/>
+					<textElement verticalAlignment="Middle">
+						<font isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{REPORT_SCRIPTLET}.decFormat($F{received_debit_amt})]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band/>
+	</background>
+	<title>
+		<band/>
+	</title>
+	<pageHeader>
+		<band/>
+	</pageHeader>
+	<columnHeader>
+		<band/>
+	</columnHeader>
+	<detail>
+		<band height="27">
+			<rectangle>
+				<reportElement key="rectangle-1" x="0" y="0" width="775" height="18" backcolor="#FFFFFF">
+					<printWhenExpression><![CDATA[new Boolean(($V{grnheader_COUNT}.intValue()%2) == 0)]]></printWhenExpression>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="0.0" lineStyle="Solid"/>
+				</graphicElement>
+			</rectangle>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField-61" x="0" y="0" width="30" height="18"/>
+				<box topPadding="2" leftPadding="2" rightPadding="2"/>
+				<textElement>
+					<font size="10" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Integer"><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField-62" x="30" y="0" width="120" height="27"/>
+				<box topPadding="2" leftPadding="2" rightPadding="2"/>
+				<textElement>
+					<font size="10" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{medicine_name}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField-63" x="218" y="-1" width="70" height="18"/>
+				<box topPadding="2" leftPadding="2" rightPadding="2"/>
+				<textElement textAlignment="Center">
+					<font size="10" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{batch_no}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField-64" x="150" y="0" width="68" height="27"/>
+				<box topPadding="2" leftPadding="2" rightPadding="2"/>
+				<textElement>
+					<font size="10" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{manf_mnemonic}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField-65" x="271" y="0" width="60" height="18"/>
+				<box topPadding="2" leftPadding="2" rightPadding="2"/>
+				<textElement textAlignment="Right">
+					<font size="10" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{exp_date}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField-68" x="446" y="0" width="55" height="18"/>
+				<box topPadding="2" leftPadding="2" rightPadding="2"/>
+				<textElement textAlignment="Right">
+					<font size="10" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{REPORT_SCRIPTLET}.decFormat($F{itemdiscount})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-69" x="516" y="0" width="60" height="18"/>
+				<box topPadding="2" leftPadding="2" rightPadding="2"/>
+				<textElement textAlignment="Right">
+					<font size="10" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{tax_rate}+" %"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField-70" x="571" y="0" width="60" height="18"/>
+				<box topPadding="2" leftPadding="2" rightPadding="2"/>
+				<textElement textAlignment="Right">
+					<font size="10" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{REPORT_SCRIPTLET}.decFormat($F{tax})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="###0.00" isBlankWhenNull="true">
+				<reportElement key="textField-71" x="331" y="0" width="55" height="18"/>
+				<box topPadding="2" leftPadding="2" rightPadding="2"/>
+				<textElement textAlignment="Right">
+					<font size="10" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{qty}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField-72" x="386" y="0" width="60" height="18"/>
+				<box topPadding="2" leftPadding="2" rightPadding="2"/>
+				<textElement textAlignment="Right">
+					<font size="10" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{REPORT_SCRIPTLET}.decFormat($F{cost_price})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField-73" x="631" y="0" width="70" height="18"/>
+				<box topPadding="2" leftPadding="2" rightPadding="2"/>
+				<textElement textAlignment="Right">
+					<font size="10" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{REPORT_SCRIPTLET}.decFormat($F{totamt})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField-73" x="701" y="0" width="70" height="18"/>
+				<box topPadding="2" leftPadding="2" rightPadding="2"/>
+				<textElement textAlignment="Right">
+					<font size="10" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{REPORT_SCRIPTLET}.decFormat($F{totrecamt})]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band/>
+	</columnFooter>
+	<pageFooter>
+		<band height="50">
+			<textField evaluationTime="Report" pattern="dd-MMM-yyyy" isBlankWhenNull="false">
+				<reportElement key="textField" x="0" y="7" width="100" height="18"/>
+				<textElement/>
+				<textFieldExpression class="java.util.Date"><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" pattern="h.mm a" isBlankWhenNull="false">
+				<reportElement key="textField" x="100" y="7" width="100" height="18"/>
+				<textElement/>
+				<textFieldExpression class="java.util.Date"><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField" x="552" y="9" width="100" height="18"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.String"><![CDATA["Page " + $V{PAGE_NUMBER} + " of "]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" isBlankWhenNull="false">
+				<reportElement key="textField" x="652" y="9" width="100" height="18"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA["" + $V{PAGE_NUMBER} + ""]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement key="line-9" x="0" y="5" width="775" height="1"/>
+			</line>
+		</band>
+	</pageFooter>
+	<summary>
+		<band/>
+	</summary>
+</jasperReport>

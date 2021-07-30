@@ -1,0 +1,2 @@
+claim_id,sale_item_id,claim_status,insurance_claim_amt,claim_recd,denial_code,insurance_category_id,return_insurance_claim_amt,prior_auth_id,prior_auth_mode_id,sales_item_plan_claim_id,sponsor_id,denial_remarks,claim_activity_id,closure_type,rejection_reason_category_id,include_in_claim_calc,tax_amt,ref_insurance_claim_amount,org_insurance_claim_amount
+'CLD000579','54913','O','58.67','0.00',,'-1',,'',,'185','TPAID0102',,,'O',,'t','2.93','58.6700','58.6700'

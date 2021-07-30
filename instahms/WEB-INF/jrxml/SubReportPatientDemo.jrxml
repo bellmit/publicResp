@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="SubReportPatientDemo" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="842" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="fromdate" class="java.util.Date" isForPrompting="false"/>
+	<parameter name="todate" class="java.util.Date" isForPrompting="false"/>
+	<queryString>
+		<![CDATA[SELECT 0 as no,sum(bc.amount) as rev, coalesce (pr.visit_type,b.visit_type) as visit_type,  
+case when  coalesce (extract(year from age(coalesce(dateofbirth,expected_dob))),isr.patient_age)<1 then '0-1  year' 
+when  coalesce (extract(year from age(coalesce(dateofbirth,expected_dob))),isr.patient_age) between 1 and 12  then '1-12 years' 
+when  coalesce (extract(year from age(coalesce(dateofbirth,expected_dob))),isr.patient_age) between 12 and 40 then '12-40 years'   
+when  coalesce (extract(year from age(coalesce(dateofbirth,expected_dob))),isr.patient_age) between 40 and 60 then  '40-60  years'
+else '>60 years' end as  agegroup,  
+case when pd.patient_gender like 'M' then 'Male' when pd.patient_gender like 'F' then 'Female' end as gender  
+FROM bill_charge bc 
+JOIN bill b on   bc.bill_no=b.bill_no  and b.status!='X' and bc.status!='X' and b.visit_type!='r'  
+left JOIN patient_registration pr ON b.visit_id=pr.patient_id 
+left JOIN patient_details pd on pd.mr_no=pr.mr_no  
+left join incoming_sample_registration isr on isr.incoming_visit_id = b.visit_id
+WHERE date_trunc('day',bc.posted_date) >= '$P!{fromdate}' and date_trunc('day',bc.posted_date) <= '$P!{todate}'
+group by pr.visit_type,dateofbirth,expected_dob,pd.patient_gender,pr.patient_id,b.visit_type,isr.patient_age
+UNION ALL  
+SELECT count(pr.patient_id) as no,0 as rev, pr.visit_type, case when extract(year from age(coalesce(dateofbirth,expected_dob)))<1 then '0-1  year'  when  extract(year from age(coalesce(dateofbirth,expected_dob))) between 1 and 12  then '1-12 years' 
+when  extract(year from age(coalesce(dateofbirth,expected_dob))) between 12 and 40 then '12-40 years'   
+when  extract(year from age(coalesce(dateofbirth,expected_dob))) between 40 and 60 then  '40-60  years'
+else '>60 years' end as  agegroup , 
+case when pd.patient_gender like 'M' then 'Male'  when pd.patient_gender like 'F' then 'Female' end as gender   
+FROM patient_registration pr 
+left JOIN patient_details pd on pd.mr_no=pr.mr_no  
+WHERE date_trunc('day',pr.reg_date) >= '$P!{fromdate}' and date_trunc('day',pr.reg_date) <= '$P!{todate}'
+group by pr.visit_type,dateofbirth,expected_dob,patient_gender ,pr.patient_id
+
+union all
+
+Select count(isr.incoming_visit_id) as no,0 as rev,b.visit_type,case when isr.patient_age <1 then '0-1 year'
+when isr.patient_age between 1 and 12 then '1-12 years' when isr.patient_age between 12 and 40 then '12-40 years'
+when isr.patient_age between 40 and 60 then '40-60 years' else '>60 years' end as agegroup,
+case when isr.patient_gender like 'M' then 'Male' when isr.patient_gender like 'F' then 'Female' end as gender
+from incoming_sample_registration  isr
+left join bill b on b.bill_no = isr.billno
+WHERE date_trunc('day',isr.date) >= '$P!{fromdate}' and date_trunc('day',isr.date) <= '$P!{todate}'
+group by b.visit_type,isr.patient_age,isr.patient_gender ]]>
+	</queryString>
+	<field name="no" class="java.lang.Long"/>
+	<field name="rev" class="java.math.BigDecimal"/>
+	<field name="visit_type" class="java.lang.String"/>
+	<field name="agegroup" class="java.lang.String"/>
+	<field name="gender" class="java.lang.String"/>
+	<background>
+		<band/>
+	</background>
+	<title>
+		<band/>
+	</title>
+	<pageHeader>
+		<band/>
+	</pageHeader>
+	<columnHeader>
+		<band/>
+	</columnHeader>
+	<detail>
+		<band/>
+	</detail>
+	<columnFooter>
+		<band/>
+	</columnFooter>
+	<pageFooter>
+		<band/>
+	</pageFooter>
+	<summary>
+		<band height="199">
+			<crosstab>
+				<reportElement key="crosstab-1" x="0" y="9" width="601" height="190"/>
+				<crosstabHeaderCell>
+					<cellContents mode="Transparent">
+						<staticText>
+							<reportElement key="staticText-1" x="0" y="25" width="100" height="25"/>
+							<box>
+								<topPen lineWidth="0.25" lineStyle="Solid"/>
+								<leftPen lineWidth="0.25" lineStyle="Solid"/>
+								<bottomPen lineWidth="0.25" lineStyle="Solid"/>
+								<rightPen lineWidth="0.25" lineStyle="Solid"/>
+							</box>
+							<textElement textAlignment="Center" verticalAlignment="Middle"/>
+							<text><![CDATA[Age Group]]></text>
+						</staticText>
+					</cellContents>
+				</crosstabHeaderCell>
+				<rowGroup name="agegroup" width="100" totalPosition="End">
+					<bucket>
+						<bucketExpression class="java.lang.String"><![CDATA[$F{agegroup}]]></bucketExpression>
+					</bucket>
+					<crosstabRowHeader>
+						<cellContents mode="Transparent">
+							<box>
+								<pen lineWidth="0.25" lineStyle="Solid"/>
+								<topPen lineWidth="0.25" lineStyle="Solid"/>
+								<leftPen lineWidth="0.25" lineStyle="Solid"/>
+								<bottomPen lineWidth="0.25" lineStyle="Solid"/>
+								<rightPen lineWidth="0.25" lineStyle="Solid"/>
+							</box>
+							<textField isBlankWhenNull="false">
+								<reportElement key="textField" x="0" y="0" width="100" height="30"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<textFieldExpression class="java.lang.String"><![CDATA[$V{agegroup}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabRowHeader>
+					<crosstabTotalRowHeader>
+						<cellContents mode="Transparent">
+							<box>
+								<pen lineWidth="0.25" lineStyle="Solid"/>
+								<topPen lineWidth="0.25" lineStyle="Solid"/>
+								<leftPen lineWidth="0.25" lineStyle="Solid"/>
+								<bottomPen lineWidth="0.25" lineStyle="Solid"/>
+								<rightPen lineWidth="0.25" lineStyle="Solid"/>
+							</box>
+							<textField isBlankWhenNull="false">
+								<reportElement key="textField" x="0" y="0" width="100" height="30"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<textFieldExpression class="java.lang.String"><![CDATA["Total"]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabTotalRowHeader>
+				</rowGroup>
+				<columnGroup name="visit_type" height="25" totalPosition="End" headerPosition="Center">
+					<bucket>
+						<bucketExpression class="java.lang.String"><![CDATA[$F{visit_type}]]></bucketExpression>
+					</bucket>
+					<crosstabColumnHeader>
+						<cellContents mode="Transparent"/>
+					</crosstabColumnHeader>
+					<crosstabTotalColumnHeader>
+						<cellContents/>
+					</crosstabTotalColumnHeader>
+				</columnGroup>
+				<columnGroup name="visit_type1" height="25" totalPosition="End" headerPosition="Center">
+					<bucket>
+						<bucketExpression class="java.lang.String"><![CDATA[$F{visit_type}]]></bucketExpression>
+					</bucket>
+					<crosstabColumnHeader>
+						<cellContents mode="Transparent">
+							<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+								<reportElement key="textField" x="0" y="0" width="50" height="25"/>
+								<box>
+									<pen lineWidth="0.25"/>
+									<topPen lineWidth="0.25"/>
+									<leftPen lineWidth="0.25"/>
+									<bottomPen lineWidth="0.25"/>
+									<rightPen lineWidth="0.25"/>
+								</box>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="9" pdfFontName="Helvetica"/>	
+								</textElement>
+								<textFieldExpression class="java.lang.String"><![CDATA[$V{visit_type}.equalsIgnoreCase("i")?"IP Count":
+$V{visit_type}.equalsIgnoreCase("o")?"OP Count":
+$V{visit_type}.equalsIgnoreCase("d")?"Diag Count":
+$V{visit_type}.equalsIgnoreCase("t")?"InComing Test Count":" "]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabColumnHeader>
+					<crosstabTotalColumnHeader>
+						<cellContents mode="Transparent">
+							<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+								<reportElement key="textField" x="0" y="0" width="60" height="25"/>
+								<box>
+									<pen lineWidth="0.25"/>
+									<topPen lineWidth="0.25"/>
+									<leftPen lineWidth="0.25"/>
+									<bottomPen lineWidth="0.25"/>
+									<rightPen lineWidth="0.25"/>
+								</box>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="9" pdfFontName="Helvetica"/>	
+								</textElement>
+								<textFieldExpression class="java.lang.String"><![CDATA[$V{visit_type}.equalsIgnoreCase("i")?"IP Revenue":
+$V{visit_type}.equalsIgnoreCase("o")?"OP Revenue":
+$V{visit_type}.equalsIgnoreCase("d")?"Diag Revenue":
+$V{visit_type}.equalsIgnoreCase("t")?"InComingTestRevenue":" "]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabTotalColumnHeader>
+				</columnGroup>
+				<measure name="no_Sum" class="java.lang.Long" calculation="Sum">
+					<measureExpression><![CDATA[$F{no}]]></measureExpression>
+				</measure>
+				<measure name="revenue" class="java.math.BigDecimal" calculation="Sum">
+					<measureExpression><![CDATA[$F{rev}]]></measureExpression>
+				</measure>
+				<crosstabCell width="50" height="30">
+					<cellContents mode="Transparent">
+						<textField isBlankWhenNull="false">
+							<reportElement key="textField" x="0" y="0" width="50" height="30"/>
+							<box>
+								<pen lineWidth="0.25"/>
+								<topPen lineWidth="0.25"/>
+								<leftPen lineWidth="0.25"/>
+								<bottomPen lineWidth="0.25"/>
+								<rightPen lineWidth="0.25"/>
+							</box>
+							<textElement textAlignment="Center" verticalAlignment="Middle">
+								<font size="9" pdfFontName="Helvetica"/>	
+							</textElement>
+							<textFieldExpression class="java.lang.Long"><![CDATA[$V{no_Sum}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell width="60" height="30" columnTotalGroup="visit_type1">
+					<cellContents mode="Transparent">
+						<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
+							<reportElement key="textField" x="0" y="0" width="60" height="30"/>
+							<box>
+								<pen lineWidth="0.25"/>
+								<topPen lineWidth="0.25"/>
+								<leftPen lineWidth="0.25"/>
+								<bottomPen lineWidth="0.25"/>
+								<rightPen lineWidth="0.25"/>
+							</box>
+							<textElement textAlignment="Right" verticalAlignment="Middle">
+								<font size="9" pdfFontName="Helvetica"/>	
+							</textElement>
+							<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{revenue}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell width="0" height="30" columnTotalGroup="visit_type">
+					<cellContents mode="Transparent"/>
+				</crosstabCell>
+				<crosstabCell width="50" height="30" rowTotalGroup="agegroup">
+					<cellContents mode="Transparent">
+						<textField isBlankWhenNull="false">
+							<reportElement key="textField" x="0" y="0" width="50" height="30"/>
+							<box>
+								<pen lineWidth="0.25"/>
+								<topPen lineWidth="0.25"/>
+								<leftPen lineWidth="0.25"/>
+								<bottomPen lineWidth="0.25"/>
+								<rightPen lineWidth="0.25"/>
+							</box>
+							<textElement textAlignment="Center" verticalAlignment="Middle">
+								<font size="9" pdfFontName="Helvetica"/>	
+							</textElement>
+							<textFieldExpression class="java.lang.Long"><![CDATA[$V{no_Sum}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell width="60" height="30" rowTotalGroup="agegroup" columnTotalGroup="visit_type1">
+					<cellContents mode="Transparent">
+						<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
+							<reportElement key="textField" x="0" y="0" width="60" height="30"/>
+							<box>
+								<pen lineWidth="0.25"/>
+								<topPen lineWidth="0.25"/>
+								<leftPen lineWidth="0.25"/>
+								<bottomPen lineWidth="0.25"/>
+								<rightPen lineWidth="0.25"/>
+							</box>
+							<textElement textAlignment="Right" verticalAlignment="Middle">
+								<font size="9" pdfFontName="Helvetica"/>	
+							</textElement>
+							<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{revenue}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell width="0" height="30" rowTotalGroup="agegroup" columnTotalGroup="visit_type">
+					<cellContents mode="Transparent"/>
+				</crosstabCell>
+				<whenNoDataCell>
+					<cellContents mode="Transparent"/>
+				</whenNoDataCell>
+			</crosstab>
+		</band>
+	</summary>
+</jasperReport>

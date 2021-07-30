@@ -1,0 +1,116 @@
+{
+    "title": "Patient Vitals Report",
+    "reportGroup": "Patient Stats Reports",
+    "description": "This report shows the list of patient vital measurements",
+    "dateFields": [
+        "reg_date",
+        "date_time"
+    ],
+    "allowNoDate": true,
+    "includes": [
+        "PatientDetailFields.srjs",
+        "PatientVisitFields.srjs"
+    ],
+    "defaultShowFields": [
+        "mr_no",
+        "visit_id",
+        "full_name",
+        "age",
+        "patient_gender",
+        "reg_date",
+        "date_time",
+        "v_time",
+        "param_label",
+        "param_uom",
+        "param_value",
+        "user_name"
+    ],
+    "queryUnits": [
+        {
+            "mainTableName": "visit_vitals",
+            "mainTableAlias": "vv",
+            "joinTables": [
+                {
+                    "name": "patient_registration",
+                    "alias": "pr",
+                    "dependsOn": "vv",
+                    "expression": "ON (pr.patient_id = vv.patient_id)"
+                },
+                {
+                    "name": "patient_details",
+                    "alias": "pd",
+                    "dependsOn": "pr",
+                    "expression": "ON (pr.mr_no = pd.mr_no)"
+                },
+                {
+                    "name": "vital_reading",
+                    "alias": "vr",
+                    "dependsOn": "vv",
+                    "expression": "ON vr.vital_reading_id = vv.vital_reading_id"
+                },
+                {
+                    "name": "vital_parameter_master",
+                    "alias": "vpm",
+                    "dependsOn": "vr",
+                    "expression": "ON vr.param_id = vpm.param_id"
+                },
+                {
+                    "includeName": "PatientVisitFields.srjs"
+                }
+            ],
+            "whereExpression": "vpm.param_container='V' ",
+            "whereTable": "vr,vpm"
+        }
+    ],
+    "fields": {
+        "date_time": {
+            "table": "vv",
+            "displayName": "Vital Date",
+            "dataType": "date",
+            "width": "60",
+            "groupable": true,
+            "filterable": true,
+            "expression": "date(date_time)"
+        },
+        "param_label": {
+            "table": "vpm",
+            "displayName": "Vital Parameter",
+            "allowNull": true,
+            "width": "100",
+            "groupable": true,
+            "filterable": true
+        },
+        "param_uom": {
+            "table": "vpm",
+            "displayName": "UOM",
+            "allowNull": true,
+            "width": "50",
+            "groupable": true,
+            "filterable": true
+        },
+        "param_value": {
+            "table": "vr",
+            "displayName": "Parameter Value",
+            "allowNull": true,
+            "width": "60",
+            "groupable": true,
+            "filterable": true
+        },
+        "user_name": {
+            "table": "vv",
+            "displayName": "Entered By",
+            "allowNull": true,
+            "width": "120",
+            "groupable": true,
+            "filterable": true
+        },
+        "v_time": {
+            "table": "vv",
+            "displayName": "Vital Time",
+            "width": "60",
+            "groupable": false,
+            "filterable": false,
+            "expression": "date_time::time"
+        }
+    }
+}

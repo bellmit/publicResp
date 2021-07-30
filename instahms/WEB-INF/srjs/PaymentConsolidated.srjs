@@ -1,0 +1,415 @@
+{
+  "title": "Payments Consolidated Report",
+  "reportGroup": "Financial Reports",
+  "dateFields": ["finalized_date"],
+  "description": "This report shows all the consolidated prescribing, conducting and referral doctors to be paid payment list.",
+  "tableName": ["rpt_payment_consolidated_view"],
+  "defaultShowFields": [
+    "bill_no",
+    "bill_amount",
+    "total_to_pay_amt",
+    "hospital_amt",
+    "doc_paid_amt",
+    "pres_dr_paid_amt",
+    "ref_paid_amt",
+    "total_paid_amt",
+    "yet_to_pay_amt",
+    "presc_dr_yet_to_pay_amount",
+    "ref_dr_yet_to_pay_amount",
+    "conducting_dr_yet_to_pay_amount"
+  ],
+  "fields": {
+    "bill_no": {
+      "displayName": "Bill No.",
+      "width": "65",
+      "groupable": true,
+      "allowNull": true
+    },
+    "visit_id": {
+      "displayName": "Visit ID",
+      "width": "65"
+    },
+    "payment_id": {
+      "displayName": "Payment ID",
+      "width": "100",
+      "allowNull": true,
+      "filterable": true
+    },
+    "prescribing_dr_payment_id": {
+      "displayName": "Presc. Dr. Payment ID",
+      "width": "100",
+      "filterable": true,
+      "allowNull": true
+    },
+    "ref_payment_id": {
+      "displayName": "Referral Payment ID",
+      "width": "100",
+      "filterable": true,
+      "allowNull": true
+    },
+    "doc_payment_id": {
+      "displayName": "Doctor Payment ID",
+      "width": "100",
+      "filterable": true,
+      "allowNull": true
+    },
+    "discount": {
+      "displayName": "Bill Discount",
+      "width": "70",
+      "filterable": true,
+      "aggFunction": "sum",
+      "dataType": "numeric",
+      "decimalType": "amount"
+    },
+    "finalized_date": {
+      "displayName": "Finalized Date",
+      "width": "80",
+      "dataType": "date"
+    },
+    "chargegroup_name": {
+      "displayName": "Charge Group",
+      "width": "100",
+      "groupable": true,
+      "allowNull": true,
+      "filterable": true,
+      "allowedValuesQuery": "SELECT chargegroup_name FROM chargegroup_constants GROUP BY chargegroup_name ORDER BY chargegroup_name"
+    },
+    "chargehead_name": {
+      "displayName": "Charge Head",
+      "width": "100",
+      "filterable": true,
+      "groupable": true,
+      "allowNull": true,
+      "allowedValuesQuery": "SELECT chargehead_name FROM chargehead_constants GROUP BY chargehead_name ORDER BY chargehead_name"
+    },
+    "activity_name": {
+      "displayName": "Activity Name",
+      "width": "100",
+      "groupable": true,
+      "allowNull": true,
+      "filterable": true,
+      "allowedValuesQuery": "SELECT service_name AS activity_name FROM services GROUP BY service_name UNION SELECT test_name AS activity_name FROM diagnostics GROUP BY test_name"
+    },
+    "activity_conducted": {
+      "displayName": "Activity Conducted",
+      "width": "60",
+      "groupable": true,
+      "filterable": true,
+      "allowedValues": ["Yes","No"]
+    },
+    "bill_amount": {
+      "displayName": "Bill Amt",
+      "width": "70",
+      "filterable": true,
+      "aggFunction": "sum"
+    },
+    "payment_type": {
+      "displayName": "Payment Type",
+      "width": "150",
+      "filterable": true,
+      "groupable": true,
+      "allowNull": true,
+      "allowedValues": ["Conducting Doctor Payments","Miscellaneous Payments","Referral Doctor Payments","Prescribed Doctor Payments","Supplier Payments","OutHouse Payments"]
+    },
+    "payee_name": {
+      "displayName": "Payee Name",
+      "width": "110",
+      "filterable": true,
+      "groupable": true,
+      "allowNull": true,
+      "allowedValuesQuery": "SELECT payee_name FROM payeenames_view GROUP BY payee_name ORDER BY payee_name"
+    },
+    "doctor_name": {
+      "displayName": "Doctor Name",
+      "width": "100",
+      "groupable": true,
+      "allowNull": true,
+      "filterable": true,
+      "allowedValuesQuery": "SELECT doctor_name FROM doctors GROUP BY doctor_name ORDER BY doctor_name"
+    },
+    "doctor_amount": {
+      "displayName": "Doctor Amt",
+      "width": "70",
+      "filterable": true,
+      "dataType": "numeric",
+      "aggFunction": "sum"
+    },
+    "prescribing_doctor_name": {
+      "displayName": "Prescribing Doctor Name",
+      "width": "100",
+      "groupable": true,
+      "allowNull": true,
+      "filterable": true,
+      "allowedValuesQuery": "SELECT doctor_name AS prescribing_doctor_name FROM doctors GROUP BY doctor_name"
+    },
+    "prescribing_dr_amount": {
+      "displayName": "Prescribing Doctor Amt",
+      "dataType": "numeric",
+      "aggFunction": "sum",
+      "filterable": true,
+      "width": "70"
+    },
+    "referal_doctor": {
+      "displayName": "Referal Doctor",
+      "width": "100",
+      "groupable": true,
+      "allowNull": true,
+      "filterable": true,
+      "allowedValuesQuery": "SELECT referal_name AS referal_doctor FROM referral UNION ALL SELECT doctor_name AS referal_doctor FROM doctors ORDER BY referal_doctor"
+    },
+    "referal_amount": {
+      "displayName": "Referal Amt",
+      "width": "70",
+      "dataType": "numeric",
+      "aggFunction": "sum",
+      "filterable": true
+    },
+    "primary_tpa_name": {
+      "displayName": "Primary Sponsor",
+      "width": "100",
+      "groupable": true,
+      "allowNull": true,
+      "filterable": true,
+      "allowedValuesQuery": "SELECT tpa_name FROM tpa_master GROUP BY tpa_name"
+    },
+    "secondary_tpa_name": {
+      "displayName": "Secondary Sponsor",
+      "width": "100",
+      "groupable": true,
+      "allowNull": true,
+      "filterable": true,
+      "allowedValuesQuery": "SELECT tpa_name FROM tpa_master GROUP BY tpa_name"
+    },
+    "plan_name": {
+      "displayName": "Plan Name",
+      "width": "100",
+      "groupable": true,
+      "filterable": true,
+      "allowNull": true,
+      "allowedValuesQuery": "SELECT plan_name FROM insurance_plan_main ORDER BY plan_name"
+    },
+    "plan_type": {
+      "displayName": "Plan Type",
+      "width": "80",
+      "groupable": true,
+      "filterable": true,
+      "allowNull": true,
+      "allowedValuesQuery": "SELECT category_name FROM insurance_category_master ORDER BY category_name"
+    },
+    "primary_insurance_co_name": {
+      "displayName": "Primary Insurance Company",
+      "width": "100",
+      "groupable": true,
+      "filterable": true,
+      "allowNull": true,
+      "allowedValuesQuery": "SELECT insurance_co_name FROM insurance_company_master ORDER BY insurance_co_name"
+    },
+    "secondary_insurance_co_name": {
+      "displayName": "Secondary Insurance Company",
+      "width": "100",
+      "groupable": true,
+      "filterable": true,
+      "allowNull": true,
+      "allowedValuesQuery": "SELECT insurance_co_name FROM insurance_company_master ORDER BY insurance_co_name"
+    },
+    "ac_head": {
+      "displayName": "Account Head",
+      "width": "130",
+      "filterable": true,
+      "groupable": true,
+      "allowNull": true,
+      "allowedValuesQuery": "SELECT account_head_name as ac_head FROM bill_account_heads ORDER BY account_head_name"
+    },
+    "account_group_name": {
+      "displayName": "Account Group",
+      "width": "70",
+      "filterable": true,
+      "groupable": true,
+      "allowNull": true,
+      "allowedValuesQuery": "SELECT account_group_name FROM account_group_master ORDER BY account_group_name"
+    },
+    "act_description": {
+      "displayName": "Item Description",
+      "width": "100",
+      "groupable": false
+    },
+    "visit_type_name": {
+      "displayName": "Visit Type",
+      "width": "60",
+      "groupable": true,
+      "filterable": true,
+      "allowedValues": ["IP","OP","Retail","Test"]
+    },
+    "bill_type": {
+      "displayName": "Bill Type",
+      "width": "50",
+      "groupable": true,
+      "filterable": true,
+      "allowedValues": ["Bill Now","Bill Later"]
+    },
+    "bill_status": {
+      "displayName": "Bill Status",
+      "width": "50",
+      "groupable": true,
+      "filterable": true,
+      "allowedValues": ["Open","Finalized","Closed","Cancelled"]
+    },
+    "payment_status": {
+      "displayName": "Payment Status",
+      "width": "70",
+      "groupable": true,
+      "filterable": true,
+      "allowedValues": ["Paid","Unpaid"]
+    },
+    "claim_status": {
+      "displayName": "Claim Status",
+      "width": "70",
+      "groupable": true,
+      "filterable": true,
+      "allowedValues": ["Closed","Sent","Open"]
+    },
+    "mr_no": {
+      "displayName": "MR No.",
+      "width": "65",
+      "groupable": false
+    },
+    "patient_gender": {
+      "displayName": "Gender",
+      "width": "40",
+      "filterable": true,
+      "groupable": true,
+      "allowedValues": ["Male","Female","Couple","Other"]
+    },
+    "patient_full_name": {
+      "displayName": "Patient Name",
+      "width": "130",
+      "groupable": true,
+      "allowNull": true
+    },
+    "name_local_language": {
+                 "displayName": "Name In Local Language",
+                 "width": "150"
+     },
+    "dept_name": {
+      "displayName": "Department",
+      "width": "120",
+      "groupable": true,
+      "filterable": true,
+      "allowNull": true,
+      "allowedValuesQuery": "SELECT dept_name FROM department ORDER BY dept_name"
+    },
+    "org_name": {
+      "displayName": "Rate Plan",
+      "width": "70",
+      "groupable": true,
+      "filterable": true,
+      "allowNull": true,
+      "allowedValuesQuery": "SELECT org_name FROM organization_details ORDER BY org_name"
+    },
+    "category_name": {
+      "displayName": "Category",
+      "width": "120",
+      "groupable": true,
+      "filterable": true,
+      "allowNull": true,
+      "allowedValuesQuery": "SELECT category_name FROM patient_category_master ORDER BY category_name"
+    },
+    "store_name": {
+      "displayName": "Store Name",
+      "width": "120",
+      "groupable": true,
+      "filterable": true,
+      "allowNull": true,
+      "allowedValuesQuery": "SELECT dept_name AS store_name FROM stores WHERE status='A' ORDER BY dept_name"
+    },
+    "total_to_pay_amt": {
+      "dataType": "numeric",
+      "aggFunction": "sum",
+      "filterable": true,
+      "displayName": "Total to Pay Amt",
+      "width": "60",
+      "decimalType": "amount"
+    },
+    "hospital_amt": {
+      "dataType": "numeric",
+      "aggFunction": "sum",
+      "filterable": true,
+      "displayName": "Hospital Amt",
+      "width": "60",
+      "decimalType": "amount"
+    },
+    "doc_paid_amt": {
+      "dataType": "numeric",
+      "aggFunction": "sum",
+      "filterable": true,
+      "displayName": "Doctor Paid Amt",
+      "width": "60",
+      "decimalType": "amount"
+    },
+    "pres_dr_paid_amt": {
+      "dataType": "numeric",
+      "aggFunction": "sum",
+      "filterable": true,
+      "displayName": "Prescribed Doctor Paid Amt",
+      "width": "60",
+      "decimalType": "amount"
+    },
+    "ref_paid_amt": {
+      "dataType": "numeric",
+      "aggFunction": "sum",
+      "filterable": true,
+      "displayName": "Referal Doctor Paid Amt",
+      "width": "60",
+      "decimalType": "amount"
+    },
+    "total_paid_amt": {
+      "dataType": "numeric",
+      "aggFunction": "sum",
+      "filterable": true,
+      "displayName": "Total Paid Amt",
+      "width": "60",
+      "decimalType": "amount"
+    },
+    "yet_to_pay_amt": {
+      "dataType": "numeric",
+      "aggFunction": "sum",
+      "filterable": true,
+      "displayName": "Yet To Pay Amt",
+      "width": "60",
+      "decimalType": "amount"
+    },
+    "presc_dr_yet_to_pay_amount": {
+      "dataType": "numeric",
+      "aggFunction": "sum",
+      "filterable": true,
+      "displayName": "Prescribing Dr Yet To Pay Amount",
+      "width": "60",
+      "decimalType": "amount"
+    },
+    "ref_dr_yet_to_pay_amount": {
+      "dataType": "numeric",
+      "aggFunction": "sum",
+      "filterable": true,
+      "displayName": "Referal Yet To Pay Amount",
+      "width": "60",
+      "decimalType": "amount"
+    },
+    "conducting_dr_yet_to_pay_amount": {
+      "dataType": "numeric",
+      "aggFunction": "sum",
+      "filterable": true,
+      "displayName": "Conducting Dr Yet To Pay Amount",
+      "width": "60",
+      "decimalType": "amount"
+    },
+	"center_name": {
+	  "displayName": "Center Name",
+	  "width": 100,
+	  "allowHorizGroup": true,
+	  "allowNull": true,
+	  "allowedValuesQuery": "SELECT center_name FROM hospital_center_master WHERE center_id!=0",
+	  "filterable": true,
+	  "groupable": true
+	}
+  }
+}

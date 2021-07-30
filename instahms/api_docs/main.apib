@@ -1,0 +1,3065 @@
+FORMAT: 1A
+HOST: https://api.instahealthsolutions.com/instaapps
+
+# Insta HMS API 12.5
+
+Being the core solution of your clinic/hospital, we understand there are always needs to integrate seamlessly with other tools and software for meeting varied needs. The Insta HMS API provides a quick and easy way to access and send data from other tools and software. 
+
+## System Information [/]
+
+Provides information about Insta HMS API .
+
+### Version API [GET /api/version.json]
+
+Returns version of Insta HMS API
+
++ Response 200 (application/json)
+
+{ 
+    "version": "12.5.0-11011",
+     "return_message": “Success",
+     "return_code": "2001"
+}
+
+Error codes
+Http Status: 200
+
+## Authentication [/]
+
+### Login [GET /Customer/Login.do?_method=login]
+
+Initializes API Session using credentials posted and returns request handler key. This request handler key can now be used to access all other APIs mentioned in this section. Login Credentials generated from portal access or mobile access can be used to login successfully.
+
++ Request
+    + Headers
+        x-insta-auth : <user-name>:<password>
+    
++ Parameter
+    + `hospital_name`: 'cen' (string, required) - schema/hospital name
+
++ Response 200 (application/json)
+
+{
+    "request_handler_key": "instaapi_42cdaead984",
+    "expires_in": 40,
+    "return_message": "Success",
+    "return_code": "2001"
+}
+
++ Response 401 (application/json)
+
+{
+    "return_message": "invalid username or password",
+    "return_code": "1021"
+}
+
+Error codes
+Http Status: 400
+1002: “Mandatory fields are not supplied”
+Http Status: 200
+2001: "Success"
+Http Status: 401
+1021: "invalid username or password"
+
+### Enable PatientMobileAccess [GET /Customer/mobileaccess.do?_method=enablePatientMobileAccess]
+
+This API can be used to generate mobile-access password for an MR number patient. The password generated from this API can be used in the login API.
+
++ Request
+    + Headers
+        request_handler_key : xxxxxxxxx
+        
++ Parameters
+    + `mr_no`: 'MR0123' (string)
+    + `date_of_birth`: `2018-09-28`(string)
+    + `mobile_no`: '9876543211' (string)
+    + `gender`: 'F' (string)
+ 
++ Response 200 (application/json)
+
+{ 
+    "patient_mobile_password": "J0hdGI",
+    "return_code": "2001",
+    "return_message": "Success"
+}
+
+Error codes
+Http Status: 400
+1001: "invalid request token,please login again"
+1002: "Mandatory fields are not supplied"
+1003: "Permission Denied. Please check with Administrator."
+1021: "date_of_birth format is not valid, please enter yyyy-MM-dd format"
+1023: "Given values are invalid"
+1024: "no patient found with given parameter"
+Http Status: 500
+1022: "Failed to create the password"
+Http Status: 200
+2001: "Success"
+
+### Update Password [GET /Customer/ChangePassword.do?_method=updatePassword]
+
+Endpoint to update password, as of now this API can only update password generated via portal access.
+
++ Request
+    + Headers
+        request_handler_key : xxxxxxxxx
+        
++ Parameters
+    + `user_id` :'john_insta' (string) - If the login credentials are generated from mobile access then user_id is not required.
+    + `old_password`: '123John'(String)
+    + `new_password`: '123456John'(String)
+
++ Response 200 (application/json)
+
+{ 
+    "return_message": ”Success”
+    "return_code": "2001"  
+}
+
+Error codes
+Http Status:200
+2001: “Success”
+Http Status: 400
+1002: Mandatory fields are not supplied
+1021: Invalid User ID
+1022: Old password is not matching with the existing password
+1023: Failed to change the password.
+1025: New password is same as the existing password
+1001: invalid request token,please login again
+Http Status: 500
+1024: Failed to change the password.
+
+
+## Registration [/]
+
+### Registration Master Data [GET /Customer/Registration/GeneralRegistration.do?_method=getRegMasterData]
+
+Endpoint to get Registration Master Data which includes states, cities, patient categories and salutations.
+
++ Request
+    + Headers
+        request_handler_key : xxxxxxxxx
+
++ Response 200 (application/json)
+
+{
+    "allStates": [
+        {
+        "state_name": "JAMSHEDPUR",
+        "state_id": "ST0038",
+        "country_id": "CM0118"
+        },
+        {
+        "state_name": "ASSAM",
+        "state_id": "ST0004",
+        "country_id": "CM0118"
+        },
+        {
+        "state_name": "ANDHRA PRADESH",
+        "state_id": "ST0002",
+        "country_id": "CM0118"
+        }
+    ],
+    "allCities": [
+        {
+        "city_id": "CT0037",
+        "state_id": "ST0002",
+        "city_name": "ADILABAD"
+        },
+        {
+        "city_id": "CT0038",
+        "state_id": "ST0032",
+        "city_name": "AGARTALA"
+        },
+        {
+        "city_id": "CT0039",
+        "state_id": "ST0034",
+        "city_name": "AGRA"
+        }
+    ],
+    allPatientCategories: [
+        {
+        "center_id": 0,
+        "category_name": "KILPAUK",
+        "category_id": 14
+        },
+        {
+        "center_id": 0,
+        "category_name": "PRIMUS",
+        "category_id": 23
+        },
+        {
+        "center_id": 0,
+        "category_name": "SHANTI NAGAR",
+        "category_id": 12
+        }
+    ],
+    "allCountries": [
+    {
+        "country_code": "91",
+        "country_name": "India",
+        "country_id": "CM0119"
+    },
+    {
+        "country_code": "93",
+        "country_name": "Afghanistan",
+        "country_id": "CM0016"
+    },
+    {
+        "country_code": "358",
+        "country_name": "Åland Islands",
+        "country_id": "CM0017"
+    }
+    ],
+    "allGovtIdentifiers": [
+        {
+            "description": "National without card",
+            "identifier_id": 1
+        },
+        {
+            "description": Emiartes ID",
+            "identifier_id": 2
+        },
+        {
+            "description": "Non national, non-expat resident without a card",
+            "identifier_id": 3
+        },
+        {
+            "description": "Unknown status, without a card.",
+            "identifier_id": 4
+        },
+        {
+            "description": "Govt ID",
+            "identifier_id": 5
+        },
+    ],
+    allSalutations: [
+        {
+        "salutation": " ",
+        "gender": "",
+        "salutation_id": "SALU0001"
+        },
+        {
+        "salutation": "APISalutation1",
+        "gender": "M",
+        "salutation_id": "SALU0014"
+        },
+        {
+        "salutation": "APISalutation2",
+        "gender": "F",
+        "salutation_id": "SALU0015"
+        }
+    ],
+    "return_code": "2001",
+    "return_message": "Success"
+}
+
+Error Codes
+Http Status: 200
+2001: "Success"
+Http Status:400
+1001: “invalid request token,please login again”
+1003: “Permission Denied. Please check with Administrator.”
+
+
+
+### Pre Registration [GET /Customer/Registration/GeneralRegistration.do?_method=doPreRegistration]
+
+This API can be used to pre-register a patient and generate the MR number by providing basic patient information.
++ Request
+    + Headers
+        request_handler_key : xxxxxxxxx
+        
++ Parameters
+    + `patient_name`: 'John' (string)
+    + `middle_name`: 'Groves' (string,optional)
+    + `last_name`: 'Jenkins' (string,optional)
+    + `salutation`: 'SALU0004' (string) - salutation_id provided by insta
+    + `dateOfBirth`: `2018-09-23` (String)
+    + `patient_gender`: 'M' (String)- provide M for male, F for Female, O for others
+    + `patient_phone`: '%2B919876543211' (string)
+    + `patient_category_id`: '32' (string)-Patient belongs to which category id
+    + `patient_state`: 'ST0017' (string)-provide state Id
+    + `patient_city`: 'CT0088' (string)-provide city Id
+    + `patient_address`: 'Natural History Museum, Cromwell Road' (string,optional)-provide state Id of state
+    + `patient_area`: '11' (string,optional)-provide area Id
+ 
++ Response 200 (application/json)
+{ 
+    "mr_no": "00012291",
+    "return_code": "2001",
+     "return_message": "Success"
+}
+
+Error codes
+Http Status: 200
+2001: "Success"
+Http Status: 400
+1001: invalid request token,please login again.
+1002:Mandatory fields are not supplied.
+1003: Permission Denied. Please check with Administrator.
+1021: Phone number does not contain the country code
+1022: Phone number contains invalid characters
+1023: First name contains invalid characters
+1024: Middle name contains invalid characters
+1025: Last name contains invalid characters
+1026: Gender is invalid
+1027: date of birth is invalid
+1028: Patient is already registered.
+Http Status: 500
+1029: Failed to Pre Register the Patient.
+
+### Pre Registration API [POST /api/registration/preregistration.json]
+
+This API can be used to pre-register a patient and generate the MR number by providing patient information.
+
+
++ Request
+    + Headers
+        request_handler_key : xxxxxxxxx
+        
++ Parameters
+    + `patient_name`: 'John' (string)
+    + `middle_name`: 'Groves' (string,optional)
+    + `last_name`: 'Jenkins' (string,optional)
+    + `middle name`: 'Jenkins' (string,optional)
+    + `salutation`: 'SALU0004' (string) - salutation_id provided by insta
+    + `dateOfBirth`: `2018-09-23` (String) - age and dateofbirth either of one is mandatory
+    + `patient_gender`: 'M' (String)- provide M for male, F for Female, O for others
+    + `patient_phone`: '%2B919876543211' (string)
+    + `preferred_language`: 'en' (string)
+    + `patient_category_id`: '32' (string)-Patient belongs to which category id
+    + `patient_state`: 'ST0017' (string)-provide state Id
+    + `patient_city`: 'CT0088' (string)-provide city Id
+    + `patient_address`: 'Natural History Museum, Cromwell Road' (string,optional)
+    + `patient_area`: '11' (string,optional)
+    + `patient_phone`: '' (string)
+    + `send_email`: 'Y' (string,optional) - Y/N
+    + `send_sms`: 'Y' (string,optional) - Y/N
+    + `age`: '4' (string) - age and dateofbirth either of one is mandatory
+    + `agein`: 'Y' (string)
+    + `middle_name2`:' Jenkins'(string,optional)
+    + `patient_category_id`: 1 (numeric)
+    + `center_id`: '7' (string,optional)
+    + `remarks`: 'this si remarks' (string,optional)
+    + `oldmrno`: 'NLPMM000176' (string,optional)
+    + `email_id`: 'n@p.com',(string,optional)
+    + `name_local_language`: ' ' (string,optional)
+    + `nationality_id`: 'CM0017' (string,optional)
+    + `government_identifier`: '2345-2637-1829'(numeric,optional)
+    + `identifier_id": '1'(numeric,optional)
+    + `vip_status`: 'Y' (string,optional)
+    + `patient_phone2`: '098778' (string,optional)
+    + `passport_no`: 'AMCNKSHSN' (string,optional)
+    + `passport_validity`: ' '(string,optional) -2018-05-05
+    + `passport_issue_country`: 'CM0016' (string,optional)
+    + `visa_validity`:  ' '(string,optional) -2018-05-05
+    + `custom_field10`: 'NEGATIVE ' (string,optional)
+    + `custom_field11`: 'NEGATIVE' (string,optional)
+    + `custom_field12`: 'NEGATIVE ' (string,optional)
+    + `custom_field13`: 'NEGATIVE ' (string,optional)
+    + `custom_field14`: 'NEGATIVE ' (string,optional)
+    + `custom_field15`: 'NEGATIVE ' (string,optional)
+    + `custom_field16`: 'NEGATIVE ' (string,optional)
+    + `custom_field17`: 'NEGATIVE ' (string,optional)
+    + `custom_field18`: 'NEGATIVE ' (string,optional)
+    + `custom_field19`: 'NEGATIVE' (string,optional)
+    + `custom_field1`: 'NEGATIVE' (string,optional)
+    + `custom_field2`: 'NEGATIVE ' (string,optional)
+    + `custom_field3`: 'NEGATIVE ' (string,optional)
+    + `custom_field4`: 'NEGATIVE ' (string,optional)
+    + `custom_field5`: 'NEGATIVE ' (string,optional)
+    + `custom_field6`: 'NEGATIVE ' (string,optional)
+    + `custom_field7`: 'NEGATIVE ' (string,optional)
+    + `custom_field8`: 'NEGATIVE ' (string,optional)
+    + `custom_field9`: 'NEGATIVE ' (string,optional)
+    + `custom_list1_value`: 'INTERNAL DOCTORS ' (string,optional)
+    + `custom_list2_value`: 'INTERNAL DOCTORS ' (string,optional)
+    + `custom_list3_value`: 'INTERNAL DOCTORS ' (string,optional)
+    + `custom_list4_value`: 'INTERNAL DOCTORS ' (string,optional)
+    + `custom_list5_value`: 'INTERNAL DOCTORS ' (string,optional)
+    + `custom_list6_value`: 'INTERNAL DOCTORS ' (string,optional)
+    + `custom_list7_value`: 'INTERNAL DOCTORS ' (string,optional)
+    + `custom_list8_value`: 'INTERNAL DOCTORS ' (string,optional)
+    + `custom_list9_value`: 'INTERNAL DOCTORS ' (string,optional)
+    + `patient_careof_address`: 'kyi' (string,optional)
+    + `relation`: 'Latha.S '(string,optional)-NOK Name
+    + `next_of_kin_relation`: ' '(string,optional)
+    + `visit_id`: ' '(string,optional)
+    + `previous_visit_id`: ' '(string,optional)
+    + `casefile_no`: ' '(string,optional)
+    + `death_date`: ' '(string,optional)
+    + `first_visit_reg_date`: ' '(string,optional)
+    + `dead_on_arrival`: ' '(string,optional)
+    + `death_reason_id`: '2',(string,optional)
+    + `patient_group`: 0 (numeric,optional)
+    + `race_id`: '1',(string,optional)
+    + `religion_id`: '1' (string,optional)
+    + `marital_status_id`: '1' (string,optional)
+    + `delivery_type`: '1' (string,optional)
+    + `blood_group_id`: '2'(string,optional)
+    + `timeofbirth`: '16:5'(string,optional)
+    + `death_time`:'17:25'(string,optional)
+    + `force`: false (boolean,optional)
+
+
++ Response 200 (application/json)
+
+{
+    "patient": "MR013254",
+    "return_message": "Patient Registration success"
+}
+
+Error codes
+Http Status: 200
+2001: "Success"
+Http Status: 401
+1001: "Session has expired, please login again"
+Http Status: 400
+1021: " Bad Request Invalid input parameters"
+1022: " duplicate  patient exists "
+
+### Visit Creation API[POST /api/registration/createVisit.json]
+
+This API can be used to create a visit for an existing Patient.
+
++ Request
+    + Headers
+        request_handler_key : xxxxxxxxx
+        
++ Parameters
+    + `mr_no`: 'MR0001' (string)
+    + `center_id`: 7 (numeric)
+    + `dept_name`: 'DEP005' (string,optional) -required when appointment_id is not passed.
+    + `doctor`: 'DOC001' (string,optional)
+    + `org_id`: 'ORG0001',(string)
+    + `appointment_id`: '88567',(string,optional)
+    + `cons_date`: '' (String,optional)
+    + `insurance_co`: 'ICM00011' (string,optional) -required when insurance details are posted for both primary & secondary.
+    + `sponsor_id`: 'TPAID0097' (string,optional) -required when insurance details are posted for both primary & secondary.
+    + `plan_id`: 14(numeric,optional) -required when insurance details are posted for both primary & secondary.
+    + `plan_type_id`: 14(numeric,optional) -required when insurance details are posted for both primary & secondary.
+    + `member_id`:  'aa33'(string,optional)
+    + `ins_doc`: 'Base64Encoded string in the form of arraylist. pdf,png & jpeg are allowed' (string,optional)
+
+
++ Response 200 (application/json)
+
+{
+    "insurance": [
+        {
+            "prior_auth_id": null,
+            "visit_max_copay_percentage": null,
+            "episode_copay_percentage": null,
+            "plan_type_id": 143,
+            "insurance_co_name": "Corporate Company",
+            "tpa_name": "Shweta Corporate",
+            "plan_name": "Corporate Plan - Shweta Corporate",
+            "mr_no": "MR014076",
+            "sponsor_type": "I",
+            "insurance_co": "ICM00011",
+            "patient_id": "OP122195",
+            "visit_copay_percentage": null,
+            "plan_type_name": "Corporate Plan Type",
+            "visit_deductible": null,
+            "use_drg": "N",
+            "policy_number": null,
+            "patient_insurance_plans_id": 636,
+            "plan_limit": null,
+            "member_id": "123456",
+            "policy_validity_end": null,
+            "patient_policy_id": 2440,
+            "episode_max_copay_percentage": null,
+            "sponsor_id": "TPAID0097",
+            "doc_id": null,
+            "visit_id": "OP122195",
+            "plan_id": 14
+        }
+    ],
+    "patient": {
+        "primary_sponsor_id": "TPAID0097",
+        "original_mr_no": "",
+        "category_name": null,
+        "previous_visit_id": "OP122174",
+        "oldmrno": null,
+        "mr_no": "MR014076"
+    },
+    "visit": {
+        "established_type": "N",
+        "sec_plan_name": null,
+        "primary_sponsor_id": "TPAID0097",
+        "policy_validity_start": null,
+        "sec_insurance_co_name": null,
+        "primary_insurance_co": "ICM00011",
+        "visit_type": "o",
+        "plan_type_name": "Corporate Plan Type",
+        "relation": "",
+        "patient_category_name": "GENERAL",
+        "tpa_name": "Shweta Corporate",
+        "policy_number": null,
+        "op_type_name": "Revisit",
+        "sec_member_id": null,
+        "alloc_bed_type": null,
+        "sec_policy_validity_end": null,
+        "admitted_dept_name": "DIET & NUTRITION",
+        "reg_time": "06:00:00",
+        "sec_tpa_name": null,
+        "bill_type": "C",
+        "main_visit_id": "OP122195",
+        "insurance_id": null,
+        "patient_policy_id": 0,
+        "sec_policy_holder_name": null,
+        "policy_validity_end": null,
+        "plan_exclusions": "",
+        "patient_group_name": "General Patient",
+        "bed_type": "GENERAL",
+        "corporate_sponsor_id": null,
+        "revisit": "Y",
+        "employee_name": null,
+        "patient_category_id": 1,
+        "cons_time": "18:00",
+        "secondary_sponsor_id": null,
+        "plan_name": "Corporate Plan - Shweta Corporate",
+        "sponsor_type": "I",
+        "patient_group": 0,
+        "token_no": 69,
+        "plan_notes": "",
+        "employee_id": null,
+        "admission_time": "06:00 AM",
+        "visit_id": "OP122195",
+        "sec_employee_id": null,
+        "op_type": "R",
+        "status": "A"
+    },
+    "bill_and_payment_status": {
+        "approval_amount": 0.00,
+        "total_receipts": 0.00,
+        "total_amount": 2300.00,
+        "payment_ok": false,
+        "first_bill_for_visit": "BC20000071",
+        "bill_no": "BC20000071",
+        "visit_id": "OP122195",
+        "credit_bill_exists": true,
+        "bill_status_ok": false
+    }
+}
+
+Error codes
+Http Status: 200
+2001: "Success"
+Http Status: 401
+1001: "Session has expired, please login again"
+Http Status: 400
+1021: " Bad Request Invalid input parameters"
+
+### Incoming Sample Registration [GET /Customer/isr.do?_method=savePrescription]
+
+Endpoint to register incoming sample
+
++ Request
+    + Headers
+        request_handler_key : xxxxxxxxx
+        
++ Parameters
+    + `testId`: '1234' (string)
+    + `patientname`: 'John' (string)
+    + `agefield`: '2018-09-23' (String)
+    + `gender`: 'M' (String)- provide M for male, F for Female, O for others
+    + `orig_sample_no`: '2222' (string)
+    + `centerName`: 'abc' (string) - Required in case of center base hospital 
+    + `orginalLabName`: 'Hosur lab' (string,optional)
+
++ Response 200 (application/json)
+
+{ 
+    "return_message": "Success"
+    "return_code": “2001”
+}
+
+Error codes
+1002: Mandatory fields are not supplied
+1001: invalid request token,please login again
+
+## Master [/]
+
+### Referral Master API [GET /api/referraldoctors/list.json]
+
+Endpoint to get Referral Doctor Master Data
+
++ Request
+    + Headers
+        request_handler_key : xxxxxxxxx
+
++ Parameters
+  + `search_term`: 'Dr. Jhon Doe' (string, optional) - Perform case insensitive contains search on name (Default empty)
+  + `page`: 1 (Int,optional)- Default 1
+  + `page_size`: 100 (Int,optional)- Default 100 And Max 500
+  + `center_id` : 1 (Int, optional)- Center applicability filtering ( Default:0 )
+  + `modified_after`: `2018-03-19T10:30:00Z` (timestamp, optional)- list only records created or modified after (>) given time stamp (yyyy-mm-dd hh:MM:ss) (Default null skip)
+  + `modified_before`: `2018-03-19T10:30:00Z` (timestamp, optional)- list only records created or modified on or before (<=) given time stamp (yyyy-mm-dd hh:MM:ss) (Default current date)
+  + `contains` : false (Boolean, optional)- ( Default:true )
+  + `status` : 'A' (string, optional) - Perform Status filtering (provide A for Active, I for Inactive) (Default empty)
+
++ Response 200 (application/json)
+
+{
+  "referraldoctors" : [{
+    "id" : "DOC1234"
+    "name" : "Dr. Jhon Doe",
+    "mobile" : "+919845012345",
+    "address" : "123, Some street,"
+    "area_id": "AR12345",
+    "city_id" : "CT12345",
+    "phone" : "+91802233445566",
+    "email" : "jhon.doe@example.com",
+    "license_no" : "DHA1234",
+    "created_at" : "2020-12-28T12:00:00Z",
+    "modified_at" : "2020-12-28T12:00:00Z",
+    "center_ids" : [2,3],
+    "status" : "A",
+    "referral_source" : "Doctor"
+   },{
+    "id" : "1234"
+    "name" : "Dr. Jane Doe",
+    "mobile" : "+919844098440",
+    "address" : "456, Some other street,"
+    "area_id": "AR12345",
+    "city_id" : "CT12345",
+    "phone" : "+918030303030",
+    "email" : "jane.doe@example.com",
+    "license_no" : "DHA4567",
+    "created_at" : "2020-12-28T12:00:01Z",
+    "modified_at" : "2020-12-28T12:00:01Z",
+    "center_ids" : [1,2,3,4],
+    "status" : "A",
+    "referral_source" : "Referral"
+   }],
+   "page" : 1,
+   "page_size": 10,
+   "return_message": "Success",
+   "return_code": "2001"
+}
+
+Error Codes
+Http Status: 200
+2001: "Success"
+Http Status:400
+1001: “Invalid request token,please login again”
+1003: “Permission Denied. Please check with Administrator.”
+1021: “Invalid input parameters supplied”
+2004: “No matching records found”
+
+### Fetch Single Referral [GET /api/referraldoctors/{referral_id}.json]
+
++ Request
+    + Headers
+        request_handler_key : xxxxxxxxx
+
++ Parameters
+
++ Response 200 (application/json)
+
+{
+    "referraldoctor": {
+          "id" : "DOC1234"
+          "name" : "Dr. Jhon Doe",
+          "mobile" : "+919845012345",
+          "address" : "123, Some street,"
+          "area_id": "AR12345",
+          "city_id" : "CT12345",
+          "phone" : "+91802233445566",
+          "email" : "jhon.doe@example.com",
+          "license_no" : "DHA1234",
+          "created_at" : "2020-12-28T12:00:00Z",
+          "modified_at" : "2020-12-28T12:00:00Z",
+          "center_ids" : [2,3],
+          "status" : "A",
+          "referral_source" : "Doctor"
+    },
+    "return_message": "Success",
+    "return_code": "2001"
+}
+
+Error Codes
+Http Status: 200
+2001: "Success"
+Http Status:400
+1001: “Invalid request token,please login again”
+1003: “Permission Denied. Please check with Administrator.”
+2004: “No matching records found”
+
+### Rate Plan API [GET /api/rateplan/list.json]
+
+Endpoint to get Rate Plan Data
+
++ Request
+    + Headers
+        request_handler_key : xxxxxxxxx
+
++ Parameters
+  + `search_term`: 'HD' (string, optional) - Perform case insensitive contains search on name (Default empty)
+  + `page`: 1 (Int,optional)- Default 1
+  + `page_size`: 100 (Int,optional)- Default 100 And Max 500
+  + `modified_after`: `2018-03-19T10:30:00Z` (timestamp, optional)- list only records created or modified after (>) given time stamp (yyyy-mm-dd hh:MM:ss) (Default null skip)
+  + `modified_before`: `2018-03-19T10:30:00Z` (timestamp, optional)- list only records created or modified on or before (<=) given time stamp (yyyy-mm-dd hh:MM:ss) (Default current date)
+  + `contains` : false (Boolean, optional)- ( Default:true )
+  + `status` : 'A' (string, optional) - Perform Status filtering (provide A for Active, I for Inactive) (Default empty)
+
++ Response 200 (application/json)
+
+
+  "rateplans" : [{
+        "rateplan_code": "ORG2341",
+        "rateplan_name": "UHC_HOS",
+        "valid_to": "2018-12-28",
+        "valid_from": "2016-12-28",
+        "created_at": "2016-02-19T22:31:55Z",
+        "modified_at": "2016-02-19T22:31:55Z",
+        "status": "A"
+   },{
+    "rateplan_code": "ORG1234",
+    "rateplan_name": "EMERGENCY_PRIMUs",
+    "valid_from":"2015-12-28",
+    "valid_to":"2020-12-28",
+    "created_at" : "2014-02-19T12:00:01Z",
+    "modified_at" : "2014-02-19T12:00:01Z",
+    "status" : "A"
+   }],
+   "page" : 1,
+   "page_size": 10,
+   "return_message": "Success",
+   "return_code": "2001"
+}
+
+Error Codes
+Http Status: 200
+2001: "Success"
+Http Status:400
+1001: “Invalid request token,please login again”
+1003: “Permission Denied. Please check with Administrator.”
+1021: “Invalid input parameters supplied”
+2004: “No matching records found”
+
+### Fetch Single Rate Plan [GET /api/rateplan/{rateplan_code}.json]
+
+Endpoint to Fetch Single Rate Plan Data
+
++ Request
+    + Headers
+        request_handler_key : xxxxxxxxx
+
++ Parameters
+
++ Response 200 (application/json)
+
+{
+    "rateplan": {
+            "rateplan_code": "ORG2341",
+            "rateplan_name": "UHC_HOS",
+            "valid_from":"2015-12-28",
+            "valid_to":"2020-12-28",
+            "created_at" : "2016-02-19T12:00:01Z",
+            "modified_at" : "2016-02-19T12:00:01Z",
+            "status": "A"
+    },
+    "return_message": "Success",
+    "return_code": "2001"
+}
+
+Error Codes
+Http Status: 200
+2001: "Success"
+Http Status:400
+1001: “Invalid request token,please login again”
+1003: “Permission Denied. Please check with Administrator.”
+2004: “No matching records found”
+
+
+### Insurance Plan API [GET /api/insuranceplans/list.json]
+
+Endpoint to get Insurance Plan Data
+
++ Request
+    + Headers
+        request_handler_key : xxxxxxxxx
+
++ Parameters
+  + `search_term`: 'HD' (string, optional) - Perform case insensitive contains search on plan name (Default empty)
+  + `with_sponsors`: true (Boolean,optional) - ( Default:false ) To fetch the sponsor list along with insurance plan
+  + `with_plan_types`: true (Boolean,optional) - ( Default:false ) To fetch the plan types list along with insurance plan
+  + `page`: 1 (Int,optional)- Default 1
+  + `page_size`: 100 (Int,optional)- Default 100 And Max 500
+  + `contains` : false (Boolean, optional)- ( Default:true )
+  + `status` : 'A' (string, optional) - Perform Status filtering (provide A for Active, I for Inactive) (Default empty)
+
++ Response 200 (application/json)
+
+{
+  "insurance_plans" : [{
+    "insurance_plan_id" : 1,
+    "insurance_co_id" : "ICM001",
+    "insurance_co_name" : "Bajaj Alianz General Insurance Co. Ltd",
+    "insurance_plan_code" : "BA1234",
+    "insurance_interface_code" : "BA",
+    "status" : "A",
+    "op_applicable" : "Y",
+    "ip_applicable" : "Y",
+    "default_rate_plan_code" : "12345",
+    "valid_from" : "2020-01-01",
+    "valid_to" : "2025-12-31"
+  },
+  {
+      "insurance_plan_id" : 2,
+      "insurance_co_id" : "ICM002",
+      "insurance_co_name" : "General Insurance Co. Ltd",
+      "insurance_plan_code" : "GA1234",
+      "insurance_interface_code" : "GA",
+      "status" : "A",
+      "op_applicable" : "Y",
+      "ip_applicable" : "Y",
+      "default_rate_plan_code" : "125",
+      "valid_from" : "2020-01-01",
+      "valid_to" : "2025-12-31"
+    },
+  ],
+  "page" : 1,
+  "page_size" : 100
+}
+
+when with_sponsors = true
+
+{
+  "insurance_plans" : [{
+    "insurance_plan_id" : 1,
+    "insurance_co_id" : "ICM001",
+    "insurance_co_name" : "Bajaj Alianz General Insurance Co. Ltd",
+    "insurance_plan_code" : "BA1234",
+    "insurance_interface_code" : "BA",
+    "status" : "A",
+    "op_applicable" : "Y",
+    "ip_applicable" : "Y",
+    "default_rate_plan_code" : "12345",
+    "valid_from" : "2020-01-01",
+    "valid_to" : "2025-12-31"
+    "sponsors" : [{
+      "sponsor_id" : "TPA0001",
+      "sponsor_name" : "FHPL"
+    }],
+    "page" : 1,
+    "page_size" : 100
+  }]
+}
+
+when with_plan_types = true
+
+{
+  "insurance_plans" : [{
+    "insurance_plan_id" : 1,
+    "insurance_co_id" : "ICM001",
+    "insurance_co_name" : "Bajaj Alianz General Insurance Co. Ltd",
+    "insurance_plan_code" : "BA1234",
+    "insurance_interface_code" : "BA",
+    "status" : "A",
+    "op_applicable" : "Y",
+    "ip_applicable" : "Y",
+    "default_rate_plan_code" : "12345",
+    "valid_from" : "2020-01-01",
+    "valid_to" : "2025-12-31"
+    "plan_types" : [{
+      "plan_type_id" : "1",
+      "plan_type_name" : "Enterprise Coverage"
+    }],
+    "page" : 1,
+    "page_size" : 100
+  }]
+}
+
+Error Codes
+Http Status: 200
+2001: "Success"
+Http Status:400
+1001: “Invalid request token,please login again”
+1003: “Permission Denied. Please check with Administrator.”
+2004: “No matching records found”
+
+### Fetch Insurance Plan by Plan Id [GET /api/planid/{planId}.json]
+
+Endpoint to get single Insurance Plan Data
+
++ Request
+    + Headers
+        request_handler_key : xxxxxxxxx
+
++ Parameters
+  + `with_sponsors`: true (Boolean,optional) - ( Default:false ) To fetch the sponsor list along with insurance plan
+  + `with_plan_types`: true (Boolean,optional) - ( Default:false ) To fetch the plan types list along with insurance plan
+
++ Response 200 (application/json)
+
+{
+  "insurance_plan" : {
+    "insurance_plan_id" : 1,
+    "insurance_co_id" : "ICM001",
+    "insurance_co_name" : "Bajaj Alianz General Insurance Co. Ltd",
+    "insurance_plan_code" : "BA1234",
+    "insurance_interface_code" : "BA",
+    "status" : "A",
+    "op_applicable" : "Y",
+    "ip_applicable" : "Y",
+    "default_rate_plan_code" : "12345",
+    "valid_from" : "2020-01-01",
+    "valid_to" : "2025-12-31",
+  }
+}
+
+when with_sponsors = true and with_plan_types = true
+
+{
+
+  "insurance_plan" : {
+    "insurance_plan_id" : 1,
+    "insurance_co_id" : "ICM001",
+    "insurance_co_name" : "Bajaj Alianz General Insurance Co. Ltd",
+    "insurance_plan_code" : "BA1234",
+    "insurance_interface_code" : "BA",
+    "status" : "A",
+    "op_applicable" : "Y",
+    "ip_applicable" : "Y",
+    "default_rate_plan_code" : "12345",
+    "valid_from" : "2020-01-01",
+    "valid_to" : "2025-12-31",
+    "sponsors" : [{
+              "sponsor_id" : "TPA0001",
+              "sponsor_name" : "FHPL"
+            }],
+    "plan_types" : [{
+              "plan_type_id" : "1",
+              "plan_type_name" : "Enterprise Coverage"
+       }]
+  }
+}
+Error Codes
+Http Status: 200
+2001: "Success"
+Http Status:400
+1001: “Invalid request token,please login again”
+1003: “Permission Denied. Please check with Administrator.”
+1021: “Invalid input parameters supplied”
+2004: “No matching records found”
+
+
+### Fetch Insurance Plan by Plan Code [GET /api/plancode/{planCode}.json]
+
+Endpoint to get single Insurance Plan Data
+
++ Request
+    + Headers
+        request_handler_key : xxxxxxxxx
+
++ Parameters
+  + `with_sponsors`: true (Boolean,optional) - ( Default : false ) To fetch the sponsor list along with insurance plan
+  + `with_plan_types`: true (Boolean,optional) - ( Default : false ) To fetch the plan types list along with insurance plan
+
++ Response 200 (application/json)
+
+{
+  "insurance_plan" : {
+    "insurance_plan_id" : 1,
+    "insurance_co_id" : "ICM001",
+    "insurance_co_name" : "Bajaj Alianz General Insurance Co. Ltd",
+    "insurance_plan_code" : "BA1234",
+    "insurance_interface_code" : "BA",
+    "status" : "A",
+    "op_applicable" : "Y",
+    "ip_applicable" : "Y",
+    "default_rate_plan_code" : "12345",
+    "valid_from" : "2020-01-01",
+    "valid_to" : "2025-12-31",
+  }
+}
+
+when with_sponsors = true and with_plan_types = true
+
+{
+
+  "insurance_plan" : {
+    "insurance_plan_id" : 1,
+    "insurance_co_id" : "ICM001",
+    "insurance_co_name" : "Bajaj Alianz General Insurance Co. Ltd",
+    "insurance_plan_code" : "BA1234",
+    "insurance_interface_code" : "BA",
+    "status" : "A",
+    "op_applicable" : "Y",
+    "ip_applicable" : "Y",
+    "default_rate_plan_code" : "12345",
+    "valid_from" : "2020-01-01",
+    "valid_to" : "2025-12-31",
+    "sponsors" : [{
+              "sponsor_id" : "TPA0001",
+              "sponsor_name" : "FHPL"
+            }],
+    "plan_types" : [{
+              "plan_type_id" : "1",
+              "plan_type_name" : "Enterprise Coverage"
+       }]
+  }
+}
+Error Codes
+Http Status: 200
+2001: "Success"
+Http Status:400
+1001: “Invalid request token,please login again”
+1003: “Permission Denied. Please check with Administrator.”
+2004: “No matching records found”
+
+## Scheduler [/]
+
+### Scheduler Master Data [GET /api/masterdata.json]
+
+Endpoint to get Scheduler Master Data which includes centers, departments and doctors
+
++ Request
+    + Headers
+        request_handler_key : xxxxxxxxx
+        
++ Parameters
+    + `status` : 'all' (string, optional) - to get all records including inactive ones
+
++ Response 200 (application/json)
+
+{
+    "hospital_center_master": [
+        {
+        "center_code": "Default Center",
+        "center_address": "",
+        "status": "A",
+        "country_id": "CM0372",
+        "region_id": "",
+        "hospital_center_service_reg_no": "MF3100",
+        "city_id": "CT0663",
+        "center_contact_phone": "",
+        "state_id": "ST0087",
+        "accounting_company_name": "",
+        "health_authority": "HAAD",
+        "center_name": "Default Center",
+        "updated_timestamp": "2015-09-30T09:48:28Z",
+        "created_timestamp": "2014-09-28T16:04:09Z",
+        "center_id": 0
+        }
+    ],
+    "hospital_doctors": [
+        {
+        "doctor_name": "Dr. RAJESH MANOHARLAL PARASWANI",
+        "doctor_center_status": "A",
+        "payment_eligible": "Y",
+        "consulting_doctor_flag": "N",
+        "doctor_type": "HOSPITAL",
+        "allowed_revisit_count": 10,
+        "doctor_mail_id": "",
+        "doctor_id": "DOC0072",
+        "doctor_license_number": "GD15032",
+        "doctor_status": "A",
+        "custom_field4_value": "",
+        "dept_id": "DEP_RAD",
+        "qualification": "",
+        "ip_discharge_consultation_validity": 7,
+        "custom_field3_value": "",
+        "updated_timestamp": "2014-09-28T16:04:13Z",
+        "created_timestamp": "2014-09-28T16:04:13Z",
+        "custom_field1_value": "",
+        "ip_template_id": -1,
+        "specialization": "",
+        "ip_discharge_consultation_count": 10,
+        "custom_field2_value": "",
+        "res_phone": "",
+        "dept_name": "RADIOLOGY",
+        "practition_type": " ",
+        "overbook_limit": 0,
+        "ot_doctor_flag": "N",
+        "doctor_mobile": "",
+        "schedule": true,
+        "registration_no": "GD15032",
+        "doctor_address": "",
+        "center_name": "Default Center",
+        "op_consultation_validity": 7,
+        "clinic_phone": "",
+        "custom_field5_value": "",
+        "center_id": 0,
+        "payment_category": 1,
+        "doc_center_id": 32
+        }
+    ],
+    "hospital_departments": [
+        {
+        "dept_type_id": "",
+        "cost_center_code": "",
+        "dept_id": "DEP0001",
+        "dept_name": "22",
+        "status": "A"
+        },
+        {
+        "dept_type_id": "",
+        "cost_center_code": "",
+        "dept_id": "DEP0002",
+        "dept_name": "ANAESTHESIOLOGY",
+        "status": "A"
+        }
+    ],
+    "return_message": "Success",
+    "return_code": "2001"
+}
+
+Error Codes
+Http Status: 200
+2001: "Success"
+Http Status:400
+1001: “invalid request token,please login again”
+1003: “Permission Denied. Please check with Administrator.”
+1021: “Invalid parameter value for status”
+
+
+### Save Appointment API [POST /api/scheduler/save.json]
+
+This API can be used to create an appointment.
+
+
++ Request
+    + Headers
+        request_handler_key : xxxxxxxxx
+        
++ Parameters
+    + `patient_name`: 'John' (string,optional) - it's mandaory incase mr_no is not passed.
+    + `mr_no`: 'MR00001' (string,optional)
+    + `patient_contact`: '%2B919876543211' (string,optional) - it's mandaory incase mr_no is not passed.
+    + `send_email`: 'true' (string,optional) 
+    + `send_sms`: 'true' (string,optional)
+    + `send_communication`: 'true' (string,optional)
+    + `vip_status`: 'true' (string,optional)
+    + `scheduler_visit_type`: 'M' (string,optional) - M/F(default 'M')
+    + `last_name`: 'Ronnie' (string,optional)
+    + `salutation_name`: 'SALU0004' (string,optional)
+    + `patient_dob`: `21-07-1993` (String,optional) - age and patient_dob either of one is mandatory
+    + `patient_age`: '4' (string,optional) - age and patient_dob either of one can passed
+    + `patient_age_units`: 'Y' (string,optional)
+    + `middle_name`:'Ann'(string,optional)
+    + `patient_gender`: 'M' (string,optional) - gender will be auto determined using salutation
+    + `patient_email_id`: 'test@gmail.com' (string,optional)
+    + `preferred_language`: 'en' (string,optional)
+    + `category`: 'DOC' (string,mandatory)
+    + `primary_resource_id`: 'DOC0001' (string,mandatory)
+    + `secondary_resource_id`: '2' (string,optional) - default value -1
+    + `appointment_slot`:`2021-01-03T21:00:00Z` (string)
+    + `duration`: 15 (numeric,optional)
+    + `complaint`: 'Feverish' (string,optional)
+    + `center_id`: 7 (numeric,mandatory)
+    + `remarks`: 'appointment remarks' (string,optional)
+    + `status` :'Booked' (string,mandatory)
+    + `presc_doc_id`: 'DOC0002'(string,optional)
+    + `presc_doc_name`: 'Dr.Amith' (string,optional)
+    + `visit_mode`:'I' (string,optional) -I/O default value is 'I'
+    + `teleconsult_url`:'http://test.com' (string,optional)
+    + `app_source_id`:1 (numeric,optional)
+    + `resource_id`:'DOC0019' (string,optional)
+    + `resource_type`:'LABTECH' (string,optional)
+
++ Response 200 (application/json)
+
+{
+"send_communication": "true",
+"patient": {
+"mr_no": "",
+"patient_name": "John Ann",
+"patient_contact": "+919987654321",
+"vip_status": "true",
+"scheduler_visit_type": "M",
+"last_name": "Ronnie",
+"salutation_name": "",
+"patient_dob": "",
+"patient_age": "",
+"patient_age_units": "",
+"patient_gender": "",
+"patient_email_id": "",
+"preferred_language": "en",
+"send_sms": "true",
+"send_email": "true",
+},
+"appointment": {
+"center_id": 7,
+"appointment_slot": "2021-01-03T21:00:00Z",
+"complaint": "Feeling feverish",
+"duration" : 15,
+"status": "Booked",
+"category": "DOC",
+"primary_resource_id": "DOC0244",
+"visit_mode":"O",
+"secondary_resource_id":"-1",
+"date": "03-01-2021",
+"slot_time": "15:30",
+"appointment_ids_list": [82686]
+}
+}
+
+Error codes
+Http Status: 200
+2001: "Success"
+Http Status: 401
+1001: "Session has expired, please login again"
+Http Status: 400
+1021: " Bad Request Invalid input parameters"
+
+### Edit Appointment API [POST /api/scheduler/edit.json]
+
+This API can be used to edit an appointment.
+
+
++ Request
+    + Headers
+        request_handler_key : xxxxxxxxx
+        
++ Parameters
+    + `patient_name`: 'John' (string,optional)
+    + `mr_no`: 'MR00001' (string,optional)
+    + `patient_contact`: '%2B919876543211' (string,optional)
+    + `send_email`: 'true' (string,optional)
+    + `send_sms`: 'true' (string,optional)
+    + `send_communication`: 'true' (string,optional)
+    + `scheduler_visit_type`: 'M' (string,optional) - M/F(default 'M')
+    + `category`: 'DOC' (string)
+    + `primary_resource_id`: 'DOC0001' (string)
+    + `secondary_resource_id`: '2' (string,optional) - default value -1
+    + `appointment_slot`:`2021-01-03T21:00:00Z` (string)
+    + `duration`: 15 (numeric,optional)
+    + `complaint`: 'Feverish' (string,optional)
+    + `center_id`: 7 (numeric)
+    + `remarks`: 'appointment remarks' (string,optional)
+    + `status` :'Booked' (string)
+    + `presc_doc_id`: 'DOC0002'(string,optional)
+    + `presc_doc_name`: 'Dr.Amith' (string,optional)
+    + `visit_mode`:'I' (string,optional) -I/O default value is 'I'
+    + `teleconsult_url`:'http://test.com' (string,optional)
+    + `app_source_id`:1 (numeric,optional)
+    + `resource_id`:'DOC0019' (string,optional)
+    + `resource_type`:'LABTECH' (string,optional)
+    + `appointment_id`:88888 (numeric)
+
++ Response 200 (application/json)
+
+{
+"send_communication": "true",
+"patient": {
+"mr_no": "",
+"patient_name": "John",
+"patient_contact": "+919987654321",
+"vip_status": "true",
+"scheduler_visit_type": "M",
+"last_name": "Ronnie",
+"salutation_name": "",
+"patient_dob": "",
+"patient_age": "",
+"patient_age_units": "",
+"patient_gender": "",
+"patient_email_id": "",
+"preferred_language": "en",
+"send_sms": "true",
+"send_email": "true",
+},
+"appointment": {
+"center_id": 7,
+"appointment_slot": "2021-01-03T21:00:00Z",
+"complaint": "Feeling feverish",
+"duration" : 15,
+"status": "Booked",
+"category": "DOC",
+"primary_resource_id": "DOC0244",
+"visit_mode":"O",
+"secondary_resource_id":"-1",
+"date": "03-01-2021",
+"slot_time": "15:30",
+"appointment_pack_group_id": "",
+"patient_presc_id": null,
+"additional_resources_insert":[],
+"appointment_ids_list": [82686]
+}
+}
+
+Error codes
+Http Status: 200
+2001: "Success"
+Http Status: 401
+1001: "Session has expired, please login again"
+Http Status: 400
+1021: " Bad Request Invalid input parameters"
+
+### Get First Available slot API [GET /api/scheduler/firstavailableslots.json]
+
+This API can be used to get first available slot for a resource.
+
+
++ Request
+    + Headers
+        request_handler_key : xxxxxxxxx
+        
++ Parameters
+    + `center_id`: 7 (numeric,optional)
+    + `visit_mode`: 'O' (string,optional)
+    + `booked_slot`:'I' (numeric,optional) - I/O
+    + `resource_id`:'DOC0019' (string)
+    + `from_date`:`2021-01-10` (string,optional)
+    + `to_date`:`2021-01-20` (string,optional)
+
++ Response 200 (application/json)
+
+{
+    "slots": {
+        "DOC0214": [
+            {
+                "center_id": 7,
+                "visit_mode": "I",
+                "timeslot": "2021-01-15T19:00:00Z"
+            }
+        ]
+}
+
+Error codes
+Http Status: 200
+2001: "Success"
+Http Status: 401
+1001: "Session has expired, please login again"
+Http Status: 400
+1021: " Bad Request Invalid input parameters"
+
+### Get Available slots API [GET /api/scheduler/availableslots.json]
+
+This API can be used to get available slots for a resource.
+
+
++ Request
+    + Headers
+        request_handler_key : xxxxxxxxx
+        
++ Parameters
+    + `center_id`: 7 (numeric,optional)
+    + `visit_mode`: 'O' (string,optional)
+    + `booked_slot`:'I' (numeric,optional) - I/O
+    + `resource_id`:'DOC0019' (string)
+    + `from_date`:`2021-01-10` (string,optional)
+    + `to_date`:`2021-01-20` (string,optional)
+    + `first_available`: 'Y' (string,optional)
+
++ Response 200 (application/json)
+
+{
+"slots": [
+        {
+            "center_id": 7,
+            "visit_mode": "I",
+            "timeslot": "2021-01-14T18:30:00Z"
+        },
+        {
+            "center_id": 7,
+            "visit_mode": "I",
+            "timeslot": "2021-01-14T19:00:00Z"
+        },
+        {
+            "center_id": 7,
+            "visit_mode": "I",
+            "timeslot": "2021-01-14T19:30:00Z"
+        },
+        {
+            "center_id": 7,
+            "visit_mode": "I",
+            "timeslot": "2021-01-14T20:00:00Z"
+        },
+        {
+            "center_id": 7,
+            "visit_mode": "I",
+            "timeslot": "2021-01-14T20:30:00Z"
+        },
+        {
+            "center_id": 7,
+            "visit_mode": "I",
+            "timeslot": "2021-01-14T21:00:00Z"
+        },
+        {
+            "center_id": 7,
+            "visit_mode": "I",
+            "timeslot": "2021-01-14T21:30:00Z"
+        },
+        {
+            "center_id": 7,
+            "visit_mode": "I",
+            "timeslot": "2021-01-14T22:00:00Z"
+        },
+        {
+            "center_id": 7,
+            "visit_mode": "I",
+            "timeslot": "2021-01-14T22:30:00Z"
+        },
+        {
+            "center_id": 7,
+            "visit_mode": "I",
+            "timeslot": "2021-01-14T23:00:00Z"
+        },
+        {
+            "center_id": 7,
+            "visit_mode": "I",
+            "timeslot": "2021-01-14T23:30:00Z"
+        },
+        {
+            "center_id": 7,
+            "visit_mode": "I",
+            "timeslot": "2021-01-15T00:00:00Z"
+        }
+        ],
+        "first_available_date": "2021-01-15"       
+}
+
+Error codes
+Http Status: 200
+2001: "Success"
+Http Status: 401
+1001: "Session has expired, please login again"
+Http Status: 400
+1021: " Bad Request Invalid input parameters"
+
+### Get doctor Slots [GET /Customer/doctorscheduler.do?_method=getDoctorAvailabilitySlots]
+
+Endpoint to get doctor availability slots.
+
++ Request
+    + Headers
+        request_handler_key : xxxxxxxxx
+        
++ Parameters
+    + `resource_id`: 'DOC0222' (string, required)
+    + `appointment_date` : `2018-03-19` (string, optional)- Default current date
+    + `center_id` : '1' (String, optional)- Default all centers
+    + `booked_slot`: 'I' (String , optional)- "I"/"O". "I" means ignore the slot if it has even one appointment booked in that slot ,even in case of overbook enabled doctor. Default value is O.
+    
++ Response 200 (application/json)
+
+{
+    "doctor_available_times": [
+        "2018-03-24T18:30:00Z",
+        "2018-03-24T18:45:00Z",
+        "2018-03-24T19:00:00Z",
+        "2018-03-25T00:00:00Z",
+        "2018-03-25T00:15:00Z",
+        "2018-03-25T00:30:00Z",
+        "2018-03-25T00:45:00Z",
+        "2018-03-25T04:00:00Z",
+        "2018-03-25T04:15:00Z",
+        "2018-03-25T04:30:00Z",
+        "2018-03-25T04:45:00Z"
+    ],
+    "doctor_first_available_date": "2018-03-25",
+    "doctor_available_times_with_centers": [
+        {
+            "center_id": 1,
+            "timeslot": "2018-03-24T18:30:00Z"
+        },
+        {
+            "center_id": 1,
+            "timeslot": "2018-03-24T18:45:00Z"
+        },
+        {
+            "center_id": 1,
+            "timeslot": "2018-03-24T19:00:00Z"
+        },
+        {
+            "center_id": 1,
+            "timeslot": "2018-03-25T00:00:00Z"
+        },
+        {
+            "center_id": 1,
+            "timeslot": "2018-03-25T00:15:00Z"
+        },
+        {
+            "center_id": 1,
+            "timeslot": "2018-03-25T00:30:00Z"
+        },
+        {
+            "center_id": 1,
+            "timeslot": "2018-03-25T00:45:00Z"
+        };,
+        {
+            "center_id": 1,
+            "timeslot": "2018-03-25T04:00:00Z"
+        },
+        {
+            "center_id": 1,
+            "timeslot": "2018-03-25T04:15:00Z"
+        },
+        {
+            "center_id": 1,
+            "timeslot": "2018-03-25T04:30:00Z"
+        },
+        {
+            "center_id": 1,
+            "timeslot": "2018-03-25T04:45:00Z"
+        }
+    ],
+    "return_message": "Success",
+    "return_code": "2001"
+}
+
+Error codes
+Http Status: 400
+1001: “invalid request token,please login again”
+1003: “Permission Denied. Please check with Administrator.”
+1002: “ Mandatory fields are not supplied”
+1021: “Invalid appointment date”
+Http Status:200
+2001: “Success”
+
+### Get doctor First Available Slots [GET /Customer/doctorscheduler.do?_method=getDoctorFirstAvailabilitySlot]
+
+Endpoint to get doctor's first available slot.
+
++ Request
+    + Headers
+        request_handler_key : xxxxxxxxx
+        
++ Parameters
+    + `appointment_date`:   `2018-03-24` (string, optional) - Default current time
+    + `center_id` : '1' (String, optional)
+    + `resource_id` : 'DOC0234'(String , required)- Comma separated string of doctor ids
+    + `booked_slot`: 'I' (String , optional)- "I"/"O". "I" means ignore the slot if it has even one appointment booked in that slot ,even in case of overbook enabled doctor. Default value is O.
+    
+    
++ Response 200 (application/json)
+{
+  "first_slots": {
+    "DOC0211": [
+      {
+        "center_id": 7,
+        "timeslot": "2018-03-28T13:15:00Z"
+      }
+    ],
+    "DOC0234": [
+    ],
+    "DOC0221": [
+      {
+        "center_id": 0,
+        "timeslot": "2018-03-28T13:15:00Z"
+      }
+    ]
+  },
+  "return_message": "Success",
+  "return_code": "2001"
+}
+
+Error codes
+Http Status: 400
+1001: “invalid request token,please login again”
+1003: “Permission Denied. Please check with Administrator.”
+1002: “ Mandatory fields are not supplied”
+1021: “Invalid appointment date”
+Http Status:200
+2001: “Success”
+
+### Save appointment [GET /Customer/doctorscheduler.do?_method=saveAppointment]
+
+Endpoint to save an appointment
+
++ Request
+    + Headers
+        request_handler_key : xxxxxxxxx
+        
++ Parameters
+    + `resource_id`: 'DOC0222' (string, required)
+    + `center_id`: '1' (string, required)
+    + `appointment_date` : `2018-03-19T10:30:00Z` (string, required)
+    + `mr_no`: 'MR0123' (string, optional) - Either mr_no or patient_phone must be provided. If the login credentials are generated from mobile access then mr_no is not required.
+    + `patient_phone`: '%2B919876543211' (string,optional) - Either mr_no or patient_phone must be provided
+    + `patient_name`: 'John' (string,optional)
+    + `send_communication`: 'true' (string,optional)
+    + `appointment_source`: 'widget' (string,optional)
+    + `appointment_status`: 'confirmed' (string,optional) - Default is 'Booked'
+    
+
++ Response 200 (application/json)
+
+{
+    "appointment_id": 53476,
+    "return_message": "Success",
+    "return_code": "2001"
+}
+
+Error codes
+Http Status: 400
+1001: invalid request token,please login again
+1002: Mandatory fields are not supplied
+1003: Permission Denied. Please check with Administrator.
+1021: Resource is not schedulable
+1022: This time slot is already booked for this patient
+1023: The time slot for this resource is already booked
+1024: The resource is not available
+1026: Invalid appointment date
+1027: Appointment can not be booked for default center
+1028: The number of appointments booked for this slot has hit the overbook limit
+1029: Please update the patient's mobile number before booking an appointment
+Http Status: 500
+1025: failed to book the Appointment.
+Http Status:200
+2001: “Success”
+
+### Update appointment [GET /Customer/doctorscheduler.do?_method=updateAppointment]
+
+Endpoint to update or reschedule an appointment
+
++ Request
+    + Headers
+        request_handler_key : xxxxxxxxx
+        
++ Parameters
+    + `appointment_id`: '123' (string, required)
+    + `appointment_date` : `2018-03-19T10:30:00Z` (string, optional)
+    + `resource_id`: 'DOC0222' (string, optional)
+    + `center_id`: '1' (string, optional)
+    + `appointment_status`: 'confirmed' (string,optional)
+    + `send_communication`: 'true' (string,optional)
+    
+
++ Response 200 (application/json)
+
+{
+    "return_message": "Success",
+    "return_code": "2001"
+}
+
+Error codes
+Http Status:200
+2001: “Success”
+Http Status: 400
+1001: invalid request token,please login again
+1002: Mandatory fields are not supplied
+1003: Permission Denied. Please check with Administrator.
+1021: The resource is not schedulable
+1022: This time slot is already booked for this patient
+1023: appointment_duration parameter is not required
+1024: The resource is not available
+1026: Invalid appointment date
+1027: The time slot for this resource is already booked
+1028: Appointments in 'Cancel' or 'No Show' status can not be updated.
+1029: Appointment can not be booked for default center
+1030: The number of appointments booked for this slot has hit the overbook limit.
+Http Status: 500
+1025: failed to update the Appointment.
+
+### Cancel appointment [GET /Customer/doctorscheduler.do?_method=cancelAppointment]
+Endpoint to cancel an appointment
+
++ Request
+    + Headers
+        request_handler_key : xxxxxxxxx
+        
++ Parameters
+    + `appointment_id`: '123' (string, required)
+    + `cancel_reason` : 'not available' (String, required)
+    + `send_communication`: 'true' (string,optional)
+    
+
++ Response 200 (application/json)
+
+{
+    "return_message": "Success",
+    "return_code": "2001"
+}
+
+Error codes
+Http Status:200
+2001: “Success”
+Http Status: 400
+1001: invalid request token,please login again
+1003: Permission Denied. Please check with Administrator.
+1002: Mandatory fields are not supplied.
+Http Status: 500
+1021: failed to cancel the Appointment.
+
+
+### Get all appointments [GET /Customer/doctorscheduler.do?_method=getPatientAppointments]
+
+Endpoint to get all appointments for a given MR number or phone number
+
++ Request
+    + Headers
+        request_handler_key : xxxxxxxxx
+        
++ Parameters
+    + `from_date`: `2018-03-24` (string, optional) - Default 6 months back from current date
+    + `to_date`: `2018-03-30` (string, optional) - Default current date
+    + `patient_phone` : '%2B918283941513' (String, optional) - Either mr_no or patient_phone should be provided. 
+    + `mr_no` : 'MR0123' (String, optional) - Either mr_no or patient_phone should be provided. If the login credentials are generated from mobile access then mr_no is not required.
+    + `center_id` : '1' (String, optional)
+    + `search_by_patient` : 'Y' (String, optional) - Setting value to N disables check for mr_no or patient_phone parameter required
+    + `filter_by_appointment_date` : 'Y' (String, optional) - If set to Y uses from_date and to_date to filter appointments by appointment time. Does filtering by date of booking otherwise.
+
+
++ Response 200 (application/json)
+
+{
+    "start_date": "2018-03-09",
+    "end_date": "2018-03-24",
+    "appointments": [{
+            "appointment_id": 82387,
+            "appointment_status": "Cancel",
+            "appointment_time": "2018-03-01T18:30:00Z",
+            "booked_by": "InstaAPI"
+            "booked_time": "2018-03-02T07:16:33Z",
+            "cancel_reason": "Some reason to cancel",
+            "center_id": 7,
+            "center_name": "Insta Clinic Jayanagar",
+            "changed_by": "InstaAPI",
+            "changed_time": "2018-03-02T07:16:34Z",
+            "complaint": "",
+            "department_name": "Urology",
+            "dept_id": "DEP0001",
+            "doctor_name": "Alice Jane",
+            "duration": 15,
+            "mr_no": "MR013633",
+            "patient_contact": "+919845012345",
+            "patient_name": "Jhon Doe",
+            "presc_doc_id": "",
+            "remarks": "",
+            "res_sch_id": 1,
+            "res_sch_name": "DOC0234",
+            "rescheduled": "N",
+            "scheduler_visit_type": "M",
+            "visit_id": "",
+     }],
+    "return_code": "2001",
+    "return_message": "Success"
+}
+
+Error code
+Http Status:200
+2001: “Success”
+Http Status: 400
+1001: invalid request token,please login again
+1003: Permission Denied. Please check with Administrator.
+1002: Mandatory fields are not supplied
+Http Status: 500
+1022: To date can not be earlier than From date.
+
+
+### Get all appointments for a patient [GET /api/scheduler/getappointments.json]
+
+Endpoint to get all appointments for a given MR number
+
++ Request
+    + Headers
+        request_handler_key : xxxxxxxxx
+        
++ Parameters
+    + `from_date`: `10-06-2019` (String, required) - Date from which the appointments are to be listed
+    + `mr_no` : 'MR0123' (String, required) - mr_no or patient_contact should be provided.
+    + `patient_contact` : '%2b919876543211' (String, required) - mr_no or patient_contact should be provided.
+    + `center_id` : '1' (String, optional) - Center specific appointments.
+    + `app_status` : 'active' (String, optional) - Enlists appointments according to appointment status. This parameter accepts 3 values viz 'active' for Booked and Confirmed appointments, 'inactive' for rest, 'all' for all.
+
+
++ Response 200 (application/json)
+
+{
+   "appointments":[
+      {
+         "presc_doc_name":"aaa",
+         "patient_name":"Ms. ManasaTest",
+         "cond_doc_id":"DOC0214",
+         "department_id":"DDept0001",
+         "appointment_date":"2018-03-19T10:30:00Z",
+         "package_name":null,
+         "appointment_pack_group_id":null,
+         "secondary_resource":{
+            "resource_id":"DGC1108",
+            "resource_name":"Test1111"
+         },
+         "remarks":"first appointment",
+         "additional_resources":[
+            {
+               "resource_id":"66",
+               "resource_type":"EQID"
+            }
+         ],
+         "cond_doc_name":"aaa",
+         "presc_doc_id":"DOC0214",
+         "appointment_status":"Booked",
+         "duration":30,
+         "app_cat":"DIA",
+         "center_name":"BRS",
+         "app_source_id":0,
+         "package_id":null,
+         "scheduler_visit_type":"M",
+         "appointment_id":82397,
+         "primary_resource":{
+            "resource_id":"147",
+            "resource_name":"Test Eq Med 2"
+         },
+         "center_id":7,
+         "complaint":"fever"
+      }
+   ]
+}
+
+## Patient Information [/]
+
+### Get Patient Details [GET /Customer/Registration/GeneralRegistration.do?_method=getPatientDetails]
+
+The API to get patient information for a given MR number. 
+
++ Request
+    + Headers
+        request_handler_key : xxxxxxxxx
+        
++ Parameters
+    + `mr_no`: 'MR0123' (string) - If the login credentials are generated from mobile access then mr_no is not mandatory.
+ 
++ Response 200 (application/json)
+
+{
+    "patient_details": {
+        "patient_city": "CT0002",
+        "dateofbirth": "",
+        "other_allergies": "",
+        "custom_list6_value": "",
+        "patient_category_id": 1,
+        "patient_phone2": "",
+        "custom_list9_value": "",
+        "expected_dob": "1973-02-08",
+        "email_id": "",
+        "no_allergies": "",
+        "death_date": "",
+        "custom_field3": "",
+        "custom_field2": "",
+        "custom_field1": "",
+        "middle_name": "",
+        "custom_field7": "",
+        "custom_field6": "",
+        "custom_field5": "",
+        "custom_list3_value": "",
+        "nationality_id": "CM0016",
+        "custom_field4": "",
+        "custom_list4_value": "",
+        "custom_field9": "",
+        "country": "CM0118",
+        "custom_field8": "",
+        "patient_gender": "M",
+        "last_name": "",
+        "mr_no": "MR013764",
+        "food_allergies": "",
+        "government_identifier": "",
+        "custom_list5_value": "",
+        "dead_on_arrival": "",
+        "identifier_id": 2,
+        "patient_area": "",
+        "patient_phone": "",
+        "med_allergies": "",
+        "patient_address": "",
+        "oldmrno": "",
+        "first_visit_reg_date": "2018-08-08",
+        "patient_name": "John Tomas",
+        "custom_field16": "",
+        "patient_state": "ST0002",
+        "custom_field15": "",
+        "custom_field18": "",
+        "custom_field17": "",
+        "custom_field19": "",
+        "custom_list1_value": "",
+        "mobile_password": "",
+        "custom_field10": "",
+        "original_mr_no": "",
+        "custom_field11": "",
+        "custom_field12": "",
+        "custom_field13": "",
+        "custom_field14": "",
+        "custom_list2_value": "",
+        "custom_list8_value": "",
+        "salutation": "SALU0002",
+        "death_reason_id": "",
+        "death_time": "",
+        "custom_list7_value": ""
+        },
+    "return_message": "Success",
+    "return_code": "2001"
+}
+
+Error Codes
+Http Status: 200
+2001: "Success"
+Http Status: 400
+1002:  Mandatory fields are not supplied
+1001: invalid request token,please login again
+1003: Permission Denied. Please check with Administrator.
+1021: invalid MRNO
+
+
+### Find patient [GET /Customer/Registration/GeneralRegistration.do?_method=findPatient]
+
+Endpoint to find patient and their MR number based on some basic patient information.
+
++ Request
+    + Headers
+        request_handler_key : xxxxxxxxx
+        
++ Parameters
+    + `mr_no`: 'MR0123' (string, optional) - mr_no of a patient, can be repeated if data is required for multiple mr_no. If the login credentials are generated from mobile access then mr_no is not required.
+    + `first_name`: 'John' (string, optional)
+    + `last_name`: 'Jenkins' (string, optional)
+    + `gender`: 'F' (string, optional)
+    + `phone_no`: '9876543211' (string, optional)
+    + `email`: 'abc@xyz.com' (string, optional)
+    + `last_visited_date`: `2018-03-12` (date, optional)
+    + `govt_id`: 'asdf' (string, optional)
+    + `date_of_birth`: `2018-03-12` (date, optional)
+    + `old_mrno`: `NLPMP123456` (string, optional)
+    
+
++ Response 200 (application/json)
+
+{
+    "patient_details": [
+        {
+            "patient_city": "CT0088",
+            "government_identifier": "",
+            "mlc_status": "N",
+            "dateofbirth": "",
+            "patient_category_id": 32,
+            "identifier_id": "",
+            "patient_area": "",
+            "age": 27,
+            "expected_dob": "1990-12-29",
+            "patient_phone": "999",
+            "email_id": "",
+            "age_in": "Y",
+            "patient_address": "",
+            "patient_name": "INDENTA",
+            "status": "A",
+            "first_visit_reg_date": "2016-06-29",
+            "vip_status": "N",
+            "last_visited_center": 6,
+            "patient_state": "ST0017",
+            "patient_full_name": "Mr. INDENTA ",
+            "country": "CM0109",
+            "last_visited_date": "2016-06-29",
+            "patient_gender": "M",
+            "last_name": "",
+            "salutation": "SALU0002",
+            "mr_no": "MR012835"
+        }
+    ],
+    "return_message": "Success",
+    "return_code": "2001"
+}
+
+Error codes
+Http Status:200
+2001: “Success”
+Http Status: 400
+1021: Please specify at least one search criteria
+1001: invalid request token,please login again
+1003: Permission Denied. Please check with Administrator.
+1022: No patient found for the given search criteria
+
+
+### Get Patient demographics details [GET /Customer/patientdemographicsdata.do?_method=getPatientDemographics]
+
+Endpoint to get patient demographics details.
+
++ Request
+    + Headers
+        request_handler_key : xxxxxxxxx
+        
++ Parameters
+    + `from_date`: `2018-03-24` (string)
+    + `to_date`: `2018-03-30` (string, optional)
+
++ Response 200 (application/json)
+
+{
+"START_DATE": "2016-02-23T00:00:00Z",
+"END_DATE": "2016-03-08",
+"PATIENT_DETAILS":
+[
+    { 
+        "age": 33,
+        "age_in": "Y",
+        "country": "CM0001",
+        "custom_list1_value": "",
+        "custom_list2_value": "",
+        "custom_list3_value": "",
+        "custom_list4_value": "A+",
+        "custom_list5_value": "HINDU",
+        "custom_list6_value": "SALARIED",
+        "custom_list7_value": ""
+        "custom_list8_value": "",
+        "custom_list9_value": "",
+        "dateofbirth": "",
+        "email_id": "pj@rm.com",
+        "expected_dob": "1982-12-04",
+        "first_visit_reg_date": "",
+        "government_identifier": "",
+        "identifier_id": "",
+        "last_name": "M",
+        "last_visit_admission_doctor_id": "",
+        "last_visit_dept_id": "DEP0008",
+        "last_visit_referred_by": "",
+        "last_visit_transferred_from": "",
+        "last_visit_transferred_to": "",
+        "last_visited_center": ​7,
+        "last_visited_date": "2015-07-27",
+        "mlc_status": "N",
+        "mr_no": "MR008317"
+        "nationality_id": "",
+        "next_of_kin_address": "",
+        "next_of_kin_name": "",
+        "next_of_kin_phone": "",
+        "next_of_kin_relation": "",
+        "oldmrno": "",
+        "patient_address": "",
+        "patient_area": "",
+        "patient_category_id": ​12,
+        "patient_city": "CT0088",
+        "patient_full_name": "Mrs. Priyaj M",
+        "patient_gender": "F",
+        "patient_name": "Priyaj",
+        "patient_phone": "9876111145",
+        "patient_phone2": "",
+        "patient_remarks": "",
+        "patient_state": "ST0017",
+        "salutation": "SALU0008",
+        "status": "A",
+        "vip_status": "N",
+    }
+],
+"return_code": "2001",
+"return_message": "Success"
+}
+
+Error codes
+Http Status:200
+2001: “Success”
+Http Status: 400
+1021: Invalid input parameters supplied
+1022: To date can not be earlier than From date
+1023: Duration can not be more than 30 days
+1001: invalid request token,please login again
+1003: Permission Denied. Please check with Administrator.
+1002: Mandatory fields are not supplied
+
+## Orders [/]
+
+### Get Patient Orders Data [GET /Customer/Orders/PatientOrders.do?_method=getPatientOrdersData]
+
+Endpoint to get Patient Orders
+
++ Request
+    + Headers
+        request_handler_key : xxxxxxxxx
+        
++ Parameters
+    + `mr_no` : 'MR01234' (string) - If the login credentials are generated from mobile access then mr_no is not mandatory.
+    + `from_date`: `2018-03-24` (string)
+    + `to_date`: `2018-03-30` (string, optional)
+    + `center_id`: 1 (Int,optional)
+
++ Response 200 (application/json)
+
+{
+    "patient_orders_details": 
+    [
+        {
+        "PATIENT_ID": "OP120849",
+        "REG_DATE": "2016-03-11T05:31:24Z",
+        "VISIT_TYPE": "o",
+        "orders": [
+            {
+            "pres_doctor_name": "",
+            "item_name": "Dr P N Shinde",
+            "package_ref": "",
+            "item_id": "DOC0141",
+            "sub_type": "-1",
+            "sub_type_name": "OP Consultation",
+            "pres_timestamp": "2016-03-11T05:31:24Z",
+            "pres_doctor_id": "",
+            "type": "Doctor",
+            "common_order_id": ​148971,
+            "order_id": ​12682,
+            "activity_code": "DOC"
+            }
+        ]
+        "DISCHARGE_DATE_TIME": "",
+        "STATUS": "A",
+        "CENTER_ID": "7",
+        "MR_NO": "MR008312"
+        }
+    ]
+    "return_code": "2001",
+    "return_message": "Success"
+}
+
+Error codes
+Http Status:200
+2001: “Success”
+Http Status: 400
+1002: Mandatory fields are not supplied
+1021: Invalid input parameters supplied
+1022: To date can not be earlier than From date
+1023: Duration can not be more than 30 days
+1003: Permission Denied. Please check with Administrator.
+1001: invalid request token,please login again”
+
+## Bill [/]
+
+### Get Bills & Payment Details [GET /Customer/Bills.do?_method=getBills]
+
+Endpoint to get Bills and Payment Details for given date range
+
++ Request
+    + Headers
+        request_handler_key : xxxxxxxxx
+        
++ Parameters
+    + `mr_no` : 'MR01234' (string, optional) - If the login credentials are generated from mobile access then mr_no is not required.
+    + `from_date`: `2018-03-24` (string, optional)
+    + `to_date`: `2018-03-30` (string, optional)
+    + `center_id`: 1 (Int,optional)
+    + `page`: 1 (Int,optional)
+    + `filter_by_finalized_date`: 'N' (Int,optional) - If set to Y uses from_date and to_date to filter bills by finalized time. Does filtering by open date otherwise.
+
++ Response 200 (application/json)
+
+{
+    "start_date": "2018-09-08",
+    "end_date": "2018-09-09",
+    "bills": [
+        {
+        "net_amount": 427.5,
+        "charges": [
+            {
+            "amount": 0,
+            "rate": 0,
+            "details": "",
+            "description": "",
+            "tax_amount": 0,
+            "charge_group": "Discounts",
+            "posted_date": "2018-09-08T17:13:00Z",
+            "quantity": 1,
+            "bill_no": "BL123456",
+            "charge_head": "Round Off",
+            "discount": 0
+            },
+            {
+            "amount": 380,
+            "rate": 400,
+            "details": "",
+            "description": "DR. Alice Jane",
+            "tax_amount": 0,
+            "charge_group": "Doctor Charges",
+            "posted_date": "2018-09-08T17:12:00Z",
+            "quantity": 1,
+            "bill_no": "BL123456",
+            "charge_head": "OP Consultation",
+            "discount": 20
+            },
+            {
+            "amount": 47.5,
+            "rate": 50,
+            "details": "",
+            "description": "",
+            "tax_amount": 0,
+            "charge_group": "Registration",
+            "posted_date": "2018-09-08T16:35:00Z",
+            "quantity": 1,
+            "bill_no": "BL123456",
+            "charge_head": "General Registration",
+            "discount": 2.5
+            }
+        ],
+        "patient_amount": 427.5,
+        "points_redeemed_amt": 0,
+        "total_discount": 22.5,
+        "open_date": "2018-09-08T05:34:52Z",
+        "patient_due_amount": 0,
+        "receipts": [
+            {
+            "amount": 427.5,
+            "receipt_subtype": "SETTLEMENT",
+            "receipt_type": "RECEIPT",
+            "paid_by_sponsor": false,
+            "receipt_no": "RC020798",
+            "counter": "Billing 1 - Jayanagar",
+            "payment_mode": "Cash",
+            "bill_no": "BL123456",
+            "receipt_date": "2018-09-08T06:15:00Z",
+            "collected_by": "John"
+            }
+        ],
+        "insurance_linked_bill": false,
+        "bill_status": "CLOSED",
+        "bill_type": "BILL_LATER",
+        "payment_status": "PAID",
+        "total_patient_payments": 427.5,
+        "deposit_set_off": 0,
+        "center_name": "Insta Clinic Jayanagar",
+        "patient_tax_amt": 0,
+        "opened_by": "John",
+        "visit_id": "OP012345",
+        "finalized_date": "2018-09-08T08:47:00Z",
+        "total_tax": 0,
+        "bill_amount": 450,
+        "bill_no": "BL123456",
+        "center_id": 1,
+        "mr_no": "MR001234"
+        }
+    ],
+    "return_code": "2001",
+    "return_message": "Success"
+}
+
+Error codes
+Http Status:200
+2001: “Success”
+Http Status: 400
+1002: Mandatory fields are not supplied
+1021: Invalid input parameters supplied
+1022: To date can not be earlier than From date
+1023: Duration can not be more than 7 days
+1024: Not a valid Center ID
+1003: Permission Denied. Please check with Administrator.
+1001: invalid request token,please login again”
+
+## Insurance [/]
+
+### Claim History [GET /api/claims/history.json]
+
+Endpoint to get claim history Data
+
++ Request
+    + Headers
+        request_handler_key : xxxxxxxxx
+        
++ Parameters
+    + `submission_date_from`: `04-06-2019` (date, required)
+    + `submission_date_to`: `04-06-2019` (date, required)   
+
++ Response 200 (application/json)
+
+{
+    "billLevelClaimHistory": [
+        {
+        "resubmission_type": null,
+        "net_amount": 3060,
+        "bill_no": "BL12018",
+        "center_id": 0,
+        "submission_date": "04-06-2019 14:47:35",
+        "tpa_name": "H TPA/sponsor"
+        },
+        {
+        "resubmission_type": "correction",
+        "net_amount": 3060,
+        "bill_no": "BL11995",
+        "center_id": 0,
+        "submission_date": "04-06-2019 10:50:53",
+        "tpa_name": "H TPA/sponsor"
+        },
+        {
+        "submission_date": "04-06-2019 11:03:06",
+        "bill_no": "BL11995",
+        "net_amount": 50,
+        "center_id": 0,
+        "tpa_name": "H TPA/sponsor",
+        "resubmission_type": "internal complaint"
+        }
+    ]
+    "return_code": "2001",
+    "return_message": "Success"
+}
+
+Error codes
+Http Status: 200
+2001: "Success"
+2004: “No  matching data found”
+Http Status: 401
+1001: “Session has expired, please login again”
+Http Status: 400
+1021: “Invalid input parameters”
+1021: “Mandatory fields are not supplied”
+Http Status: 500
+500: “Failed to retrieve claim history data”
+
+
+## Patient visit information [/]
+
+### Get Patient visits details [GET /Customer/Registration/GeneralRegistration.do?_method=getPatientVisits]
+
+Endpoint to get Patients visits details
+
++ Request
+    + Headers
+        request_handler_key : xxxxxxxxx
+        
++ Parameters
+    + `from_date`: `2018-03-19T10:30:00Z` (date, optional)- Default 6 month back from to_date
+    + `to_date`: `2018-03-19T10:30:00Z` (date, optional)- Default current date
+    + `mr_no`: 'MR0123' (string, optional) - If the login credentials are generated from mobile access then mr_no is not required.
+    + `primary_sponsor_id`: '123' (string, optional)
+    + `secondary_sponsor_id`: '123' (string, optional)
+    + `use_discharge_date_for_ip` : 'Y'(string,optional) - When set to Y IP visits returned are filtered by discharge date. If set to N or parameter is not provided IP visits are filtered using Admission Date. 
+    
+
++ Response 200 (application/json)
+
+{
+    "patient_visits_details": [
+        {
+            "SEC_PATIENT_RELATIONSHIP": "",
+            "SEC_MEMBER_ID": "",
+            "PATIENT_PHONE": "+919987654321",
+            "SECONDARY_SPONSOR_ID": "",
+            "DISCHARGE_DATE_TIME": "",
+            "PRIMARY_PLAN_NAME": "",
+            "PRI_POLICY_HOLDER_NAME": "",
+            "PRI_POLICY_NUMBER": "",
+            "DATE_OF_BIRTH_ESTIMATED": "1993-07-07",
+            "REFERRER_ID": "493",
+            "PRIMARY_SPONSOR_NAME": "",
+            "DOCTOR_ID": "DOC0214",
+            "PRIMARY_PLAN_ID": "",
+            "PRIMARY_SPONSOR_ID": "",
+            "MR_NO": "MR013816",
+            "SEC_POLICY_NUMBER": "",
+            "SECONDARY_SPONSOR_NAME": "",
+            "VISIT_TYPE": "o",
+            "DOCTOR_NAME": "aaa",
+            "REG_DATE_TIME": "2019-01-07T06:21:32Z",
+            "REFERRED_BY": "All centre refer",
+            "CENTER_NAME": "BRS",
+            "PRIMARY_SPONSOR_EMAIL_ID": "",
+            "VISIT_CUSTOM_FIELD_2": "",
+            "SECONDARY_PLAN_ID": "",
+            "VISIT_CUSTOM_FIELD_1": "",
+            "DEPT_NAME": "GENERAL MEDICINE",
+            "PRI_MEMBER_ID": "",
+            "SECONDARY_PLAN_NAME": "",
+            "PATIENT_NAME": "Ms. Manasa  ",
+            "ORG_NAME": "GENERAL",
+            "SEC_POLICY_VALIDITY_END": "",
+            "SECONDARY_SPONSOR_MOBILE_NO": "",
+            "CENTER_ID": "7",
+            "VISIT_ID": "OP121833",
+            "PRI_POLICY_VALIDITY_START": "",
+            "PRI_PATIENT_RELATIONSHIP": "",
+            "PRIMARY_SPONSOR_MOBILE_NO": "",
+            "DATE_OF_BIRTH": "",
+            "PRI_POLICY_VALIDITY_END": "",
+            "EMAIL_ID": "",
+            "SEC_POLICY_HOLDER_NAME": "",
+            "DEPT_ID": "DEP0007",
+            "RATE_PLAN_ID": "ORG0001",
+            "PATIENT_GENDER": "F",
+            "SECONDARY_SPONSOR_EMAIL_ID": "",
+            "SEC_POLICY_VALIDITY_START": ""
+        }
+    ],
+    "START_DATE": "2011-08-24",
+    "END_DATE": "2011-09-10",
+    "return_message": "Success",
+    "return_code": "2001"
+}
+
+Error codes
+Http Status:200
+2001: “Success”
+Http Status: 400
+1021: Invalid input parameters supplied
+1022: To date can not be earlier than From date
+1023: Duration can not be more than 6 months
+1001: invalid request token,please login again
+1003: Permission Denied. Please check with Administrator.
+1002: Mandatory fields are not supplied
+1024: No visits found for the given search criteria
+Http Status: 500
+1025: Failed to retrieve the visits
+
+### Incoming Patients visits details [GET /Customer/Registration/GeneralRegistration.do?_method=getIncomingPatientVisits]
+
+Endpoint to get incoming patient visits detail.
+
++ Request
+    + Headers
+        request_handler_key : xxxxxxxxx
+        
++ Parameters
+    + `from_date`: `2018-03-19T10:30:00Z` (date, required)
+    + `to_date`: `2018-03-19T10:30:00Z` (date, optional)
+    + `incoming_hospital_id`:'IH0006' (String, optional)
+
++ Response 200 (application/json)
+
+{
+"START_DATE": "2016-03-16",
+"END_DATE": "2016-04-14",
+"incoming_patient_visits_details": [
+    { 
+    "PHONE_NO": "", 
+    "PATIENT_NAME": "Ashwini", 
+    "REG_DATE_TIME": "2018-03-02T07:16:25Z", 
+    "INCOMING_VISIT_ID": "IN000241", 
+    "INCOMING_HOSP_ID": "IH0007", 
+    "PATIENT_OTHER_INFO": "Diabetic sample", 
+    "AGE_UNIT": "Y", 
+    "HOSPITAL_NAME": "Apollo", 
+    "PATIENT_AGE": "23", 
+    "PATIENT_GENDER": "M" 
+    }
+]
+"return_code": "2001",
+"return_message": "Success"
+}
+
+Error codes
+Http Status:200
+2001: “Success”
+Http Status: 400
+1021: Invalid input parameters supplied
+1022: To date can not be earlier than From date
+1023: Duration can not be more than 30 days
+1001: invalid request token,please login again
+1003: Permission Denied. Please check with Administrator.
+1002: Mandatory fields are not supplied
+1024: No visits found for the given search criteria
+Http Status: 500
+1025: Failed to retrieve the visits
+
+
+## EMR [/]
+
+### Get Patient Clinical Data [GET /Customer/patientclinicaldata.do?_method=getPatientClinicalData]
+
+Endpoint to get patient clinical information which includes patient demographic details, lab, medications, allergies, appointments.
+
++ Request
+    + Headers
+        request_handler_key : xxxxxxxxx
+        
++ Parameters
+    + `from_date`: `2018-03-24` (string)
+    + `to_date`: `2018-03-30` (string, optional)
+
++ Response 200 (application/json)
+
+{ 
+"START_DATE": "2014-05-02T12:34:22.000Z", 
+"END_DATE": "2015-07-22T12:34:22.000Z", 
+"LAB": [ 
+    { 
+    "value_date": “2015-07-10”, 
+    "patient_id": "IP000197", 
+    "values_id": 80073, 
+    "test_value": "81", 
+    "mod_time": “2015-06-12T18:30:00Z”, 
+    "resultlabel": "URR" ,
+    "min_normal_value":75,
+    "max_normal_value":"",
+    "units": "mg/dl"
+    }, 
+    { 
+    "value_date": “2015-06-12”, 
+    "patient_id": "IP000197", 
+    "values_id": 80081, 
+    "test_value": "2.41", 
+    "mod_time": “2015-06-12T18:30:00Z”, 
+    "resultlabel": "KT/V" ,
+    "min_normal_value":75,
+    "max_normal_value":""
+    } 
+] ,
+{ 
+"MEDICATIONS": [ 
+    { 
+    "medicine_remarks": "",
+    "duration": 12,
+    "mod_time": "2015-05-19T20:15:48Z",
+    "route_name": "Rectal",
+    "name": "ADOL 500MG Suppositories",
+    "dosage": "",
+    "op_medicine_pres_id": 2106,
+    "patient_id": "OP026083",
+    "duration_units": "D",
+    "prescribed_date": "2015-05-19T20:15:48Z",
+    "consultation_id": 24726
+    }
+],
+"ALLERGIES": [
+    {
+    "reaction": "Rashes",
+    "patient_id": "OP030980",
+    "mod_time": "2015-08-17T18:40:22Z",
+    "allergy": "Food alergy",
+    "allergy_id": 5,
+    "section_detail_id": 276739,
+    "status": "A",
+    "onset_date": "generic",
+    "allergy_type": "N"
+    }
+],
+"APPOINTMENTS": [
+{
+    "appointment_id":"78987",
+    "mr_no":"MR008312",
+    "res_sch_name": "OPID0114",
+    "duration": 30,
+    "appointment_time": 18000000,
+    "res_sch_id": 2,
+    "visit_id": "IP000606",
+    "remarks": ""
+    "center_id": “13”
+    "appointment_status": "Arrived"
+    }
+],
+"PATIENT_DEMOGRAPHICS": [ 
+    {
+    "mobile_password": "12345",
+    "first_name": "Claudia",
+    "mod_time": "2015-07-23T10:56:44Z",
+    "patient_name": "Mrs. Claudia Louise Shaw",
+    "middle_name": "Louise",
+    "patient_phone": "971505585304",
+    "last_name": "Shaw",
+    "gender": "Female",
+    "dateofbirth": "1968-09-06",
+    "email_id": "",
+    "mr_no": "00010377"
+    }
+],
+"MEDICAL_PROFESSIONAL_DEMOGRAPHICS": [
+    {
+    "user_doc_id": "DOC0177",
+    "username": "Abhay",
+    "status" : "A",
+    "hospital_roles" : "nurse, physician",
+    "application_role" :"Admin",
+    "mod_datetime": "2015-09-22T17:34:57Z",
+    "name": "John L.",
+    "created_timestamp": "2015-09-21T23:05:18Z",
+    "center_id": 7,
+    "mobile_no": "1234567876",
+    "email_id":"abcd@def.com"
+    }
+]
+"return_code": "2001",
+"return_message": "Success"
+}    
+
+Error codes
+Http Status:200
+2001: “Success”
+Http Status: 400
+1002: Mandatory fields are not supplied
+1003: Permission Denied. Please check with Administrator.
+1021: Invalid input parameters supplied
+1022: To date can not be earlier than From date
+1023: Duration can not be more than 30 days
+
+
+### Diag Reports for a visit [GET /Customer/DiagnosticModule/DiagPrint.do?_method=getDiagReportsForVisit]
+
+Endpoint to get Diag Reports for a visit
+
++ Request
+    + Headers
+        request_handler_key : xxxxxxxxx
+        
++ Parameters
+    + `visitId` : 'IP0123' (string)
+    + `logoHeader` : 'Y' (string,optional)- Y- Logo and Header, L- Logo Only, H- Header Only, N- None
+
++ Response 200 (application/json)
+PDF response
+
+Error codes
+1001: invalid request token,please login again
+1002: Mandatory fields are not supplied
+1003: Permission Denied. Please check with Administrator.
+
+### Get Patient visit EMR Details [GET /Customer/emr/VisitEMRView.do?_method=getVisitEMR]
+
+Endpoint to get patient visit EMR details
+
++ Request
+    + Headers
+        request_handler_key : xxxxxxxxx
+        
++ Parameters
+    + `visitId`: 'OP120443' (string) - Pass `visitId` to get visit level documents. Either `visitId` or `mr_no` is required, if both are passed documents linked to visitId will be returned.
+    + `mr_no`: 'MR0123' (string) - Pass mr_no to get Patient level documents. Either visitId or mr_no is required, if both are passed documents linked to visitId will be returned. When using patient user credentials, `mr_no` parameter is ignored and always data for logged in patient is returned. When using patient user credentials, if neither `visitId` nor `mr_no` is passed, EMR data attached to patient is returned as this endppoint defaults `mr_no` to logged in user.
+    + `logoHeader`: 'Y' (string, optional)
+    
+
++ Response 200 (application/json)
+
+{ 
+"return_code": "2001",
+"return_message": "Success",
+"patient_visit_emr_documents": 
+[
+    [
+    {
+        "class": "com.insta.hms.emr.DocHolder",
+        "filterId": "OP023204",
+        "label": "2013-12-24 (OP023204)",
+        "viewDocs": [
+            {
+            "pdfSupported": true,
+            "provider": "ConsultationsProvider",
+            "contentType": "application/pdf",
+            "visitDate": "2013-12-23T18:30:00Z",
+            "date": "2013-12-24T13:04:44Z",
+            "type": "SYS_CONSULT",
+            "doctor": "Dr. Mohan Rangaswamy ",
+            "annotation": "",
+            "displayUrl": "/print/printEmrConsultation.json?consultation_id=22077&printerId=4",
+            "docid": "22077",
+            "title": "Case Sheet - Dr. Mohan Rangaswamy ",
+            "visitid": "OP023204",
+            "description": ""
+            }
+        ]
+    }
+]
+}
+
+Error codes
+Http Status:200
+2001: “Success”
+Http Status: 400
+1001: invalid request token,please login again
+1021: Invalid input parameters supplied
+1003: Permission Denied. Please check with Administrator.
+1002: Mandatory fields are not supplied”
+Http Status: 500
+1022: fail to get  emr  data
+
+
+### Get Patient Facing Patient EMR Details [GET /Customer/emr/VisitEMRView.do?_method=getVisitEMRForPatient]
+
+Endpoint to get patient visit EMR details that have web based templates
+
++ Request
+    + Headers
+        request_handler_key : xxxxxxxxx
+        
++ Parameters
+    + `visit_id`: 'OP120443' (string, required)
+    
+
++ Response 200 (application/json)
+
+{
+    "return_code": "2001",
+    "return_message": "Success",
+    "patient_visit_emr_documents": [
+            {
+                "class": "com.insta.hms.emr.DocHolder",
+                "filterId": "OP120443",
+                "label": "2014-10-20  (OP120443)",
+                "viewDocs": [
+                    {
+                        "displayUrl": "/pages/DiagnosticModule/DiagReportPrint.do?\_method=printReport&reportId=8468&forcePdf=true&printerId=9&request_handler_key=instaapi_a73b1730b6b",
+                        "annotation": "",
+                        "docid": "8468",
+                        "title": "RR-(+)-ULTRASOUND2",
+                        "pdfSupported": true,
+                        "visitid": "OP120443",
+                        "description": "X RAY ELBOW, X-RAY KUB, ULTRASOUND",
+                        "visitDate": "2014-10-19T18:30:00Z",
+                        "contentType": "",
+                        "type": "SYS_RR",
+                        "date": "2014-10-20T09:39:09Z",
+                        "doctor": "DR AJAY"
+                    },
+                    {
+                        "displayUrl": "/pages/DiagnosticModule/DiagReportPrint.do?\_method=printReport&reportId=8467&forcePdf=true&printerId=9&request_handler_key=instaapi_a73b1730b6b",
+                        "annotation": "",
+                        "docid": "8467",
+                        "title": "RR-(+)-ULTRASOUND1",
+                        "pdfSupported": true,
+                        "visitid": "OP120443",
+                        "description": "X-RAY KUB, ULTRASOUND, X-RAY CHEST, XRAY-BARIUM ENEMA, X RAY ELBOW, XRAY-BARIUM ENEMA",
+                        "visitDate": "2014-10-19T18:30:00Z",
+                        "contentType": "",
+                        "type": "SYS_RR",
+                        "date": "2014-10-20T09:31:23Z",
+                        "doctor": "DR AJAY"
+                    },
+                    {
+                        "displayUrl": "/print/printEmrConsultation.json?consultation_id=12537&printerId=4&request_handler_key=instaapi_a73b1730b6b",
+                        "annotation": "",
+                        "docid": "12537",
+                        "title": "Case Sheet - DR. ABHAY SADRE",
+                        "pdfSupported": true,
+                        "visitid": "OP120443",
+                        "description": "",
+                        "provider": "ConsultationsProvider",
+                        "visitDate": "2014-10-19T18:30:00Z",
+                        "contentType": "application/pdf",
+                        "type": "SYS_CONSULT",
+                        "date": "2014-10-20T09:21:23Z",
+                        "doctor": "DR. ABHAY SADRE"
+                    }
+                ]
+            }
+        ]
+}
+
+Error codes
+Http Status:200
+2001: “Success”
+Http Status: 400
+1001: invalid request token,please login again
+1021: Invalid input parameters supplied
+1003: Permission Denied. Please check with Administrator.
+1002: Mandatory fields are not supplied”
+Http Status: 500
+1022: fail to get  emr  data
+
+## Accounting [/]
+
+### Get Vouchers [GET /api/accounting/vouchers/list.json]
+
+Endpoint to get vouchers
+
++ Request
+    + Headers
+        request_handler_key : xxxxxxxxx
+        
++ Parameters
+    + `from_date`: `2018-03-19T10:30:00Z` (date, required)
+    + `to_date`: `2018-03-19T10:30:00Z` (date, optional) - Default current date
+    + `voucher_type` :'HOSPBILLS' (String, optional)
+    + `center_id` : '1' (String) - One of center_id OR account_group_id is required.
+    + `account_group_id`: '1' (String) - One of center_id OR account_group_id is required.
+    + `summarize`: 'false'(String,optional) - Default false, Whether vouchers should be consolidated by account heads and only totals should be included in the result. True results in only summary to be included in the output. False results in all vouchers with details to be included in the output
+    + `open_only`: 'true'(String) - True will retrieve only those vouchers which are not yet marked as exported. 
+
++ Response 200 (application/json)
+
+{
+    "result": [ 
+        { 
+        "receipt_store_center": "", 
+        "transaction_type": "N", 
+        "po_number": "", 
+        "account_group": 1, 
+        "voucher_date": 1480962600000, 
+        "gross_amount": 300, 
+        "item_code": "GREG", 
+        "round_off_amount": 0, 
+        "voucher_no": "AB16000504", 
+        "grn_date": "", 
+        "voucher_ref": "", 
+        "outhouse_name": "", 
+        "quantity": 1, 
+        "visit_type": "o", 
+        "bill_open_date": 1481016635618, 
+        "prescribing_doctor": "", 
+        "payee_doctor": "", 
+        "custom_1": "300.00", 
+        "custom_5": "0", 
+        "points_redeemed": 0, 
+        "custom_4": "Revenue-Other Services", 
+        "points_redeemed_amount": 0, 
+        "custom_3": "", 
+        "is_tpa": "N", 
+        "custom_2": "", 
+        "supplier_name": "", 
+        "custom_9": "", 
+        "custom_8": "", 
+        "custom_7": "", 
+        "custom_6": "", 
+        "discount_amount": 0, 
+        "cost_amount": 0, 
+        "purchase_vat_amount": 0, 
+        "center_name": "abc", 
+        "mod_time": 1481016635528, 
+        "item_name": "", 
+        "sales_vat_percent": 0, 
+        "visit_id": "OP121135", 
+        "admitting_doctor": "Center Doc3", 
+        "invoice_no": "", 
+        "charge_head": "General Registration", 
+        "mr_no": "MR012871", 
+        "receipt_store": "", 
+        "update_status": 1, 
+        "net_amount": 300, 
+        "issue_store_center": "", 
+        "points_redeemed_rate": 0, 
+        "custom_11": "", 
+        "custom_10": "", 
+        "remarks": "", 
+        "invoice_date": "", 
+        "unit_rate": 0, 
+        "audit_control_number": "", 
+        "currency": "", 
+        "old_mr_no": "", 
+        "insurance_co": "", 
+        "counter_no": "", 
+        "po_date": "", 
+        "tax_amount": 0, 
+        "item_category_id": 0, 
+        "issue_store": "", 
+        "credit_account": "Revenue-Other Services", 
+        "currency_conversion_rate": 0, 
+        "debit_account": "Counter Receipts", 
+        "bill_no": "AB16000504", 
+        "conducting_department": "", 
+        "voucher_type": "HOSPBILLS", 
+        "conductiong_doctor": "", 
+        "incoimng_hospital": "", 
+        "bill_finalized_date": "", 
+        "referral_doctor": "", 
+        "guid": "ACC0000000000001", 
+        "unit": "", 
+        "admitting_department": "Laboratory", 
+        "service_sub_group": "Direct Charge", 
+        "charge_group": "Registration", 
+        "center_id": 18, 
+        "sales_vat_amount": 0, 
+        "purchase_vat_percent": 0, 
+        "service_group": "Direct Charge" 
+        } 
+    ],
+    "return_code": "2001",
+    "return_message": "Success"
+}
+
+Error codes
+Http Status: 200
+2001: "Success"
+2004: “No matching data found”
+Http Status: 401
+1001: “Session has expired, please login again”
+Http Status: 400
+1021: “Mandatory fields are not supplied”
+1021: “Invalid input parameters”
+Http Status: 500
+500: “Failed to retrieve accounting vouchers”
+
+### Events Data [GET /api/accounting/events/list.json]
+
+Endpoint to get accounting events Data
+
++ Request
+    + Headers
+        request_handler_key : xxxxxxxxx
+        
++ Parameters
+    + `from_date`: `2018-03-19T10:30:00Z` (date, required)
+    + `to_date`: `2018-03-19T10:30:00Z` (date, optional) - Default current date
+    + `event_type`: 'FINALIZE_BILL' (String,optional)
+    
+
++ Response 200 (application/json)
+
+{
+"events" : [
+    { 
+    "entity_name" : "BILL"
+    "entity_id": "BN000234", 
+    "event_name": “FINALIZED",
+    "event_date_time": "2017-12-06 16:02:53"
+    }
+],
+"return_code": "2001",
+"return_message": "Success"
+}
+
+Error codes
+Http Status: 200
+2001: "Success"
+2004: “No  matching data found”
+Http Status: 401
+1001: “Session has expired, please login again”
+Http Status: 400
+1021: “Invalid input parameters”
+1021: “Mandatory fields are not supplied”
+Http Status: 500
+500: “Failed to retrieve accounting events”
+
+### Update Export Status [POST /api/accounting/exportstatus/update.json]
+
+Endpoint to update export status
+
++ Request
+    + Headers
+        request_handler_key : xxxxxxxxx
+        
++ Parameters
+    + `guid`: `ACC0000001` (String)
+    + `new_status`: `1` (String)
+
+
++ Response 200 (application/json)
+
+{ 
+    "return_code": "2001",
+    "return_message": "Success"
+}
+
+Error codes
+Http Status: 200
+2001: "Success"
+2004: "No matching data found"
+Http Status: 500
+500: "Failed to update accounting vouchers"
+Http Status: 401
+1001: "Session has expired, please login again"
+Http Status: 400
+1021: "Invalid input parameters"
+
+## Inventory [/]
+
+### Create Item Master [POST /api/storeitem/create.json]
+
+Endpoint to create item master
+
++ Request
+    + Headers
+        request_handler_key : xxxxxxxxx
+        
++ Parameters
+    + `cust_item_code`: `demo` (string)
+    + `medicine_name`: `capillary tubes` (string)
+    + `medicine_short_name`: `capillary tubes` (string)
+    + `status`: `A` (string)
+    + `integration_category_id`: `ici-01` (string)
+    + `integration_manf_id`: `imi-01` (string)
+    + `item_strength`: `demo` (string)
+    + `integration_strength_unit_id`: `isui-01` (string)
+    + `integration_form_id`: `ifi-01` (string)
+    + `integration_medicine_route_id`: `["imri-01", "imri-02"]` (string[])
+    + `value`: `demo` (string)
+    + `integration_uom_id`: `iuomi-01` (string)
+    + `package_type`: `pack-type` (string)
+    + `consumption_uom`: `demo` (string)
+    + `consumption_capacity`: `12.00` (numeric(10,2))
+    + `integration_generic_name_id`: `igni-01` (string)
+    + `integration_service_sub_group_id`: `issgi-01` (string)
+    + `max_cost_price`: `15.00` (numerice(15,2))
+    + `supplier_name`: `demo-suplier` (string)
+    + `invoice_details`: `demo-invoice` (string)
+    + `integration_control_type_id`: `icti-01` (string)
+    + `integration_insurance_category_id`: `["iici-01", "iici-02"]` (string[])
+    + `prior_auth_required`: `N` (string)
+    + `integration_group_id`: `igi-01` (string)
+    + `tax_type`: `M` (string)
+    + `bin`: `bin` (string)
+    + `batch_no_applicable`: `Y` (string)
+    + `item_selling_price`: `10.00` (numeric)
+    + `high_cost_consumable`: `N` (string)
+    + `allow_zero_claim_amount`: `i` (string)
+    + `integration_subgroup_id`: `isgi-01` (string)
+
++ Response 201 (application/json)
+
+{
+    "INFO": [
+        "Item created successfully. But value for tax_type is not appropriate, So setting default value : M"
+    ],
+    "return_message": "Item capillary tubes created successfully.",
+    "return_code": "201"
+}
+
+Error codes
+201: "Item capillary tubes created successfully."
+Http Status: 409
+409: "capillary tubes already exists..Item not created."
+Http Status: 400
+400 : Mandatory fields are not provided
+1001: "Invalid request token,please login again."
+
+{
+    "validationErrors": {
+        "manf_name": [
+            "Manf Name cannot be null / empty"
+        ],
+        "integration_category_id": [
+            "integration_category_id cannot be null / empty"
+        ]
+     }
+     "error": {
+          "status": 400,
+          "displayMessage": "Validation has failed"
+     }
+}
+
+### Update Item Master [POST /api/storeitem/update.json]
+
+Endpoint to update item master
+
++ Request
+    + Headers
+        request_handler_key : xxxxxxxxx
+        
++ Parameters
+    + `cust_item_code`: `demo` (string)
+    + `medicine_name`: `capillary tubes` (string)
+    + `medicine_short_name`: `capillary tubes` (string)
+    + `status`: `A` (string)
+    + `integration_category_id`: `ici-01` (string)
+    + `integration_manf_id`: `imi-01` (string)
+    + `item_strength`: `demo` (string)
+    + `integration_strength_unit_id`: `isui-01` (string)
+    + `integration_form_id`: `ifi-01` (string)
+    + `integration_medicine_route_id`: `["imri-01", "imri-02"]` (string[])
+    + `value`: `demo` (string)
+    + `package_type`: `pack-type` (string)
+    + `consumption_uom`: `demo` (string)
+    + `consumption_capacity`: `12.00` (numeric(10,2))
+    + `integration_generic_name_id`: `igni-01` (string)
+    + `integration_service_sub_group_id`: `issgi-01` (string)
+    + `max_cost_price`: `15.00` (numerice(15,2))
+    + `supplier_name`: `demo-suplier` (string)
+    + `invoice_details`: `demo-invoice` (string)
+    + `integration_control_type_id`: `icti-01` (string)
+    + `integration_insurance_category_id`: `["iici-01", "iici-02"]` (string[])
+    + `prior_auth_required`: `N` (string)
+    + `integration_group_id`: `igi-01` (string)
+    + `tax_type`: `M` (string)
+    + `bin`: `bin` (string)
+    + `batch_no_applicable`: `Y` (string)
+    + `item_selling_price`: `10.00` (numeric)
+    + `high_cost_consumable`: `N` (string)
+    + `allow_zero_claim_amount`: `i` (string)
+    + `integration_subgroup_id`: `isgi-01` (string)
+
++ Response 202 (application/json)
+
+{ 
+    "return_code": "202",
+    "return_message": "Item updated successfully.."
+}
+
+Error codes
+201: "capillary tubes updated successfully.."
+Http Status: 409
+409: "MEDICINE_NAME already exists.."
+Http Status: 400
+400 : Mandatory fields are not provided
+1001: "Invalid request token,please login again."
+
+{
+    "validationErrors": {
+        "manf_name": [
+            "Manf Name cannot be null / empty"
+        ],
+        "integration_category_id": [
+            "integration_category_id cannot be null / empty"
+        ]
+     }
+     "error": {
+          "status": 400,
+          "displayMessage": "Validation has failed"
+     }
+}

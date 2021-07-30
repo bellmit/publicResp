@@ -1,0 +1,286 @@
+{
+    "description": "This report shows all deposit receipts with patient and payer details.",
+    "allowNoDate": true,
+    "dateFields": [
+        "deposit_date"
+    ],
+    "defaultOrder": "receipt_no",
+    "defaultShowFields": [
+        "mr_no",
+        "full_name",
+        "deposit_payer_name",
+        "deposit_type",
+        "payment_mode",
+        "amount"
+    ],
+    "fields": {
+        "mr_no": {
+            "dataType": "string",
+            "displayName": "MR No.",
+            "filterable": true,
+            "groupable": true,
+            "name": "mr_no",
+            "table": "dep",
+            "width": "65"
+        },
+        "receipt_no": {
+            "displayName": "Receipt No.",
+            "expression": "dep.receipt_id",
+            "name": "receipt_no",
+            "table": "dep",
+            "width": "65"
+        },
+        "deposit_date": {
+            "displayName": "Deposit Date",
+            "expression": "date(dep.display_date)",
+            "dataType": "date",
+            "width": "65"
+        },
+        "deposit_type": {
+            "displayName": "Deposit Type",
+            "expression": "(CASE WHEN dep.receipt_type ='R' THEN 'Deposits' WHEN dep.receipt_type = 'F' THEN 'Deposit Returns' END)",
+            "width": "80",
+            "groupable": true,
+            "filterable": true,
+            "allowedValues": [
+                "Deposits",
+                "Deposit Returns"
+            ]
+        },
+        "username": {
+            "displayName": "User Name",
+            "width": "80",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT emp_username AS username FROM u_user JOIN u_role USING(role_id) WHERE portal_id='N'",
+            "expression": "dep.created_by",
+            "name": "username",
+            "table": "dep"
+        },
+        "realized": {
+            "displayName": "Realized",
+            "expression": "(CASE WHEN dep.realized='Y' THEN 'Yes' ELSE 'No' END)",
+            "width": "40",
+            "filterable": true,
+            "groupable": true,
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "deposit_remarks": {
+            "displayName": "Narration",
+            "width": "85",
+            "groupable": false,
+            "expression": "dep.remarks",
+            "name": "deposit_remarks",
+            "table": "dep"
+        },
+        "deposit_payer_name": {
+            "displayName": "Payer Name",
+            "expression": "dep.payer_name",
+            "width": "90"
+        },
+        "payer_phone_no": {
+            "displayName": "Payer Phone No",
+            "expression": "dep.payer_mobile_number",
+            "width": "50"
+        },
+        "payer_address": {
+            "displayName": "Payer Address",
+            "expression": "dep.payer_address",
+            "width": "60"
+        },
+        "paid_by": {
+            "displayName": "Paid By",
+            "width": "60"
+        },
+        "payment_mode": {
+            "displayName": "Payment Mode",
+            "width": "60",
+            "groupable": true,
+            "filterable": true,
+            "allowedValuesQuery": "SELECT payment_mode FROM payment_mode_master ORDER BY payment_mode",
+            "expression": "pm.payment_mode",
+            "name": "payment_mode",
+            "table": "pm"
+        },
+        "bank_name": {
+            "displayName": "Bank Name",
+            "width": "80",
+            "groupable": true,
+            "filterable": true
+        },
+        "reference_no": {
+            "displayName": "Ref No.",
+            "width": "60"
+        },
+        "card_type": {
+            "displayName": "Card Type",
+            "width": "60",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT card_type FROM card_type_master ORDER BY card_type",
+            "expression": "ctm.card_type",
+            "name": "card_type",
+            "table": "ctm"
+        },
+        "card_number": {
+            "displayName": "Card Number",
+            "width": "65",
+            "filterable": true
+        },
+        "card_expdate": {
+            "displayName": "Card Exp. Date",
+            "width": "65",
+            "filterable": true,
+            "dataType": "date",
+            "expression": "dep.card_exp_date"
+        },
+        "card_holder_name": {
+            "displayName": "Card Holder Name",
+            "width": "65",
+            "filterable": true
+        },
+        "card_auth_code": {
+            "displayName": "Card Auth Code",
+            "width": "65",
+            "groupable": true,
+            "filterable": true
+        },
+        "credit_card_commission_amount": {
+            "displayName": "Commission Amount",
+            "width": 50,
+            "groupable": true,
+            "filterable": true,
+            "allowedValuesQuery": "SELECT credit_card_commission_amount FROM bill_receipts br join receipts r on (r.receipt_id=br.receipt_no) left join card_type_master c on (c.card_type_id=r.card_type_id)"
+        },
+        "credit_card_commission_percentage": {
+            "displayName": "Commission Percentage",
+            "width": 50,
+            "groupable": true,
+            "filterable": true,
+            "allowedValuesQuery": "SELECT credit_card_commission_percentage FROM bill_receipts br join receipts r on (r.receipt_id=br.receipt_no) left join card_type_master c on (c.card_type_id=r.card_type_id)"
+        },
+        "bank_batch_no": {
+            "displayName": "Bank Batch No.",
+            "width": "65",
+            "groupable": true,
+            "filterable": true
+        },
+        "currency": {
+            "displayName": "Foreign Currency",
+            "width": "50",
+            "groupable": true,
+            "filterable": true,
+            "allowedValuesQuery": "SELECT currency FROM foreign_currency ORDER BY currency",
+            "expression": "fc.currency",
+            "name": "currency",
+            "table": "fc"
+        },
+        "exchange_rate": {
+            "displayName": "Exchange Rate",
+            "width": "65",
+            "dataType": "numeric",
+            "filterable": true
+        },
+        "exchange_date": {
+            "displayName": "Exchange Date",
+            "dataType": "date",
+            "width": "65",
+            "groupable": true,
+            "filterable": true
+        },
+        "currency_amt": {
+            "displayName": "Currency Amt",
+            "dataType": "numeric",
+            "width": "65",
+            "filterable": true
+        },
+        "amount": {
+            "dataType": "numeric",
+            "displayName": "Amount",
+            "aggFunction": "sum",
+            "width": "60",
+            "filterable": true,
+            "table": "dep"
+        },
+        "net_amount": {
+            "dataType": "numeric",
+            "displayName": "Net Amount",
+            "aggFunction": "sum",
+            "expression": "(case when dep.receipt_type = 'R' then  (dep.amount/(1+(dep.total_tax_rate/100))) else (dep.amount - (-rref.tax_amount)) end)",
+            "width": "60",
+            "filterable": true,
+            "table": "dep,rref"
+        },
+        "tax_amount": {
+            "dataType": "numeric",
+            "displayName": "Tax Amount",
+            "aggFunction": "sum",
+            "expression": "(case when dep.receipt_type = 'R' then (dep.amount - (dep.amount/(1+(dep.total_tax_rate/100)))) else -(rref.tax_amount) end)",
+            "width": "60",
+            "filterable": true,
+            "table": "dep,rref"
+        },
+        "total_tax_percentage": {
+            "dataType": "numeric",
+            "displayName": "Total Tax percentage",
+            "aggFunction": "sum",
+            "expression": "(case when dep.receipt_type = 'R' then ((dep.total_tax_rate)||'%') else 'N/A' end)",
+            "width": "60",
+            "filterable": true
+        }
+    },
+    "includes": [
+        "PatientDetailFields.srjs"
+    ],
+    "queryUnits": [
+        {
+            "joinTables": [
+                {
+                    "alias": "pm",
+                    "dependsOn": "dep",
+                    "expression": "ON (pm.mode_id = dep.payment_mode_id)",
+                    "name": "payment_mode_master",
+                    "type": "JOIN"
+                },
+                {
+                    "alias": "ctm",
+                    "dependsOn": "dep",
+                    "expression": "ON (ctm.card_type_id = dep.card_type_id)",
+                    "name": "card_type_master",
+                    "type": "LEFT"
+                },
+                {
+                    "alias": "fc",
+                    "dependsOn": "dep",
+                    "expression": "ON (fc.currency_id = dep.currency_id)",
+                    "name": "foreign_currency",
+                    "type": "LEFT"
+                },
+                {
+                    "alias": "pd",
+                    "dependsOn": "dep",
+                    "expression": "ON (pd.mr_no=dep.mr_no)",
+                    "name": "patient_details",
+                    "type": "JOIN"
+                },
+                {
+                    "alias": "rref",
+                    "dependsOn": "dep",
+                    "expression": "ON (rref.refund_receipt_id=dep.receipt_id)",
+                    "name": "(select sum(rr.tax_amount) as tax_amount, rr.refund_receipt_id from receipt_refund_reference rr join receipts r on(rr.refund_receipt_id = r.receipt_id) group by rr.refund_receipt_id)",
+                    "type": "LEFT"
+                }
+            ],
+            "mainTableAlias": "dep",
+            "mainTableName": "receipts",
+            "whereExpression": "dep.is_deposit='t'"
+        }
+    ],
+    "reportGroup": "Billing Reports",
+    "title": "Deposit Receipts Report"
+}

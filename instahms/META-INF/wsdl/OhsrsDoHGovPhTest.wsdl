@@ -1,0 +1,652 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<definitions xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns="uhmistrn.doh.gov.ph/ahsr/webservice/index.php?wsdl" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns="http://schemas.xmlsoap.org/wsdl/" targetNamespace="uhmistrn.doh.gov.ph/ahsr/webservice/index.php?wsdl">
+<types>
+<xsd:schema targetNamespace="uhmistrn.doh.gov.ph/ahsr/webservice/index.php?wsdl"
+>
+ <xsd:import namespace="http://schemas.xmlsoap.org/soap/encoding/" />
+ <xsd:import namespace="http://schemas.xmlsoap.org/wsdl/" />
+</xsd:schema>
+</types>
+<message name="authenticationTestRequest">
+  <part name="username" type="xsd:string" />
+  <part name="password" type="xsd:string" /></message>
+<message name="authenticationTestResponse">
+  <part name="return" type="xsd:string" /></message>
+<message name="getDataTableRequest">
+  <part name="hfhudcode" type="xsd:string" />
+  <part name="reportingyear" type="xsd:string" />
+  <part name="table" type="xsd:string" /></message>
+<message name="getDataTableResponse">
+  <part name="return" type="xsd:string" /></message>
+<message name="genInfoClassificationRequest">
+  <part name="hfhudcode" type="xsd:string" />
+  <part name="servicecapability" type="xsd:string" />
+  <part name="general" type="xsd:string" />
+  <part name="specialty" type="xsd:string" />
+  <part name="specialtyspecify" type="xsd:string" />
+  <part name="traumacapability" type="xsd:string" />
+  <part name="natureofownership" type="xsd:string" />
+  <part name="government" type="xsd:string" />
+  <part name="national" type="xsd:string" />
+  <part name="local" type="xsd:string" />
+  <part name="privateorg" type="xsd:string" />
+  <part name="reportingyear" type="xsd:string" />
+  <part name="ownershipothers" type="xsd:string" /></message>
+<message name="genInfoClassificationResponse">
+  <part name="return" type="xsd:string" /></message>
+<message name="genInfoQualityManagementRequest">
+  <part name="hfhudcode" type="xsd:string" />
+  <part name="qualitymgmttype" type="xsd:string" />
+  <part name="description" type="xsd:string" />
+  <part name="certifyingbody" type="xsd:string" />
+  <part name="philhealthaccreditation" type="xsd:string" />
+  <part name="validityfrom" type="xsd:string" />
+  <part name="validityto" type="xsd:string" />
+  <part name="reportingyear" type="xsd:string" /></message>
+<message name="genInfoQualityManagementResponse">
+  <part name="return" type="xsd:string" /></message>
+<message name="genInfoBedCapacityRequest">
+  <part name="hfhudcode" type="xsd:string" />
+  <part name="abc" type="xsd:string" />
+  <part name="implementingbeds" type="xsd:string" />
+  <part name="bor" type="xsd:string" />
+  <part name="reportingyear" type="xsd:string" /></message>
+<message name="genInfoBedCapacityResponse">
+  <part name="return" type="xsd:string" /></message>
+<message name="hospOptSummaryOfPatientsRequest">
+  <part name="hfhudcode" type="xsd:string" />
+  <part name="totalinpatients" type="xsd:string" />
+  <part name="totalnewborn" type="xsd:string" />
+  <part name="totaldischarges" type="xsd:string" />
+  <part name="totalpad" type="xsd:string" />
+  <part name="totalibd" type="xsd:string" />
+  <part name="totalinpatienttransto" type="xsd:string" />
+  <part name="totalinpatienttransfrom" type="xsd:string" />
+  <part name="totalpatientsremaining" type="xsd:string" />
+  <part name="reportingyear" type="xsd:string" /></message>
+<message name="hospOptSummaryOfPatientsResponse">
+  <part name="return" type="xsd:string" /></message>
+<message name="hospOptDischargesSpecialtyRequest">
+  <part name="hfhudcode" type="xsd:string" />
+  <part name="typeofservice" type="xsd:string" />
+  <part name="nopatients" type="xsd:string" />
+  <part name="totallengthstay" type="xsd:string" />
+  <part name="nppay" type="xsd:string" />
+  <part name="nphservicecharity" type="xsd:string" />
+  <part name="nphtotal" type="xsd:string" />
+  <part name="phpay" type="xsd:string" />
+  <part name="phservice" type="xsd:string" />
+  <part name="phtotal" type="xsd:string" />
+  <part name="hmo" type="xsd:string" />
+  <part name="owwa" type="xsd:string" />
+  <part name="recoveredimproved" type="xsd:string" />
+  <part name="transferred" type="xsd:string" />
+  <part name="hama" type="xsd:string" />
+  <part name="absconded" type="xsd:string" />
+  <part name="unimproved" type="xsd:string" />
+  <part name="deathsbelow48" type="xsd:string" />
+  <part name="deathsover48" type="xsd:string" />
+  <part name="totaldeaths" type="xsd:string" />
+  <part name="totaldischarges" type="xsd:string" />
+  <part name="remarks" type="xsd:string" />
+  <part name="reportingyear" type="xsd:string" /></message>
+<message name="hospOptDischargesSpecialtyResponse">
+  <part name="return" type="xsd:string" /></message>
+<message name="hospOptDischargesSpecialtyOthersRequest">
+  <part name="hfhudcode" type="xsd:string" />
+  <part name="othertypeofservicespecify" type="xsd:string" />
+  <part name="nopatients" type="xsd:string" />
+  <part name="totallengthstay" type="xsd:string" />
+  <part name="nppay" type="xsd:string" />
+  <part name="nphservicecharity" type="xsd:string" />
+  <part name="nphtotal" type="xsd:string" />
+  <part name="phpay" type="xsd:string" />
+  <part name="phservice" type="xsd:string" />
+  <part name="phtotal" type="xsd:string" />
+  <part name="hmo" type="xsd:string" />
+  <part name="owwa" type="xsd:string" />
+  <part name="recoveredimproved" type="xsd:string" />
+  <part name="transferred" type="xsd:string" />
+  <part name="hama" type="xsd:string" />
+  <part name="absconded" type="xsd:string" />
+  <part name="unimproved" type="xsd:string" />
+  <part name="deathsbelow48" type="xsd:string" />
+  <part name="deathsover48" type="xsd:string" />
+  <part name="totaldeaths" type="xsd:string" />
+  <part name="totaldischarges" type="xsd:string" />
+  <part name="remarks" type="xsd:string" />
+  <part name="reportingyear" type="xsd:string" /></message>
+<message name="hospOptDischargesSpecialtyOthersResponse">
+  <part name="return" type="xsd:string" /></message>
+<message name="hospOptDischargesMorbidityRequest">
+  <part name="hfhudcode" type="xsd:string" />
+  <part name="icd10desc" type="xsd:string" />
+  <part name="munder1" type="xsd:string" />
+  <part name="funder1" type="xsd:string" />
+  <part name="m1to4" type="xsd:string" />
+  <part name="f1to4" type="xsd:string" />
+  <part name="m5to9" type="xsd:string" />
+  <part name="f5to9" type="xsd:string" />
+  <part name="m10to14" type="xsd:string" />
+  <part name="f10to14" type="xsd:string" />
+  <part name="m15to19" type="xsd:string" />
+  <part name="f15to19" type="xsd:string" />
+  <part name="m20to24" type="xsd:string" />
+  <part name="f20to24" type="xsd:string" />
+  <part name="m25to29" type="xsd:string" />
+  <part name="f25to29" type="xsd:string" />
+  <part name="m30to34" type="xsd:string" />
+  <part name="f30to34" type="xsd:string" />
+  <part name="m35to39" type="xsd:string" />
+  <part name="f35to39" type="xsd:string" />
+  <part name="m40to44" type="xsd:string" />
+  <part name="f40to44" type="xsd:string" />
+  <part name="m45to49" type="xsd:string" />
+  <part name="f45to49" type="xsd:string" />
+  <part name="m50to54" type="xsd:string" />
+  <part name="f50to54" type="xsd:string" />
+  <part name="m55to59" type="xsd:string" />
+  <part name="f55to59" type="xsd:string" />
+  <part name="m60to64" type="xsd:string" />
+  <part name="f60to64" type="xsd:string" />
+  <part name="m65to69" type="xsd:string" />
+  <part name="f65to69" type="xsd:string" />
+  <part name="m70over" type="xsd:string" />
+  <part name="f70over" type="xsd:string" />
+  <part name="msubtotal" type="xsd:string" />
+  <part name="fsubtotal" type="xsd:string" />
+  <part name="grandtotal" type="xsd:string" />
+  <part name="icd10code" type="xsd:string" />
+  <part name="icd10category" type="xsd:string" />
+  <part name="reportingyear" type="xsd:string" /></message>
+<message name="hospOptDischargesMorbidityResponse">
+  <part name="return" type="xsd:string" /></message>
+<message name="hospOptDischargesNumberDeliveriesRequest">
+  <part name="hfhudcode" type="xsd:string" />
+  <part name="totalifdelivery" type="xsd:string" />
+  <part name="totallbvdelivery" type="xsd:string" />
+  <part name="totallbcdelivery" type="xsd:string" />
+  <part name="totalotherdelivery" type="xsd:string" />
+  <part name="reportingyear" type="xsd:string" /></message>
+<message name="hospOptDischargesNumberDeliveriesResponse">
+  <part name="return" type="xsd:string" /></message>
+<message name="hospOptDischargesOPVRequest">
+  <part name="hfhudcode" type="xsd:string" />
+  <part name="newpatient" type="xsd:string" />
+  <part name="revisit" type="xsd:string" />
+  <part name="adult" type="xsd:string" />
+  <part name="pediatric" type="xsd:string" />
+  <part name="adultgeneralmedicine" type="xsd:string" />
+  <part name="specialtynonsurgical" type="xsd:string" />
+  <part name="surgical" type="xsd:string" />
+  <part name="antenatal" type="xsd:string" />
+  <part name="postnatal" type="xsd:string" />
+  <part name="reportingyear" type="xsd:string" /></message>
+<message name="hospOptDischargesOPVResponse">
+  <part name="return" type="xsd:string" /></message>
+<message name="hospOptDischargesOPDRequest">
+  <part name="hfhudcode" type="xsd:string" />
+  <part name="opdconsultations" type="xsd:string" />
+  <part name="number" type="xsd:string" />
+  <part name="icd10code" type="xsd:string" />
+  <part name="icd10category" type="xsd:string" />
+  <part name="reportingyear" type="xsd:string" /></message>
+<message name="hospOptDischargesOPDResponse">
+  <part name="return" type="xsd:string" /></message>
+<message name="hospOptDischargesERRequest">
+  <part name="hfhudcode" type="xsd:string" />
+  <part name="erconsultations" type="xsd:string" />
+  <part name="number" type="xsd:string" />
+  <part name="icd10code" type="xsd:string" />
+  <part name="icd10category" type="xsd:string" />
+  <part name="reportingyear" type="xsd:string" /></message>
+<message name="hospOptDischargesERResponse">
+  <part name="return" type="xsd:string" /></message>
+<message name="hospOptDischargesTestingRequest">
+  <part name="hfhudcode" type="xsd:string" />
+  <part name="testinggroup" type="xsd:string" />
+  <part name="testing" type="xsd:string" />
+  <part name="number" type="xsd:string" />
+  <part name="reportingyear" type="xsd:string" /></message>
+<message name="hospOptDischargesTestingResponse">
+  <part name="return" type="xsd:string" /></message>
+<message name="hospOptDischargesEVRequest">
+  <part name="hfhudcode" type="xsd:string" />
+  <part name="emergencyvisits" type="xsd:string" />
+  <part name="emergencyvisitsadult" type="xsd:string" />
+  <part name="emergencyvisitspediatric" type="xsd:string" />
+  <part name="evfromfacilitytoanother" type="xsd:string" />
+  <part name="reportingyear" type="xsd:string" /></message>
+<message name="hospOptDischargesEVResponse">
+  <part name="return" type="xsd:string" /></message>
+<message name="hospitalOperationsDeathsRequest">
+  <part name="hfhudcode" type="xsd:string" />
+  <part name="totaldeaths" type="xsd:string" />
+  <part name="totaldeaths48down" type="xsd:string" />
+  <part name="totaldeaths48up" type="xsd:string" />
+  <part name="totalerdeaths" type="xsd:string" />
+  <part name="totaldoa" type="xsd:string" />
+  <part name="totalstillbirths" type="xsd:string" />
+  <part name="totalneonataldeaths" type="xsd:string" />
+  <part name="totalmaternaldeaths" type="xsd:string" />
+  <part name="totaldeathsnewborn" type="xsd:string" />
+  <part name="totaldischargedeaths" type="xsd:string" />
+  <part name="grossdeathrate" type="xsd:string" />
+  <part name="ndrnumerator" type="xsd:string" />
+  <part name="ndrdenominator" type="xsd:string" />
+  <part name="netdeathrate" type="xsd:string" />
+  <part name="reportingyear" type="xsd:string" /></message>
+<message name="hospitalOperationsDeathsResponse">
+  <part name="return" type="xsd:string" /></message>
+<message name="hospitalOperationsMortalityDeathsRequest">
+  <part name="hfhudcode" type="xsd:string" />
+  <part name="icd10desc" type="xsd:string" />
+  <part name="munder1" type="xsd:string" />
+  <part name="funder1" type="xsd:string" />
+  <part name="m1to4" type="xsd:string" />
+  <part name="f1to4" type="xsd:string" />
+  <part name="m5to9" type="xsd:string" />
+  <part name="f5to9" type="xsd:string" />
+  <part name="m10to14" type="xsd:string" />
+  <part name="f10to14" type="xsd:string" />
+  <part name="m15to19" type="xsd:string" />
+  <part name="f15to19" type="xsd:string" />
+  <part name="m20to24" type="xsd:string" />
+  <part name="f20to24" type="xsd:string" />
+  <part name="m25to29" type="xsd:string" />
+  <part name="f25to29" type="xsd:string" />
+  <part name="m30to34" type="xsd:string" />
+  <part name="f30to34" type="xsd:string" />
+  <part name="m35to39" type="xsd:string" />
+  <part name="f35to39" type="xsd:string" />
+  <part name="m40to44" type="xsd:string" />
+  <part name="f40to44" type="xsd:string" />
+  <part name="m45to49" type="xsd:string" />
+  <part name="f45to49" type="xsd:string" />
+  <part name="m50to54" type="xsd:string" />
+  <part name="f50to54" type="xsd:string" />
+  <part name="m55to59" type="xsd:string" />
+  <part name="f55to59" type="xsd:string" />
+  <part name="m60to64" type="xsd:string" />
+  <part name="f60to64" type="xsd:string" />
+  <part name="m65to69" type="xsd:string" />
+  <part name="f65to69" type="xsd:string" />
+  <part name="m70over" type="xsd:string" />
+  <part name="f70over" type="xsd:string" />
+  <part name="msubtotal" type="xsd:string" />
+  <part name="fsubtotal" type="xsd:string" />
+  <part name="grandtotal" type="xsd:string" />
+  <part name="icd10code" type="xsd:string" />
+  <part name="icd10category" type="xsd:string" />
+  <part name="reportingyear" type="xsd:string" /></message>
+<message name="hospitalOperationsMortalityDeathsResponse">
+  <part name="return" type="xsd:string" /></message>
+<message name="hospitalOperationsHAIRequest">
+  <part name="hfhudcode" type="xsd:string" />
+  <part name="numhai" type="xsd:string" />
+  <part name="numdischarges" type="xsd:string" />
+  <part name="infectionrate" type="xsd:string" />
+  <part name="patientnumvap" type="xsd:string" />
+  <part name="totalventilatordays" type="xsd:string" />
+  <part name="resultvap" type="xsd:string" />
+  <part name="patientnumbsi" type="xsd:string" />
+  <part name="totalnumcentralline" type="xsd:string" />
+  <part name="resultbsi" type="xsd:string" />
+  <part name="patientnumuti" type="xsd:string" />
+  <part name="totalcatheterdays" type="xsd:string" />
+  <part name="resultuti" type="xsd:string" />
+  <part name="numssi" type="xsd:string" />
+  <part name="totalproceduresdone" type="xsd:string" />
+  <part name="resultssi" type="xsd:string" />
+  <part name="reportingyear" type="xsd:string" /></message>
+<message name="hospitalOperationsHAIResponse">
+  <part name="return" type="xsd:string" /></message>
+<message name="hospitalOperationsMajorOptRequest">
+  <part name="hfhudcode" type="xsd:string" />
+  <part name="operationcode" type="xsd:string" />
+  <part name="surgicaloperation" type="xsd:string" />
+  <part name="number" type="xsd:string" />
+  <part name="reportingyear" type="xsd:string" /></message>
+<message name="hospitalOperationsMajorOptResponse">
+  <part name="return" type="xsd:string" /></message>
+<message name="hospitalOperationsMinorOptRequest">
+  <part name="hfhudcode" type="xsd:string" />
+  <part name="operationcode" type="xsd:string" />
+  <part name="surgicaloperation" type="xsd:string" />
+  <part name="number" type="xsd:string" />
+  <part name="reportingyear" type="xsd:string" /></message>
+<message name="hospitalOperationsMinorOptResponse">
+  <part name="return" type="xsd:string" /></message>
+<message name="staffingPatternRequest">
+  <part name="hfhudcode" type="xsd:string" />
+  <part name="professiondesignation" type="xsd:string" />
+  <part name="specialtyboardcertified" type="xsd:string" />
+  <part name="fulltime40permanent" type="xsd:string" />
+  <part name="fulltime40contractual" type="xsd:string" />
+  <part name="parttimepermanent" type="xsd:string" />
+  <part name="parttimecontractual" type="xsd:string" />
+  <part name="activerotatingaffiliate" type="xsd:string" />
+  <part name="outsourced" type="xsd:string" />
+  <part name="reportingyear" type="xsd:string" /></message>
+<message name="staffingPatternResponse">
+  <part name="return" type="xsd:string" /></message>
+<message name="staffingPatternOthersRequest">
+  <part name="hfhudcode" type="xsd:string" />
+  <part name="parent" type="xsd:string" />
+  <part name="professiondesignation" type="xsd:string" />
+  <part name="specialtyboardcertified" type="xsd:string" />
+  <part name="fulltime40permanent" type="xsd:string" />
+  <part name="fulltime40contractual" type="xsd:string" />
+  <part name="parttimepermanent" type="xsd:string" />
+  <part name="parttimecontractual" type="xsd:string" />
+  <part name="activerotatingaffiliate" type="xsd:string" />
+  <part name="outsourced" type="xsd:string" />
+  <part name="reportingyear" type="xsd:string" /></message>
+<message name="staffingPatternOthersResponse">
+  <part name="return" type="xsd:string" /></message>
+<message name="expensesRequest">
+  <part name="hfhudcode" type="xsd:string" />
+  <part name="salarieswages" type="xsd:string" />
+  <part name="employeebenefits" type="xsd:string" />
+  <part name="allowances" type="xsd:string" />
+  <part name="totalps" type="xsd:string" />
+  <part name="totalamountmedicine" type="xsd:string" />
+  <part name="totalamountmedicalsupplies" type="xsd:string" />
+  <part name="totalamountutilities" type="xsd:string" />
+  <part name="totalamountnonmedicalservice" type="xsd:string" />
+  <part name="totalmooe" type="xsd:string" />
+  <part name="amountinfrastructure" type="xsd:string" />
+  <part name="amountequipment" type="xsd:string" />
+  <part name="totalco" type="xsd:string" />
+  <part name="grandtotal" type="xsd:string" />
+  <part name="reportingyear" type="xsd:string" /></message>
+<message name="expensesResponse">
+  <part name="return" type="xsd:string" /></message>
+<message name="revenuesRequest">
+  <part name="hfhudcode" type="xsd:string" />
+  <part name="amountfromdoh" type="xsd:string" />
+  <part name="amountfromlgu" type="xsd:string" />
+  <part name="amountfromdonor" type="xsd:string" />
+  <part name="amountfromprivateorg" type="xsd:string" />
+  <part name="amountfromphilhealth" type="xsd:string" />
+  <part name="amountfrompatient" type="xsd:string" />
+  <part name="amountfromreimbursement" type="xsd:string" />
+  <part name="amountfromothersources" type="xsd:string" />
+  <part name="grandtotal" type="xsd:string" />
+  <part name="reportingyear" type="xsd:string" /></message>
+<message name="revenuesResponse">
+  <part name="return" type="xsd:string" /></message>
+<message name="submittedReportsRequest">
+  <part name="hfhudcode" type="xsd:string" />
+  <part name="reportingyear" type="xsd:string" />
+  <part name="reportingstatus" type="xsd:string" />
+  <part name="reportedby" type="xsd:string" />
+  <part name="designation" type="xsd:string" />
+  <part name="section" type="xsd:string" />
+  <part name="department" type="xsd:string" />
+  <part name="datereported" type="xsd:string" /></message>
+<message name="submittedReportsResponse">
+  <part name="return" type="xsd:string" /></message>
+<message name="createNEHEHRSVaccountRequest">
+  <part name="hfhudcode" type="xsd:string" />
+  <part name="hfhudname" type="xsd:string" />
+  <part name="fhudaddress" type="xsd:string" />
+  <part name="regcode" type="xsd:string" />
+  <part name="provcode" type="xsd:string" />
+  <part name="ctymuncode" type="xsd:string" />
+  <part name="bgycode" type="xsd:string" />
+  <part name="fhudtelno1" type="xsd:string" />
+  <part name="fhudtelno2" type="xsd:string" />
+  <part name="fhudfaxno" type="xsd:string" />
+  <part name="fhudemail" type="xsd:string" />
+  <part name="headlname" type="xsd:string" />
+  <part name="headfname" type="xsd:string" />
+  <part name="headmname" type="xsd:string" />
+  <part name="accessKey" type="xsd:string" /></message>
+<message name="createNEHEHRSVaccountResponse">
+  <part name="return" type="xsd:string" /></message>
+<portType name="Online_Health_Facility_Statistical_Report_SystemPortType">
+  <operation name="authenticationTest">
+    <input message="tns:authenticationTestRequest"/>
+    <output message="tns:authenticationTestResponse"/>
+  </operation>
+  <operation name="getDataTable">
+    <input message="tns:getDataTableRequest"/>
+    <output message="tns:getDataTableResponse"/>
+  </operation>
+  <operation name="genInfoClassification">
+    <input message="tns:genInfoClassificationRequest"/>
+    <output message="tns:genInfoClassificationResponse"/>
+  </operation>
+  <operation name="genInfoQualityManagement">
+    <input message="tns:genInfoQualityManagementRequest"/>
+    <output message="tns:genInfoQualityManagementResponse"/>
+  </operation>
+  <operation name="genInfoBedCapacity">
+    <input message="tns:genInfoBedCapacityRequest"/>
+    <output message="tns:genInfoBedCapacityResponse"/>
+  </operation>
+  <operation name="hospOptSummaryOfPatients">
+    <input message="tns:hospOptSummaryOfPatientsRequest"/>
+    <output message="tns:hospOptSummaryOfPatientsResponse"/>
+  </operation>
+  <operation name="hospOptDischargesSpecialty">
+    <input message="tns:hospOptDischargesSpecialtyRequest"/>
+    <output message="tns:hospOptDischargesSpecialtyResponse"/>
+  </operation>
+  <operation name="hospOptDischargesSpecialtyOthers">
+    <input message="tns:hospOptDischargesSpecialtyOthersRequest"/>
+    <output message="tns:hospOptDischargesSpecialtyOthersResponse"/>
+  </operation>
+  <operation name="hospOptDischargesMorbidity">
+    <input message="tns:hospOptDischargesMorbidityRequest"/>
+    <output message="tns:hospOptDischargesMorbidityResponse"/>
+  </operation>
+  <operation name="hospOptDischargesNumberDeliveries">
+    <input message="tns:hospOptDischargesNumberDeliveriesRequest"/>
+    <output message="tns:hospOptDischargesNumberDeliveriesResponse"/>
+  </operation>
+  <operation name="hospOptDischargesOPV">
+    <input message="tns:hospOptDischargesOPVRequest"/>
+    <output message="tns:hospOptDischargesOPVResponse"/>
+  </operation>
+  <operation name="hospOptDischargesOPD">
+    <input message="tns:hospOptDischargesOPDRequest"/>
+    <output message="tns:hospOptDischargesOPDResponse"/>
+  </operation>
+  <operation name="hospOptDischargesER">
+    <input message="tns:hospOptDischargesERRequest"/>
+    <output message="tns:hospOptDischargesERResponse"/>
+  </operation>
+  <operation name="hospOptDischargesTesting">
+    <input message="tns:hospOptDischargesTestingRequest"/>
+    <output message="tns:hospOptDischargesTestingResponse"/>
+  </operation>
+  <operation name="hospOptDischargesEV">
+    <input message="tns:hospOptDischargesEVRequest"/>
+    <output message="tns:hospOptDischargesEVResponse"/>
+  </operation>
+  <operation name="hospitalOperationsDeaths">
+    <input message="tns:hospitalOperationsDeathsRequest"/>
+    <output message="tns:hospitalOperationsDeathsResponse"/>
+  </operation>
+  <operation name="hospitalOperationsMortalityDeaths">
+    <input message="tns:hospitalOperationsMortalityDeathsRequest"/>
+    <output message="tns:hospitalOperationsMortalityDeathsResponse"/>
+  </operation>
+  <operation name="hospitalOperationsHAI">
+    <input message="tns:hospitalOperationsHAIRequest"/>
+    <output message="tns:hospitalOperationsHAIResponse"/>
+  </operation>
+  <operation name="hospitalOperationsMajorOpt">
+    <input message="tns:hospitalOperationsMajorOptRequest"/>
+    <output message="tns:hospitalOperationsMajorOptResponse"/>
+  </operation>
+  <operation name="hospitalOperationsMinorOpt">
+    <input message="tns:hospitalOperationsMinorOptRequest"/>
+    <output message="tns:hospitalOperationsMinorOptResponse"/>
+  </operation>
+  <operation name="staffingPattern">
+    <input message="tns:staffingPatternRequest"/>
+    <output message="tns:staffingPatternResponse"/>
+  </operation>
+  <operation name="staffingPatternOthers">
+    <input message="tns:staffingPatternOthersRequest"/>
+    <output message="tns:staffingPatternOthersResponse"/>
+  </operation>
+  <operation name="expenses">
+    <input message="tns:expensesRequest"/>
+    <output message="tns:expensesResponse"/>
+  </operation>
+  <operation name="revenues">
+    <input message="tns:revenuesRequest"/>
+    <output message="tns:revenuesResponse"/>
+  </operation>
+  <operation name="submittedReports">
+    <input message="tns:submittedReportsRequest"/>
+    <output message="tns:submittedReportsResponse"/>
+  </operation>
+  <operation name="createNEHEHRSVaccount">
+    <input message="tns:createNEHEHRSVaccountRequest"/>
+    <output message="tns:createNEHEHRSVaccountResponse"/>
+  </operation>
+</portType>
+<binding name="Online_Health_Facility_Statistical_Report_SystemBinding" type="tns:Online_Health_Facility_Statistical_Report_SystemPortType">
+  <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+  <operation name="authenticationTest">
+    <soap:operation soapAction="http://uhmistrn.doh.gov.ph/ahsr/webservice/index.php/authenticationTest" style="rpc"/>
+    <input><soap:body namespace="uhmistrn.doh.gov.ph/ahsr/webservice/index.php?wsdl"/></input>
+    <output><soap:body namespace="uhmistrn.doh.gov.ph/ahsr/webservice/index.php?wsdl"/></output>
+  </operation>
+  <operation name="getDataTable">
+    <soap:operation soapAction="http://uhmistrn.doh.gov.ph/ahsr/webservice/index.php/getDataTable" style="rpc"/>
+    <input><soap:body namespace="uhmistrn.doh.gov.ph/ahsr/webservice/index.php?wsdl"/></input>
+    <output><soap:body namespace="uhmistrn.doh.gov.ph/ahsr/webservice/index.php?wsdl"/></output>
+  </operation>
+  <operation name="genInfoClassification">
+    <soap:operation soapAction="http://uhmistrn.doh.gov.ph/ahsr/webservice/index.php/genInfoClassification" style="rpc"/>
+    <input><soap:body namespace="uhmistrn.doh.gov.ph/ahsr/webservice/index.php?wsdl"/></input>
+    <output><soap:body namespace="uhmistrn.doh.gov.ph/ahsr/webservice/index.php?wsdl"/></output>
+  </operation>
+  <operation name="genInfoQualityManagement">
+    <soap:operation soapAction="http://uhmistrn.doh.gov.ph/ahsr/webservice/index.php/genInfoQualityManagement" style="rpc"/>
+    <input><soap:body namespace="uhmistrn.doh.gov.ph/ahsr/webservice/index.php?wsdl"/></input>
+    <output><soap:body namespace="uhmistrn.doh.gov.ph/ahsr/webservice/index.php?wsdl"/></output>
+  </operation>
+  <operation name="genInfoBedCapacity">
+    <soap:operation soapAction="http://uhmistrn.doh.gov.ph/ahsr/webservice/index.php/genInfoBedCapacity" style="rpc"/>
+    <input><soap:body namespace="uhmistrn.doh.gov.ph/ahsr/webservice/index.php?wsdl"/></input>
+    <output><soap:body namespace="uhmistrn.doh.gov.ph/ahsr/webservice/index.php?wsdl"/></output>
+  </operation>
+  <operation name="hospOptSummaryOfPatients">
+    <soap:operation soapAction="http://uhmistrn.doh.gov.ph/ahsr/webservice/index.php/hospOptSummaryOfPatients" style="rpc"/>
+    <input><soap:body namespace="uhmistrn.doh.gov.ph/ahsr/webservice/index.php?wsdl"/></input>
+    <output><soap:body namespace="uhmistrn.doh.gov.ph/ahsr/webservice/index.php?wsdl"/></output>
+  </operation>
+  <operation name="hospOptDischargesSpecialty">
+    <soap:operation soapAction="http://uhmistrn.doh.gov.ph/ahsr/webservice/index.php/hospOptDischargesSpecialty" style="rpc"/>
+    <input><soap:body namespace="uhmistrn.doh.gov.ph/ahsr/webservice/index.php?wsdl"/></input>
+    <output><soap:body namespace="uhmistrn.doh.gov.ph/ahsr/webservice/index.php?wsdl"/></output>
+  </operation>
+  <operation name="hospOptDischargesSpecialtyOthers">
+    <soap:operation soapAction="http://uhmistrn.doh.gov.ph/ahsr/webservice/index.php/hospOptDischargesSpecialtyOthers" style="rpc"/>
+    <input><soap:body namespace="uhmistrn.doh.gov.ph/ahsr/webservice/index.php?wsdl"/></input>
+    <output><soap:body namespace="uhmistrn.doh.gov.ph/ahsr/webservice/index.php?wsdl"/></output>
+  </operation>
+  <operation name="hospOptDischargesMorbidity">
+    <soap:operation soapAction="http://uhmistrn.doh.gov.ph/ahsr/webservice/index.php/hospOptDischargesMorbidity" style="rpc"/>
+    <input><soap:body namespace="uhmistrn.doh.gov.ph/ahsr/webservice/index.php?wsdl"/></input>
+    <output><soap:body namespace="uhmistrn.doh.gov.ph/ahsr/webservice/index.php?wsdl"/></output>
+  </operation>
+  <operation name="hospOptDischargesNumberDeliveries">
+    <soap:operation soapAction="http://uhmistrn.doh.gov.ph/ahsr/webservice/index.php/hospOptDischargesNumberDeliveries" style="rpc"/>
+    <input><soap:body namespace="uhmistrn.doh.gov.ph/ahsr/webservice/index.php?wsdl"/></input>
+    <output><soap:body namespace="uhmistrn.doh.gov.ph/ahsr/webservice/index.php?wsdl"/></output>
+  </operation>
+  <operation name="hospOptDischargesOPV">
+    <soap:operation soapAction="http://uhmistrn.doh.gov.ph/ahsr/webservice/index.php/hospOptDischargesOPV" style="rpc"/>
+    <input><soap:body namespace="uhmistrn.doh.gov.ph/ahsr/webservice/index.php?wsdl"/></input>
+    <output><soap:body namespace="uhmistrn.doh.gov.ph/ahsr/webservice/index.php?wsdl"/></output>
+  </operation>
+  <operation name="hospOptDischargesOPD">
+    <soap:operation soapAction="http://uhmistrn.doh.gov.ph/ahsr/webservice/index.php/hospOptDischargesOPD" style="rpc"/>
+    <input><soap:body namespace="uhmistrn.doh.gov.ph/ahsr/webservice/index.php?wsdl"/></input>
+    <output><soap:body namespace="uhmistrn.doh.gov.ph/ahsr/webservice/index.php?wsdl"/></output>
+  </operation>
+  <operation name="hospOptDischargesER">
+    <soap:operation soapAction="http://uhmistrn.doh.gov.ph/ahsr/webservice/index.php/hospOptDischargesER" style="rpc"/>
+    <input><soap:body namespace="uhmistrn.doh.gov.ph/ahsr/webservice/index.php?wsdl"/></input>
+    <output><soap:body namespace="uhmistrn.doh.gov.ph/ahsr/webservice/index.php?wsdl"/></output>
+  </operation>
+  <operation name="hospOptDischargesTesting">
+    <soap:operation soapAction="http://uhmistrn.doh.gov.ph/ahsr/webservice/index.php/hospOptDischargesTesting" style="rpc"/>
+    <input><soap:body namespace="uhmistrn.doh.gov.ph/ahsr/webservice/index.php?wsdl"/></input>
+    <output><soap:body namespace="uhmistrn.doh.gov.ph/ahsr/webservice/index.php?wsdl"/></output>
+  </operation>
+  <operation name="hospOptDischargesEV">
+    <soap:operation soapAction="http://uhmistrn.doh.gov.ph/ahsr/webservice/index.php/hospOptDischargesEV" style="rpc"/>
+    <input><soap:body namespace="uhmistrn.doh.gov.ph/ahsr/webservice/index.php?wsdl"/></input>
+    <output><soap:body namespace="uhmistrn.doh.gov.ph/ahsr/webservice/index.php?wsdl"/></output>
+  </operation>
+  <operation name="hospitalOperationsDeaths">
+    <soap:operation soapAction="http://uhmistrn.doh.gov.ph/ahsr/webservice/index.php/hospitalOperationsDeaths" style="rpc"/>
+    <input><soap:body namespace="uhmistrn.doh.gov.ph/ahsr/webservice/index.php?wsdl"/></input>
+    <output><soap:body namespace="uhmistrn.doh.gov.ph/ahsr/webservice/index.php?wsdl"/></output>
+  </operation>
+  <operation name="hospitalOperationsMortalityDeaths">
+    <soap:operation soapAction="http://uhmistrn.doh.gov.ph/ahsr/webservice/index.php/hospitalOperationsMortalityDeaths" style="rpc"/>
+    <input><soap:body namespace="uhmistrn.doh.gov.ph/ahsr/webservice/index.php?wsdl"/></input>
+    <output><soap:body namespace="uhmistrn.doh.gov.ph/ahsr/webservice/index.php?wsdl"/></output>
+  </operation>
+  <operation name="hospitalOperationsHAI">
+    <soap:operation soapAction="http://uhmistrn.doh.gov.ph/ahsr/webservice/index.php/hospitalOperationsHAI" style="rpc"/>
+    <input><soap:body namespace="uhmistrn.doh.gov.ph/ahsr/webservice/index.php?wsdl"/></input>
+    <output><soap:body namespace="uhmistrn.doh.gov.ph/ahsr/webservice/index.php?wsdl"/></output>
+  </operation>
+  <operation name="hospitalOperationsMajorOpt">
+    <soap:operation soapAction="http://uhmistrn.doh.gov.ph/ahsr/webservice/index.php/hospitalOperationsMajorOpt" style="rpc"/>
+    <input><soap:body namespace="uhmistrn.doh.gov.ph/ahsr/webservice/index.php?wsdl"/></input>
+    <output><soap:body namespace="uhmistrn.doh.gov.ph/ahsr/webservice/index.php?wsdl"/></output>
+  </operation>
+  <operation name="hospitalOperationsMinorOpt">
+    <soap:operation soapAction="http://uhmistrn.doh.gov.ph/ahsr/webservice/index.php/hospitalOperationsMinorOpt" style="rpc"/>
+    <input><soap:body namespace="uhmistrn.doh.gov.ph/ahsr/webservice/index.php?wsdl"/></input>
+    <output><soap:body namespace="uhmistrn.doh.gov.ph/ahsr/webservice/index.php?wsdl"/></output>
+  </operation>
+  <operation name="staffingPattern">
+    <soap:operation soapAction="http://uhmistrn.doh.gov.ph/ahsr/webservice/index.php/staffingPattern" style="rpc"/>
+    <input><soap:body namespace="uhmistrn.doh.gov.ph/ahsr/webservice/index.php?wsdl"/></input>
+    <output><soap:body namespace="uhmistrn.doh.gov.ph/ahsr/webservice/index.php?wsdl"/></output>
+  </operation>
+  <operation name="staffingPatternOthers">
+    <soap:operation soapAction="http://uhmistrn.doh.gov.ph/ahsr/webservice/index.php/staffingPatternOthers" style="rpc"/>
+    <input><soap:body namespace="uhmistrn.doh.gov.ph/ahsr/webservice/index.php?wsdl"/></input>
+    <output><soap:body namespace="uhmistrn.doh.gov.ph/ahsr/webservice/index.php?wsdl"/></output>
+  </operation>
+  <operation name="expenses">
+    <soap:operation soapAction="http://uhmistrn.doh.gov.ph/ahsr/webservice/index.php/expenses" style="rpc"/>
+    <input><soap:body namespace="uhmistrn.doh.gov.ph/ahsr/webservice/index.php?wsdl"/></input>
+    <output><soap:body namespace="uhmistrn.doh.gov.ph/ahsr/webservice/index.php?wsdl"/></output>
+  </operation>
+  <operation name="revenues">
+    <soap:operation soapAction="http://uhmistrn.doh.gov.ph/ahsr/webservice/index.php/revenues" style="rpc"/>
+    <input><soap:body namespace="uhmistrn.doh.gov.ph/ahsr/webservice/index.php?wsdl"/></input>
+    <output><soap:body namespace="uhmistrn.doh.gov.ph/ahsr/webservice/index.php?wsdl"/></output>
+  </operation>
+  <operation name="submittedReports">
+    <soap:operation soapAction="http://uhmistrn.doh.gov.ph/ahsr/webservice/index.php/submittedReports" style="rpc"/>
+    <input><soap:body namespace="uhmistrn.doh.gov.ph/ahsr/webservice/index.php?wsdl"/></input>
+    <output><soap:body namespace="uhmistrn.doh.gov.ph/ahsr/webservice/index.php?wsdl"/></output>
+  </operation>
+  <operation name="createNEHEHRSVaccount">
+    <soap:operation soapAction="http://uhmistrn.doh.gov.ph/ahsr/webservice/index.php/createNEHEHRSVaccount" style="rpc"/>
+    <input><soap:body namespace="uhmistrn.doh.gov.ph/ahsr/webservice/index.php?wsdl"/></input>
+    <output><soap:body namespace="uhmistrn.doh.gov.ph/ahsr/webservice/index.php?wsdl"/></output>
+  </operation>
+</binding>
+<service name="Online_Health_Facility_Statistical_Report_System">
+  <port name="Online_Health_Facility_Statistical_Report_SystemPort" binding="tns:Online_Health_Facility_Statistical_Report_SystemBinding">
+    <soap:address location="http://uhmistrn.doh.gov.ph/ahsr/webservice/index.php"/>
+  </port>
+</service>
+</definitions>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+		xmlns:p="http://www.springframework.org/schema/p"
+		xmlns:context="http://www.springframework.org/schema/context"
+		xmlns:mvc="http://www.springframework.org/schema/mvc" 
+		xmlns:tx="http://www.springframework.org/schema/tx"
+		xmlns:jpa="http://www.springframework.org/schema/data/jpa" xmlns:aop="http://www.springframework.org/schema/aop"
+		xsi:schemaLocation="http://www.springframework.org/schema/beans  
+		http://www.springframework.org/schema/beans/spring-beans.xsd  
+		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/mvc
+		http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/tx
+	    http://www.springframework.org/schema/tx/spring-tx.xsd">
+	    
+	    
+	    <!-- For Billing Module related configuration -->
+	    
+	    <bean id="billController" class="com.insta.hms.core.billing.BillController">
+				<property name = "authMode" value = "passthru"/>
+			</bean>
+			<bean id="billIPController" class="com.insta.hms.core.billing.BillIPController">
+				<property name = "actionId" value = "new_ip_bill"/>
+			</bean>
+			<bean id="billOPController" class="com.insta.hms.core.billing.BillOPController">
+				<property name = "actionId" value = "new_op_bill"/>
+			</bean>
+		
+	    <bean id="accountingController" class="com.insta.hms.extension.billing.AccountingController">
+	    	<!-- The action id should eventually change -->
+			<property name="actionId" value="billing_zoho_export"/>
+			<!-- 
+			<property name = "authMode" value = "passthru"/>
+			 -->
+		</bean>
+	    
+	    
+   	    <!-- Self Pay Claims Controller -->
+	    
+	    <bean id="selfPaySubmissionController" class=" com.insta.hms.integration.insurance.submission.SelfPaySubmissionController">
+			<property name = "actionId" value = "ins_selfpay"/>
+		</bean>
+		
+		 <bean id="newBillController" class=" com.insta.hms.core.billing.NewBillController">
+			<property name = "authMode" value = "passthru"/>
+		</bean>
+		
+		<!--  Allocation Controller -->	
+
+		<bean id="allocationController" class="com.insta.hms.core.billing.AllocationController">	
+			<property name = "authMode" value = "passthru" />	
+		</bean>
+	    
+</beans>

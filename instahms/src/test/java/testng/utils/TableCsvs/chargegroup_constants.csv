@@ -1,0 +1,2 @@
+chargegroup_id,chargegroup_name,ip_applicable,op_applicable,associated_module,display_order,ordereable,dependent_module
+'DIA','Diagnostics','Y','Y','mod_diagnostics','5','t',

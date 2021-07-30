@@ -1,0 +1,38 @@
+HOST: http://localhost:8080/instahms/generalUploadDocuments/
+
+# Upload Documents API
+
+## Documents Collection [/getdoclist.json{?mr_no,patient_id}]
+
+### List All Documents [GET]
+
+Get details for the documents filtered by mrNo/visitId.
+
++ Parameters
+    + mr_no: `MR1` (String,optional) - mrNo of patient
+    + patient_id: `OP1` (String,optional) - visitId
+
++ Response 200 (application/json)
+
+        {
+            "mapList": [
+                {
+                    "content_type": "image/png",
+                    "doc_name": "fdfdfdfd",
+                    "doc_type": "SYS_RG",
+                    "doc_id": 36465,
+                    "original_extension": "png",
+                    "username":"InstaAdmin",
+                    "patient_id":"OP000001"
+                },
+                {
+                    "content_type": "image/png",
+                    "doc_name": "sfdfdfdf",
+                    "doc_id": 36464,
+                    "doc_type": "SYS_RG",
+                    "original_extension": "png",
+                    "username":"InstaAdmin",
+                    "patient_id":"OP000001"
+                }
+            ]
+        }

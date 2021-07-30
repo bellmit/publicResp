@@ -1,0 +1,437 @@
+{
+    "title": "Stock Issues",
+    "description": "This Report shows the list of items sent out on a particular date and list of items sent out and not yet received by the hospital.",
+    "reportGroup": "Store Mgmt Reports",
+    "dateFields": [
+        "date_time"
+    ],
+    "includes": [
+        "StoreItemFields.srjs",
+        "PatientVisitFields.srjs",
+        "PatientDetailFields.srjs"
+    ],
+    "queryUnits": [
+        {
+            "mainTableName": "stock_issue_main",
+            "mainTableAlias": "sim",
+            "joinTables": [
+                {
+                    "name": "stock_issue_details",
+                    "alias": "id",
+                    "dependsOn": "sim",
+                    "expression": "ON id.user_issue_no=sim.user_issue_no"
+                },
+                {
+                    "name": "store_stock_details",
+                    "alias": "ssd",
+                    "dependsOn": "id",
+                    "expression": "ON (id.item_batch_id=ssd.item_batch_id AND sim.dept_from=ssd.dept_id)"
+                },
+                {
+                    "name": "store_item_details",
+                    "alias": "sid",
+                    "dependsOn": "id",
+                    "expression": "ON (sid.medicine_id=id.medicine_id)"
+                },
+                {
+                    "includeName": "StoreItemFields.srjs"
+                },
+                {
+                    "name": "patient_registration",
+                    "alias": "pr",
+                    "dependsOn": "sim",
+                    "expression": "ON pr.patient_id=sim.issued_to"
+                },
+                {
+                    "name": "patient_details",
+                    "alias": "pd",
+                    "dependsOn": "pr",
+                    "expression": "on pr.mr_no = pd.mr_no"
+                },
+                {
+                    "name": "stores",
+                    "alias": "str",
+                    "dependsOn": "sim",
+                    "expression": "on str.dept_id = dept_from"
+                },
+                {
+                    "name": "hospital_center_master",
+                    "alias": "ihcm",
+                    "dependsOn": "str",
+                    "expression": "ON(ihcm.center_id=str.center_id)"
+                },
+                {
+                    "name": "organization_details",
+                    "alias": "pod",
+                    "dependsOn": "pr",
+                    "expression": "ON(pr.org_id=pod.org_id)"
+                },
+                {
+                    "name": "store_item_rates",
+                    "alias": "sir",
+                    "type": "LEFT",
+                    "dependsOn": "pod,sim",
+                    "expression": "ON (id.medicine_id = sir.medicine_id AND sir.store_rate_plan_id = pod.store_rate_plan_id)"
+                },
+                {
+                    "name": "store_item_rates",
+                    "alias": "ssir",
+                    "type": "LEFT",
+                    "dependsOn": "sim,str",
+                    "expression": "ON (id.medicine_id = ssir.medicine_id AND ssir.store_rate_plan_id = str.store_rate_plan_id)"
+                },
+                {
+                    "name": "store_patient_indent_item_issue_no_details",
+                    "alias": "spid",
+                    "dependsOn": "id",
+                    "expression": "ON spid.item_issue_no=id.item_issue_no",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "store_item_batch_details",
+                    "alias": "sibd",
+                    "type": "JOIN",
+                    "dependsOn": "id",
+                    "expression": "ON (sibd.item_batch_id = id.item_batch_id)"
+                },
+                {
+                    "name": "ha_item_code_type",
+                    "alias": "hict",
+                    "type": "LEFT",
+                    "dependsOn": "sid,ihcm",
+                    "expression": "ON (sid.medicine_id=hict.medicine_id AND ihcm.health_authority = hict.health_authority)"
+                },
+                {
+                    "name": "store_item_codes",
+                    "alias": "sic",
+                    "type": "LEFT",
+                    "dependsOn": "hict",
+                    "expression": "ON (sic.medicine_id = hict.medicine_id AND hict.code_type=sic.code_type)"
+                }
+            ]
+        }
+    ],
+    "fields": {
+        "batch_no": {
+            "table": "sibd",
+            "displayName": "Batch",
+            "width": 60,
+            "filterable": true,
+            "groupable": true,
+            "expression": "sibd.batch_no"
+        },
+        "date_time": {
+            "table": "sim",
+            "displayName": "Date",
+            "dataType": "date",
+            "width": 60,
+            "expression": "date_time::date"
+        },
+        "user_type": {
+            "table": "sim",
+            "displayName": "User Type",
+            "width": 60,
+            "filterable": true,
+            "groupable": true,
+            "allowedValues": [
+                "Hospital",
+                "Patient"
+            ]
+        },
+        "issued_to": {
+            "table": "pd,sm",
+            "displayName": "Issued To",
+            "width": 120,
+            "filterable": true,
+            "groupable": true,
+            "expressionLines": [
+                " CASE WHEN user_type='Patient' ",
+                " THEN get_patient_full_name(sm.salutation, pd.patient_name, pd.middle_name, pd.last_name) ",
+                " ELSE issued_to END "
+            ]
+        },
+        "indent_no": {
+            "table": "id",
+            "displayName": "Indent No",
+            "width": 50,
+            "dataType": "numeric",
+            "decimalType": "integer",
+            "filterable": true,
+            "groupable": true
+        },
+        "user_issue_no": {
+            "table": "id",
+            "displayName": "Issue No",
+            "width": 50,
+            "dataType": "numeric",
+            "decimalType": "integer",
+            "filterable": true,
+            "groupable": true
+        },
+        "gate_pass_issued": {
+            "table": "sim",
+            "displayName": "Gate Pass Issued",
+            "width": 40,
+            "filterable": true,
+            "groupable": true,
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "expression": "CASE WHEN gatepass_id is not null THEN 'Yes' ELSE 'No' END"
+        },
+        "return_done": {
+            "table": "id",
+            "displayName": "Return Done",
+            "width": 40,
+            "filterable": true,
+            "groupable": true,
+            "allowedValues": [
+                "Yes",
+                "No",
+                "Partial"
+            ],
+            "expression": "CASE WHEN id.qty=return_qty THEN 'Yes' WHEN return_qty>0 THEN 'Partial' ELSE 'No' END"
+        },
+        "issued_qty": {
+            "table": "id",
+            "displayName": "Issued Qty",
+            "width": 80,
+            "dataType": "numeric",
+            "aggFunction": "sum",
+            "expression": "id.qty"
+        },
+        "return_qty": {
+            "table": "id",
+            "displayName": "Return Qty",
+            "width": 40,
+            "dataType": "numeric",
+            "aggFunction": "sum"
+        },
+        "dept_name": {
+            "table": "str",
+            "displayName": "Issuing Store",
+            "width": 80,
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT dept_name FROM stores ORDER BY dept_name"
+        },
+        "center_name": {
+            "table": "ihcm",
+            "displayName": "Store Center Name",
+            "width": 100,
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT center_name FROM hospital_center_master WHERE center_id!=0 order by center_name"
+        },
+        "pkg_mrp": {
+            "table": "id,sibd",
+            "displayName": "Package MRP",
+            "width": 60,
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "filterable": true,
+            "expression": "CASE WHEN pkg_mrp != 0.0 THEN id.pkg_mrp ELSE sibd.mrp END"
+        },
+        "unit_mrp": {
+            "table": "id,sibd",
+            "displayName": "Unit MRP",
+            "width": 60,
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "filterable": true,
+            "expression": "CASE WHEN pkg_mrp != 0.0 THEN id.pkg_mrp/id.pkg_size ELSE sibd.mrp/id.pkg_size END"
+        },
+        "mrp_value": {
+            "table": "id,sibd",
+            "displayName": "Value(MRP)",
+            "width": 60,
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "aggFunction": "sum",
+            "filterable": true,
+            "expression": "CASE WHEN pkg_mrp != 0.0 THEN (id.pkg_mrp/id.pkg_size)*id.qty ELSE (sibd.mrp/id.pkg_size)*id.qty END"
+        },
+        "cp_value": {
+            "table": "id",
+            "displayName": "Value(CP)",
+            "width": 60,
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "aggFunction": "sum",
+            "filterable": true,
+            "expression": "cost_value"
+        },
+        "rate": {
+            "table": "id",
+            "displayName": "Amount",
+            "width": 60,
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "aggFunction": "sum",
+            "filterable": true,
+            "expression": "COALESCE(amount,pkg_mrp)"
+        },
+        "margin": {
+            "table": "id",
+            "displayName": "Margin",
+            "width": 60,
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "aggFunction": "sum",
+            "filterable": true,
+            "expression": "COALESCE(amount,pkg_mrp) - (pkg_cp/pkg_size*id.qty)"
+        },
+        "margin_per": {
+            "table": "id",
+            "displayName": "Margin%",
+            "width": 60,
+            "dataType": "numeric",
+            "decimalType": "percent",
+            "filterable": true,
+            "expression": "CASE WHEN pkg_mrp = 0 THEN 0 ELSE (COALESCE(amount,pkg_mrp) - (pkg_cp/pkg_size*id.qty))/(COALESCE(amount,pkg_mrp))*100 END"
+        },
+        "tax_rate": {
+            "table": "sir,ssir,sid",
+            "displayName": "Tax Rate",
+            "width": 60,
+            "dataType": "numeric",
+            "decimalType": "percent",
+            "filterable": true,
+            "expressionLines": [
+                "COALESCE(sir.tax_rate,COALESCE(ssir.tax_rate,sid.tax_rate))"
+            ]
+        },
+        "tax": {
+            "table": "id,sid,sir,ssir",
+            "displayName": "Tax",
+            "width": 60,
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "aggFunction": "sum",
+            "filterable": true,
+            "expressionLines": [
+                "CASE WHEN COALESCE(sir.tax_type,COALESCE(ssir.tax_type,sid.tax_type)) IN ('M','MB') THEN (pkg_mrp/pkg_size)*id.qty * COALESCE(sir.tax_rate,COALESCE(ssir.tax_rate,sid.tax_rate))/(100+COALESCE(sir.tax_rate,COALESCE(ssir.tax_rate,sid.tax_rate)))",
+                " ELSE (pkg_cp/pkg_size)*id.qty * COALESCE(sir.tax_rate,COALESCE(ssir.tax_rate,sid.tax_rate))/(100+COALESCE(sir.tax_rate,COALESCE(ssir.tax_rate,sid.tax_rate))) END"
+            ]
+        },
+        "tax_type": {
+            "table": "sir,ssir,pod,str,sid",
+            "displayName": "Tax Basis",
+            "width": 90,
+            "filterable": true,
+            "groupable": true,
+            "allowedValues": [
+                "MRP with bonus",
+                "MRP without bonus",
+                "Cost Price Based"
+            ],
+            "expressionLines": [
+                " CASE WHEN COALESCE(sir.tax_type,COALESCE(ssir.tax_type,sid.tax_type)) ='MB' then 'MRP with bonus' ",
+                " WHEN COALESCE(sir.tax_type,COALESCE(ssir.tax_type,sid.tax_type))='M' then 'MRP without bonus' ",
+                " WHEN COALESCE(sir.tax_type,COALESCE(ssir.tax_type,sid.tax_type))='C' then 'CP Based without bonus' ELSE 'CP Based with bonus' END "
+            ]
+        },
+        "reference": {
+            "table": "sim",
+            "displayName": "Issue Reason",
+            "width": 100
+        },
+        "mr_no": {
+            "table": "pd",
+            "displayName": "MR No.",
+            "width": 65,
+            "groupable": true,
+            "filterable": true
+        },
+        "username": {
+            "table": "sim",
+            "displayName": "User Name",
+            "width": 80,
+            "groupable": true,
+            "filterable": true
+        },
+        "patient_indent_no": {
+            "table": "spid",
+            "width": 80,
+            "displayName": "Patient Indent No",
+            "groupable": true,
+            "filterable": true
+        },
+        "return_cost_value": {
+            "table": "id",
+            "width": 80,
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "aggFunction": "sum",
+            "displayName": "Return Value (CP)"
+        },
+        "net_cost_value": {
+            "displayName": "Net Value(CP)",
+            "dataType": "numeric",
+            "width": 80,
+            "decimalType": "amount",
+            "aggFunction": "sum",
+            "expression": "( id.cost_value - id.return_cost_value ) ",
+            "table": "id"
+        },
+        "item_code": {
+            "table": "sic",
+            "displayName": "Item Code",
+            "width": 50,
+            "filterable": true,
+            "groupable": true,
+            "description": "Item Code of the item as per the master"
+        },
+        "code_type": {
+            "table": "hict",
+            "displayName": "Code Type",
+            "width": 40,
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT msc.code_type FROM mrd_supported_codes msc JOIN (select regexp_split_to_table(drug_code_type,E',') as drug_code_type,health_authority FROM health_authority_preferences) as hap ON(msc.code_type = hap.drug_code_type) JOIN health_authority_master ham ON(hap.health_authority=ham.health_authority) WHERE msc.code_category = 'Drug' order by drug_code_type"
+        },
+        "exp_dt": {
+            "table": "sibd",
+            "displayName": "Expiry Date",
+            "dataType": "date",
+            "width": 60,
+            "expression": "sibd.exp_dt",
+            "filterable": true,
+            "groupable": true
+        },
+        "item_selling_price": {
+            "table": "sir,ssir,sid",
+            "displayName": "Item Selling Price",
+            "width": 100,
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "aggFunction": "sum",
+            "filterable": true,
+            "expressionLines": [
+                "COALESCE(sir.selling_price,COALESCE(ssir.selling_price,sid.item_selling_price))"
+            ]
+        },
+        "issue_time": {
+            "allowHorizGroup": true,
+            "allowNull": false,
+            "dataType": "string",
+            "displayName": "Issue Time",
+            "expression": " to_char(date_time,'HH24:mi')::text  ",
+            "filterable": true,
+            "groupable": true,
+            "name": "issue_time",
+            "table": "sim",
+            "width": 80
+        }
+    },
+    "defaultShowFields": [
+        "date_time",
+        "item_name",
+        "user_type",
+        "issued_to",
+        "issued_qty",
+        "pkg_mrp",
+        "mrp_value"
+    ]
+}

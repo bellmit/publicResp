@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<suite name="AllocationServiceTest" verbose="10" allow-return-values="true">
+ 	<test name="allocationTest">
+ 		<classes>
+ 			<class name="testng.com.insta.hms.core.allocation.AllocationServiceTest" />
+ 			<methods>
+ 			</methods>
+ 		</classes>
+ 	</test>
+ 
+ </suite>
+ 
+ 

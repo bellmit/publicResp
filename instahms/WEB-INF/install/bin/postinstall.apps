@@ -1,0 +1,168 @@
+#!/bin/bash
+#
+# Postinstall script: this is called after the software has been copied into the
+# app root via upgrade or install. Here, we can copy files to other places in the
+# filesystem, and do any changes to the app root contents depending on specific
+# install target.
+#
+
+source `dirname $0`/functions
+source /etc/hms/options
+[ -f /etc/hms/options.$APP ] && source /etc/hms/options.$APP
+
+LOGFILE=$LOGDIR/postinstall.log
+
+if [ -z "$APPHOME" ] ; then
+       APPHOME="/root/webapps"
+fi
+
+if [ -z "$TOMCAT_HOME" ] ; then
+       TOMCAT_HOME="/usr/local/tomcat-9"
+fi
+
+if [ -z "$HMSUSER" ]; then
+       HMSUSER="root"
+fi
+
+if [ -z "$APPS_DBCONN_MAXACTIVE" ]; then
+       if [ "$ENABLE_TESTING" = 'Y' ] ; then
+              APPS_DBCONN_MAXACTIVE=15
+       else
+              APPS_DBCONN_MAXACTIVE=50
+       fi
+fi
+
+if [ -z "$APPS_DBCONN_MAXIDLE" ]; then
+       if [ "$ENABLE_TESTING" = 'Y' ] ; then
+              APPS_DBCONN_MAXIDLE=10
+       else
+              APPS_DBCONN_MAXIDLE=25
+       fi
+fi
+
+if [ -z "$APPS_DBCONN_MINIDLE" ]; then
+       if [ "$ENABLE_TESTING" = 'Y' ] ; then
+              APPS_DBCONN_MINIDLE=10
+       else
+              APPS_DBCONN_MINIDLE=50
+       fi
+fi
+
+if [ -z "$APPSQUARTZ_DBCONN_MAXACTIVE" ]; then
+       if [ "$ENABLE_TESTING" = 'Y' ] ; then
+              APPSQUARTZ_DBCONN_MAXACTIVE=10
+       else
+              APPSQUARTZ_DBCONN_MAXACTIVE=15
+       fi
+fi
+
+if [ -z "$APPSQUARTZ_DBCONN_MAXIDLE" ]; then
+       if [ "$ENABLE_TESTING" = 'Y' ] ; then
+              APPSQUARTZ_DBCONN_MAXIDLE=6
+       else
+              APPSQUARTZ_DBCONN_MAXIDLE=10
+       fi
+fi
+
+if [ -z "$APPSQUARTZ_DBCONN_MINIDLE" ]; then
+       if [ "$ENABLE_TESTING" = 'Y' ] ; then
+              APPSQUARTZ_DBCONN_MINIDLE=3
+       else
+              APPSQUARTZ_DBCONN_MINIDLE=5
+       fi
+fi
+
+APPHOMEESCAPED=$(sed 's/\//\\\//g' <<< $APPHOME)
+
+
+###########################
+# PREREQUISITES
+# The following must be installed already on the server. The rest, we take care of
+# in this script
+#  - default tomcat 9 installation at /usr/local/tomcat-9
+#  - java installation at /usr/lib/jvm/java
+###########################
+
+HMSDB=$2
+QUARTZDB=$HMSDB"_q"
+[ -z $HMSDB ] && do_log "Cannot upgrade, hmsdb missing in postinstall" && exit 1
+#
+# Install our deployment descriptor and modify the primrose conf file
+#
+do_log "Installing deployment descriptor"
+CONTEXT_XML=$TOMCAT_HOME/conf/Catalina/localhost/insta${APP}.xml
+
+sudo cp $INSTPATH/context.xml $CONTEXT_XML
+sudo sed --in-place -e "s/__app__/$APP/g" $CONTEXT_XML
+sudo sed --in-place -e "s/__apphome__/$APPHOMEESCAPED/g" $CONTEXT_XML
+sudo sed --in-place -e "s/__hmsapp__/$HMSDB/g" $CONTEXT_XML
+sudo sed --in-place -e "s/__quartzdb__/$QUARTZDB/g" $CONTEXT_XML
+
+# If a remote host is not defined, the  set it to local host else provide the DBHOST
+if [ -z "$DBHOST" -o "$DBHOST" = " " ]; then
+       sudo sed --in-place -e "s/__dbhost__/127.0.0.1/g" $CONTEXT_XML
+else
+       sudo sed --in-place -e "s/__dbhost__/$DBHOST/g" $CONTEXT_XML
+fi
+
+# If the port is not defined, set it to default port number
+if [ -z "$DBPORT" -o "$DBPORT" = " " ]; then
+       sudo sed --in-place -e "s/__dbport__/5432/g" $CONTEXT_XML
+else
+       sudo sed --in-place -e "s/__dbport__/$DBPORT/g" $CONTEXT_XML
+fi
+
+# If postgres password  is not defined, the  set it to empty
+if [ -z "$DBPASSWORD" -o "$DBPASSWORD" = " " ]; then
+       sudo sed --in-place -e "s/"__dbpassword__"/""/g" $CONTEXT_XML
+else
+       sudo sed --in-place -e "s/__dbpassword__/$DBPASSWORD/g" $CONTEXT_XML
+fi
+
+# If DBUSER  is not defined, the  set it as postgres user
+if [ -z "$DBUSER" -o "$DBUSER" = " " ]; then
+       sudo sed --in-place -e "s/"__dbuser__"/"postgres"/g" $CONTEXT_XML
+else
+       sudo sed --in-place -e "s/__dbuser__/$DBUSER/g" $CONTEXT_XML
+fi
+
+#Set Database Connection Limits for HMS Application
+sudo sed --in-place -e "s/__apps_db_minidle__/$APPS_DBCONN_MINIDLE/g" $CONTEXT_XML
+sudo sed --in-place -e "s/__apps_db_maxidle__/$APPS_DBCONN_MAXIDLE/g" $CONTEXT_XML
+sudo sed --in-place -e "s/__apps_db_maxactive__/$APPS_DBCONN_MAXACTIVE/g" $CONTEXT_XML
+
+#Set Database Connection Limits for HMS Quartz Processor
+sudo sed --in-place -e "s/__apps_quartz_minidle__/$APPSQUARTZ_DBCONN_MINIDLE/g" $CONTEXT_XML
+sudo sed --in-place -e "s/__apps_quartz_maxidle__/$APPSQUARTZ_DBCONN_MAXIDLE/g" $CONTEXT_XML
+sudo sed --in-place -e "s/__apps_quartz_maxactive__/$APPSQUARTZ_DBCONN_MAXACTIVE/g" $CONTEXT_XML
+
+
+# Ensure that our log directory exists
+#
+sudo mkdir -p /var/log/insta/$APP
+#
+# Install our application cron-job in /etc/cron.d
+#
+CRONFILE=/etc/cron.d/$APP
+sudo cp $INSTPATH/apps.cron /etc/cron.d/$APP
+sudo sed --in-place -e "s/__app__/$APP/g" $CRONFILE
+sudo sed --in-place -e "s/__apphome__/$APPHOMEESCAPED/g" $CRONFILE
+sed --in-place -e "s/__hmsuser__/$HMSUSER/g" $CRONFILE
+
+# Adjust the output of apps.log based on our app name (if not the default: apps)
+#
+if ! is_default_app ; then
+	sudo sed --in-place -e "s/apps.log/$APP.log/g" $APPROOT/WEB-INF/classes/log4j2.xml
+	sudo sed --in-place -e "s/apps-%i.log/$APP-%i.log/g" $APPROOT/WEB-INF/classes/log4j2.xml
+fi
+
+# waiting for 2 minutes for tomcat restart
+do_log "Waiting for 2 minutes for tomat start"
+sleep 120
+# Starting tomcat after api upgrade
+do_log "Starting tomcat-9"
+sudo /etc/init.d/tomcat-9 start
+
+
+
+

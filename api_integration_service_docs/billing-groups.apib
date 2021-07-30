@@ -1,0 +1,81 @@
+FORMAT: 1A
+HOST: http://polls.apiblueprint.org/
+
+# BillingGroupMasters
+
+To fetch the billing groups list
+
+## Billing groups list collection [/master/billinggroups/list.json?pageNum=1&pageSize=15]
+
+### List All Billing Groups [GET]
+
++ Response 200 (application/json)
+
+    + Body
+    
+            {
+                "paged_list": {
+                    "dto_list":[
+                    {
+                        "item_group_name":"Hospital Ward",
+                        "status":"A",
+                        "item_group_display_order": 1,
+                        "item_group_id":1
+                    },
+                    {
+                        "item_group_name":"Lab",
+                        "status":"A",
+                        "item_group_display_order": 2,
+                        "item_group_id":2
+                    },
+                    {
+                        "item_group_name":"Pharmacy",
+                        "status":"A",
+                        "item_group_display_order": 3,
+                        "item_group_id":3
+                    }
+                    ],
+                    "total_record":3,
+                    "page_size":15,
+                    "page_number":1,
+                    "count_info": { "count": 3 },
+                    "num_pages":1
+                }
+            }
+
+## Billing groups Create [/master/billinggroups/create.json]
+### Create a New Billing Group [POST]
+
+Create a new billing group
+
++ Request (application/json)
+
+        {
+            "billing_group_name": "New billing group",
+            "display_order": "4",
+            "status": "A"
+        }
+
++ Response 201 (application/json)
+
+    + Body
+
+            {}
+## Billing groups Update [/master/billinggroups/update.json]
+### Update an existing billing group [POST]
+
+Create a new billing group
+
++ Request (application/json)
+
+        {
+            "billing_group_name": "New billing group",
+            "display_order": "4",
+            "status": "A",
+        }
+
++ Response 201 (application/json)
+
+    + Body
+
+            {}

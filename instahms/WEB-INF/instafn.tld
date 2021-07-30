@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+<taglib>
+	<tlibversion>1.0</tlibversion>
+	<jspversion>2.0</jspversion>
+	<shortname>instafn</shortname>
+	<info>
+		Generic set of utilities to use as EL functions in JSP pages
+	</info>
+
+	<function>
+		<name>afmt</name>
+		<function-class>com.insta.hms.common.TagFunctions</function-class>
+		<function-signature>java.lang.String afmt(java.math.BigDecimal)</function-signature>
+	</function>
+
+	<function>
+		<name>round</name>
+		<function-class>com.insta.hms.common.TagFunctions</function-class>
+		<function-signature>java.lang.String round(java.math.BigDecimal, java.lang.String, java.lang.String)</function-signature>
+	</function>
+
+	<function>
+		<name>afmts</name>
+		<function-class>com.insta.hms.common.TagFunctions</function-class>
+		<function-signature>java.lang.String afmts(java.math.BigDecimal)</function-signature>
+	</function>
+
+	<function>
+		<name>abs</name>
+		<function-class>com.insta.hms.common.TagFunctions</function-class>
+		<function-signature>java.math.BigDecimal abs(java.math.BigDecimal)</function-signature>
+	</function>
+
+	<function>
+		<name>breakContent</name>
+		<function-class>com.insta.hms.common.TagFunctions</function-class>
+		<function-signature>java.lang.String breakContent(java.lang.String)</function-signature>
+	</function>
+
+	<function>
+		<name>breakAfterNumChar</name>
+		<function-class>com.insta.hms.common.TagFunctions</function-class>
+		<function-signature>java.lang.String breakContent(java.lang.String, java.lang.Integer)</function-signature>
+	</function>
+
+	<function>
+		<name>listFind</name>
+		<function-class>com.insta.hms.common.TagFunctions</function-class>
+		<function-signature>int listFind(java.util.List, java.lang.String)</function-signature>
+	</function>
+
+	<function>
+		<name>arrayFind</name>
+		<function-class>com.insta.hms.common.TagFunctions</function-class>
+		<function-signature>int arrayFind(java.lang.String[], java.lang.String)</function-signature>
+	</function>
+
+
+	<function>
+		<name>nextDate</name>
+		<function-class>com.insta.hms.common.TagFunctions</function-class>
+		<function-signature>java.util.Date nextDate(java.util.Date,int)</function-signature>
+	</function>
+
+	<function>
+		<name>nextDateString</name>
+		<function-class>com.insta.hms.common.TagFunctions</function-class>
+		<function-signature>java.lang.String nextDateString(java.util.Date,java.lang.String)</function-signature>
+	</function>
+
+	<function>
+		<name>prettyPrint</name>
+		<function-class>com.insta.hms.common.TagFunctions</function-class>
+		<function-signature>java.lang.String prettyPrint(java.lang.String)</function-signature>
+	</function>
+
+	<function>
+		<name>encodeUriComponent</name>
+		<function-class>com.insta.hms.common.TagFunctions</function-class>
+		<function-signature>java.lang.String encodeUriComponent(java.lang.String)</function-signature>
+	</function>
+
+	 <function>
+      <name>contains</name>
+      <function-class>com.insta.hms.common.TagFunctions</function-class>
+      <function-signature>boolean contains(java.util.Collection,java.lang.Object)</function-signature>
+  	</function>
+
+  	<function>
+      <name>isNumeric</name>
+      <function-class>com.insta.hms.common.TagFunctions</function-class>
+      <function-signature>boolean isNumeric(java.lang.String)</function-signature>
+  	</function>
+
+  	<function>
+      <name>toString</name>
+      <function-class>com.insta.hms.common.TagFunctions</function-class>
+      <function-signature>String toString(java.lang.Integer)</function-signature>
+  	</function>
+
+  	<function>
+  		<name>listAll</name>
+  		<function-class>com.insta.hms.common.TagFunctions</function-class>
+     	<function-signature>List listAll(java.lang.String,java.lang.String)</function-signature>
+  	</function>
+
+  	<function>
+  		<name>JSONlist</name>
+  		<function-class>com.insta.hms.common.TagFunctions</function-class>
+     	<function-signature>String jsonList(java.lang.String)</function-signature>
+  	</function>
+  	
+  	<function>
+  		<name>cleanHtml</name>
+  		<function-class>com.insta.hms.common.TagFunctions</function-class>
+     	<function-signature>String cleanHtml(java.lang.String)</function-signature>
+  	</function>
+  	
+  	<function>
+  		<name>cleanHtmlAttribute</name>
+  		<function-class>com.insta.hms.common.TagFunctions</function-class>
+     	<function-signature>String cleanHtmlAttribute(java.lang.String)</function-signature>
+  	</function>
+  	
+  	<function>
+  		<name>cleanJavaScript</name>
+  		<function-class>com.insta.hms.common.TagFunctions</function-class>
+     	<function-signature>Object cleanJavaScript(java.lang.Object)</function-signature>
+  	</function>
+  	
+  	<function>
+  		<name>cleanURL</name>
+  		<function-class>com.insta.hms.common.TagFunctions</function-class>
+     	<function-signature>String cleanURL(java.lang.String)</function-signature>
+  	</function>
+  	
+  	<function>
+  		<name>convertListToJson</name>
+  		<function-class>com.insta.hms.common.TagFunctions</function-class>
+     	<function-signature>String convertListToJson(java.util.List)</function-signature>
+  	</function>
+  	
+  	<function>
+  		<name>convertMapToJson</name>
+  		<function-class>com.insta.hms.common.TagFunctions</function-class>
+  		<function-signature>String convertMapToJson(java.util.Map)</function-signature>
+  	</function>
+
+	<function>
+		<name>convertToDeepSerializedJSON</name>
+		<function-class>com.insta.hms.common.TagFunctions</function-class>
+		<function-signature>String convertToDeepSerializedJSON(java.lang.Object)</function-signature>
+	</function>
+  	
+  	<function>
+  		<name>listBeantoMapMap</name>
+  		<function-class>com.insta.hms.common.TagFunctions</function-class>
+  		<function-signature>java.util.Map listBeantoMapMap(java.util.List, java.lang.String)</function-signature>
+  	</function>
+  	
+  	<function>
+  		<name>listMapToMapMapBean</name>
+  		<function-class>com.insta.hms.common.TagFunctions</function-class>
+  		<function-signature>java.util.Map listMapToMapMapBean(java.util.List, java.lang.String, java.lang.String)</function-signature>
+  	</function>
+
+</taglib>
+

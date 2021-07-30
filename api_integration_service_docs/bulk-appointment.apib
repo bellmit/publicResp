@@ -1,0 +1,262 @@
+# Insta Bulk Appointment
+## Get all appointments [/getappointments]
+### Get all appointments [GET]
+
++ Request (application/json)
+
+        {
+            "contact_id":"contact001",
+            "current_date":"21-05-2013",
+            "center_id":7
+        }
+        
++ Response 200 (application/json)
+
+    {
+        "appointments": [
+            {
+                "duration": 15,
+                "appointment_time": "00:00:00",
+                "app_cat": "DOC",
+                "center_name": "BRS",
+                "appointment_date": "17-01-2019",
+                "package_name": null,
+                "secondary_resource": {
+                    "resource_id": "-1",
+                    "resource_name": "OP Consultation"
+                },
+                "package_id": null,
+                "additional_resources": [],
+                "appointment_id": 81110,
+                "center_id": 7,
+                "primary_resource": {
+                    "resource_id": "DOC0203",
+                    "resource_name": "DoctorAPI1"
+                },
+                "appointment_status": "Cancel"
+            },
+            {
+                "duration": 15,
+                "appointment_time": "00:00:00",
+                "app_cat": "DOC",
+                "center_name": "BRS",
+                "appointment_date": "19-01-2019",
+                "package_name": null,
+                "secondary_resource": {
+                    "resource_id": "-1",
+                    "resource_name": "OP Consultation"
+                },
+                "package_id": null,
+                "additional_resources": [
+                    {
+                        "resource_id": "33",
+                        "resource_type": "EQID"
+                    },
+                    {
+                        "resource_id": "22",
+                        "resource_type": "EQID"
+                    }
+                ],
+                "appointment_id": 81003,
+                "center_id": 7,
+                "primary_resource": {
+                    "resource_id": "DOC0203",
+                    "resource_name": "DoctorAPI1"
+                },
+                "appointment_status": "Cancel"
+            },
+            {
+                "duration": 15,
+                "appointment_time": "00:00:00",
+                "app_cat": "DOC",
+                "center_name": "BRS",
+                "appointment_date": "19-01-2019",
+                "package_name": null,
+                "secondary_resource": {
+                    "resource_id": "-1",
+                    "resource_name": "OP Consultation"
+                },
+                "package_id": null,
+                "additional_resources": [],
+                "appointment_id": 81135,
+                "center_id": 7,
+                "primary_resource": {
+                    "resource_id": "DOC0203",
+                    "resource_name": "DoctorAPI1"
+                },
+                "appointment_status": "Cancel"
+            }
+        ]
+    }
+ 
+### Search orderable items [/patients/appointments/getorderableitemForAppointments]         
+## Search orderable items on appointments activity  [GET /patients/appointments/getorderableitemForAppointments.json{?center_id,gender_applicability,orderable,visit_type,search_id,service_group_id,service_sub_group_id,filter,page_limit}]
+
++ Parameters
+    + center_id: `1` (number, required) - logged in center id.
+    + gender_applicability: `F` (String, optional) - values it takes are 'F', 'M', '*'
+    + orderable: `Y` (String, required) - values it takes are 'Y', 'N'.
+    + visit_type: `o` (String, optional) - values it takes are 'o', 'i', '*'.
+        +Default: *
+    + search_id: `avia` (string, required) - search term.
+    + service_group_id: `23` (number, optional) - service group id
+    + service_sub_group_id: `18` (number, optional) - service sub group id.
+    + filter: `Order Sets` (string, required) - Currently searching on Order sets only. values it can take are Doctor,Laboratory,Radiology,Service,Package,MultiVisitPackage,DiagPackage,Direct Charge,Equipment,Operation,Meal,Order Sets.
+    + page_limit: `20` (number, optional) - Number of items in each page
+        +Default: 25
+
++ Response 200 (application/json)
+
+        {
+            "orderable_items": [
+            {
+                "department": "BOTH",
+                "results_entry_applicable": false,
+                "prior_auth_required": "N",
+                "multi_visit_package": false,
+                "conducting_doc_mandatory": false,
+                "additional_info_reqts": "",
+                "gender_applicability": "*",
+                "conduction_applicable": false,
+                "id": "159",
+                "insurance_category_id": -1,
+                "name": "aviation_consultation",
+                "mandate_additional_info": "N",
+                "type": "Order Sets",
+                "groupid": -1,
+                "code": "123",
+                "tooth_num_required": "N",
+                "dept_id": "*",
+                "center_id": -1,
+                "subgrpid": -1
+            }
+            ]
+        }
+        
+## Get available slots for multiple appointments [/getslots.json{?secondary_resources_id_list,interdependency_list,date,time,center_id,appointment_category_list,dept_id_list}]
+### Get available slots [GET]
+
++ Parameters
+    + secondary_resources_id_list: `-1,SER001` (String,required) - secondary resources comma separated
+    + interdependency_list: `,0` (String,required) - interdependency comma separated in-case-no-dependency-blank/in-case-of-dependency-duration
+    + date: `13-09-2018` (String,required) - date of appointment
+    + time: `09:30` (String,required) - time of appointment
+    + center_id: `7` (String,required) - center
+    + appointment_category_list: `DOC,DOC` (String,required) - what is the type of appointment to be booked
+    + dept_id_list: `DEP_RAD,1` (String,required) - departments of the resources
+    
++ Response 200 (application/json)
+
+        {
+            "combinations" : [
+                {
+                   "slot1" : {
+                        "resource_id" : "DOC001",
+                        "time_slot" : "00:15"
+                    },
+                    "slot2" : {
+                        "resource_id" : "DOC001",
+                        "time_slot" : "00:15"
+                    } 
+                },
+                {
+                   "slot1" : {
+                        "resource_id" : "DOC001",
+                        "time_slot" : "00:15"
+                    },
+                    "slot2" : {
+                        "resource_id" : "DOC001",
+                        "time_slot" : "00:15"
+                    } 
+                }
+            ]
+        }    
+            
+### Get Package content details [/patients/orders/getpackagecontents]
+## Get package content [GET /patients/orders/getpackagecontents.json{?mr_no,multi_visit_package,packageId}]
+
++ Parameters
+    + mr_no: `MR013717` (string, required) - patient mr_no.
+    + multi_visit_package: `false` (boolean, required) - send as false. as appointments are Order sets.
+    + packageId: `124` (number required) - package id of the order set.
+    
++ Response 200 (application/json)
+
+        {
+            "packComponentDetails": [
+            {
+                "operation_id": "",
+                "activity_qty": 1,
+                "item_type": "Doctor",
+                "item_name": "DR  Ajit Mehta",
+                "pack_ob_id": "791",
+                "dept_id": null,
+                "charge_head": "ODDOPDOC",
+                "chargehead_name": "Odd hours OP Consultation",
+                "activity_units": null,
+                "consultation_type_duration": 15,
+                "mandate_additional_info": "N",
+                "activity_id": "Doctor",
+                "activity_charge": 0,
+                "package_id": 159,
+                "package_category_id": -1,
+                "description": "aviation consulttion",
+                "operation_name": "",
+                "package_name": "aviation_consultation",
+                "doctor_id": "DOC0126",
+                "conducting_doc_mandatory": false,
+                "multi_visit_package": false,
+                "additional_info_reqts": "",
+                "display_order": 2,
+                "pack_item_id": "",
+                "service_duration": null,
+                "insurance_category_id": -1,
+                "type": "O",
+                "consultation_type": "Doctor Consultation",
+                "remarks": "qqq",
+                "service_sub_group_id": -1,
+                "activity_description": "DR  Ajit Mehta",
+                "consultation_type_id": 19,
+                "conduction_order": false,
+            },
+            {
+                "operation_id": "",
+                "activity_qty": 1,
+                "consultation_type": null,
+                "consultation_type_duration": null,
+                "doctor_id": null,
+                "item_type": "Service",
+                "service_duration": 30,
+                "dept_id": null,
+                "activity_units": null,
+                "mandate_additional_info": "N",
+                "activity_charge": 0,
+                "pack_ob_id": "790",
+                "chargehead_name": "Service",
+                "charge_head": "SERSNP",
+                "package_id": 159,
+                "package_category_id": -1,
+                "description": "aviation consulttion",
+                "operation_name": "",
+                "package_name": "aviation_consultation",
+                "activity_description": "BLOOD PRESSURE",
+                "consultation_type_id": null,
+                "conducting_doc_mandatory": false,
+                "multi_visit_package": false,
+                "additional_info_reqts": "",
+                "display_order": 2,
+                "pack_item_id": "",
+                "item_name": "BLOOD PRESSURE",
+                "insurance_category_id": -1,
+                "type": "O",
+                "service_sub_group_id": -1,
+                "remarks": "qqqq",
+                "activity_id": "SERV0068",
+                "conduction_order": true,
+            }
+            ],
+            "multVisitPackComponentQtyDetails": []
+        }
+    
+    
+    

@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="595" pageHeight="842" whenNoDataType="NoDataSection" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="40" bottomMargin="40" scriptletClass="com.insta.hms.common.JRCommonScriptlet">
+	<parameter name="fromDate" class="java.util.Date">
+		<defaultValueExpression><![CDATA[java.sql.Date.valueOf("1970-01-01")]]></defaultValueExpression>
+	</parameter>
+	<parameter name="toDate" class="java.util.Date">
+		<defaultValueExpression><![CDATA[java.sql.Date.valueOf("2199-01-01")]]></defaultValueExpression>
+	</parameter>
+	<parameter name="groupBy" class="java.lang.String">
+		<defaultValueExpression><![CDATA["dept_name"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="primaryFilterBy" class="java.lang.String">
+		<defaultValueExpression><![CDATA["dept_name"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="primaryFilterValue" class="java.lang.String">
+		<defaultValueExpression><![CDATA["*"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="groupByName" class="java.lang.String">
+		<defaultValueExpression><![CDATA["store"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="secondaryFilterBy" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["qty"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="fromSecondaryFilterValInt" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[new Integer(Integer.MIN_VALUE)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="toSecondaryFilterValInt" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[new Integer(Integer.MAX_VALUE)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="viewName" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="fromView" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{viewName}.isEmpty() ?"current_stock_details_view":$P{viewName}]]></defaultValueExpression>
+	</parameter>
+	<parameter name="checkpointName" class="java.lang.String">
+		<defaultValueExpression><![CDATA["*"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[ SELECT medicine_name,category_name,control_type_name,issue_base_unit,package_type,
+sum(qty) as qty,dept_name,reorder_level,$P!{groupBy} as group_name  FROM $P!{fromView}
+WHERE (($P!{primaryFilterBy}=$P{primaryFilterValue})or ($P{primaryFilterValue}='*')) AND ((checkpoint_name::character varying=$P{checkpointName})or ($P{checkpointName}='*')) AND $P!{secondaryFilterBy} BETWEEN $P{fromSecondaryFilterValInt} AND $P{toSecondaryFilterValInt} AND
+date(exp_dt) BETWEEN $P{fromDate} AND $P{toDate} GROUP BY dept_name,$P!{groupBy},medicine_name,category_name,control_type_name,issue_base_unit,package_type,
+reorder_level,group_name
+ORDER BY dept_name, $P!{groupBy}]]>
+	</queryString>
+	<field name="medicine_name" class="java.lang.String"/>
+	<field name="qty" class="java.math.BigDecimal"/>
+	<field name="dept_name" class="java.lang.String"/>
+	<field name="group_name" class="java.lang.String"/>
+	<field name="category_name" class="java.lang.String"/>
+	<field name="control_type_name" class="java.lang.String"/>
+	<field name="issue_base_unit" class="java.math.BigDecimal"/>
+	<field name="package_type" class="java.lang.String"/>
+	<field name="reorder_level" class="java.math.BigDecimal"/>
+	<group name="group_name">
+		<groupExpression><![CDATA[$P{groupByName}]]></groupExpression>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<group name="grand_total">
+		<groupHeader>
+			<band/>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<group name="DefalutGroup">
+		<groupExpression><![CDATA[$F{dept_name}]]></groupExpression>
+		<groupHeader>
+			<band height="15">
+				<textField>
+					<reportElement x="39" y="0" width="164" height="15"/>
+					<textElement>
+						<font size="12" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{dept_name}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="1" y="0" width="38" height="15"/>
+					<textElement>
+						<font size="12" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[Store:]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="2"/>
+		</groupFooter>
+	</group>
+	<group name="userGroup">
+		<groupExpression><![CDATA[$F{group_name}]]></groupExpression>
+		<groupHeader>
+			<band height="21">
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="117" y="1" width="162" height="20"/>
+					<textElement verticalAlignment="Middle">
+						<font size="12" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{group_name}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="1" y="3" width="103" height="18"/>
+					<textElement>
+						<font size="12" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{groupByName}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="104" y="3" width="16" height="18"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="12" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[:]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<background>
+		<band/>
+	</background>
+	<title>
+		<band height="70">
+			<line>
+				<reportElement x="0" y="61" width="555" height="4"/>
+			</line>
+			<textField>
+				<reportElement x="17" y="41" width="538" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA["(as of " + new SimpleDateFormat("dd-MM-yyyy HH:mm").format(new Date()) + ")"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="2" y="12" width="553" height="29"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font  size="20" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Stock Itemwise Report: By " + $P{groupByName}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="23">
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" x="2" y="1" width="118" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Medicine Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="120" y="1" width="63" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Category]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="182" y="1" width="58" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9" isBold="true" isItalic="false" isUnderline="false" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Control Type]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="239" y="1" width="60" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Pack Size]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="299" y="1" width="50" height="19"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Pack Type]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="349" y="1" width="61" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Stock Qty]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="410" y="1" width="94" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Reorder Level]]></text>
+			</staticText>
+			<line>
+				<reportElement x="2" y="20" width="553" height="3"/>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="14">
+			<textField isStretchWithOverflow="true">
+				<reportElement x="2" y="0" width="118" height="14"/>
+				<textElement>
+					<font isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{medicine_name}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="238" y="0" width="37" height="14"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{issue_base_unit}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="349" y="0" width="61" height="14"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{qty}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="119" y="0" width="64" height="14"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{category_name}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="184" y="1" width="55" height="13"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{control_type_name}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="296" y="1" width="53" height="13"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{package_type}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="410" y="0" width="62" height="14"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{reorder_level}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="20">
+			<textField>
+				<reportElement x="275" y="0" width="175" height="20"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.String"><![CDATA["Page " + $V{PAGE_NUMBER} + " of "]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" pattern="" isBlankWhenNull="false">
+				<reportElement key="textField" x="469" y="0" width="48" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Right">
+					<font size="10" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["" + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<noData>
+		<band height="50">
+			<staticText>
+				<reportElement x="17" y="0" width="455" height="37"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="20" isBold="true"/>
+				</textElement>
+				<text><![CDATA[No Data was found for the given criteria.]]></text>
+			</staticText>
+		</band>
+	</noData>
+</jasperReport>

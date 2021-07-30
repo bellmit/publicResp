@@ -1,0 +1,76 @@
+
+
+ Postfix Installation and configuration.
+
+
+1) sudo apt-get install postfix
+
+    it will prompt you with the following options
+
+Note :-	  Use Keyboard(tab, up, down and 'Enter' keys) throughout configuration. Mouse will not work.
+
+    a) No configuration:
+          Should be chosen to leave the current configuration unchanged.
+    b) Internet site:
+          Mail is sent and received directly using SMTP.
+    c) Internet with smarthost:
+          Mail is received directly using SMTP or by running a utility such
+          as fetchmail. Outgoing mail is sent using a smarthost.
+    d) Satellite system:
+         All mail is sent to another machine, called a 'smarthost', for
+         delivery.
+    e) Local only:
+         The only delivered mail is the mail for local users. There is no
+         network.
+
+    click on 'Ok'.
+
+2) it will navigate to the next screen with following information
+
+	General type of mail configuration:
+
+		No configuration
+		Internet Site
+		Internet with smarthost
+		Satellite system
+		Local only
+
+        	<Ok>           <Cancel>
+	click on 'Ok' after selecting the option(i.e., Internet Site).
+
+ 3) it will prompt you to enter the mail name( Read the following enter the mail name)
+	a) The "mail name" is the domain name used to "qualify" mail addresses
+  	   without a domain name.
+        b) This name will also be used by other programs. It should be the single,
+           fully qualified domain name FQDN).
+        c) Thus, if a mail address on the local host is foo@example.org, the
+           correct value for this option would be example.org.
+
+    	System mail name:
+
+	 <Ok>           <Cancel>
+
+	enter the mail name and click 'Ok'.
+
+
+Server:-(Relay server)
+	edit the /etc/postfix/main.cf file
+	append the virtual private network address to the mynetworks property.
+		[ex: mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128 (before editing)
+			if virtual private network address is 10.x.x.x then your mynetworks should be like:
+			mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128, 10.x.x.x (after editing)]
+
+
+Client:-
+	edit the /etc/postfix/main.cf file
+	append the virtual private network address of relayhost(postfix relay server vpn address) to the relayhost  property.
+
+
+
+
+Note:- after editing the main.cf file reload the postfix at the server(relay server), and at the client.
+using command :   postfix reload
+
+Now postfix is installed and configured.
+
+

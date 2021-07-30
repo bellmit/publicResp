@@ -1,0 +1,11 @@
+insurance_category_id,insurance_category_name,insurance_payable,system_category
+1,'GP Consultation','Y','N'
+2,'SP Consultation','Y','N'
+3,'Laboratory','Y','N'
+4,'Radiology','Y','N'
+5,'Pharmacy','Y','N'
+6,'Dental','Y','N'
+7,'Maternity','Y','N'
+8,'Chronic','Y','N'
+-1,'General','Y','N'
+-2,'DRG','Y','Y'

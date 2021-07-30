@@ -1,0 +1,152 @@
+{
+  "title": "Stock Consumption Report",
+  "reportGroup": "Stores Reports",
+  "dateFields": ["mov_date"],
+  "description": "This report builder shows all transaction details including purchases, Debits, Supplier Retuns/Replacements, Issues/Returns, Transfers and Adjustments.",
+  "tableName": ["rpt_stock_consumption_view"],
+  "defaultShowFields": [
+    "medicine_name",
+    "sales",
+    "category",
+    "returns",
+    "purchase",
+    "transfer_out",
+    "transfer_in",
+    "supreturns",
+    "replaced_stock",
+    "debit_qty",
+    "reagent_qty",
+    "userissue_out_qty",
+    "userissue_in_qty"
+  ],
+  "fields": {
+    "dept_name": {
+      "displayName": "Store Name",
+      "width": "100",
+      "filterable": true,
+      "groupable": true,
+      "allowedValuesQuery": "SELECT dept_name FROM stores ORDER BY dept_name"
+    },
+    "center_name": {
+      "displayName": "Center Name",
+      "filterable": true,
+      "groupable": true,
+      "width": "100",
+      "allowedValuesQuery": "SELECT center_name FROM hospital_center_master WHERE center_id!=0 order by center_name"
+    },
+    "medicine_name": {
+      "displayName": "Item Name",
+      "width": "100",
+      "filterable": true,
+      "groupable": true
+    },
+    "cust_item_code": {
+      "displayName": "custom Item Code",
+      "width": "100",
+      "filterable": true,
+      "groupable": true
+    },
+    "mov_date": {
+      "displayName": "Date of Movement",
+      "filterable": true,
+      "dataType": "date",
+      "width": "60"
+    },
+    "sales": {
+      "displayName": "Sales",
+      "dataType": "numeric",
+      "aggFunction": "sum",
+      "width": "60",
+      "filterable": true
+    },
+    "category": {
+      "displayName": "Item Category",
+      "filterable": true,
+      "groupable": true,
+      "width": "100",
+      "allowedValuesQuery": "SELECT category FROM store_category_master order by category"
+    },
+    "returns": {
+      "displayName": "Returns",
+      "dataType": "numeric",
+      "aggFunction": "sum",
+      "width": "60",
+      "filterable": true
+    },
+    "purchase": {
+      "displayName": "Purchase",
+      "dataType": "numeric",
+      "aggFunction": "sum",
+      "width": "50",
+      "filterable": true
+    },
+    "transfer_out": {
+      "displayName": "Transfer Out",
+      "dataType": "numeric",
+      "aggFunction": "sum",
+      "width": "50",
+      "filterable": true
+    },
+    "transfer_in": {
+      "displayName": "Transfer In",
+      "dataType": "numeric",
+      "aggFunction": "sum",
+      "width": "50",
+      "filterable": true
+    },
+    "adj_dec": {
+      "displayName": "Adj Dec",
+      "dataType": "numeric",
+      "aggFunction": "sum",
+      "width": "50"
+    },
+    "adj_inc": {
+      "displayName": "Adj Inc",
+      "dataType": "numeric",
+      "aggFunction": "sum",
+      "width": "50"
+    },
+    "supreturns": {
+      "displayName": "Supplier Returns",
+      "dataType": "numeric",
+      "aggFunction": "sum",
+      "width": "50",
+      "filterable": true
+    },
+    "replaced_stock": {
+      "displayName": "Replaced Stock",
+      "dataType": "numeric",
+      "aggFunction": "sum",
+      "width": "50",
+      "filterable": true
+    },
+    "debit_qty": {
+      "displayName": "Debit Qty",
+      "dataType": "numeric",
+      "aggFunction": "sum",
+      "width": "50",
+      "filterable": true
+    },
+    "reagent_qty": {
+      "displayName": "Reagent Qty",
+      "dataType": "numeric",
+      "aggFunction": "sum",
+      "width": "50",
+      "filterable": true
+    },
+    "userissue_out_qty": {
+      "displayName": "User Issue Out Qty",
+      "dataType": "numeric",
+      "aggFunction": "sum",
+      "width": "60",
+      "filterable": true
+    },
+    "userissue_in_qty": {
+      "displayName": "User Issue In Qty",
+      "dataType": "numeric",
+      "aggFunction": "sum",
+      "width": "60",
+      "filterable": true
+    }
+  }
+}

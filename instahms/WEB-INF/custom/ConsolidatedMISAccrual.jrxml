@@ -1,0 +1,550 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="650" pageHeight="842" columnWidth="610" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="comment" value="Used by Unity"/>
+	<parameter name="reportDate" class="java.util.Date"/>
+	<queryString>
+		<![CDATA[
+SELECT ord, particulars, main_particulars, daily_data,
+       ROUND( (daily_data/pc_den)*100,2) AS percentage,
+       monthly_data,
+       (monthly_data /(SELECT extract(day FROM $P{reportDate}::date)))::numeric(10,2) AS average FROM
+(
+SELECT 1 as ord, 'Admission' AS Particulars,'Bed Occupancy Details' AS main_Particulars,
+   (SELECT count(*) AS daily FROM  patient_registratiON  WHERE visit_type='i' AND
+    reg_date::date =$P{reportDate}::date ) AS daily_data,
+   (SELECT null::numeric  AS pc_den ) AS pc_den,
+   (SELECT count(*) AS monthly FROM  patient_registratiON  WHERE visit_type='i' AND
+    reg_date::date BETWEEN date_trunc('month', $P{reportDate}::date) AND $P{reportDate}::date) AS monthly_data
+UNION ALL
+SELECT 2, 'Discharge' AS Particulars,'Bed Occupancy Details' AS main_Particulars,
+   (SELECT COUNT(*) AS daily FROM patient_registratiON
+    WHERE discharge_flag='D' AND visit_type='i' AND
+    discharge_date::DATE=$P{reportDate}::date) AS daily_data ,
+   (SELECT null::numeric  AS pc_den ) AS pc_den,
+   (SELECT COUNT(*) AS monthly FROM patient_registratiON
+    WHERE discharge_flag='D' AND visit_type='i' AND
+    discharge_date::DATE BETWEEN date_trunc('month', $P{reportDate}::date) AND $P{reportDate}::date) AS monthly_data
+UNION ALL
+SELECT 3, 'Current Bed Occupancy' AS Particulars,'Bed Occupancy Details' AS main_Particulars,
+   (SELECT count(*) AS daily FROM bed_status_report bsr
+    WHERE bsr.status in ('A','C','R') ) as daily_data,
+   (SELECT count(*) AS denominator FROM bed_names bn LEFT JOIN ward_names wn  USING (ward_no)
+             WHERE wn.status='A' AND bn.status='A' )  AS pc_den,
+   (SELECT null::numeric AS monthly_data)
+UNION ALL
+SELECT 4, 'Active IP' AS Particulars,'Bed Occupancy Details' AS main_Particulars,
+   (SELECT count(*) AS daily FROM patient_registratiON WHERE status='A' AND visit_type='i' ) AS daily_data,
+   (SELECT null::numeric  AS pc_den ) AS pc_den,
+   (SELECT null::numeric AS monthly) AS monthly_data
+
+UNION ALL
+
+SELECT m.ord, m.particulars, m.main_particulars, d.data as daily_data, tot.pc_den, m.data as monthly_data
+FROM (
+  SELECT 
+    CASE WHEN particulars = 'IP Sales' THEN 5
+         WHEN particulars = 'OP Sales' THEN 6
+         WHEN particulars = 'Hospital Discount' THEN 20
+         WHEN particulars = 'Pharmacy Discount' THEN 21
+    END AS ord,
+    particulars, main_particulars,
+    sum(case when atype = 'a' then amount else disc end) as data
+  FROM (
+    SELECT revgrpdisc.*,
+      CASE
+        WHEN atype = 'a' AND ctype = 'Hospital' THEN
+          CASE WHEN visit_type = 'IP' THEN 'IP Sales'
+               ELSE 'OP Sales'
+	      END
+        WHEN atype = 'd' THEN
+          CASE WHEN ctype = 'Hospital' THEN 'Hospital Discount'
+	           ELSE 'Pharmacy Discount'
+	      END
+        END AS particulars,
+      CASE WHEN atype = 'a' THEN 'Hospital Sales' ELSE 'Discounts' END as main_particulars
+    FROM (
+      SELECT * FROM (
+	    SELECT visit_type,
+          CASE WHEN charge_head IN ('PHCMED','PHMED','PHCRET','PHRET') THEN 'Pharmacy'
+	           ELSE 'Hospital' END as ctype,
+	      sum(incr_amount+incr_discount) AS amount, sum(incr_discount) as disc
+        FROM rpt_revenue_accrual_report_view
+	    WHERE date(incr_date)  BETWEEN date_trunc('month', $P{reportDate}::date) AND $P{reportDate}::date
+        GROUP by visit_type,
+	      CASE WHEN charge_head IN ('PHCMED','PHMED','PHCRET','PHRET') THEN 'Pharmacy' ELSE 'Hospital' END
+        ) as revgrp
+      CROSS JOIN (VALUES ('a'), ('d')) as at(atype) ) as revgrpdisc
+  ) as x
+  GROUP BY particulars, main_particulars
+  HAVING particulars IS NOT NULL
+) as m
+JOIN (
+  SELECT 
+    particulars,
+    sum (case when atype = 'a' then amount else disc end) as data
+  FROM (
+    SELECT revgrpdisc.*,
+      CASE
+        WHEN atype = 'a' AND ctype = 'Hospital' THEN
+          CASE WHEN visit_type = 'IP' THEN 'IP Sales'
+               ELSE 'OP Sales'
+	      END
+        WHEN atype = 'd' THEN
+          CASE WHEN ctype = 'Hospital' THEN 'Hospital Discount'
+	           ELSE 'Pharmacy Discount'
+	      END
+        END AS particulars
+    FROM (
+      SELECT * FROM (
+	    SELECT visit_type,
+          CASE WHEN charge_head IN ('PHCMED','PHMED','PHCRET','PHRET') THEN 'Pharmacy'
+	           ELSE 'Hospital' END as ctype,
+	      sum(incr_amount+incr_discount) AS amount, sum(incr_discount) as disc
+        FROM rpt_revenue_accrual_report_view
+	    WHERE date(incr_date) = $P{reportDate}::date
+        GROUP by visit_type,
+	      CASE WHEN charge_head IN ('PHCMED','PHMED','PHCRET','PHRET') THEN 'Pharmacy' ELSE 'Hospital' END
+        ) as revgrp
+      CROSS JOIN (VALUES ('a'), ('d')) as at(atype) ) as revgrpdisc
+  ) as x
+  GROUP BY particulars
+  HAVING particulars IS NOT NULL
+) as d
+ ON (d.particulars = m.particulars)
+LEFT JOIN (
+  SELECT * FROM (SELECT sum(incr_amount+incr_discount) as pc_den 
+	FROM rpt_revenue_accrual_report_view
+	WHERE restriction_type='Hospital'
+     AND charge_head NOT IN ('PHCMED','PHMED','PHCRET','PHRET')
+   	 AND date(incr_date) = $P{reportDate}::date ) as total
+  CROSS JOIN (VALUES ('IP Sales'), ('OP Sales')) as at(particulars)
+) as tot
+ ON (tot.particulars = m.particulars)
+
+UNION ALL
+SELECT 7, 'Cash Sales' AS Particulars ,'Pharmacy Sales' AS main_Particulars,
+   (SELECT sum(total_item_amount+round_off-discount) AS daily FROM store_sales_main sm LEFT JOIN bill b using (bill_no)
+        WHERE visit_type ='r' AND type ='S' and
+        date(sale_date) = $P{reportDate}::date  ) AS daily_data,
+   (SELECT sum(total_item_amount+round_off-discount) AS daily FROM store_sales_main sm LEFT JOIN bill b using (bill_no)
+        WHERE type ='S' and
+        date(sale_date) = $P{reportDate}::date  )  AS pc_den,
+   (SELECT sum(total_item_amount+round_off-discount) AS monthly FROM store_sales_main sm LEFT JOIN bill b using (bill_no)
+        WHERE visit_type ='r' AND type ='S' and
+        date(sale_date) BETWEEN date_trunc('month', $P{reportDate}::date) AND  $P{reportDate}::date  ) AS monthly_data
+UNION ALL
+SELECT 8, 'Credit Sales' AS Particulars ,'Pharmacy Sales' AS main_Particulars,
+   (SELECT sum(total_item_amount+round_off-discount) AS daily FROM store_sales_main sm LEFT JOIN bill b using (bill_no)
+        WHERE visit_type in ('o','i') AND type ='S' and
+        date(sale_date) = $P{reportDate}::date  ) AS daily_data,
+   (SELECT sum(total_item_amount+round_off-discount) AS daily FROM store_sales_main sm LEFT JOIN bill b using (bill_no)
+        WHERE type ='S' and
+        date(sale_date) = $P{reportDate}::date  )  AS pc_den,
+   (SELECT sum(total_item_amount+round_off-discount) AS monthly FROM store_sales_main sm LEFT JOIN bill b using (bill_no)
+        WHERE visit_type in ('o','i') AND type ='S' and
+        date(sale_date) BETWEEN date_trunc('month', $P{reportDate}::date) AND  $P{reportDate}::date  ) AS monthly_data
+UNION ALL
+SELECT 9, 'Cash Returns' AS Particulars ,'Pharmacy Sales' AS main_Particulars,
+   (SELECT sum(total_item_amount+round_off-discount) AS daily FROM store_sales_main sm LEFT JOIN bill b using (bill_no)
+        WHERE visit_type ='r' AND type ='R' and
+        date(sale_date) = $P{reportDate}::date  ) AS daily_data,
+   (SELECT sum(total_item_amount+round_off-discount) AS daily FROM store_sales_main sm LEFT JOIN bill b using (bill_no)
+        WHERE type ='S' and
+        date(sale_date) = $P{reportDate}::date  )  AS pc_den,
+   (SELECT sum(total_item_amount+round_off-discount) AS monthly FROM store_sales_main sm LEFT JOIN bill b using (bill_no)
+        WHERE visit_type ='r' AND type ='R' and
+        date(sale_date) BETWEEN date_trunc('month', $P{reportDate}::date) AND  $P{reportDate}::date  ) AS monthly_data
+UNION ALL
+SELECT 10, 'Credit Returns' AS Particulars ,'Pharmacy Sales' AS main_Particulars,
+   (SELECT sum(total_item_amount+round_off-discount) AS daily FROM store_sales_main sm LEFT JOIN bill b using (bill_no)
+        WHERE visit_type in ('o','i') AND type ='R' and
+        date(sale_date) = $P{reportDate}::date  ) AS daily_data,
+   (SELECT sum(total_item_amount+round_off-discount) AS daily FROM store_sales_main sm LEFT JOIN bill b using (bill_no)
+        WHERE type ='S' and
+        date(sale_date) = $P{reportDate}::date  )   AS pc_den,
+   (SELECT sum(total_item_amount+round_off-discount) AS monthly FROM store_sales_main sm LEFT JOIN bill b using (bill_no)
+        WHERE visit_type in ('o','i') AND type ='R' and
+        date(sale_date) BETWEEN date_trunc('month', $P{reportDate}::date) AND  $P{reportDate}::date  ) AS monthly_data
+UNION ALL
+
+SELECT 11, 'IP Settlement' AS Particulars ,'Hospital Collection' AS main_Particulars,
+   (SELECT sum(amount) AS daily FROM (SELECT amount FROM bill_receipts r LEFT JOIN bill b using (bill_no) left JOIN counters c ON (r.counter=c.counter_id)
+        WHERE visit_type ='i' AND counter_type='B' AND payment_type='R' AND recpt_type ='S' and
+        date(display_date) = $P{reportDate}::date  ) AS ph_sales) AS daily_data,
+   (SELECT null::numeric ) AS pc_den,
+   (SELECT sum(amount) AS monthly FROM (SELECT amount FROM bill_receipts r LEFT JOIN bill b using (bill_no) left JOIN counters c ON (r.counter=c.counter_id)
+        WHERE visit_type ='i' AND counter_type='B' AND payment_type='R' AND recpt_type ='S' and
+        date(display_date) BETWEEN date_trunc('month', $P{reportDate}::date) AND  $P{reportDate}::date  ) AS ph_sales) AS monthly_data
+UNION ALL
+SELECT 12, 'IP Advances' AS Particulars ,'Hospital Collection' AS main_Particulars,
+   (SELECT sum(amount) AS daily FROM (SELECT amount FROM bill_receipts r LEFT JOIN bill b using (bill_no) left JOIN counters c ON (r.counter=c.counter_id)
+        WHERE visit_type ='i' AND counter_type='B' AND payment_type='R' AND recpt_type ='A' and
+        date(display_date) = $P{reportDate}::date  ) AS ph_sales) AS daily_data,
+   (SELECT null::numeric ) AS pc_den,
+   (SELECT sum(amount) AS monthly FROM (SELECT amount FROM bill_receipts r LEFT JOIN bill b using (bill_no) left JOIN counters c ON (r.counter=c.counter_id)
+        WHERE visit_type ='i' AND counter_type='B' AND payment_type='R' AND recpt_type ='A' and
+        date(display_date) BETWEEN date_trunc('month', $P{reportDate}::date) AND  $P{reportDate}::date  ) AS ph_sales) AS monthly_data
+UNION ALL
+SELECT 13, 'IP Refunds' AS Particulars ,'Hospital Collection' AS main_Particulars,
+   (SELECT sum(amount) AS daily FROM (SELECT amount FROM bill_receipts r LEFT JOIN bill b using (bill_no) left JOIN counters c ON (r.counter=c.counter_id)
+        WHERE visit_type ='i' AND counter_type='B' AND payment_type='F' and
+        date(display_date) = $P{reportDate}::date  ) AS ph_sales) AS daily_data,
+   (SELECT null::numeric ) AS pc_den,
+   (SELECT sum(amount) AS monthly FROM (SELECT amount FROM bill_receipts r LEFT JOIN bill b using (bill_no) left JOIN counters c ON (r.counter=c.counter_id)
+        WHERE visit_type ='i' AND counter_type='B' AND payment_type='F' AND
+        date(display_date) BETWEEN date_trunc('month', $P{reportDate}::date) AND  $P{reportDate}::date  ) AS ph_sales) AS monthly_data
+UNION ALL
+SELECT 14, 'OP Collection' AS Particulars ,'Hospital Collection' AS main_Particulars,
+   (SELECT sum(amount) AS daily FROM (SELECT amount FROM bill_receipts r LEFT JOIN bill b using (bill_no) left JOIN counters c ON (r.counter=c.counter_id)
+        WHERE visit_type in ('o','t')  AND counter_type='B' AND payment_type in ('R','F') and
+        date(display_date) = $P{reportDate}::date  ) AS ph_sales) AS daily_data,
+   (SELECT null::numeric ) AS pc_den,
+   (SELECT sum(amount) AS monthly FROM (SELECT amount FROM bill_receipts r LEFT JOIN bill b using (bill_no) left JOIN counters c ON (r.counter=c.counter_id)
+        WHERE visit_type in ('o','t')  AND counter_type='B' AND payment_type in ('R','F') AND
+        date(display_date) BETWEEN date_trunc('month', $P{reportDate}::date) AND  $P{reportDate}::date  ) AS ph_sales) AS monthly_data
+UNION ALL
+
+SELECT 15, 'TPA Collections' AS Particulars ,'Hospital Collection' AS main_Particulars,
+   (SELECT sum(foo.daily) FROM
+     (SELECT sum (amount) AS daily FROM bill_receipts br
+       JOIN bill b USING (bill_no)
+       WHERE primary_claim_status in ('S','R') AND br.payment_type='S' AND
+       date(br.display_date) = $P{reportDate}::date
+     UNION ALL
+       SELECT sum(amount) AS daily FROM bill_sponsor_receipts sr
+       JOIN bill_sponsor sb USING (sponsor_bill_no)
+       WHERE sb.status in ('S','R') AND sb.sponsor_type ='S' AND
+       date(sr.display_date) = $P{reportDate}::date
+     ) AS foo ) AS daily_data,
+   (SELECT null::numeric ) AS pc_den,
+   (SELECT sum(foo1.monthly) FROM
+     (SELECT sum(amount) AS monthly FROM bill b
+       JOIN bill_receipts br USING (bill_no)
+       WHERE primary_claim_status in ('S','R') AND br.payment_type='S' AND
+       date(br.display_date) BETWEEN date_trunc('month', $P{reportDate}::date) AND  $P{reportDate}::date
+      UNION ALL
+      	SELECT sum(amount) AS monthly FROM bill_sponsor_receipts sr
+	JOIN bill_sponsor sb USING (sponsor_bill_no)
+        WHERE sb.status IN ('S','R') AND sb.sponsor_type ='S' AND
+        date(sr.display_date) BETWEEN date_trunc('month', $P{reportDate}::date) AND  $P{reportDate}::date
+      ) as foo1) AS monthly_data
+UNION ALL
+
+SELECT 16, 'Cash Sales' AS Particulars ,'Pharmacy Collection' AS main_Particulars,
+   (SELECT sum(amount) AS daily FROM (SELECT amount FROM bill_receipts r LEFT JOIN bill b using (bill_no) left JOIN counters c ON (r.counter=c.counter_id)
+        WHERE visit_type ='r'  AND counter_type='P' AND payment_type ='R' AND
+        date(display_date) = $P{reportDate}::date  ) AS ph_sales) AS daily_data,
+   (SELECT null::numeric ) AS pc_den,
+   (SELECT sum(amount) AS monthly FROM (SELECT amount FROM bill_receipts r LEFT JOIN bill b using (bill_no) left JOIN counters c ON (r.counter=c.counter_id)
+        WHERE visit_type ='r' AND counter_type='P' AND  payment_type ='R' and
+        date(display_date) BETWEEN date_trunc('month', $P{reportDate}::date) AND  $P{reportDate}::date  ) AS ph_sales) AS monthly_data
+UNION ALL
+SELECT 17, 'Pharmacy Advance' AS Particulars ,'Pharmacy Collection' AS main_Particulars,
+   (SELECT sum(amount) AS daily FROM (SELECT amount FROM bill_receipts r LEFT JOIN bill b using (bill_no) left JOIN counters c ON (r.counter=c.counter_id)
+        WHERE visit_type !='r'  AND counter_type='P' AND payment_type ='R' AND recpt_type ='A' and
+        date(display_date) = $P{reportDate}::date  ) AS ph_sales) AS daily_data,
+   (SELECT null::numeric ) AS pc_den,
+   (SELECT sum(amount) AS monthly FROM (SELECT amount FROM bill_receipts r LEFT JOIN bill b using (bill_no) left JOIN counters c ON (r.counter=c.counter_id)
+        WHERE visit_type !='r' AND counter_type='P' AND payment_type ='R' AND recpt_type ='A' and
+        date(display_date) BETWEEN date_trunc('month', $P{reportDate}::date) AND  $P{reportDate}::date  ) AS ph_sales) AS monthly_data
+UNION ALL
+SELECT 18, 'Pharmacy Settlement' AS Particulars ,'Pharmacy Collection' AS main_Particulars,
+   (SELECT sum(amount) AS daily FROM (SELECT amount FROM bill_receipts r LEFT JOIN bill b using (bill_no) left JOIN counters c ON (r.counter=c.counter_id)
+        WHERE visit_type !='r'  AND counter_type='P' AND payment_type ='R' AND recpt_type ='S' and
+        date(display_date) = $P{reportDate}::date  ) AS ph_sales) AS daily_data,
+   (SELECT null::numeric ) AS pc_den,
+   (SELECT sum(amount) AS monthly FROM (SELECT amount FROM bill_receipts r LEFT JOIN bill b using (bill_no) left JOIN counters c ON (r.counter=c.counter_id)
+        WHERE visit_type !='r' AND counter_type='P' AND payment_type ='R' AND recpt_type ='S' and
+        date(display_date) BETWEEN date_trunc('month', $P{reportDate}::date) AND  $P{reportDate}::date  ) AS ph_sales) AS monthly_data
+UNION ALL
+
+SELECT 19, 'Pharmacy Returns' AS Particulars ,'Pharmacy Collection' AS main_Particulars,
+   (SELECT sum(amount) AS daily FROM (SELECT amount FROM bill_receipts r LEFT JOIN bill b using (bill_no) left JOIN counters c ON (r.counter=c.counter_id)
+        WHERE counter_type='P' AND payment_type ='F' AND
+        date(display_date) = $P{reportDate}::date  ) AS ph_sales) AS daily_data,
+   (SELECT null::numeric ) AS pc_den,
+   (SELECT sum(amount) AS monthly FROM (SELECT amount FROM bill_receipts r LEFT JOIN bill b using (bill_no) left JOIN counters c ON (r.counter=c.counter_id)
+        WHERE counter_type='P' AND payment_type ='F' AND
+        date(display_date) BETWEEN date_trunc('month', $P{reportDate}::date) AND  $P{reportDate}::date  ) AS ph_sales) AS monthly_data
+
+UNION ALL
+SELECT 22, 'Doctor Payments' AS Particulars ,'Payments' AS main_Particulars,
+   (SELECT sum(amount) AS daily FROM (SELECT amount FROM payments p LEFT JOIN counters c ON (p.counter=c.counter_id)
+        WHERE payment_type in ('D','P','R','F') and
+        date(date) = $P{reportDate}::date  ) AS ph_sales) AS daily_data,
+   (SELECT null::numeric ) AS pc_den,
+   (SELECT sum(amount) AS monthly FROM (SELECT amount FROM payments p LEFT JOIN counters c ON (p.counter=c.counter_id)
+        WHERE payment_type in ('D','P','R','F') and
+        date(date) BETWEEN date_trunc('month', $P{reportDate}::date) AND  $P{reportDate}::date  ) AS ph_sales) AS monthly_data
+UNION ALL
+SELECT 23, 'Supplier Payments' AS Particulars ,'Payments' AS main_Particulars,
+   (SELECT sum(amount) AS daily FROM (SELECT amount FROM payments p LEFT JOIN counters c ON (p.counter=c.counter_id)
+        WHERE payment_type ='S' and
+        date(date) = $P{reportDate}::date  ) AS ph_sales) AS daily_data,
+   (SELECT null::numeric ) AS pc_den,
+   (SELECT sum(amount) AS monthly FROM (SELECT amount FROM payments p LEFT JOIN counters c ON (p.counter=c.counter_id)
+        WHERE payment_type='S' and
+        date(date) BETWEEN date_trunc('month', $P{reportDate}::date) AND  $P{reportDate}::date  ) AS ph_sales) AS monthly_data
+UNION ALL
+SELECT 24, 'Misc Payments' AS Particulars ,'Payments' AS main_Particulars,
+   (SELECT sum(amount) AS daily FROM (SELECT amount FROM payments p LEFT JOIN counters c ON (p.counter=c.counter_id)
+        WHERE payment_type ='C' and
+        date(date) = $P{reportDate}::date  ) AS ph_sales) AS daily_data,
+   (SELECT null::numeric ) AS pc_den,
+   (SELECT sum(amount) AS monthly FROM (SELECT amount FROM payments p LEFT JOIN counters c ON (p.counter=c.counter_id)
+        WHERE payment_type ='C' and
+        date(date) BETWEEN date_trunc('month', $P{reportDate}::date) AND  $P{reportDate}::date  ) AS ph_sales) AS monthly_data
+UNION ALL
+SELECT 25, 'Outhouse Payments' AS Particulars ,'Payments' AS main_Particulars,
+   (SELECT sum(amount) AS daily FROM (SELECT amount FROM payments p LEFT JOIN counters c ON (p.counter=c.counter_id)
+        WHERE payment_type ='O' and
+        date(date) = $P{reportDate}::date  ) AS ph_sales) AS daily_data,
+   (SELECT null::numeric ) AS pc_den,
+   (SELECT sum(amount) AS monthly FROM (SELECT amount FROM payments p LEFT JOIN counters c ON (p.counter=c.counter_id)
+        WHERE payment_type ='O' and
+        date(date) BETWEEN date_trunc('month', $P{reportDate}::date) AND  $P{reportDate}::date  ) AS ph_sales) AS monthly_data
+UNION ALL
+SELECT 26, mt.Particulars, 'Purchase Details' AS main_Particulars, daily::numeric(10,2), null, monthly::numeric(10,2) FROM
+     (SELECT dept_name as Particulars, sum(grn_total_amount + invoice_level_amount) as monthly
+      FROM (SELECT gm.store_id, gm.grn_no,
+			    sum(g.billed_qty/id.issue_base_unit*g.cost_price - g.discount + g.tax) AS grn_total_amount,
+          CASE WHEN supplier_invoice_id IS NULL THEN
+            0-(dn.other_charges - dn.discount + dn.round_off)
+          ELSE
+            i.other_charges - i.discount + i.round_off + i.cess_tax_amt
+          END AS invoice_level_amount
+        FROM store_grn_details g
+          JOIN store_grn_main gm USING (grn_no)
+					JOIN store_item_details id USING (medicine_id)
+          LEFT JOIN store_invoice i USING (supplier_invoice_id)
+          LEFT JOIN store_debit_note dn USING (debit_note_no)
+          WHERE date(gm.grn_date) BETWEEN date_trunc('month',$P{reportDate}::date) AND $P{reportDate}::date
+        GROUP BY gm.store_id, gm.grn_no, invoice_level_amount
+      ) as inv
+        JOIN stores s ON (inv.store_id = s.dept_id)
+      GROUP BY dept_name
+    ) AS mt
+    LEFT JOIN
+     (SELECT dept_name as Particulars, sum(grn_total_amount + invoice_level_amount) as daily
+      FROM (SELECT gm.store_id, gm.grn_no,
+			    sum(g.billed_qty/id.issue_base_unit*g.cost_price - g.discount + g.tax) AS grn_total_amount,
+          CASE WHEN supplier_invoice_id IS NULL THEN
+            0-(dn.other_charges - dn.discount + dn.round_off)
+          ELSE
+            i.other_charges - i.discount + i.round_off + i.cess_tax_amt
+          END AS invoice_level_amount
+        FROM store_grn_details g
+          JOIN store_grn_main gm USING (grn_no)
+					JOIN store_item_details id USING (medicine_id)
+          LEFT JOIN store_invoice i USING (supplier_invoice_id)
+          LEFT JOIN store_debit_note dn USING (debit_note_no)
+          WHERE date(gm.grn_date) = $P{reportDate}::date
+        GROUP BY gm.store_id, gm.grn_no, invoice_level_amount
+      ) as inv
+        JOIN stores s ON (inv.store_id = s.dept_id)
+      GROUP BY dept_name
+    ) as dt ON (dt.Particulars = mt.Particulars)
+UNION ALL
+SELECT 27, 'Current TPA Dues' AS Particulars ,'TPA Dues' AS main_Particulars,
+   (SELECT sum(COALESCE(total_claim,0) -
+        (CASE
+           WHEN claim_recd_amount is not null
+           THEN claim_recd_amount
+           ELSE COALESCE(primary_total_sponsor_receipts,0) end)::NUMERIC)
+     AS tpa_due  FROM bill WHERE primary_claim_status ='S' ) AS daily_data,
+   (SELECT null::numeric ) AS pc_den,
+   (SELECT null::numeric ) AS monthly_data
+) as foo
+order by ord
+]]>
+	</queryString>
+	<field name="Particulars" class="java.lang.String"/>
+	<field name="daily_data" class="java.lang.Number"/>
+	<field name="percentage" class="java.lang.Number"/>
+	<field name="monthly_data" class="java.lang.Number"/>
+	<field name="average" class="java.lang.Number"/>
+	<field name="main_Particulars" class="java.lang.String"/>
+	<variable name="daily_sale_tot" class="java.math.BigDecimal" resetType="Group" resetGroup="main_particulars" calculation="Sum">
+		<variableExpression><![CDATA[$F{daily_data}]]></variableExpression>
+	</variable>
+	<variable name="monthly_tot" class="java.math.BigDecimal" resetType="Group" resetGroup="main_particulars" calculation="Sum">
+		<variableExpression><![CDATA[$F{monthly_data}]]></variableExpression>
+	</variable>
+	<variable name="average_tot" class="java.math.BigDecimal" resetType="Group" resetGroup="main_particulars" calculation="Sum">
+		<variableExpression><![CDATA[$F{average}]]></variableExpression>
+	</variable>
+	<group name="main_particulars">
+		<groupExpression><![CDATA[$F{main_Particulars}]]></groupExpression>
+		<groupHeader>
+			<band height="20">
+				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="main_particulars" isBlankWhenNull="true">
+					<reportElement x="8" y="3" width="413" height="13"/>
+					<textElement verticalAlignment="Bottom">
+						<font size="11" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{main_Particulars}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="0" y="0" width="610" height="1" forecolor="#A8A5A5"/>
+				</line>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="15">
+				<printWhenExpression><![CDATA[$F{main_Particulars}.equals("Bed Occupancy Details")?Boolean.FALSE:Boolean.TRUE]]></printWhenExpression>
+				<staticText>
+					<reportElement x="84" y="0" width="43" height="13"/>
+					<textElement>
+						<font size="11" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[Total:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="123" y="0" width="100" height="13"/>
+					<textElement textAlignment="Right">
+						<font size="12" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression class="java.lang.Number"><![CDATA[($V{daily_sale_tot}).setScale(2)]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="405" y="0" width="110" height="13"/>
+					<textElement textAlignment="Right">
+						<font size="12" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression class="java.lang.Number"><![CDATA[($V{monthly_tot}).setScale(2)]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="530" y="0" width="76" height="13"/>
+					<textElement textAlignment="Right">
+						<font size="12" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression class="java.lang.Number"><![CDATA[($V{average_tot}).setScale(2)]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="78" y="0" width="530" height="1" forecolor="#A8A5A5"/>
+				</line>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band/>
+	</background>
+	<title>
+		<band height="40">
+			<staticText>
+				<reportElement x="190" y="0" width="197" height="18"/>
+				<textElement textAlignment="Center">
+					<font fontName="" size="12" isBold="true" isUnderline="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[MIS Accrual Report ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="208" y="17" width="58" height="13"/>
+				<textElement textAlignment="Right">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Date:]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" pattern="dd-MM-yyyy" isBlankWhenNull="true">
+				<reportElement x="276" y="17" width="110" height="13"/>
+				<textElement>
+					<font size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[$P{reportDate}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="36" width="610" height="1" forecolor="#A8A5A5"/>
+			</line>
+		</band>
+	</title>
+	<pageHeader>
+		<band/>
+	</pageHeader>
+	<columnHeader>
+		<band height="15">
+			<staticText>
+				<reportElement x="8" y="0" width="88" height="13"/>
+				<textElement>
+					<font size="11" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Particulars]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="123" y="0" width="100" height="13"/>
+				<textElement textAlignment="Right">
+					<font size="11" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Daily Sale]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="223" y="0" width="100" height="13"/>
+				<textElement textAlignment="Right">
+					<font size="11" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Percentage]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="328" y="0" width="187" height="13"/>
+				<textElement textAlignment="Right">
+					<font size="11" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Monthly Sale As On Date]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="546" y="0" width="64" height="13"/>
+				<textElement textAlignment="Right">
+					<font size="11" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Average]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="15">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="8" y="0" width="130" height="13"/>
+				<textElement>
+					<font size="11"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{Particulars}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="152" y="0" width="69" height="13"/>
+				<textElement textAlignment="Right">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$F{daily_data}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="223" y="0" width="100" height="13"/>
+				<textElement textAlignment="Right">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$F{percentage}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="406" y="0" width="109" height="13"/>
+				<textElement textAlignment="Right">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$F{monthly_data}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="530" y="0" width="76" height="13"/>
+				<textElement textAlignment="Right">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$F{average}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="1"/>
+	</columnFooter>
+	<pageFooter>
+		<band/>
+	</pageFooter>
+	<summary>
+		<band/>
+	</summary>
+</jasperReport>

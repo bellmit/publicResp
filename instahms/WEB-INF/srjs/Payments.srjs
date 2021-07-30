@@ -1,0 +1,157 @@
+{
+  "title": "Payments Paid Report",
+  "defaultOrder": "payeename",
+  "reportGroup": "Financial Reports",
+  "dateFields": ["date"],
+   "description": "This report builder gives a detailed description of all payments (or payment reversals) paid between the given date range.",
+  "tableName": ["rpt_payment_view"],
+  "defaultShowFields": [
+    "payeename",
+    "payment_type",
+	"center_name",
+    "date",
+    "payment_mode",
+    "card_type",
+    "voucher_category",
+    "counter_no",
+    "amt"
+  ],
+  "fields": {
+    "voucher_no": {
+      "displayName": "Voucher No.",
+      "width": "60",
+      "filterable": false,
+      "groupable": false
+    },
+    "payeename": {
+      "displayName": "Payee Name",
+      "width": "110",
+      "filterable": true,
+      "groupable": true,
+      "allowNull": true,
+      "allowedValuesQuery": "SELECT payee_name as payeename FROM payeenames_view ORDER BY payeename"
+    },
+    "payment_type": {
+      "displayName": "Payment Type",
+      "width": "150",
+      "filterable": true,
+      "groupable": true,
+      "allowedValues": ["Conducting Doctor Payments","Miscellaneous Payments","Referral Doctor Payments","Prescribed Doctor Payments","Supplier Payments","OutHouse Payments"]
+    },
+    "remarks": {
+      "displayName": "Description",
+      "width": "75"
+    },
+    "date": {
+      "displayName": "Voucher Date",
+      "width": "75",
+      "dataType": "date"
+    },
+    "payment_mode": {
+      "displayName": "Payment Mode",
+      "width": "75",
+      "groupable": true,
+      "allowNull": true,
+      "filterable": true,
+      "allowedValuesQuery": "SELECT payment_mode FROM payment_mode_master ORDER BY payment_mode"
+    },
+    "card_type": {
+      "displayName": "Card Type",
+      "width": "75",
+      "groupable": true,
+      "allowNull": true,
+      "filterable": true,
+      "allowedValuesQuery": "SELECT card_type FROM card_type_master ORDER BY card_type"
+    },
+    "voucher_category": {
+      "displayName": "Voucher Category",
+      "width": "100",
+      "allowedValues": ["Payment Reversal","Payments"]
+    },
+    "counter_no": {
+      "displayName": "Counter",
+      "width": "120",
+      "groupable": true,
+      "allowNull": true,
+      "filterable": true,
+      "allowedValuesQuery": "SELECT counter_no FROM counters ORDER BY counter_no"
+    },
+    "counter_type": {
+      "displayName": "Counter Type",
+      "width": "75",
+      "groupable": true,
+      "allowNull": true,
+      "filterable": true,
+      "allowedValues": ["Billing","Pharmacy"]
+    },
+    "collection_counter": {
+      "displayName": "Collection Counter",
+      "width": "75",
+      "groupable": true,
+      "allowNull": true,
+      "filterable": true,
+      "allowedValues": ["Yes","No"]
+    },
+    "reference_no": {
+      "displayName": "Reference No.",
+      "width": "75"
+    },
+    "bank": {
+      "displayName": "Bank",
+      "width": "75"
+    },
+    "username": {
+      "displayName": "User",
+      "width": "80",
+      "filterable": true,
+      "groupable": true,
+      "allowNull": true,
+      "allowedValuesQuery": "SELECT emp_username AS username FROM u_user JOIN u_role USING(role_id) WHERE portal_id='N' GROUP BY emp_username"
+    },
+    "tds_amount": {
+      "dataType": "numeric",
+      "displayName": "TDS Amount",
+      "aggFunction": "sum",
+      "width": "60",
+      "filterable": true
+    },
+    "wht_amount": {
+      "dataType": "numeric",
+      "displayName": "WHT Amount",
+      "aggFunction": "sum",
+      "width": "60",
+      "filterable": true
+    },
+    "tax_amount": {
+      "dataType": "numeric",
+      "displayName": "Tax Amount",
+      "aggFunction": "sum",
+      "width": "60",
+      "filterable": true
+    },
+    "net_amount": {
+      "displayName": "Amount",
+      "dataType": "numeric",
+      "aggFunction": "sum",
+      "width": "70",
+      "filterable": true
+    },
+    "amt": {
+      "displayName": "Net Amount",
+      "dataType": "numeric",
+      "aggFunction": "sum",
+      "width": "70",
+      "filterable": true,
+      "decimalType": "amount"
+    },
+	"center_name": {
+	  "displayName": "Center Name",
+	  "width": 100,
+	  "allowHorizGroup": true,
+	  "allowNull": true,
+	  "allowedValuesQuery": "SELECT center_name FROM hospital_center_master WHERE center_id!=0",
+	  "filterable": true,
+	  "groupable": true
+	}
+  }
+}

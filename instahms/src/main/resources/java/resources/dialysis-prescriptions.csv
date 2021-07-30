@@ -1,0 +1,24 @@
+patient.dialysis.prescriptions.dialyzer=Dialyzer
+patient.dialysis.prescriptions.targetweight=Target Weight
+patient.dialysis.prescriptions.enddate=End Date
+patient.dialysis.prescriptions.startdate=Start Date
+patient.dialysis.prescriptions.prsec.date=Presc.Date
+patient.dialysis.prescriptions.status=Status
+patient.dialysis.prescriptions.doctor=Doctor
+patient.dialysis.prescriptions.prescr.date=Prescr. Date
+patient.dialysis.prescriptions.patient.name=Patient Name
+patient.dialysis.prescriptions.mr.no=Mr No
+patient.dialysis.prescriptions.dummyvalue="----select---"
+patient.dialysis.prescriptions.prescription.date=Prescription Date
+patient.dialysis.prescriptions.from=From:
+patient.dialysis.prescriptions.to=To:
+patient.dialysis.prescriptions.status=Status
+patient.dialysis.prescriptions.pending=Pending
+patient.dialysis.prescriptions.active=Active
+patient.dialysis.prescriptions.inactive=Inactive
+patient.dialysis.prescriptions.screen=Dialysis Prescriptions - Insta HMS
+patient.dialysis.prescriptions.pageHeader=Dialysis Prescriptions
+patient.dialysis.prescriptions.sbofield=MR No/Patient Name:
+patient.dialysis.prescriptions.auditlog=Audit Log Search
+patient.dialysis.prescriptions.addnewprescription=Add New Prescription
+

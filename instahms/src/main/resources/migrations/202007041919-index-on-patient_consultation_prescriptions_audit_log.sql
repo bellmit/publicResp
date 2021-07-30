@@ -1,0 +1,4 @@
+-- liquibase formatted sql
+-- changeset dattuvs:indexing-on-field-name failOnError:false
+
+CREATE INDEX patient_consultation_prescriptions_audit_log_field_name_idx ON patient_consultation_prescriptions_audit_log USING btree(field_name);

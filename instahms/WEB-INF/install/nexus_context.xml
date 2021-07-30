@@ -1,0 +1,9 @@
+<!--
+    Context specific tomcat configuration file for the instahms application
+-->
+
+<Context path="/instanexus" debug="0" reloadable="false" crossContext="true"
+	docBase="__apphome__/instanexus">
+	<JarScanner scanManifest="false" scanClassPath="false"/>
+</Context>
+

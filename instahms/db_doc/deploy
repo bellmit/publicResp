@@ -1,0 +1,335 @@
+#!/bin/bash
+
+# configuration
+TRUNK=12.5
+
+source /etc/hms/options
+
+if [ -z "$APPHOME" ] ; then
+	APPHOME="/root/webapps"
+fi
+
+if [ -z "$TOMCAT_HOME" ] ; then
+	TOMCAT_HOME="/usr/local/tomcat"
+fi
+
+if [ -z "$HMS_DIST_HOME" ] ; then
+	HMS_DIST_HOME="/root"
+fi
+
+if [ -z "$HMS_BIN_DIR" ] ; then
+	HMS_BIN_DIR="/root/bin"
+fi
+
+export PGHOST=$DBHOST
+export PGHOSTADDR=$DBHOST
+if [ -z "$PGUSER" ] ; then
+	PGUSER=postgres
+fi
+if [ -z "$PGPORT" ] ; then
+	PGPORT=5432
+fi
+HOST=`hostname`
+
+TS=`date +"%Y%m%d-%H%M"`
+
+function usage() {
+	echo "Usage: deploy [-c <config>] [-n] [version]"
+	echo " -n for no questions"
+	echo " -i for forcing all schemas to incrementally migrate, ignoring settings in cfg"
+	echo " version defaults to the latest in $HMS_DIST_HOME/builds"
+	echo " db/app defaults to version major, otherwise specified in deploy config"
+	echo " config defaults to $HMS_DIST_HOME/bin/deploy-<db>.cfg, eg, $HMS_BIN_DIR/deploy-hms75.cfg"
+}
+
+function get_all_schemas() {
+	if [ "$HA_IS_STANDBY" != 'Y' ] ; then
+		echo "\\t\\dn" | $PSQL -q | awk '{print $1}' | \
+			grep -v ^pg_ | grep -v information_schema | grep -v ^public
+	fi
+}
+
+# getting the major and minor parts of the version as a string ie 10.1
+
+function get_string_maj_min() {
+	local ver=$1
+	ver=${ver%-*}
+	local parts=(${ver//./ })
+	if [[ ${#parts[1]} -eq 1 ]]
+	then
+	parts[1]="0${parts[1]}"
+	fi
+	echo "${parts[0]}.${parts[1]}"
+}
+
+function set_java_home() {
+	if [[ $# -ne 1 ]]
+	then
+		REQUIRED_VERSION="8"
+	else
+		REQUIRED_VERSION=$1
+	fi
+
+	OS=`uname -s`
+	OP=""
+	if [[ $OS == 'Darwin' ]]
+	then 
+		OP=$(/usr/libexec/java_home -v $REQUIRED_VERSION -f)
+	else
+		JAVAC_INSTALLS=`sudo update-alternatives --list javac`
+		for JAVAC in $JAVAC_INSTALLS; do
+			THIS_JAVA=${JAVAC/'javac'/'java'}
+			THIS_VERSION=$($THIS_JAVA -version 2>&1 | grep -i version | cut -d'"' -f2 | sed 's/^1\.//g' | sed 's/\_/\./g' | cut -d'.' -f1)
+			THIS_FLAVOUR=$($THIS_JAVA -version 2>&1 | grep -i "runtime environment" | cut -d' ' -f1)
+			if [[ ${THIS_VERSION} == $REQUIRED_VERSION && $THIS_FLAVOUR == "OpenJDK" ]]
+			then
+				OP=${JAVAC/'/bin/javac'/''}
+			fi
+		done
+	fi
+	if [[ $OP == "" ]]
+	then
+		echo "OpenJDK $REQUIRED_VERSION not detected on this machine"
+		export JAVA_HOME=""
+	else
+		echo "Detected OpenJDK $REQUIRED_VERSION at $OP"
+		export JAVA_HOME=$OP
+	fi
+}
+
+function grant() {
+	if [ "$HA_IS_STANDBY" != 'Y' ] ; then
+		local schema=$1
+
+		$PSQL <<EOF >/dev/null 2>&1
+			set search_path TO $schema;
+			GRANT USAGE ON SCHEMA $schema TO guest;
+			SELECT grant_readonly('guest','$schema');
+EOF
+	fi
+}
+
+#
+# Main
+#
+while getopts "c:in" opt ; do
+	case $opt in
+		c) CFG=${OPTARG}
+			;;
+		i) INCR=Y
+			;;
+		n) NQ=Y
+			;;
+		:) usage
+			;;
+		\?) usage
+			;;
+	esac
+done
+shift `expr $OPTIND - 1`
+
+# clear out any existing deploy status
+rm -f /tmp/deploy_status
+
+# restart postgres
+sudo /etc/init.d/postgresql restart
+
+#
+# Figure out version to deploy
+#
+VERSION=$1
+if [ -z $VERSION ] ; then
+	# find out the latest version: must be the last one that was copied in
+	VERSION=`ls -t $HMS_DIST_HOME/builds | head -1`
+	echo -n "$HOST $(date +"%a %m-%d-%Y %H:%M:%S") : Found latest version as $VERSION. Deploy this version? [y/n]: "
+	read
+	[ $REPLY != "y" ] && echo "$HOST $(date +"%a %m-%d-%Y %H:%M:%S") : Not confirmed, exiting." && exit 1
+else
+	# ensure that the given version exists
+	if [ ! -d $HMS_DIST_HOME/builds/$VERSION ] ; then
+		echo "$HOST $(date +"%a %m-%d-%Y %H:%M:%S") : No build found: $HMS_DIST_HOME/builds/$VERSION"
+		exit 1
+	fi
+fi
+
+#
+# Branch depends on version being deployed: no exceptions
+#
+MINOR=`get_string_maj_min $VERSION`
+MINOR_WITHOUT_DOT=${MINOR/./}
+if [[ $MINOR_WITHOUT_DOT -ge 1204 ]] ; then
+	set_java_home 8
+else
+	set_java_home 7
+fi
+
+BRANCH=`get_string_maj_min $VERSION`
+TRUNKVERSION=`get_string_maj_min $TRUNK`
+if [ $BRANCH == $TRUNKVERSION ] ; then
+	DB=hms
+else
+	DB=hms
+	DB=hms${BRANCH/./}
+fi
+
+PSQL="psql -U postgres -d $DB --no-psqlrc"
+SQLPATH=${APPHOME}/insta${DB}/WEB-INF/install/sql
+BINPATH=${APPHOME}/insta${DB}/WEB-INF/install/bin
+
+DISTDIR=$HMS_DIST_HOME/builds/$VERSION
+[ ! -d $DISTDIR ] && echo "Missing distribution: $DISTDIR. Aborting upgrade" && exit 1
+
+if [ ! -d $SQLPATH ] ; then
+	echo "$HOST $(date +"%a %m-%d-%Y %H:%M:%S") : No current version found at ${APPHOME}/insta${DB}, skipping deploy"
+	echo "$HOST $(date +"%a %m-%d-%Y %H:%M:%S") : Not deployed" > /tmp/deploy_status
+	echo >> /tmp/deploy_status
+	exit 0
+fi
+
+if [ -z $INCR ] ; then
+	# Not an incremental build. Get the config if not supplied
+	if [ -z $CFG ] ; then
+		# get app/db based on version major
+		CFG=$HMS_BIN_DIR/deploy-${DB}.cfg
+	fi
+	[ ! -f $CFG ] && echo "$HOST $(date +"%a %m-%d-%Y %H:%M:%S") : Config file $CFG not found" && exit 1
+	source $CFG
+fi
+
+# find out which schemas are to be continued
+allschemas=`get_all_schemas`
+for schema in $allschemas ; do
+	found=N
+	for exist in $MIGRATE_SCHEMAS $FRESH_SCHEMAS $FRESH3_SCHEMAS ;  do
+		[ $schema == $exist ] && found=Y
+	done
+	[ $found == N ] && OTHER_SCHEMAS="$schema $OTHER_SCHEMAS"
+done
+
+if [ -z $INCR ] ; then
+	echo "$HOST $(date +"%a %m-%d-%Y %H:%M:%S") : Deploying to $DB, migrating (if required) from $FROMDB"
+	if [ -z $NQ ] ; then
+		echo "$HOST $(date +"%a %m-%d-%Y %H:%M:%S") : Schemas to be migrated: $MIGRATE_SCHEMAS"
+		echo "$HOST $(date +"%a %m-%d-%Y %H:%M:%S") : Schemas to be created afresh: $FRESH_SCHEMAS $FRESH3_SCHEMAS"
+		echo "$HOST $(date +"%a %m-%d-%Y %H:%M:%S") : Schemas to be continued: $OTHER_SCHEMAS"
+		echo -n "$HOST $(date +"%a %m-%d-%Y %H:%M:%S") : Continue to deploy? [y/n]: "
+		read
+		[ "$REPLY" != "y" ] && exit 1
+	fi
+else
+	echo "$HOST $(date +"%a %m-%d-%Y %H:%M:%S") : Deploying to $DB (incremental migration only)"
+	echo "$HOST $(date +"%a %m-%d-%Y %H:%M:%S") : Schemas to be continued: $OTHER_SCHEMAS"
+fi
+
+#
+# Stop tomcat: we do this ourselves and set UPGRADE_RESTART=N
+# in /etc/hms/options so that migration from previous versions is
+# also taken care of.
+#
+if [[ $MINOR_WITHOUT_DOT -lt 1204 ]] ; then
+	sudo /etc/init.d/tomcat stop
+else
+	sudo /etc/init.d/tomcat-9 stop	
+fi
+
+#
+# Drop any schema that's going to be migrated or will be freshly created
+#
+for schema in $MIGRATE_SCHEMAS $FRESH_SCHEMAS $FRESH3_SCHEMAS ; do
+	echo "$HOST $(date +"%a %m-%d-%Y %H:%M:%S") : Dropping schema that will be re-created: $schema"
+	echo "drop schema if exists ${schema}_temp cascade" | $PSQL >/dev/null 2>&1
+	echo "alter schema $schema rename to ${schema}_temp" | $PSQL >/dev/null 2>&1
+done
+
+#
+# Create migrate schemas as new ones
+#
+if [ -z $INCR ] ; then
+	if [ ! -z "$MIGRATE_SCHEMAS" ] ; then
+		VERFILE=${APPHOME}/insta${FROMDB}/WEB-INF/classes/java/resources/application.properties
+		OLDVER=`grep 'insta.software.version' $VERFILE | awk '{print $3}'`
+
+		for schema in $MIGRATE_SCHEMAS ; do
+			echo "$HOST $(date +"%a %m-%d-%Y %H:%M:%S") : .. Dumping $FROMDB.$schema"
+			pg_dump $FROMDB -U postgres -n $schema --no-owner -f /tmp/$schema.dump
+			[ $? -ne 0 ] && return $?
+
+			echo "$HOST $(date +"%a %m-%d-%Y %H:%M:%S") : .. Loading dump into $DB.$schema"
+			$PSQL <<EOF >/dev/null 2>&1
+				\i /tmp/$schema.dump
+EOF
+			# signal postswitch about the special version for this schema
+			# export will carry through all the subsequent calls
+			export SCHEMA_VER_$schema=$OLDVER
+		done
+	fi
+fi
+
+#
+# Do the upgrade: this will incrementally upgrade any schemas that are left over
+# after the previous step
+#
+echo "$HOST $(date +"%a %m-%d-%Y %H:%M:%S") : Upgrading HMS version to $VERSION"
+$BINPATH/upgradeInsta $VERSION
+if [ $? -ne 0 ] ; then
+	echo "$HOST $(date +"%a %m-%d-%Y %H:%M:%S") : HMS upgrade failed."
+fi
+echo "$HOST"; grep "ERROR" /var/log/insta/${DB}/migrate.log
+
+if [ -z $DBHOST ]; then
+	DBHOST="localhost"
+fi
+
+UPGRADE_APPS_NAME=insta${DB/hms/apps}
+echo "$HOST $(date +"%a %m-%d-%Y %H:%M:%S") : Upgrading HMS API version to $VERSION"
+if [ -d $HMS_DIST_HOME/Appsbuilds/$VERSION ] ; then
+	APPSBINPATH=${APPHOME}/insta${UPGRADE_APPS_NAME}/WEB-INF/install/bin
+	$BINPATH/upgrade $VERSION $DB
+	if [ $? -ne 0 ] ; then
+		echo "$HOST: API upgrade failed ... check upgrade.log"
+		exit 1
+	fi
+	grep "ERROR" /var/log/insta/${UPGRADE_APPS_NAME}/migrate.log
+else
+	echo "$HOST $(date +"%a %m-%d-%Y %H:%M:%S") : No API build found: $HMS_DIST_HOME/Appsbuilds/$VERSION. API Deployment will be skipped."
+
+fi
+
+#
+# Create any fresh schemas that need to be created
+#
+for schema in $FRESH_SCHEMAS ; do
+	echo $HOST: `date`
+	echo "$HOST $(date +"%a %m-%d-%Y %H:%M:%S") : Creating fresh schema with precision 2 : $schema"
+	$BINPATH/new_schema.sh ${DB} $schema 2
+done
+
+#
+# Create any fresh 3 schemas that need to be created
+#
+for schema in $FRESH3_SCHEMAS ; do
+	echo $HOST: `date`
+	echo "$HOST $(date +"%a %m-%d-%Y %H:%M:%S") : Creating fresh schema with precision 3 : $schema"
+	$BINPATH/new_schema.sh ${DB} $schema 3
+done
+
+#
+# Grant read-only to guest for all the created schemas
+#
+for schema in $MIGRATE_SCHEMAS $FRESH_SCHEMAS $FRESH3_SCHEMAS $OTHER_SCHEMAS ; do
+	grant $schema
+done
+
+if [[ $MINOR_WITHOUT_DOT -lt 1204 ]] ; then
+	sudo /etc/init.d/tomcat start
+else
+	sudo /etc/init.d/tomcat-9 start	
+fi
+
+> /tmp/deploy_status
+
+[ ! -z "$MIGRATE_SCHEMAS" ] && echo "$HOST $(date +"%a %m-%d-%Y %H:%M:%S") : Schemas migrated from $FROMDB: $MIGRATE_SCHEMAS" > /tmp/deploy_status
+[ ! -z "$FRESH_SCHEMAS" ] && echo "$HOST $(date +"%a %m-%d-%Y %H:%M:%S") : Schemas created afresh: $FRESH_SCHEMAS" >> /tmp/deploy_status
+[ ! -z "$FRESH3_SCHEMAS" ] && echo "$HOST $(date +"%a %m-%d-%Y %H:%M:%S") : Schemas created afresh (3 digit): $FRESH3_SCHEMAS" >> /tmp/deploy_status
+[ ! -z "$OTHER_SCHEMAS" ] && echo "$HOST $(date +"%a %m-%d-%Y %H:%M:%S") : Schemas incrementally migrated: $OTHER_SCHEMAS" >> /tmp/deploy_status
+echo >> /tmp/deploy_status

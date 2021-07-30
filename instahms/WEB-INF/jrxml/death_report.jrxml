@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Daily Death Report" pageWidth="680" pageHeight="842" whenNoDataType="NoDataSection" columnWidth="640" leftMargin="20" rightMargin="20" topMargin="40" bottomMargin="40">
+	<parameter name="fromDate" class="java.util.Date"/>
+	<parameter name="toDate" class="java.util.Date"/>
+	<queryString>
+		<![CDATA[select pr.mr_no ,get_patient_name(pd.salutation, pd.patient_name, pd.middle_name, pd.last_name)  as Patient_name,
+to_char(reg_date,'dd-mm-yyyy') as admit_date,
+to_char(death_date,'dd-mm-yyyy') as deathdate,
+to_char(death_time, 'HH:MI AM') as deathtime,
+drm.reason as death_reason,d.doctor_name
+from patient_registration pr
+join patient_details pd on (pr.mr_no = pd.mr_no)
+left join doctors d on (d.doctor_id = pr.doctor)
+LEFT JOIN discharge_type_master dtm ON(pr.discharge_type_id = dtm.discharge_type_id)
+LEFT JOIN death_reason_master drm ON (drm.reason_id=pd.death_reason_id)
+where dtm.discharge_type = 'Death' and death_date between $P{fromDate} and $P{toDate}]]>
+	</queryString>
+	<field name="mr_no" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="patient_name" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="admit_date" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="deathdate" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="deathtime" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="death_reason" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="doctor_name" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<background>
+		<band/>
+	</background>
+	<title>
+		<band height="43">
+			<staticText>
+				<reportElement x="226" y="10" width="126" height="21"/>
+				<textElement textAlignment="Center">
+					<font size="13"/>
+				</textElement>
+				<text><![CDATA[Death Report]]></text>
+			</staticText>
+			<line>
+				<reportElement x="5" y="41" width="635" height="1"/>
+			</line>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="34">
+			<staticText>
+				<reportElement x="132" y="12" width="100" height="20"/>
+				<textElement/>
+				<text><![CDATA[From Date :
+]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="201" y="12" width="54" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.util.Date"><![CDATA[$P{fromDate}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="414" y="10" width="53" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.util.Date"><![CDATA[$P{toDate}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="347" y="10" width="70" height="20"/>
+				<textElement/>
+				<text><![CDATA[To Date :]]></text>
+			</staticText>
+			<line>
+				<reportElement x="5" y="32" width="635" height="1"/>
+			</line>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="31">
+			<staticText>
+				<reportElement x="5" y="10" width="57" height="20"/>
+				<textElement/>
+				<text><![CDATA[Mr No]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="60" y="11" width="100" height="20"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Patient Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="160" y="10" width="100" height="20"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Admitting Doctor]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="271" y="10" width="100" height="20"/>
+				<textElement textAlignment="Left"/>
+				<text><![CDATA[Admission Date]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="357" y="11" width="72" height="20"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Death Date
+]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="451" y="11" width="63" height="20"/>
+				<textElement/>
+				<text><![CDATA[Death Time]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="525" y="11" width="100" height="20"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Death Reason]]></text>
+			</staticText>
+			<line>
+				<reportElement x="5" y="27" width="635" height="1"/>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="30">
+			<textField>
+				<reportElement x="0" y="6" width="60" height="20"/>
+				<textElement>
+					<font size="8" pdfFontName="Helvetica"/>	
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{mr_no}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="76" y="8" width="80" height="20"/>
+				<textElement>
+					<font size="8" pdfFontName="Helvetica"/>	
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{patient_name}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="174" y="8" width="100" height="20"/>
+				<textElement>
+					<font size="8" pdfFontName="Helvetica"/>	
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{doctor_name}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="279" y="8" width="87" height="20"/>
+				<textElement>
+					<font size="8" pdfFontName="Helvetica"/>	
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{admit_date}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="367" y="8" width="74" height="20"/>
+				<textElement>
+					<font size="8" pdfFontName="Helvetica"/>	
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{deathdate}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="452" y="8" width="80" height="20"/>
+				<textElement>
+					<font size="8" pdfFontName="Helvetica"/>	
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{deathtime}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="540" y="8" width="88" height="20"/>
+				<textElement>
+					<font size="8" pdfFontName="Helvetica"/>	
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{death_reason}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="48"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54"/>
+	</pageFooter>
+	<summary>
+		<band height="45"/>
+	</summary>
+	<noData>
+		<band height="50">
+			<staticText>
+				<reportElement x="5" y="14" width="635" height="28"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[No data for the given date range]]></text>
+			</staticText>
+		</band>
+	</noData>
+</jasperReport>

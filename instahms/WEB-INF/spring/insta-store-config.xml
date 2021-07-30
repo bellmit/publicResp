@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+		xmlns:p="http://www.springframework.org/schema/p"
+		xmlns:context="http://www.springframework.org/schema/context"
+		xmlns:mvc="http://www.springframework.org/schema/mvc" 
+		xmlns:tx="http://www.springframework.org/schema/tx"
+		xmlns:jpa="http://www.springframework.org/schema/data/jpa" xmlns:aop="http://www.springframework.org/schema/aop"
+		xsi:schemaLocation="http://www.springframework.org/schema/beans  
+		http://www.springframework.org/schema/beans/spring-beans.xsd  
+		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/mvc
+		http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/tx
+	    http://www.springframework.org/schema/tx/spring-tx.xsd">
+	    
+	
+	<!-- For Stores related configuration -->
+	
+	<!-- Sales Controller -->
+	<bean id="salesController" class="com.insta.hms.core.inventory.sales.SalesController">
+		<property name="authMode" value="passthru"/>
+	</bean>
+	
+	<!-- Issues Controller -->
+	<bean id="issuesController" class="com.insta.hms.core.inventory.issues.IssuesController">
+		<property name="authMode" value="passthru"/>
+	</bean>
+	 
+	 <!-- Patient Indent -->
+    	<bean id="patientIndentController" class="com.insta.hms.core.inventory.patientindent.PatientIndentController">
+		<property name="authMode" value="passthru"/>
+	</bean>
+	
+	 <!-- Purchase Order -->
+    	<bean id="purchaseOrderController" class="com.insta.hms.core.inventory.procurement.PurchaseOrderController">
+		<property name="authMode" value="passthru"/>
+	</bean>
+	
+	<!-- ===================================  -->	
+	<!-- Stock Upload  -->
+	<!-- ==================================== -->
+	<bean id="stockUploadController" class="com.insta.hms.core.inventory.stocks.StockUploadController">
+		<property name="actionId" value="mas_stock_upload" />
+		<property name="authMode" value="instaonly" />
+	</bean> 
+	    
+	 <!-- Purchase Order -->
+    	<bean id="stockEntryController" class="com.insta.hms.core.inventory.stocks.StockEntryController">
+		<property name="authMode" value="passthru"/>
+    	</bean>
+	
+	<!-- Patient Issues Controller -->
+	<bean id="patientIssueController" class="com.insta.hms.core.inventory.issues.PatientIssueController">
+		<property name="actionId" value="patient_inventory_issue" />
+	</bean>
+	
+		<!-- Stock Cache -->
+    	<bean id="medicineCacheController" class="com.insta.hms.core.inventory.stockmgmt.MedicineCacheController">
+		<property name="authMode" value="passthru"/>
+	</bean>
+
+    	<bean id="stockManagementController" class="com.insta.hms.core.inventory.stockmgmt.StockManagementController">
+         	<property name="authMode" value="passthru"/>
+    	</bean>	
+
+      <bean id="stockTakeCreateController" class="com.insta.hms.core.inventory.stockmgmt.StockTakeCreateController">
+          <property name="actionId" value="store_stock_take_create" />
+      </bean> 
+      <bean id="stockTakeApprovalController" class="com.insta.hms.core.inventory.stockmgmt.StockTakeApprovalController">
+          <property name="actionId" value="store_stock_take_approve" />
+      </bean> 
+      <bean id="stockTakeReconcileController" class="com.insta.hms.core.inventory.stockmgmt.StockTakeReconcileController">
+          <property name="actionId" value="store_stock_take_reconcile" />
+      </bean> 
+      <bean id="stockTakeCountController" class="com.insta.hms.core.inventory.stockmgmt.StockTakeCountController">
+          <property name="actionId" value="store_stock_take_count" />
+      </bean> 
+      <bean id="stockTakeListController" class="com.insta.hms.core.inventory.stockmgmt.StockTakeListController">
+          <property name="actionId" value="store_stock_take_list" />
+      </bean> 
+      <bean id="stockTakeCancelController" class="com.insta.hms.core.inventory.stockmgmt.StockTakeCancelController">
+          <property name="actionId" value="store_stock_take_cancel" />
+      </bean> 
+      <bean id="stockTakeViewController" class="com.insta.hms.core.inventory.stockmgmt.StockTakeViewController">
+          <property name="authMode" value="passthru"/>
+      </bean>
+</beans>
+

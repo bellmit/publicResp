@@ -1,0 +1,75 @@
+{
+	"title": "Break the Glass Report",
+	"reportGroup": "Master Reports",
+	"description": "This report shows all accesses granted and revoked in the given date range",
+	"dateFields": [ "granted_access_at_date", "revoked_access_at_date" ],
+	"allowNoDate": true,
+	"defaultOrder": "emp_username",
+	"defaultShowFields": [
+		"emp_username",
+		"mr_no",            
+ 		"remarks",  
+	    "granted_access_at_date",
+ 		"revoked_access_at_date"
+ 	 ],
+ 	 "fields": {
+ 	 	"emp_username": {
+ 	 	    "table" : "btgauditlog",
+ 	 		"displayName": "User Name",
+ 	 		"allowedValuesQuery": "SELECT emp_username AS username FROM u_user JOIN u_role USING(role_id) WHERE portal_id='N' GROUP BY emp_username",
+ 	 		"width": "70",
+ 	 		"dataType": "string",
+ 	 		"filterable": true,
+            "groupable": true,
+            "allowNull": true
+ 	 	},
+ 	 	"mr_no": {
+ 	 	    "table" : "btgauditlog",
+            "allowHorizGroup": true,
+            "allowNull": false,
+            "dataType": "string",
+            "displayName": "MR No.",
+            "filterable": true,
+            "groupable": true,
+            "name": "mr_no",
+            "width": 65
+        },
+        "remarks" : {
+            "table" : "btgauditlog",
+        	"dataType": "string",
+        	"displayName": "Reason for access",
+        	"width" : 200,
+        	"name" : "remarks"
+        },
+        "granted_access_at" : {
+        	"displayName": "Granted Access At(With time)",
+        	"table" : "btgauditlog",
+        	"dataType" : "timestamp",
+        	"width" : 60
+        },
+        "revoked_access_at" : {
+        	"displayName": "Revoked Access At(With time)",
+        	"table" : "btgauditlog",
+        	"dataType" : "timestamp",
+        	"width" : 60
+        },
+        "granted_access_at_date" : {
+            "displayName": "Granted Access At Date",
+            "table" : "btgauditlog",
+            "dataType" : "date",
+            "expression" : "date(btgauditlog.granted_access_at)"
+        },
+        "revoked_access_at_date" : {
+            "displayName": "Revoked Access At Date",
+            "table" : "btgauditlog",
+            "dataType" : "date",
+            "expression" : "date(btgauditlog.revoked_access_at)"
+        }
+    },
+    "queryUnits" : [ 
+    	{
+    		"mainTableAlias": "btgauditlog", 
+    		"mainTableName": "user_mrno_association_audit_log"
+    	}
+    ]
+}

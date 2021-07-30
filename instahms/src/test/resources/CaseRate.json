@@ -1,0 +1,20 @@
+{
+   "dataProviderInsert":[
+      {
+         "insurance_company_id":"ICM00002",
+         "network_type_id":133,
+         "plan_id":1,
+         "code_type":"ICD10",
+         "code":"CPT",
+         "code_description":"FEVER",
+         "case_rate_number":1,
+         "status":"A",
+         "case_rate_detail":[
+            {
+               "insurance_category_id":1,
+               "amount":1250.00
+            }
+         ]
+      }
+   ]
+}

@@ -1,0 +1,457 @@
+var form = null;
+var screentype = null;
+function init(){
+    form = document.addtest;
+    screentype = form.screentype.value;
+    if(screentype == "test"){
+  		populateTesNames('testNameObj', 'testContainer', filterJSONArray(deptWiseTestsjson, 'DDEPT_ID', 'all', 'TEST_NAME'));
+  	}else{
+  		populateTesNames('testNameObj','testContainer', filterJSONArray(servicesJSON, 'dept_name', 'all', 'service_name'));
+  	}
+	populateDoctors('doctorNameObj','doctorContainer', filterJSONArray(doctorsJSON, 'dept_id', 'all', 'doctor_name'));
+}
+
+function filterJSONArray(jsonArray, filterKey, filterValue, resultKey) {
+
+	if ( jsonArray == null || jsonArray == undefined ) return null;
+	var jsArray = [];
+
+	if ( jsonArray.length == 0 ) return jsArray;
+
+	var len = 0;
+	if (filterValue == 'all') {
+		for (var i in jsonArray) {
+			var el = jsonArray[i];
+			jsArray.length = len+1;
+			jsArray[len] = el[resultKey];
+			len = len+1;
+		}
+
+	} else {
+		for (var i in jsonArray) {
+			var el = jsonArray[i];
+			if (el[filterKey] == filterValue) {
+				jsArray.length = len+1;
+				jsArray[len] = el[resultKey];
+				len = len+1;
+			}
+		}
+	}
+
+	return jsArray;
+}
+
+var testNamesArray = [];
+var autoComp = null;
+function populateTesNames(testNameObj, testContainer, jsTestArray){
+
+	if(autoComp != null){
+		autoComp.destroy();
+		autoComp =  null;
+	}
+	YAHOO.example.ACJSAddArray = new function() {
+		datasource = new YAHOO.widget.DS_JSArray(jsTestArray);
+		autoComp = new YAHOO.widget.AutoComplete(testNameObj,testContainer,datasource);
+		autoComp.prehighlightClassName = "yui-ac-prehighlight";
+		autoComp.typeAhead = true;
+		autoComp.useShadow = true;
+		autoComp.allowBrowserAutocomplete = false;
+		autoComp.minQueryLength = 0;
+		autoComp.maxResultsDisplayed = 20;
+		autoComp.autoHighlight = true;
+		autoComp.forceSelection = true;
+		autoComp.animVert = false;
+  }
+  if(screentype == "test"){
+  		form.doctorDeptObj.value = "";
+  		form.doctorDeptObjText.value = "";
+  		form.doctorNameObj.value = "";
+	  autoComp.itemSelectEvent.subscribe(function (oSelf){
+			var testId   = getTestId(form.testNameObj.value);
+			var testarr = findInList(deptWiseTestsjson,"TEST_ID",testId);
+			form.doctorDeptObj.value = testarr["CATEGORY"];
+
+			if(form.doctorDeptObj.value == 'DEP_LAB') form.doctorDeptObjText.value = "Laboratory";
+			else form.doctorDeptObjText.value = "Radiology";
+
+			populateDoctors('doctorNameObj','doctorContainer', filterJSONArray(doctorsJSON, 'dept_id', form.doctorDeptObj.value, 'doctor_name'));
+		});
+	}
+}
+
+var doctorNameArray = [];
+var docautoComp = null;
+function populateDoctors(doctorNameObj, doctorContainer, jsDoctorsArray){
+
+ 	if(docautoComp != null){
+		docautoComp.destroy();
+		docautoComp = null;
+	}
+	YAHOO.example.ACJSAddArray= new function(){
+			datasource = new YAHOO.widget.DS_JSArray(jsDoctorsArray);
+			docautoComp = new YAHOO.widget.AutoComplete(doctorNameObj,doctorContainer,datasource);
+			docautoComp.prehighlightClassName = "yui-ac-prehighlight";
+			docautoComp.typeAhead = true;
+			docautoComp.useShadow = true;
+			docautoComp.allowBrowserAutocomplete = false;
+			docautoComp.minQueryLength = 0;
+			docautoComp.maxResultsDisplayed = 20;
+			docautoComp.autoHighlight = true;
+			docautoComp.forceSelection = true;
+			docautoComp.animVert = false;
+	}
+
+}
+
+function addRow(){
+	var index = document.getElementById("maintable").rows.length;
+	var form = document.addtest;
+	var testDeptId = form.deptName.options[form.deptName.selectedIndex].value;
+	var testDeptName = form.deptName.options[form.deptName.selectedIndex].text;
+
+	var doctordeptId = "";
+	var doctorDeptObj = "";
+	if(screentype == "test"){
+		doctordeptId = form.doctorDeptObj.value;
+    	doctorDeptObj = form.doctorDeptObjText.value;
+    }else{
+		doctordeptId = form.doctorDeptObj.options[form.doctorDeptObj.selectedIndex].value;
+    	doctorDeptObj = form.doctorDeptObj.options[form.doctorDeptObj.selectedIndex].text;
+    }
+
+    var testStatusId = form.testStatusObj.options[form.testStatusObj.selectedIndex].value;
+    var testStatusObj = form.testStatusObj.options[form.testStatusObj.selectedIndex].text;
+
+	var testNameObj = form.testNameObj.value;
+	var doctorNameObj = form.doctorNameObj.value;
+	var paymentAmtObj = form.paymentAmtObj.value;
+
+	if(testDeptId == ''){
+		if(screentype == "test") alert('Test department is required');
+		else alert('Service department is required');
+		return false;
+	}
+
+	if(testNameObj == ''){
+		if(screentype == "test") alert('Test name is required');
+		else alert('Service name is required');
+		form.testNameObj.focus();
+		return false;
+	}
+
+	if(doctordeptId == ''){
+		alert('Doctor department is required');
+		return false;
+	}
+
+	if(doctorNameObj == ''){
+		alert('Doctor name is required');
+		form.doctorNameObj.focus();
+		return false;
+	}
+	if(paymentAmtObj == ''){
+		alert('Payment amount is required');
+		form.paymentAmtObj.focus();
+		return false;
+	}
+
+	if(!onChangePaymentPercent(form.paymentAmtObj,form.isPaymentInPerObj)){
+		return false;
+	}
+
+	var testId   = getTestId(testNameObj);
+
+	var doctor = form.doctorNameObj.value;
+	var doctorId = getDoctorId(doctor);
+
+	var paymentAmtObj = form.paymentAmtObj.value;
+    var checked = form.isPaymentInPerObj.checked;
+
+    if(!checkDuplicate(testId,doctordeptId,doctorId)) return false;
+
+	var table = document.getElementById('maintable');
+    var tr =  table.insertRow(-1);
+	tr.setAttribute("id","row"+index);
+	tr.setAttribute("class","");
+
+	var td =   tr.insertCell(-1);
+	var checkBoxObj = document.createElement("input");
+	checkBoxObj.setAttribute("type","checkbox");
+	checkBoxObj.setAttribute("name","selected");
+	checkBoxObj.setAttribute("id","selected"+index);
+	checkBoxObj.setAttribute("value",index);
+	checkBoxObj.setAttribute("onChange","disableRow(this.value)");
+	td.appendChild(checkBoxObj);
+
+	var td = tr.insertCell(-1);
+	var testDeptNode = document.createTextNode(testDeptName);
+	var testDeptIdEle = document.createElement("input");
+	testDeptIdEle.setAttribute("type","hidden");
+	testDeptIdEle.setAttribute("value",testDeptId);
+	testDeptIdEle.setAttribute("name","testDeptId");
+	td.appendChild(testDeptIdEle);
+	td.appendChild(testDeptNode);
+
+	var td = tr.insertCell(-1);
+	var testNameNode = document.createTextNode(testNameObj);
+	var testIdEle = document.createElement("input");
+	testIdEle.setAttribute("type","hidden");
+	testIdEle.setAttribute("value",testId);
+	testIdEle.setAttribute("name", "testId");
+	td.appendChild(testNameNode);
+	td.appendChild(testIdEle);
+
+	var td = tr.insertCell(-1);
+	var doctorDeptNode = document.createTextNode(doctorDeptObj);
+	var doctorDeptEle = document.createElement("input");
+	doctorDeptEle.setAttribute("type","hidden");
+	doctorDeptEle.setAttribute("value",doctordeptId);
+	doctorDeptEle.setAttribute("name","doctordeptId");
+	td.appendChild(doctorDeptNode);
+	td.appendChild(doctorDeptEle);
+
+	var td = tr.insertCell(-1);
+	var doctorNameNode = document.createTextNode(doctor);
+	var doctorNameEle = document.createElement("input");
+	doctorNameEle.setAttribute("type","hidden");
+	doctorNameEle.setAttribute("value",doctorId);
+	doctorNameEle.setAttribute("name","doctorId" );
+	td.appendChild(doctorNameNode);
+	td.appendChild(doctorNameEle);
+
+	var td = tr.insertCell(-1);
+	var paymenTypeEle = document.createElement("input");
+	paymenTypeEle.setAttribute("type","checkbox");
+	if(checked)
+		paymenTypeEle.setAttribute("checked",checked);
+	paymenTypeEle.setAttribute("name","paymentType");
+	paymenTypeEle.setAttribute("id","paymentType"+index);
+	paymenTypeEle.setAttribute("onchange","changePaymentType("+index+")");
+	var isPaymentInPer = document.createElement("input");
+	isPaymentInPer.setAttribute("type","hidden");
+	isPaymentInPer.setAttribute("name","isPaymentInPer");
+	isPaymentInPer.setAttribute("id","isPaymentInPer"+index);
+	if(checked){
+		isPaymentInPer.setAttribute("value","y");
+	}else{
+		isPaymentInPer.setAttribute("value","n");
+	}
+	td.appendChild(isPaymentInPer);
+	td.appendChild(paymenTypeEle);
+
+	var td = tr.insertCell(-1);
+	var paymentEle = document.createElement("input");
+	paymentEle.setAttribute("type","text");
+	paymentEle.setAttribute("name","paymentAmt");
+	paymentEle.setAttribute("onkeypress","return enterNumAndDot(event)");
+	paymentEle.setAttribute("class", "number");
+	paymentEle.setAttribute("value",paymentAmtObj);
+	td.appendChild(paymentEle);
+
+
+	var td =   tr.insertCell(-1);
+	var testStatusNode = document.createTextNode(testStatusObj);
+	var testStatusEle = document.createElement("input");
+	testStatusEle.setAttribute("type","hidden");
+	testStatusEle.setAttribute("value",testStatusId);
+	testStatusEle.setAttribute("name","testStatus");
+	td.appendChild(testStatusNode);
+	td.appendChild(testStatusEle);
+
+	var td =   tr.insertCell(-1);
+	var idObj = document.createElement("input");
+	idObj.setAttribute("type","hidden");
+	idObj.setAttribute("name","idno");
+	idObj.setAttribute("id","idno"+index);
+	idObj.setAttribute("value","");
+	td.appendChild(idObj);
+
+	index++;
+}
+
+function changePaymentType(number){
+	var form = document.addtest;
+	var source = "paymentType" + number;
+	var destination = "isPaymentInPer"+number;
+	var checked = document.getElementById(source).checked;
+	if(checked){
+		document.getElementById(destination).value = 'y';
+	}else{
+		document.getElementById(destination).value = 'n';
+	}
+}
+
+function disableRow(valueIndex){
+	var row = "row"+valueIndex;
+	var status =  	document.getElementById("selected"+valueIndex).checked;
+	var rowObj = document.getElementById(row);
+	if(status){
+		rowObj.setAttribute("style","background-color:#F2DCDC");
+	}else{
+		rowObj.removeAttribute("style");
+	}
+
+   toggleDisabled(rowObj,status);
+}
+
+function toggleDisabled(el,status){
+	try{
+		el.disabled = status;
+	}catch(E){
+	}
+	if(el.childNodes && el.childNodes.length>0){
+		for(var i=0; i<el.childNodes.length;i++){
+		    if(el.childNodes[i].name != 'selected')
+				toggleDisabled(el.childNodes[i],status);
+		}
+	}
+}
+
+
+function getTestId(testNameObj){
+
+
+ if(screentype == 'test'){
+	   for ( i=0 ; i< deptWiseTestsjson.length; i++){
+			var item = deptWiseTestsjson[i];
+			if(item["TEST_NAME"] ==testNameObj ){
+				return item["TEST_ID"];
+			}
+	   }
+  }else{
+	 for ( i=0 ; i< servicesJSON.length; i++){
+			var item = servicesJSON[i];
+			if(item["service_name"] ==testNameObj ){
+				return item["service_id"];
+			}
+	 }
+  }
+}
+
+
+function getDoctorId(doctor){
+
+	for (var i=0; i<doctorsJSON.length;i++){
+		 var item = doctorsJSON[i];
+		 if(doctor ==  item["doctor_name"]){
+			return item["doctor_id"];
+		 }
+	}
+}
+
+function validateForm(){
+	if(!validateEnabled){
+		alert("no changes found");
+		return false;
+	}
+	if(!validateAmts()){
+		return false;
+	}
+}
+
+
+function validateEnabled(){
+	var paymentEls = document.getElementsByName("paymentAmt");
+	for (var i=0; i<paymentEls.length; i++) {
+		var el = paymentEls[i];
+		if (!el.disabled) {
+			return true;
+		}
+	}
+	return false;
+}
+
+function validateAmts(){
+	var paymentEls = document.getElementsByName("paymentAmt");
+	var paymentCheckEls = document.getElementsByName("paymentType");
+	for (var i=0; i<paymentEls.length; i++) {
+		if (!onChangePaymentPercent(paymentEls[i],paymentCheckEls[i])) {
+			return false;
+		}
+	}
+	return true;
+}
+
+
+function filterTests(){
+	form.testNameObj.value = "";
+	var dept  = form.deptName.value;
+	populateTesNames('testNameObj','testContainer', filterJSONArray(deptWiseTestsjson, 'DDEPT_ID', dept, 'TEST_NAME'));
+}
+
+function filterServices(){
+	form.testNameObj.value = "";
+	var dept  = form.deptName.value;
+	populateTesNames('testNameObj','testContainer', filterJSONArray(servicesJSON, 'dept_name', dept, 'service_name'));
+}
+
+
+function filterDoctors(){
+	form.doctorNameObj.value = "";
+	var docdept  = form.doctorDeptObj.value;
+	populateDoctors('doctorNameObj','doctorContainer', filterJSONArray(doctorsJSON, 'dept_id', docdept, 'doctor_name'));
+}
+
+function enableChargeInputs(id){
+	var disabled = document.getElementById("paymentAmt"+id).disabled;
+
+	var paymentAmt = document.getElementById("paymentAmt"+id);
+	var paymentType = document.getElementById("paymentType"+id);
+	var idno = document.getElementById("idno"+id);
+	var isPaymentInPer = document.getElementById("isPaymentInPer"+id);
+
+	var testId = document.getElementById("testId"+id);
+	var doctordeptId = document.getElementById("doctordeptId"+id);
+	var doctorId = document.getElementById("doctorId"+id);
+
+	var testStatus = document.getElementById("testStatus"+id);
+
+	paymentAmt.disabled = !disabled;
+	paymentType.disabled = !disabled;
+	idno.disabled = !disabled;
+	isPaymentInPer.disabled = !disabled;
+
+	testId.disabled = !disabled;
+	doctordeptId.disabled = !disabled;
+	doctorId.disabled = !disabled;
+
+	testStatus.disabled = !disabled;
+
+}
+
+	function checkDuplicate(testId,doctordeptId,doctorId){
+		var testIdEls = document.getElementsByName("testId");
+		var doctordeptIdEls = document.getElementsByName("doctordeptId");
+		var doctorIdEls = document.getElementsByName("doctorId");
+		for(var i=0; i<testIdEls.length ;i++){
+			if((testIdEls[i].value == testId) && (doctordeptIdEls[i].value == doctordeptId) && (doctorIdEls[i].value == doctorId)){
+				alert("Duplicate entry");
+				return false;
+			}
+		}
+		return true;
+	}
+
+function onChangePaymentPercent(obj,isPaymentInPer) {
+	formatAmountObj(obj, true);
+	var valid = true;
+	if(isPaymentInPer.checked){
+	  	 valid = validateDiscountsPer(obj);
+  	}
+	return valid;
+}
+
+function validateDiscountsPer(obj){
+	var valid = true;
+	valid =  valid && validateAmount(obj, "Payment must be a valid amount");
+	if (valid && (obj.value > 100) ) {
+		alert("Payment  percentage can not be greater than 100");
+		valid = false;
+	}
+
+	if (!valid) {
+		obj.value="";
+		obj.focus();
+	}
+	return valid;
+}

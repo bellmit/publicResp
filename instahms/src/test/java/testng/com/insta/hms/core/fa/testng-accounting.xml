@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<suite name="HmsAccountingInfoTest" verbose="10"
+	allow-return-values="true">
+	<test name="accounting">
+		<classes>
+			<class
+				name="testng.com.insta.hms.batchjob.AccountingDataInsertServiceTest" />
+		</classes>
+	</test>
+	<test name="phbills">
+		<classes>
+			<class
+				name="testng.com.insta.hms.batchjob.PharmacyAccountingDataInsertServiceTest" />
+		</classes>
+	</test>
+	<test name="invbills">
+		<classes>
+			<class
+				name="testng.com.insta.hms.batchjob.InventoryAccountingDataInsertServiceTest" />
+		</classes>
+	</test>
+	<test name="invretbills">
+		<classes>
+			<class
+				name="testng.com.insta.hms.batchjob.InventoryReturnsAccountingDataInsertServiceTest" />
+		</classes>
+	</test>
+</suite>

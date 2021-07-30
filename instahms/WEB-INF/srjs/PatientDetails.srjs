@@ -1,0 +1,128 @@
+{
+    "title": "Patient Details Report",
+    "reportGroup": "Patient Stats Reports",
+    "description": "This report builder gives a detailed description of all patients.",
+    "dateFields": [
+        "first_visit_date",
+        "death_date"
+    ],
+    "allowNoDate": true,
+    "defaultOrder": "mr_no",
+    "defaultDate": "None",
+    "defaultShowFields": [
+        "mr_no",
+        "age",
+        "age_in",
+        "patient_name",
+        "patient_gender",
+        "patient_status",
+        "patient_phone",
+        "first_visit_date"
+    ],
+    "includes": [
+        "PatientDetailFields.srjs"
+    ],
+    "fields": {
+        "mr_no": {
+            "allowHorizGroup": true,
+            "allowNull": false,
+            "dataType": "string",
+            "displayName": "MR No.",
+            "filterable": true,
+            "groupable": true,
+            "name": "mr_no",
+            "table": "pd",
+            "width": 65
+        },
+        "original_mr_no": {
+            "allowHorizGroup": true,
+            "allowNull": false,
+            "dataType": "string",
+            "displayName": "Original MR No.",
+            "filterable": true,
+            "groupable": true,
+            "name": "original_mr_no",
+            "table": "pd",
+            "width": 65
+        },
+        "age_group": {
+            "displayName": "Age Group",
+            "width": "110",
+            "groupable": true,
+            "filterable": true,
+            "table": "pd",
+            "expression": "get_patient_age_group(pd.dateofbirth, pd.expected_dob)",
+            "allowedValues": [
+                "0 - 30 Days - Neo Natal",
+                "31 Days - 1 Year: Infant",
+                "1 - 14 Yrs - Paediatric",
+                "15 - 80 Yrs - General",
+                "80+ Yrs - Geriatric"
+            ]
+        },
+        "user_name": {
+            "displayName": "User",
+            "width": "80",
+            "filterable": true,
+            "allowNull": true,
+            "groupable": true,
+            "table": "pd",
+            "name": "user_name",
+            "allowedValuesQuery": "SELECT emp_username FROM u_user JOIN u_role USING(role_id) WHERE portal_id='N' GROUP BY emp_username"
+        },
+        "timeofbirth": {
+            "displayName": "Time Of Birth",
+            "width": "60"
+        },
+        "death_date": {
+            "displayName": "Death Date",
+            "dataType": "date",
+            "width": "60"
+        },
+        "death_time": {
+            "displayName": "Death Time",
+            "width": "60"
+        },
+        "death_datetime": {
+            "displayName": "Death Date/Time",
+            "expression": "(pd.death_date + pd.death_time)",
+            "width": "90"
+        },
+        "death_reason": {
+            "displayName": "Death Reason",
+            "width": "100",
+            "groupable": true,
+            "filterable": true,
+            "expression": "drm.reason",
+            "table": "drm",
+            "name": "death_reason",
+            "allowedValuesQuery": "SELECT reason FROM death_reason_master GROUP BY reason ORDER BY reason"
+        },
+        "dateofbirth": {
+            "table": "pd",
+            "displayName": "Date of Birth",
+            "dataType": "date",
+            "filterable": true,
+            "groupable": true,
+            "width": "80",
+            "name": "dateofbirth"
+        },
+        "expected_dob": {
+            "table": "pd",
+            "displayName": "Expected Date of Birth",
+            "dataType": "date",
+            "filterable": true,
+            "groupable": true,
+            "width": "80",
+            "name": "expected_dob"
+        }
+    },
+    "queryUnits": [
+        {
+            "mainTableAlias": "pd",
+            "mainTableName": "patient_details",
+            "groupBy": false,
+            "joinTables": []
+        }
+    ]
+}

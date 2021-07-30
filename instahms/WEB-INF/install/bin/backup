@@ -1,0 +1,111 @@
+#!/bin/bash
+
+#
+# Daily/weekly/monthly backup for the given database, cleaning up old ones as necessary
+#
+
+source `dirname $0`/functions
+
+# check prefs
+[ "$BACKUP_ENABLED" == "N" ] && exit 0
+
+# If there is a upgrade going on dont start the backup
+
+UPGRADING_FILE=$APPHOME/upgrading
+if [ -f $UPGRADING_FILE ] ; then
+       date_echo "Upgrade in progress, Dont take the backup"
+       exit 0
+fi
+
+# can change to partial for hospitals which have HB or HA for PITR convenience
+[ -z $BACKUP_TYPE ] && BACKUP_TYPE=full
+
+DOW=`date +%a`
+WEEK=`date +%-V`
+HOD=`date +%-H`
+FULLDATE=`date +%Y%m%d-%H%M`
+curdate=`date +%Y-%m-%d`
+BACKUPDIR=$HMS_WORK_HOME/db-backups/$APP
+bkperrlog=/var/log/insta/backup.$curdate.log
+
+for schema in `get_live_schemas` ; do
+	[ ! -d $BACKUPDIR/$schema/daily ] && sudo mkdir -p $BACKUPDIR/$schema/daily
+	[ ! -d $BACKUPDIR/$schema/weekly ] && sudo mkdir -p $BACKUPDIR/$schema/weekly
+	[ ! -d $BACKUPDIR/$schema/monthly ] && sudo mkdir -p $BACKUPDIR/$schema/monthly
+done
+# MONTHLY is actually 4-weekly.
+
+for schema in `get_live_schemas` ; do
+
+#
+# Every app can have its own delay. Needs to be setup in prefs for the app
+# Useful only if there are multiple apps on the same server, esp. in testsvr and apps.
+# This is to ensure that multiple backups don't collide with each other.
+#
+if [ ! -z $CRONDELAY ] ; then
+	sleep $CRONDELAY
+fi
+
+#
+# Take the backup
+#
+date
+FILENAME=backup.dump
+sudo rm -f $BACKUPDIR/$schema/$FILENAME
+backup_db $BACKUPDIR/$schema/$FILENAME $BACKUP_TYPE compress $schema
+if [ $? -ne 0 ] ; then
+	echo "DB Backup failed" >> $bkperrlog
+	tail -20 /var/log/insta/$APP/backup.log >> $bkperrlog
+	exit 1
+fi
+
+# sometimes, a backup is not made (eg, scan requested and no scan schemas exist)
+[ ! -f $BACKUPDIR/$schema/$FILENAME ] && exit 0
+
+#
+# Move the backup to a monthly/weekly/daily subdirectory
+#
+if [ $DOW == "Mon" -a $HOD -le 6 ] ; then
+	if [ $((WEEK%4)) == 0 ] ; then
+		period=monthly
+	else
+		period=weekly
+	fi
+else
+	period=daily
+fi
+
+# 
+#
+# Move it to the appropriate period's subdirectory
+#
+FINALFILE=$period/backup-$FULLDATE.dump
+sudo mv $BACKUPDIR/$schema/$FILENAME $BACKUPDIR/$schema/$FINALFILE
+
+#
+# Indicate that this is the latest we have. This can be used to
+# remote download a newer backup "incrementally" by using it as a base for rsync
+#
+#sudo ln -sf $FINALFILE $BACKUPDIR/$schema/latest
+#
+# Cleanup old backups in various sub-directories. Since we use a common 
+# script for different frequencies, we rely on age rather than on the 
+# number of backups for cleaning up of old backups
+#
+
+# delete all old monthly files more than 12 weeks old (ensure at least 3 month old backups exist)
+find $BACKUPDIR/$schema/monthly/ -mtime +85 -exec rm '{}' ';'
+# delete all old weekly files more than 4 weeks old (ensure at least 4 week old backups exist)
+find $BACKUPDIR/$schema/weekly/  -mtime +29  -exec rm '{}' ';'
+# delete all old daily files more than 7 days old (keep last 7 days' backup)
+find $BACKUPDIR/$schema/daily/ -mtime +7  -exec rm '{}' ';'
+
+done
+
+#
+# Only on apps: special backup for demo databases
+#
+if [ $HOST == "apps.instahealthsolutions.com" ] ; then
+	sudo mkdir -p $HMS_WORK_HOME/demo-backups
+	pg_dump -n demo -f $HMS_WORK_HOME/demo-backups/${APP}.demo.dump ${APP}
+fi

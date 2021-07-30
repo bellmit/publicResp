@@ -1,0 +1,52 @@
+/* Hide the top bar */
+#tblMain > tbody > tr:first-child {
+    display: none;
+}
+
+/* Hide the side bar */
+.fa-zero-width { display: none; }
+
+/* Remove padding and border from content area */
+.whitebg.contentarea { padding: 0px; border: none; }
+
+/* Hide the bill form */
+form[name="billNoForm"] { display: none; }
+
+/* Apply margin for the first block from the top */
+#content > div:nth-child(3) { margin-top: 10px; }
+
+/* Hide the image on the the first block */
+#content > div:nth-child(3) > .fieldSetBorder > .fieldSetLabel { display: none; }
+
+/* Hide the first row of the first block containing patient details */
+.patientdetails > tbody > tr:first-child { display: none; }
+
+/* Hide screen action button */
+/* Uncomment for 12.2.2 */ 
+/* #txx { display: none; } */
+/* Remove for 12.2.2 */
+/* Styles to show bill template & printer settings dropdown to download bill */
+#txx > tbody > tr > td { display: none; }
+#bill-actions-print-options-row > td:first-child { display: none; }
+#bill-actions-print-options-row > td:nth-child(2) { display: table-cell; }
+
+/* Expand Order list table to full width */
+form[name="mainform"] .resultList { width: 100%; }
+
+.foottertxt { display: none; }
+
+/* Hide Insta Chat support */
+#chat-widget-container { display: none; }
+#livechat-eye-catcher { display: none; }
+
+/* Initial styles for hidden-header-scroll-area later updated dynamically onscroll */
+.hidden-header-scroll-area {
+  display: none;
+  background-color: white;
+  height: 120px; /* Height of the patient header + Sub activity bar */
+}
+
+select[readonly] {
+  pointer-events: none;
+}
+

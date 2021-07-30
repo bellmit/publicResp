@@ -1,0 +1,6 @@
+malaffi_code,malaffi_description,hms_name,is_default
+A,Admitting,Admitting,true
+W,Working,Working,
+W,Working,Probable,
+F,Final,Final,
+F,Final,Confirmed,

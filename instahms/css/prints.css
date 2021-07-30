@@ -1,0 +1,49 @@
+/*
+ * CSS file to be included in printable pages, eg, pharmacy bill, and diag print.
+ * Styles common to all prints are included here.
+ */
+
+
+body,pre {
+	color: black;
+	background-color:  #FFFFFF;
+	font-family: Courier New, Fixed;
+}
+
+table {
+	empty-cells: show;
+}
+
+table#patientDetails {
+	margin-bottom: 20px;
+}
+table#patientDetails td {
+	padding: 1px 4px 1px 4px;
+}
+table#patientDetails td.info {
+	padding-right: 50px;
+	font-weight: bold;
+}
+table#licenseDetails td.info {
+	padding-right: 50px;
+	font-weight: bold;
+}
+
+table.items {
+	border-collapse: collapse;
+	border-top: 1px solid silver;
+	border-bottom: 1px solid silver;
+}
+ table.items th {
+	border-top: 1px solid silver;
+	border-bottom: 1px solid silver;
+	padding: 2px 8px 2px 3px;
+}
+table.items td {
+	padding: 2px 8px 2px 3px;
+}
+
+table.items td.number {
+	text-align: right;
+}
+

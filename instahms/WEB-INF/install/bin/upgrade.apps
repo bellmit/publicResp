@@ -1,0 +1,91 @@
+#!/bin/bash
+
+#
+# Upgrade: this is called from the current version that is installed,
+# to upgrade to the new version that has been downloaded to
+# /root/builds/<version>
+#
+# The main task is to copy over the version and hand over to scripts in
+# the new version. It is better to keep maximum control in the new version.
+#
+
+source `dirname $0`/functions
+LOGFILE=$LOGDIR/upgrade.log
+
+#
+# Initial Checks
+#
+VERSION=$1
+[ -z $VERSION ] && do_log "Cannot upgrade, version missing." && exit 1
+
+HMSDB=$2
+[ -z $HMSDB ] && do_log "Cannot upgrade, hmsdb missing." && exit 1
+
+
+NEWVERN=`get_numeric_version $VERSION`
+
+MINOR=`get_string_maj_min $VERSION`
+MINOR_WITHOUT_DOT=${MINOR/./}
+
+do_log "--------- Upgrade Begin: `date` ---------"
+do_log "Attempting upgrade to $VERSION"
+
+DISTDIR=$HMS_DIST_HOME/Appsbuilds/$VERSION
+[ ! -d $DISTDIR ] && do_log "Missing distribution: $DISTDIR. Aborting upgrade" && exit 1
+
+OLDVER=`get_current_version`
+do_log "Current version is" $OLDVER
+
+#
+# Stop the application
+#
+if [ "$UPGRADE_RESTART" != "N" ] ; then
+	do_log "Stopping tomcat-9"
+	sudo /etc/init.d/tomcat-9 stop
+	if [ -f /var/run/dialysis_poll.pid ] ; then
+		do_log "Stopping dialysis poller"
+		sudo kill `cat /var/run/dialysis_poll.pid`
+	fi
+	if [ -f /var/run/hl7_lab_order*.pid ] ; then
+		do_log "Stopping hl7_lab_order poller"
+		sudo kill `cat /var/run/hl7_lab_order*.pid`
+	fi
+else
+	do_log "Not stopping tomcat as per preference settings"
+fi
+
+#
+# Software: copy in the new version under a temporary name
+#
+do_log "Copying in new version"
+sudo rm -rf $APPROOT.orig $APPROOT.new
+sudo cp -a $DISTDIR $APPROOT.new
+
+NEWBINPATH=$APPROOT.new/WEB-INF/install/bin
+sudo chmod +x $NEWBINPATH/*
+
+#
+# Copy old sentry.properties config, update release version and set apps tag
+#
+if [ -f $APPROOT/WEB-INF/classes/sentry.properties ] ;
+then
+	sudo cp $APPROOT/WEB-INF/classes/sentry.properties $APPROOT.new/WEB-INF/classes/sentry.properties
+	sudo sed --in-place -e "s/^release.*$/release=$VERSION/" \
+		$APPROOT.new/WEB-INF/classes/sentry.properties
+	sudo sed --in-place -e "s/^tags.*$/tags=application:apps/" \
+		$APPROOT.new/WEB-INF/classes/sentry.properties
+fi
+
+#
+# switch the old and new software
+#
+sudo cp -a $NEWBINPATH/switchver /tmp/
+exec /tmp/switchver $APPROOT $APPROOT.orig $APPROOT.new WEB-INF/install/bin/postinstall $OLDVER $HMSDB
+echo "switchver has run"
+
+
+######
+# exec does not return
+######
+
+

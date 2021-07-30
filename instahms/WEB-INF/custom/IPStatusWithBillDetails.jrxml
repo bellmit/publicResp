@@ -1,0 +1,419 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="comment" value="Used by omni hospital."/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT *,  (age||agein) || '/' || patient_gender as patient_age, hospital_advance+pharmacy_advance as advance,
+total_amt - (hospital_advance+pharmacy_advance) as due
+FROM (
+	SELECT  pr.mr_no, pr.status,  wn.ward_name, pr.bed_type, 
+		bn.bed_name, 
+		get_patient_name(pd.salutation, pd.patient_name, pd.middle_name, pd.last_name) as patient_name,
+		b.total_amount - b.total_claim AS total_amt,
+		(SELECT CASE WHEN pr.primary_sponsor_id IS NOT NULL and pr.primary_sponsor_id != '' 
+				THEN coalesce(sum(amount-insurance_claim_amount),0.00)
+				ELSE coalesce(sum(amount),0.00) END
+			FROM bill_charge bc
+			WHERE bc.bill_no=b.bill_no AND charge_head IN ('PHMED','PHRET','PHCMED','PHCRET')
+				AND bc.status !='X' 
+			) AS pharmacy_amt,
+		(SELECT coalesce(sum(brh.amount), 0.00)
+			FROM bill_receipts brh
+				JOIN counters ch ON (brh.counter = ch.counter_id)
+			WHERE brh.bill_no = b.bill_no AND brh.payment_type IN ('R','F') AND ch.counter_type != 'P'
+			) AS hospital_advance, 
+		(SELECT coalesce(sum(brp.amount), 0.00) 
+			FROM bill_receipts brp
+				JOIN counters cp ON (brp.counter = cp.counter_id)
+			WHERE brp.bill_no = b.bill_no AND brp.payment_type IN ('R','F') AND cp.counter_type = 'P'
+			) AS pharmacy_advance,
+			get_patient_age(pd.dateofbirth, pd.expected_dob) AS age,
+			get_patient_age_in(pd.dateofbirth, pd.expected_dob) AS agein,
+			pd.patient_gender,
+			a.admit_date,
+			pr.discharge_date,
+			d.doctor_name as admitting_doctor,
+			od.org_name, 
+			tm.tpa_name,
+			om.operation_name,
+			date(bos.start_datetime) as date_of_surgery
+			
+	FROM bill b
+		LEFT JOIN patient_registration pr ON (pr.patient_id=b.visit_id)
+		LEFT JOIN patient_details pd on (pd.mr_no=pr.mr_no)
+		LEFT JOIN admission a ON (a.patient_id=pr.patient_id)
+		LEFT JOIN bed_names bn ON (bn.bed_id=a.bed_id)
+		LEFT JOIN ward_names wn ON (wn.ward_no=bn.ward_no)
+		LEFT JOIN doctors d ON  (d.doctor_id=pr.doctor)
+		LEFT JOIN organization_details od ON ( od.org_id = pr.org_id )
+		LEFT JOIN tpa_master tm ON ( tm.tpa_id = pr.primary_sponsor_id )
+		LEFT JOIN bed_operation_schedule bos ON (bos.mr_no = pr.mr_no)
+		LEFT JOIN operation_master om ON (om.op_id = bos.operation_name)
+		WHERE b.status IN ('A','F') AND bill_type IN ('P','C') AND b.visit_type='i'
+		 
+) as foo where status='A' and ward_name is not null 
+group by bed_name,mr_no,status,ward_name,bed_type,patient_name,
+total_amt,pharmacy_amt,hospital_advance,pharmacy_advance,age,agein,patient_gender,
+admit_date,discharge_date,admitting_doctor,org_name, tpa_name,operation_name,date_of_surgery
+ order by ward_name]]>
+	</queryString>
+	<field name="mr_no" class="java.lang.String"/>
+	<field name="patient_name" class="java.lang.String"/>
+	<field name="patient_age" class="java.lang.String"/>
+	<field name="bed_name" class="java.lang.String"/>
+	<field name="operation_name" class="java.lang.String"/>
+	<field name="date_of_surgery" class="java.util.Date"/>
+	<field name="admit_date" class="java.util.Date"/>
+	<field name="admitting_doctor" class="java.lang.String"/>
+	<field name="org_name" class="java.lang.String"/>
+	<field name="tpa_name" class="java.lang.String"/>
+	<field name="total_amt" class="java.lang.Number"/>
+	<field name="advance" class="java.lang.Number"/>
+	<field name="due" class="java.lang.Number"/>
+	<field name="ward_name" class="java.lang.String"/>
+	<variable name="slno" class="java.lang.Integer" calculation="Count">
+		<variableExpression><![CDATA[$F{mr_no}]]></variableExpression>
+	</variable>
+	<variable name="tot_amt" class="java.lang.Number" resetType="Group" resetGroup="ward_group" calculation="Sum">
+		<variableExpression><![CDATA[$F{total_amt}]]></variableExpression>
+	</variable>
+	<variable name="tot_advance" class="java.lang.Number" resetType="Group" resetGroup="ward_group" calculation="Sum">
+		<variableExpression><![CDATA[$F{advance}]]></variableExpression>
+	</variable>
+	<variable name="tot_due" class="java.lang.Number" resetType="Group" resetGroup="ward_group" calculation="Sum">
+		<variableExpression><![CDATA[$F{due}]]></variableExpression>
+	</variable>
+	<variable name="grand_tot_amt" class="java.lang.Number" resetType="Group" resetGroup="grand_grp" calculation="Sum">
+		<variableExpression><![CDATA[$F{total_amt}]]></variableExpression>
+	</variable>
+	<variable name="grand_adv" class="java.lang.Number" resetType="Group" resetGroup="grand_grp" calculation="Sum">
+		<variableExpression><![CDATA[$F{advance}]]></variableExpression>
+	</variable>
+	<variable name="grand_due" class="java.lang.Number" resetType="Group" resetGroup="grand_grp" calculation="Sum">
+		<variableExpression><![CDATA[$F{due}]]></variableExpression>
+	</variable>
+	<group name="grand_grp">
+		<groupHeader>
+			<band/>
+		</groupHeader>
+		<groupFooter>
+			<band height="20">
+				<staticText>
+					<reportElement x="524" y="3" width="100" height="15"/>
+					<textElement textAlignment="Right">
+						<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[Grand Total:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="grand_grp" pattern="##0.00" isBlankWhenNull="true">
+					<reportElement x="659" y="3" width="47" height="15"/>
+					<textElement textAlignment="Right">
+						<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression class="java.lang.Number"><![CDATA[$V{grand_tot_amt}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="grand_grp" pattern="##0.00" isBlankWhenNull="true">
+					<reportElement x="709" y="3" width="47" height="15"/>
+					<textElement textAlignment="Right">
+						<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression class="java.lang.Number"><![CDATA[$V{grand_adv}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="grand_grp" pattern="##0.00" isBlankWhenNull="true">
+					<reportElement x="758" y="3" width="45" height="15"/>
+					<textElement textAlignment="Right">
+						<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression class="java.lang.Number"><![CDATA[$V{grand_due}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="459" y="0" width="343" height="1" forecolor="#B5B0B0"/>
+				</line>
+				<line>
+					<reportElement x="459" y="19" width="343" height="1" forecolor="#B5B0B0"/>
+				</line>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="ward_group">
+		<groupExpression><![CDATA[$F{ward_name}]]></groupExpression>
+		<groupHeader>
+			<band height="22">
+				<staticText>
+					<reportElement x="6" y="5" width="65" height="15"/>
+					<textElement>
+						<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[Ward Name:]]></text>
+				</staticText>
+				<textField evaluationTime="Group" evaluationGroup="ward_group" isBlankWhenNull="true">
+					<reportElement x="79" y="4" width="234" height="15"/>
+					<textElement>
+						<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{ward_name}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="18">
+				<textField evaluationTime="Group" evaluationGroup="ward_group">
+					<reportElement x="459" y="2" width="168" height="15"/>
+					<textElement textAlignment="Right">
+						<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{ward_name}==null?"Sub Total :":$F{ward_name}+" Sub Total : "]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="ward_group" pattern="##0.00" isBlankWhenNull="true">
+					<reportElement x="659" y="2" width="47" height="15"/>
+					<textElement textAlignment="Right">
+						<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression class="java.lang.Number"><![CDATA[$V{tot_amt}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="ward_group" pattern="##0.00" isBlankWhenNull="true">
+					<reportElement x="707" y="2" width="49" height="15"/>
+					<textElement textAlignment="Right">
+						<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression class="java.lang.Number"><![CDATA[$V{tot_advance}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="ward_group" pattern="##0.00" isBlankWhenNull="true">
+					<reportElement x="758" y="2" width="45" height="15"/>
+					<textElement textAlignment="Right">
+						<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression class="java.lang.Number"><![CDATA[$V{tot_due}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="459" y="0" width="343" height="1" forecolor="#B5B0B0"/>
+				</line>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band/>
+	</background>
+	<title>
+		<band height="37">
+			<staticText>
+				<reportElement x="266" y="3" width="256" height="23"/>
+				<textElement textAlignment="Center">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[IP Status Report]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="23">
+			<staticText>
+				<reportElement x="5" y="4" width="22" height="15"/>
+				<textElement>
+					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[SNo.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="32" y="4" width="42" height="15"/>
+				<textElement>
+					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[MRNO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="85" y="4" width="104" height="15"/>
+				<textElement>
+					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Patient Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="197" y="4" width="42" height="15"/>
+				<textElement>
+					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Age/Gender]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="239" y="4" width="63" height="15"/>
+				<textElement>
+					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Bed Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="309" y="4" width="46" height="15"/>
+				<textElement>
+					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[D.O.A]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="364" y="5" width="92" height="15"/>
+				<textElement>
+					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Procedure Done]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="456" y="5" width="83" height="15"/>
+				<textElement>
+					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Consultant]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="552" y="5" width="52" height="15"/>
+				<textElement>
+					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Rate Plan]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="613" y="5" width="44" height="15"/>
+				<textElement>
+					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[TPA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="659" y="5" width="49" height="15"/>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Amount]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="707" y="5" width="46" height="15"/>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Advance]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="763" y="5" width="34" height="15"/>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Due]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="1" width="803" height="1" forecolor="#B5B0B0"/>
+			</line>
+			<line>
+				<reportElement x="0" y="21" width="803" height="1" forecolor="#B5B0B0"/>
+			</line>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band/>
+	</columnHeader>
+	<detail>
+		<band height="17">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="32" y="1" width="45" height="12"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{mr_no}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="85" y="1" width="100" height="12"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{patient_name}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="197" y="1" width="36" height="12"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{patient_age}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="239" y="1" width="63" height="12"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{bed_name}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="309" y="1" width="47" height="12"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[$F{admit_date}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="364" y="1" width="92" height="12"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{operation_name}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="457" y="1" width="90" height="12"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{admitting_doctor}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="553" y="1" width="51" height="12"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{org_name}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="609" y="1" width="44" height="12"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{tpa_name}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="##0.00" isBlankWhenNull="true">
+				<reportElement x="659" y="1" width="47" height="12"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$F{total_amt}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="##0.00" isBlankWhenNull="true">
+				<reportElement x="707" y="1" width="49" height="12"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$F{advance}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="##0.00" isBlankWhenNull="true">
+				<reportElement x="758" y="1" width="45" height="12"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$F{due}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="8" y="1" width="20" height="12"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Integer"><![CDATA[$V{slno}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band/>
+	</columnFooter>
+	<pageFooter>
+		<band/>
+	</pageFooter>
+	<summary>
+		<band height="43"/>
+	</summary>
+</jasperReport>
+

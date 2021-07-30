@@ -1,0 +1,11 @@
+<xml version="1.0" encoding="UTF-8">
+<suite name="OrderOrderableItemTest" verbose="1" allow-return-values="true">
+ 	<test name="orderableitems">
+ 		<classes>
+ 			<class
+ 				name="testng.com.insta.hms.core.clinical.order.master.OrderOrderableItemTest" >
+ 			</class>
+ 		</classes>
+ 	</test>
+ </suite>
+ </xml> 

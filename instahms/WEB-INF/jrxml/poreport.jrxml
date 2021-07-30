@@ -1,0 +1,552 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="poreport" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="40" bottomMargin="40">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="poNo" class="java.lang.String"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
+	<parameter name="hospitaltin" class="java.lang.String"/>
+	<parameter name="hospitalpan" class="java.lang.String"/>
+	<parameter name="hospitalSerRegno" class="java.lang.String"/>
+	<parameter name="center_id" class="java.lang.Integer" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new Integer(0)]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT DISTINCT SITD.MEDICINE_NAME,
+POM.PO_NO,
+TO_CHAR(POM.PO_DATE,'DD-MON-YY') AS PO_DATE,
+SM.SUPPLIER_NAME,
+REPLACE(SM.SUPPLIER_ADDRESS,'~','')AS SUPPLIER_ADDRESS,
+COALESCE(SUPPLIER_CITY,'') as CITY_NAME,
+COALESCE(SUPPLIER_COUNTRY,'') as COUNTRY_NAME,
+COALESCE(SUPPLIER_STATE ,'') as STATE_NAME,
+POM.SUPPLIER_TERMS,
+POM.HOSPITAL_TERMS,
+COALESCE(SM.SUPPLIER_TIN_NO,'')AS SUPPLIER_TIN,
+PO.DISCOUNT,
+PO.QTY_REQ,
+PO.MRP,
+PO.COST_PRICE,
+PO.VAT_RATE,
+PO.VAT,
+POM.QUT_NO,
+COALESCE(TO_CHAR(POM.QUT_DATE,'DD-MON-YY'),'') AS QUT_DATE,
+PO.ADJ_MRP,
+POM.REFERENCE,
+PO.MED_TOTAL
+FROM STORE_PO_MAIN POM JOIN STORE_PO PO ON POM.PO_NO = PO.PO_NO
+JOIN SUPPLIER_MASTER SM on SM.SUPPLIER_CODE = POM.SUPPLIER_ID
+JOIN STORE_ITEM_DETAILS SITD on PO.MEDICINE_ID = SITD.MEDICINE_ID
+WHERE POM.PO_NO=$P{poNo}]]>
+	</queryString>
+	<field name="medicine_name" class="java.lang.String"/>
+	<field name="po_no" class="java.lang.String"/>
+	<field name="po_date" class="java.lang.String"/>
+	<field name="supplier_name" class="java.lang.String"/>
+	<field name="supplier_address" class="java.lang.String"/>
+	<field name="city_name" class="java.lang.String"/>
+	<field name="country_name" class="java.lang.String"/>
+	<field name="state_name" class="java.lang.String"/>
+	<field name="supplier_terms" class="java.lang.String"/>
+	<field name="hospital_terms" class="java.lang.String"/>
+	<field name="supplier_tin" class="java.lang.String"/>
+	<field name="discount" class="java.math.BigDecimal"/>
+	<field name="qty_req" class="java.math.BigDecimal"/>
+	<field name="mrp" class="java.math.BigDecimal"/>
+	<field name="cost_price" class="java.math.BigDecimal"/>
+	<field name="vat_rate" class="java.math.BigDecimal"/>
+	<field name="vat" class="java.math.BigDecimal"/>
+	<field name="qut_no" class="java.lang.String"/>
+	<field name="qut_date" class="java.lang.String"/>
+	<field name="adj_mrp" class="java.math.BigDecimal"/>
+	<field name="reference" class="java.lang.String"/>
+	<field name="med_total" class="java.math.BigDecimal"/>
+	<variable name="SUM_qty_req_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{qty_req}]]></variableExpression>
+	</variable>
+	<variable name="SUM_vat_1" class="java.math.BigDecimal" resetType="Group" resetGroup="pocolheader" calculation="Sum">
+		<variableExpression><![CDATA[$F{vat}]]></variableExpression>
+	</variable>
+	<variable name="SUM_discount_1" class="java.math.BigDecimal" resetType="Group" resetGroup="pocolheader" calculation="Sum">
+		<variableExpression><![CDATA[$F{discount}]]></variableExpression>
+	</variable>
+	<variable name="SUM_med_total_1" class="java.math.BigDecimal" resetType="Group" resetGroup="pocolheader" calculation="Sum">
+		<variableExpression><![CDATA[$F{med_total}]]></variableExpression>
+	</variable>
+	<group name="poheader">
+		<groupExpression><![CDATA[]]></groupExpression>
+		<groupHeader>
+			<band height="33">
+				<staticText>
+					<reportElement key="staticText-1" x="0" y="1" width="535" height="31"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="15" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[ PURCHASE ORDER]]></text>
+				</staticText>
+				<line>
+					<reportElement key="line-3" x="0" y="4" width="535" height="1"/>
+				</line>
+				<line>
+					<reportElement key="line-4" x="0" y="27" width="535" height="1"/>
+				</line>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="29">
+				<staticText>
+					<reportElement x="7" y="6" width="70" height="20"/>
+					<textElement/>
+					<text><![CDATA[Prepares By: ]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="202" y="6" width="67" height="20"/>
+					<textElement/>
+					<text><![CDATA[Verified By:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="363" y="6" width="85" height="20"/>
+					<textElement/>
+					<text><![CDATA[Authorized By:]]></text>
+				</staticText>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="podetailsheader">
+		<groupExpression><![CDATA[]]></groupExpression>
+		<groupHeader>
+			<band height="160">
+				<staticText>
+					<reportElement key="staticText-2" x="0" y="5" width="127" height="18"/>
+					<box topPadding="4" leftPadding="3"/>
+					<textElement/>
+					<text><![CDATA[PO No                            : ]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-3" x="0" y="23" width="127" height="18"/>
+					<box topPadding="4" leftPadding="3"/>
+					<textElement/>
+					<text><![CDATA[Quotation No                 :]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-4" x="279" y="5" width="127" height="18"/>
+					<box topPadding="4" leftPadding="3"/>
+					<textElement/>
+					<text><![CDATA[PO Date                      :]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-5" x="279" y="23" width="127" height="18"/>
+					<box topPadding="4" leftPadding="3"/>
+					<textElement/>
+					<text><![CDATA[Quotation Date           :]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-6" x="279" y="41" width="127" height="18"/>
+					<box topPadding="4" leftPadding="3"/>
+					<textElement/>
+					<text><![CDATA[Reference                   :]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-7" x="0" y="41" width="127" height="18"/>
+					<box topPadding="4" leftPadding="3"/>
+					<textElement/>
+					<text><![CDATA[Supplier Address           :]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement key="textField-1" x="127" y="5" width="125" height="18"/>
+					<box topPadding="4" leftPadding="1"/>
+					<textElement/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{po_no}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement key="textField-2" x="127" y="23" width="125" height="18"/>
+					<box topPadding="4" leftPadding="1"/>
+					<textElement/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{qut_no}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement key="textField-3" x="127" y="41" width="152" height="18"/>
+					<box topPadding="4" leftPadding="1"/>
+					<textElement/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{supplier_name}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement key="textField-4" x="406" y="5" width="127" height="18"/>
+					<box topPadding="4" leftPadding="1"/>
+					<textElement/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{po_date}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement key="textField-5" x="406" y="23" width="127" height="18"/>
+					<box topPadding="4" leftPadding="1"/>
+					<textElement/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{qut_date}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement key="textField-6" x="406" y="41" width="127" height="18"/>
+					<box topPadding="4" leftPadding="1"/>
+					<textElement/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{reference}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement key="textField-7" x="126" y="66" width="190" height="51"/>
+					<box topPadding="4" leftPadding="1"/>
+					<textElement/>
+					<textFieldExpression class="java.lang.String"><![CDATA[(($F{supplier_address}.concat( $F{city_name} )).concat($F{state_name}))
+.concat($F{country_name})]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="6" y="125" width="71" height="20">
+						<printWhenExpression><![CDATA[new Boolean($P{hospitaltin} != "")]]></printWhenExpression>
+					</reportElement>
+					<textElement/>
+					<text><![CDATA[Hospital TIN:
+]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="167" y="124" width="71" height="20">
+						<printWhenExpression><![CDATA[new Boolean($P{hospitalpan} != "")]]></printWhenExpression>
+					</reportElement>
+					<textElement/>
+					<text><![CDATA[Hospital PAN:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="335" y="123" width="135" height="20">
+						<printWhenExpression><![CDATA[new Boolean($P{hospitalSerRegno} != "")]]></printWhenExpression>
+					</reportElement>
+					<textElement/>
+					<text><![CDATA[Hospital Service Regn No:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="73" y="125" width="100" height="20"/>
+					<textElement/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{hospitaltin}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="239" y="124" width="100" height="20"/>
+					<textElement/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{hospitalpan}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="468" y="122" width="50" height="20"/>
+					<textElement/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{hospitalSerRegno}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<group name="hospitalterms">
+		<groupExpression><![CDATA[]]></groupExpression>
+		<groupHeader>
+			<band/>
+		</groupHeader>
+		<groupFooter>
+			<band height="78">
+				<staticText>
+					<reportElement key="staticText-46" x="0" y="0" width="177" height="15"/>
+					<textElement>
+						<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[Hospital Terms And Conditions   :]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement key="textField-19" x="2" y="15" width="535" height="52"/>
+					<box topPadding="1" leftPadding="2" bottomPadding="2"/>
+					<textElement/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{hospital_terms}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="supplierterms">
+		<groupExpression><![CDATA[]]></groupExpression>
+		<groupHeader>
+			<band/>
+		</groupHeader>
+		<groupFooter>
+			<band height="82">
+				<staticText>
+					<reportElement key="staticText-45" x="0" y="16" width="177" height="15"/>
+					<textElement>
+						<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[Supplier Terms And Conditions     :]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement key="textField-18" x="0" y="31" width="535" height="50"/>
+					<box topPadding="1" leftPadding="2" bottomPadding="2"/>
+					<textElement/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{supplier_terms}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="pocolheader">
+		<groupExpression><![CDATA[]]></groupExpression>
+		<groupHeader>
+			<band height="30">
+				<staticText>
+					<reportElement key="staticText-34" mode="Opaque" x="0" y="0" width="25" height="30" backcolor="#FFFFFF"/>
+					<box leftPadding="2"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[#]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-35" mode="Opaque" x="25" y="0" width="137" height="30" backcolor="#FFFFFF"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[Item/Medicine name]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-36" mode="Opaque" x="162" y="0" width="46" height="30" backcolor="#FFFFFF"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[Qty Req]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-37" mode="Opaque" x="208" y="0" width="46" height="30" backcolor="#FFFFFF"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[MRP]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-38" mode="Opaque" x="254" y="0" width="46" height="30" backcolor="#FFFFFF"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[Adj MRP]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-39" mode="Opaque" x="300" y="0" width="47" height="30" backcolor="#FFFFFF"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[Rate]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-40" mode="Opaque" x="347" y="0" width="47" height="30" backcolor="#FFFFFF"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[TAX Rate]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-41" mode="Opaque" x="394" y="0" width="47" height="30" backcolor="#FFFFFF"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[TAX]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-42" mode="Opaque" x="441" y="0" width="47" height="30" backcolor="#FFFFFF"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[Disc]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-43" mode="Opaque" x="488" y="0" width="47" height="30" backcolor="#FFFFFF"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[Amt]]></text>
+				</staticText>
+				<line>
+					<reportElement x="0" y="28" width="535" height="1"/>
+				</line>
+				<line>
+					<reportElement x="0" y="2" width="535" height="1"/>
+				</line>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="31">
+				<line>
+					<reportElement key="line-1" x="0" y="4" width="535" height="2"/>
+				</line>
+				<staticText>
+					<reportElement key="staticText-44" x="92" y="6" width="70" height="20"/>
+					<box topPadding="3" rightPadding="3"/>
+					<textElement textAlignment="Right">
+						<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[Total  :]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement key="textField" x="162" y="6" width="46" height="20"/>
+					<box topPadding="3" rightPadding="3"/>
+					<textElement textAlignment="Right">
+						<font isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{SUM_qty_req_1}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement key="textField" x="394" y="6" width="47" height="20"/>
+					<box topPadding="3" rightPadding="3"/>
+					<textElement textAlignment="Right">
+						<font isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{SUM_vat_1}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement key="textField" x="441" y="6" width="47" height="20"/>
+					<box topPadding="3" rightPadding="3"/>
+					<textElement textAlignment="Right">
+						<font isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{SUM_discount_1}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement key="textField" x="488" y="6" width="47" height="20"/>
+					<box topPadding="3" rightPadding="3"/>
+					<textElement textAlignment="Right">
+						<font isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{SUM_med_total_1}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement key="line-5" x="0" y="29" width="535" height="1"/>
+				</line>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band/>
+	</background>
+	<title>
+		<band/>
+	</title>
+	<pageHeader>
+		<band height="120">
+			<subreport isUsingCache="true">
+				<reportElement key="subreport-1" x="-32" y="-20" width="595" height="110"/>
+				<subreportParameter name="type">
+					<subreportParameterExpression><![CDATA["bill"]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="center_id">
+					<subreportParameterExpression><![CDATA[$P{center_id}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR}+"/PrintmasterHeader.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band/>
+	</columnHeader>
+	<detail>
+		<band height="22">
+			<rectangle>
+				<reportElement key="rectangle-1" x="0" y="0" width="535" height="22" backcolor="#FFFFFF">
+					<printWhenExpression><![CDATA[new Boolean(($V{poheader_COUNT}.intValue()%2) == 0)]]></printWhenExpression>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="0.0" lineStyle="Solid"/>
+				</graphicElement>
+			</rectangle>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField-8" x="0" y="0" width="25" height="22"/>
+				<box topPadding="2" leftPadding="2" rightPadding="2"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.Integer"><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField-9" x="25" y="0" width="137" height="22"/>
+				<box topPadding="2" leftPadding="2" rightPadding="2"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{medicine_name}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField-10" x="162" y="0" width="46" height="22"/>
+				<box topPadding="2" leftPadding="2" rightPadding="2"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{qty_req}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField-11" x="208" y="0" width="46" height="22"/>
+				<box topPadding="2" leftPadding="2" rightPadding="2"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{mrp}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField-12" x="254" y="0" width="46" height="22"/>
+				<box topPadding="2" leftPadding="2" rightPadding="2"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{adj_mrp}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField-13" x="300" y="0" width="47" height="22"/>
+				<box topPadding="2" leftPadding="2" rightPadding="2"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{cost_price}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField-14" x="347" y="0" width="47" height="22"/>
+				<box topPadding="2" leftPadding="2" rightPadding="2"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{vat_rate}+" %"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField-15" x="394" y="0" width="47" height="22"/>
+				<box topPadding="2" leftPadding="2" rightPadding="2"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{vat}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField-16" x="441" y="0" width="47" height="22"/>
+				<box topPadding="2" leftPadding="2" rightPadding="2"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{discount}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField-17" x="488" y="0" width="47" height="22"/>
+				<box topPadding="2" leftPadding="2" rightPadding="2"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{med_total}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band/>
+	</columnFooter>
+	<pageFooter>
+		<band height="30">
+			<line>
+				<reportElement key="line-2" x="0" y="4" width="535" height="1"/>
+			</line>
+			<textField evaluationTime="Report" pattern="dd-MMM-yy" isBlankWhenNull="false">
+				<reportElement key="textField" x="2" y="5" width="100" height="18"/>
+				<textElement/>
+				<textFieldExpression class="java.util.Date"><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" pattern="h.mm a" isBlankWhenNull="false">
+				<reportElement key="textField" x="102" y="5" width="100" height="18"/>
+				<textElement/>
+				<textFieldExpression class="java.util.Date"><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField" x="335" y="4" width="100" height="18"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.String"><![CDATA["Page " + $V{PAGE_NUMBER} + " of "]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" isBlankWhenNull="false">
+				<reportElement key="textField" x="435" y="4" width="100" height="18"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA["" + $V{PAGE_NUMBER} + ""]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band/>
+	</summary>
+</jasperReport>

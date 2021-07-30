@@ -1,0 +1,81 @@
+<decorators defaultdir="/pages/decorators">
+    <excludes>
+        <pattern>*/loginForm.do*</pattern>
+        <pattern>*/login.do*</pattern>
+        <pattern>*Print.do*</pattern>
+        <pattern>*/DirectReport.do*</pattern>
+        <pattern>/help/*</pattern>
+	    <pattern>*/reportdashboard/download.htm*</pattern>
+       <!--  <pattern>*registration.htm</pattern> -->
+	<pattern>/pages/emr/Medicalrecords/patientSummary.do*</pattern>
+	<pattern>/pages/emr/Medicalrecords/regMedicalRec.do*</pattern>
+	<pattern>/pages/emr/Medicalrecords/investigatedLabReports.do*</pattern>
+	<pattern>/emr/fileupload/medicalfile.do*</pattern>
+	<pattern>/patient/patientSummary.do*</pattern>
+	<pattern>/emr/EMRMainDisplay.do?method=getEmptyScreen*</pattern>
+	<pattern>/AccessControlForward.do*</pattern>
+	<pattern>/pages/payments/PaymentDashboard.do?method=printVoucher*</pattern>
+	<pattern>/vitalForm/genericVitalForm.do?method=generateReport*</pattern>
+	<pattern>/serviceModule/Service.do?method=printReport*</pattern>
+	<pattern>/outpatient/OpPrescribeAction.do?method=printPrescription*</pattern>
+
+	<pattern>/VisitDetails/VisitDetailsStdReport.do?method=getText*</pattern>
+	<pattern>/Case/CaseFileStdReport.do?method=getText*</pattern>
+
+	<pattern>/Enquiry/dischargereport.do?report=DischargeReport*</pattern>
+	<pattern>/Enquiry/advancereport.do?report=PatientAdvanceReport*</pattern>
+	<pattern>/billing/OutstandingDepositsReport.do?method=getReport*</pattern>
+	<pattern>/pages/Reports/OpenBills.do?method=getReport*</pattern>
+	<pattern>/pages/Reports/ReopenedBills.do?method=getReport*</pattern>
+
+	<pattern>/dashboard.do?method=getText*</pattern>
+	<pattern>/pages/Enquiry/daybookreport.do?method=getText*</pattern>
+	<pattern>/Enquiry/ImplantsReport/dashboard.do?method=getText*</pattern>
+	<pattern>/payment/PaymentReports.do?method=getText*</pattern>
+	<pattern>/payment/DueMiscellaneousReports.do?method=getText*</pattern>
+	<pattern>/payment/PaymentsToInsurance.do?method=getText*</pattern>
+	<pattern>/payment/PaidPayments.do?method=getText*</pattern>
+	<pattern>/pages/Reports/InternalTransferRevenueReport.do?method=getReport*</pattern>
+	<pattern>/insurance/InsuranceClaim.do?method=printHTML*</pattern>
+	<pattern>/pages/registration/QuickEstimate.do?_method=estimateBillPrint*</pattern>
+	<pattern>/pages/BillDischarge/allocateSponsorBill.do?_method=sponsorReceiptPrint*</pattern>
+	<pattern>/pages/BillDischarge/SponsorBillList.do?_method=sponsorConsolidatedBillPrint*</pattern>
+	<pattern>/pages/stores/poscreen.do?_method=generatePOprint*</pattern>
+	<pattern>/stores/stockentry.do?_method=generateGRNprint*</pattern>
+	<pattern>/stores/StoresIndentProcess.do?_method=generateReport*</pattern>
+	<pattern>/pages/Reports/IPOPStatsReport.do?method=getReport*</pattern>
+	<pattern>/outpatient/tokendisplay/ConsultationTokenDisplayAction.do*</pattern>
+	<pattern>/dialysis/ClinicalDataLabResults.do?_method=generatePrint*</pattern>
+	<pattern>*/DiagnosticReportsDocket*</pattern>
+	<pattern>*/patientReportAccessFailure*</pattern>
+  <pattern>/patientfeedback/RecordPatientResponse.do?_method=recordSurveyForm*</pattern>
+	<pattern>/inventory/stockmanagement/stocktake/print.htm*</pattern>
+    </excludes>
+    
+    <decorator name="frame" page="frame.jsp">
+    </decorator>
+    
+    <decorator name="reactDecorator" page="reactDecorator.jsp">
+    </decorator>
+
+    <decorator name="main" page="main.jsp">
+          <pattern>*.htm</pattern>
+    </decorator>
+    
+    <decorator name="main" page="main.jsp">
+          <pattern>*.do</pattern>
+    </decorator>
+    
+
+    <decorator name="patientportal" page="patient.jsp">
+          <pattern>/patient/*.do</pattern>
+    </decorator>
+
+    <decorator name="doctorportal" page="doctor.jsp">
+          <pattern>/doctor/*.do</pattern>
+    </decorator>
+    <decorator name="popup" page="popup.jsp">
+    	 <pattern>*Popup.do*</pattern>
+    </decorator>
+</decorators>
+

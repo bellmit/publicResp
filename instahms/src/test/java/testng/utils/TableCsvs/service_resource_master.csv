@@ -1,0 +1,2 @@
+serv_res_id,serv_resource_name,schedule,hl7_export_code,status,obsolete_overbook,center_id,serv_dept_id,overbook_limit
+1,'Fresenius-3','t',,'A','f',7,1,0

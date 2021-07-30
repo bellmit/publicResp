@@ -1,0 +1,497 @@
+{
+    "title": "Prescription Ordering Details",
+    "description": "This report builder gives a detailed description of test, service and doctor prescriptions. (Note: The builder shows only postulated amount based on visit types and not the actual billed amount.)",
+    "reportGroup": "Consultation Reports",
+    "defaultOrder": "mr_no",
+    "dateFields": [
+        "prescribed_date",
+        "reg_date"
+    ],
+    "includes": [
+        "PatientDetailFields.srjs",
+        "PatientVisitFields.srjs"
+    ],
+    "queryUnits": [
+        {
+            "mainTableName": "patient_prescription",
+            "mainTableAlias": "pp",
+            "joinTables": [
+                {
+                    "name": "patient_service_prescriptions",
+                    "alias": "pres",
+                    "dependsOn": "pp",
+                    "expression": "ON (pp.patient_presc_id=pres.op_service_pres_id)",
+                    "type": "JOIN"
+                },
+                {
+                    "name": "(SELECT SUM(sp.quantity) as orderedQty,psp.qty as prescribedQty,psp.op_service_pres_id as prescriptionId,psp.qty - sum(sp.quantity) as notOrderedQty from patient_service_prescriptions psp join services_prescribed sp on psp.op_service_pres_id = sp.doc_presc_id group by psp.qty,psp.op_service_pres_id)",
+                    "alias": "rpsqv",
+                    "dependsOn": "pres",
+                    "expression": "ON (rpsqv.prescriptionId=pres.op_service_pres_id)",
+                    "type": "LEFTLATERAL"
+                },
+                {
+                    "name": "doctor_consultation",
+                    "alias": "dc",
+                    "dependsOn": "pp",
+                    "expression": "ON (pp.consultation_id=dc.consultation_id)"
+                },
+                {
+                    "name": "doctors",
+                    "alias": "cons_d",
+                    "dependsOn": "dc",
+                    "expression": "ON (dc.doctor_name=cons_d.doctor_id)"
+                },
+                {
+                    "name": "patient_registration",
+                    "alias": "pr",
+                    "dependsOn": "dc",
+                    "expression": "ON (pr.patient_id = dc.patient_id)",
+                    "type": "JOIN"
+                },
+                {
+                    "includeName": "PatientVisitFields.srjs"
+                },
+                {
+                    "name": "patient_details",
+                    "alias": "pd",
+                    "dependsOn": "pr",
+                    "expression": "ON (pd.mr_no = pr.mr_no)",
+                    "type": "JOIN"
+                },
+                {
+                    "includeName": "PatientDetailFields.srjs"
+                },
+                {
+                    "name": "service_master_charges",
+                    "alias": "smc",
+                    "dependsOn": "pr,bn,pres",
+                    "expression": "ON (smc.service_id=pres.service_id AND pr.org_id=smc.org_id AND CASE WHEN pr.visit_type='i' THEN smc.bed_type=coalesce(bn.bed_type, pr.bed_type) ELSE smc.bed_type='GENERAL' END)"
+                },
+                {
+                    "name": "services",
+                    "alias": "s",
+                    "dependsOn": "pres",
+                    "expression": "ON (s.service_id=pres.service_id)"
+                }
+            ],
+            "fieldExpressions": {
+                "item_prescribed": {
+                    "table": "s",
+                    "expression": "service_name"
+                },
+                "item_type": {
+                    "expression": "'Service'::text"
+                },
+                "prescribed_qty": {
+                    "expression": "pres.qty"
+                },
+                "prescribed_amt": {
+                    "table": "smc",
+                    "expression": "unit_charge"
+                },
+                "amount_unavbl": {
+                    "table": "pp,smc",
+                    "expression": "CASE WHEN pp.status='U' THEN unit_charge ELSE 0 END"
+                },
+                "amount_notordered": {
+                    "table": "pp,smc",
+                    "expression": "CASE WHEN pp.status='P' THEN unit_charge ELSE 0 END"
+                },
+                "amount_ordered": {
+                    "table": "pp,smc",
+                    "expression": "CASE WHEN pp.status='O' THEN unit_charge ELSE 0 END"
+                },
+                "prescribed_date_time": {
+                    "expression": "pp.prescribed_date"
+                },
+                "prescribed_date": {
+                    "expression": "date(pp.prescribed_date)"
+                },
+                "user_name": {
+                    "expression": "pres.username"
+                },
+                "dept_category": {
+                    "expression": "NULL::text"
+                },
+                "qty_ordered": {
+                    "table": "rpsqv",
+                    "expression": "rpsqv.orderedQty"
+                },
+                "qty_notordered": {
+                    "table": "rpsqv",
+                    "expression": "rpsqv.notOrderedQty"
+                }
+            }
+        },
+        {
+            "mainTableName": "patient_prescription",
+            "mainTableAlias": "pp",
+            "joinTables": [
+                {
+                    "name": "patient_test_prescriptions",
+                    "alias": "pres",
+                    "dependsOn": "pp",
+                    "expression": "ON (pp.patient_presc_id=pres.op_test_pres_id)",
+                    "type": "JOIN"
+                },
+                {
+                    "name": "doctor_consultation",
+                    "alias": "dc",
+                    "dependsOn": "pp",
+                    "expression": "ON (pp.consultation_id=dc.consultation_id)"
+                },
+                {
+                    "name": "doctors",
+                    "alias": "cons_d",
+                    "dependsOn": "dc",
+                    "expression": "ON (dc.doctor_name=cons_d.doctor_id)"
+                },
+                {
+                    "name": "patient_registration",
+                    "alias": "pr",
+                    "dependsOn": "dc",
+                    "expression": "ON (pr.patient_id = dc.patient_id)",
+                    "type": "JOIN"
+                },
+                {
+                    "includeName": "PatientVisitFields.srjs"
+                },
+                {
+                    "name": "patient_details",
+                    "alias": "pd",
+                    "dependsOn": "pr",
+                    "expression": "ON (pd.mr_no = pr.mr_no)",
+                    "type": "JOIN"
+                },
+                {
+                    "includeName": "PatientDetailFields.srjs"
+                },
+                {
+                    "name": "diagnostics",
+                    "alias": "test",
+                    "dependsOn": "pres",
+                    "expression": "ON (pres.test_id=test.test_id AND NOT pres.ispackage)"
+                },
+                {
+                    "name": "packages",
+                    "alias": "package",
+                    "dependsOn": "pres",
+                    "expression": "ON (pres.test_id=package.package_id::text AND pres.ispackage)"
+                },
+                {
+                    "name": "diagnostic_charges",
+                    "alias": "dch",
+                    "dependsOn": "test,pr",
+                    "expression": "ON (dch.test_id=test.test_id AND dch.org_name=pr.org_id AND dch.bed_type=pr.bed_type)"
+                },
+                {
+                    "name": "package_charges",
+                    "alias": "pc",
+                    "dependsOn": "pr,package",
+                    "expression": "ON (pc.package_id=package.package_id AND pc.org_id=pr.org_id AND pc.bed_type=pr.bed_type)"
+                },
+                {
+                    "name": "diagnostics_departments",
+                    "alias": "ddep",
+                    "dependsOn": "test",
+                    "expression": "ON (ddep.ddept_id = test.ddept_id)"
+                }
+            ],
+            "fieldExpressions": {
+                "item_prescribed": {
+                    "table": "test,package",
+                    "expression": "COALESCE(test_name,package_name)"
+                },
+                "item_type": {
+                    "expression": "'Test'::text"
+                },
+                "prescribed_qty": {
+                    "expression": "1"
+                },
+                "prescribed_amt": {
+                    "table": "dch,pc",
+                    "expression": "coalesce(dch.charge, pc.charge)"
+                },
+                "amount_unavbl": {
+                    "table": "dch,pc",
+                    "expression": "CASE WHEN pp.status='U' THEN coalesce(dch.charge, pc.charge) ELSE 0 END"
+                },
+                "amount_notordered": {
+                    "table": "dch,pc",
+                    "expression": "CASE WHEN pp.status='P' THEN coalesce(dch.charge, pc.charge) ELSE 0 END"
+                },
+                "amount_ordered": {
+                    "table": "dch,pc",
+                    "expression": "CASE WHEN pp.status='O' THEN coalesce(dch.charge, pc.charge) ELSE 0 END"
+                },
+                "prescribed_date_time": {
+                    "expression": "pp.prescribed_date"
+                },
+                "prescribed_date": {
+                    "expression": "date(pp.prescribed_date)"
+                },
+                "user_name": {
+                    "expression": "pres.username"
+                },
+                "dept_category": {
+                    "table": "ddep",
+                    "expression": "CASE WHEN ddep.category='DEP_LAB' THEN 'Laboratory' ELSE 'Radiology'END"
+                }
+            }
+        },
+        {
+            "mainTableName": "patient_prescription",
+            "mainTableAlias": "pp",
+            "joinTables": [
+                {
+                    "name": "patient_consultation_prescriptions",
+                    "alias": "pres",
+                    "dependsOn": "pp",
+                    "expression": "ON (pp.patient_presc_id=pres.prescription_id)",
+                    "type": "JOIN"
+                },
+                {
+                    "name": "doctor_consultation",
+                    "alias": "dc",
+                    "dependsOn": "pres",
+                    "expression": "ON (pp.consultation_id=dc.consultation_id)"
+                },
+                {
+                    "name": "doctors",
+                    "alias": "cons_d",
+                    "dependsOn": "dc",
+                    "expression": "ON (dc.doctor_name=cons_d.doctor_id)"
+                },
+                {
+                    "name": "patient_registration",
+                    "alias": "pr",
+                    "dependsOn": "dc",
+                    "expression": "ON (pr.patient_id = dc.patient_id)",
+                    "type": "JOIN"
+                },
+                {
+                    "includeName": "PatientVisitFields.srjs"
+                },
+                {
+                    "name": "patient_details",
+                    "alias": "pd",
+                    "dependsOn": "pr",
+                    "expression": "ON (pd.mr_no = pr.mr_no)",
+                    "type": "JOIN"
+                },
+                {
+                    "includeName": "PatientDetailFields.srjs"
+                },
+                {
+                    "name": "doctors",
+                    "alias": "pres_d",
+                    "dependsOn": "pres",
+                    "expression": "ON (pres.doctor_id=pres_d.doctor_id)"
+                },
+                {
+                    "name": "department",
+                    "alias": "pres_dept",
+                    "dependsOn": "pres",
+                    "expression": "ON (pres_dept.dept_id=pres.dept_id)"
+                },
+                {
+                    "name": "doctor_consultation_charge",
+                    "alias": "dcc",
+                    "dependsOn": "pres,pr,pres_d",
+                    "expression": "ON (dcc.doctor_name=pres_d.doctor_id AND dcc.organization=pr.org_id AND dcc.bed_type=pr.bed_type)"
+                },
+                {
+                    "name": "doctor_op_consultation_charge",
+                    "alias": "docc",
+                    "dependsOn": "pres_d,pr",
+                    "expression": "ON (docc.doctor_id=pres_d.doctor_id and docc.org_id=pr.org_id)"
+                }
+            ],
+            "fieldExpressions": {
+                "amount_unavbl": {
+                    "table": "pr,dcc,docc",
+                    "expression": "CASE WHEN pp.status='U' THEN (CASE WHEN pr.visit_type='i' THEN doctor_ip_charge ELSE op_charge END) ELSE 0 end"
+                },
+                "amount_notordered": {
+                    "table": "pr,dcc,docc",
+                    "expression": "CASE WHEN pp.status='P' THEN (CASE WHEN pr.visit_type='i' THEN doctor_ip_charge ELSE op_charge END) ELSE 0 end"
+                },
+                "amount_ordered": {
+                    "table": "pr,dcc,docc",
+                    "expression": "CASE WHEN pp.status='O' THEN (CASE WHEN pr.visit_type='i' THEN doctor_ip_charge ELSE op_charge END) ELSE 0 end"
+                },
+                "prescribed_date": {
+                    "expression": "date(pp.prescribed_date)"
+                },
+                "prescribed_date_time": {
+                    "expression": "pp.prescribed_date"
+                },
+                "user_name": {
+                    "expression": "pres.username"
+                },
+                "item_type": {
+                    "expression": "'Doctor'::text"
+                },
+                "prescribed_qty": {
+                    "expression": "1"
+                },
+                "prescribed_amt": {
+                    "table": "dcc,docc,pres_d",
+                    "expression": "CASE WHEN pr.visit_type='i'THEN doctor_ip_charge ELSE op_charge END"
+                },
+                "dept_category": {
+                    "expression": "NULL::text"
+                }
+            }
+        }
+    ],
+    "fields": {
+        "consulting_doctor_name": {
+            "table": "cons_d",
+            "expression": "cons_d.doctor_name",
+            "displayName": "Prescribing Doctor",
+            "width": 100,
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT doctor_name FROM doctors ORDER BY doctor_name"
+        },
+        "user_name": {
+            "displayName": "Prescribed User",
+            "width": 100,
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT emp_username FROM u_user JOIN u_role USING(role_id)\n    WHERE portal_id='N' ORDER BY emp_username"
+        },
+        "prescribed_date": {
+            "displayName": "Prescribed Date",
+            "width": 70,
+            "dataType": "date"
+        },
+        "prescribed_date_time": {
+            "displayName": "Prescribed Date Time",
+            "width": 100,
+            "dataType": "timestamp",
+            "filterable": true
+        },
+        "item_prescribed": {
+            "table": "pres_d,pres_dept",
+            "expression": "COALESCE(pres_d.doctor_name,pres_dept.dept_name)",
+            "displayName": "Item Prescribed",
+            "width": 100,
+            "groupable": true,
+            "filterable": true
+        },
+        "item_type": {
+            "displayName": "Item Type",
+            "width": 70,
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValues": [
+                "Service",
+                "Test",
+                "Doctor"
+            ]
+        },
+        "prescribed_qty": {
+            "displayName": "Prescribed Quantity",
+            "width": 55,
+            "dataType": "numeric",
+            "decimalType": "integer",
+            "filterable": true,
+            "aggFunction": "sum"
+        },
+        "prescribed_amt": {
+            "table": "pres_d",
+            "displayName": "Prescribed Amount",
+            "width": 70,
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "filterable": true,
+            "aggFunction": "sum"
+        },
+        "qty_unavbl": {
+            "table": "pp",
+            "displayName": "Qty Unavailable",
+            "width": 60,
+            "dataType": "numeric",
+            "decimalType": "integer",
+            "filterable": true,
+            "aggFunction": "sum",
+            "expression": "CASE WHEN pp.status='U' THEN 1 ELSE 0 END"
+        },
+        "qty_notordered": {
+            "table": "pp",
+            "displayName": "Qty Not Ordered",
+            "width": 60,
+            "dataType": "numeric",
+            "decimalType": "integer",
+            "filterable": true,
+            "aggFunction": "sum",
+            "expression": "CASE WHEN pp.status='P' THEN 1 ELSE 0 END"
+        },
+        "qty_ordered": {
+            "table": "pp",
+            "displayName": "Qty Ordered",
+            "width": 60,
+            "dataType": "numeric",
+            "decimalType": "integer",
+            "filterable": true,
+            "aggFunction": "sum",
+            "expression": "CASE WHEN pp.status='O' THEN 1 ELSE 0 END"
+        },
+        "amount_unavbl": {
+            "table": "pp",
+            "displayName": "Amount Unavailable",
+            "width": 70,
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "filterable": true,
+            "aggFunction": "sum",
+            "expression": "CASE WHEN pp.status='U' THEN unit_charge ELSE 0 END"
+        },
+        "amount_notordered": {
+            "table": "pp",
+            "displayName": "Amount Not Ordered",
+            "width": 70,
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "filterable": true,
+            "aggFunction": "sum",
+            "expression": "CASE WHEN pp.status='P' THEN unit_charge ELSE 0 END"
+        },
+        "amount_ordered": {
+            "table": "pp",
+            "displayName": "Amount Ordered",
+            "width": 70,
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "filterable": true,
+            "aggFunction": "sum",
+            "expression": "CASE WHEN pp.status='O' THEN unit_charge ELSE 0 END"
+        },
+        "dept_category": {
+            "displayName": "Department Type",
+            "width": 70,
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValues": [
+                "Laboratory",
+                "Radiology"
+            ]
+        }
+    },
+    "defaultShowFields": [
+        "mr_no",
+        "full_name",
+        "patient_id",
+        "consulting_doctor_name",
+        "prescribed_date",
+        "item_prescribed",
+        "prescribed_amt"
+    ]
+}

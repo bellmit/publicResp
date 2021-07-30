@@ -1,0 +1,479 @@
+{
+  "title": "Current Bed Occupancy Report",
+  "reportGroup": "Bed Util Reports",
+  "allowNoDate": true,
+  "dateFields": ["admission_date","first_visit_date"],
+  "description": "This report describes bed occupancy in detail.",
+  "tableName": ["rpt_bed_occupancy_report_view"],
+  "defaultShowFields": [
+    "bed_name",
+    "patient_name",
+    "age",
+    "patient_gender",
+    "mr_no",
+    "patient_id",
+    "doctor_name",
+    "admission_datetime",
+    "primary_tpa_name",
+    "mlc_status",
+    "deposit",
+    "approval_amount",
+    "occupied_status"
+  ],
+  "fields": {
+    "bed_name": {
+      "displayName": "Bed Name",
+      "width": "100",
+      "groupable": true,
+      "filterable": true,
+      "allowNull": true,
+      "allowedValuesQuery": "SELECT 'Not Allocated' AS bed_name UNION SELECT * FROM (SELECT bed_name FROM bed_names GROUP BY bed_name ORDER BY bed_name) AS foo"
+    },
+    "bed_status": {
+      "displayName": "Bed Status",
+      "width": "70",
+      "groupable": true,
+      "filterable": true,
+      "allowNull": false,
+      "allowedValues": ["Occupied","Vacant"]
+    },
+    "bed_type": {
+      "displayName": "Bed Type",
+      "width": "100",
+      "groupable": true,
+      "filterable": true,
+      "allowedValuesQuery": "SELECT bed_type FROM bed_details GROUP BY bed_type ORDER BY bed_type"
+    },
+    "ward_name": {
+      "displayName": "Ward",
+      "width": "100",
+      "groupable": true,
+      "filterable": true,
+      "allowedValuesQuery": "SELECT ward_name FROM ward_names GROUP BY ward_name ORDER BY ward_name"
+    },
+    "patient_name": {
+      "displayName": "Patient Name",
+      "width": "130"
+    },
+    "name_local_language": {
+             "displayName": "Name In Local Language",
+             "width": "150"
+         },
+    "age": {
+      "displayName": "Age",
+      "width": "40",
+      "dataType": "numeric",
+      "decimalType": "integer",
+      "groupable": true,
+      "filterable": true,
+      "allowNull": true,
+      "allowedValuesQuery": "SELECT get_patient_age(pd.dateofbirth, pd.expected_dob) AS age FROM patient_details pd GROUP BY age ORDER BY age"
+    },
+    "patient_gender": {
+      "displayName": "Gender",
+      "width": "50",
+      "groupable": true,
+      "filterable": true,
+      "allowedValues": ["Male","Female","Couple","Others"]
+    },
+    "mr_no": {
+      "displayName": "MR No.",
+      "width": "65"
+    },
+    "patient_id": {
+      "displayName": "Patient ID",
+      "width": "65"
+    },
+    "first_visit_date": {
+      "displayName": "First Visit Date",
+      "dataType": "date",
+      "width": "60"
+    },
+    "doctor_name": {
+      "displayName": "Doctor",
+      "width": "120",
+      "groupable": true,
+      "filterable": true,
+      "allowNull": true,
+      "allowedValuesQuery": "SELECT doctor_name FROM doctors GROUP BY doctor_name ORDER BY doctor_name"
+    },
+    "admission_date": {
+      "displayName": "Admission Date",
+      "dataType": "date",
+      "width": "60"
+    },
+    "admission_time": {
+      "displayName": "Admission Time",
+      "width": "60"
+    },
+    "admission_datetime": {
+      "displayName": "Admission Date With Time",
+      "width": "90"
+    },
+    "status": {
+      "displayName": "Visit Status",
+      "width": "50",
+      "groupable": true,
+      "filterable": true,
+      "allowedValues": ["Active","Inactive"]
+    },
+    "primary_tpa_name": {
+      "displayName": "General/Primary Sponsor",
+      "width": "120",
+      "groupable": true,
+      "filterable": true,
+      "allowNull": true,
+      "allowedValuesQuery": "SELECT 'GENERAL' AS tpa_name UNION SELECT tpa_name FROM tpa_master ORDER BY tpa_name"
+    },
+    "secondary_tpa_name": {
+      "displayName": "Secondary Sponsor",
+      "width": "120",
+      "groupable": true,
+      "filterable": true,
+      "allowNull": true,
+      "allowedValuesQuery": "SELECT tpa_name FROM tpa_master ORDER BY tpa_name"
+    },
+    "plan_name": {
+      "displayName": "Plan Name",
+      "width": "100",
+      "groupable": true,
+      "filterable": true,
+      "allowNull": true,
+      "allowedValuesQuery": "SELECT plan_name FROM insurance_plan_main ORDER BY plan_name"
+    },
+    "plan_type": {
+      "displayName": "Plan Type",
+      "width": "80",
+      "groupable": true,
+      "filterable": true,
+      "allowNull": true,
+      "allowedValuesQuery": "SELECT category_name FROM insurance_category_master ORDER BY category_name"
+    },
+    "primary_insurance_co_name": {
+      "displayName": "Primary Insurance Company",
+      "width": "100",
+      "groupable": true,
+      "filterable": true,
+      "allowNull": true,
+      "allowedValuesQuery": "SELECT insurance_co_name FROM insurance_company_master ORDER BY insurance_co_name"
+    },
+     "secondary_insurance_co_name": {
+      "displayName": "Secondary Insurance Company",
+      "width": "100",
+      "groupable": true,
+      "filterable": true,
+      "allowNull": true,
+      "allowedValuesQuery": "SELECT insurance_co_name FROM insurance_company_master ORDER BY insurance_co_name"
+    },
+    "mlc_status": {
+      "displayName": "MLC Status",
+      "width": "50",
+      "groupable": true,
+      "filterable": true,
+      "allowNull": true,
+      "allowedValues": ["MLC"]
+    },
+    "user_name": {
+      "displayName": "User",
+      "width": "80",
+      "filterable": true,
+      "allowNull": true,
+      "groupable": true,
+      "allowedValuesQuery": "SELECT emp_username FROM u_user JOIN u_role USING(role_id) WHERE portal_id='N' GROUP BY emp_username"
+    },
+    "email_id": {
+      "displayName": "Email Id",
+      "width": "80"
+    },
+    "category_name": {
+      "displayName": "Patient Category",
+      "width": "80",
+      "allowNull": true,
+      "filterable": true,
+      "allowedValuesQuery": "SELECT category_name AS patient_category FROM patient_category_master ORDER BY category_name"
+    },
+    "previous_visit_id": {
+      "displayName": "Previous Visit Id",
+      "width": "65"
+    },
+    "patient_address": {
+      "displayName": "Patient Address",
+      "width": "100"
+    },
+    "patient_phone": {
+      "displayName": "Mobile No.",
+      "width": "80"
+    },
+    "patient_phone2": {
+      "displayName": "Patient Phone 2",
+      "width": "80"
+    },
+    "relation": {
+      "displayName": "Relation Name",
+      "width": "85"
+    },
+    "patient_care_oftext": {
+      "displayName": "Relation Cont. No.",
+      "width": "80"
+    },
+    "patient_careof_address": {
+      "displayName": "Relation Address",
+      "width": "100"
+    },
+    "casefile_no": {
+      "displayName": "Case File No.",
+      "width": "60"
+    },
+    "custom_field1": {
+      "displayName": "Custom Field 1",
+      "description": "Custom Field 1",
+      "width": "60",
+      "groupable": true,
+      "filterable": true
+    },
+    "custom_field2": {
+      "displayName": "Custom Field 2",
+      "description": "Custom Field 2",
+      "width": "60",
+      "groupable": true,
+      "filterable": true
+    },
+    "custom_field3": {
+      "displayName": "Custom Field 3",
+      "description": "Custom Field 3",
+      "width": "60",
+      "groupable": true,
+      "filterable": true
+    },
+    "custom_field5": {
+      "displayName": "Custom Field5",
+      "width": "60"
+    },
+    "custom_field6": {
+      "displayName": "Custom Field 6",
+      "description": "Custom Field 6",
+      "width": "60",
+      "groupable": true,
+      "filterable": true
+    },
+    "custom_field7": {
+      "displayName": "Custom Field 7",
+      "description": "Custom Field 7",
+      "width": "60",
+      "groupable": true,
+      "filterable": true
+    },
+    "custom_field8": {
+      "displayName": "Custom Field 8",
+      "description": "Custom Field 8",
+      "width": "60",
+      "groupable": true,
+      "filterable": true
+    },
+    "custom_field9": {
+      "displayName": "Custom Field 9",
+      "description": "Custom Field 9",
+      "width": "60",
+      "groupable": true,
+      "filterable": true
+    },
+    "custom_field10": {
+      "displayName": "Custom Field 10",
+      "description": "Custom Field 10",
+      "width": "60",
+      "groupable": true,
+      "filterable": true
+    },
+    "custom_field11": {
+      "displayName": "Custom Field11",
+      "width": "80",
+      "groupable": true,
+      "filterable": true
+    },
+    "custom_field12": {
+      "displayName": "Custom Field12",
+      "width": "80",
+      "groupable": true,
+      "filterable": true
+    },
+    "custom_field13": {
+      "displayName": "Custom Field13",
+      "width": "80",
+      "groupable": true,
+      "filterable": true
+    },
+    "custom_field14": {
+      "displayName": "Custom Field14",
+      "width": "80",
+      "groupable": true,
+      "filterable": true
+    },
+    "custom_field15": {
+      "displayName": "Custom Field15",
+      "width": "80",
+      "groupable": true,
+      "filterable": true
+    },
+    "custom_field16": {
+      "displayName": "Custom Field16",
+      "width": "80",
+      "groupable": true,
+      "filterable": true
+    },
+    "custom_field17": {
+      "displayName": "Custom Field17",
+      "width": "80",
+      "groupable": true,
+      "filterable": true
+    },
+    "custom_field18": {
+      "displayName": "Custom Field18",
+      "width": "80",
+      "groupable": true,
+      "filterable": true
+    },
+    "custom_field19": {
+      "displayName": "Custom Field19",
+      "width": "80",
+      "groupable": true,
+      "filterable": true
+    },
+    "custom_list1_value": {
+      "displayName": "Custom List1",
+      "width": "80",
+      "groupable": true,
+      "filterable": true
+    },
+    "custom_list2_value": {
+      "displayName": "Custom List2",
+      "width": "80",
+      "groupable": true,
+      "filterable": true
+    },
+    "custom_list3_value": {
+      "displayName": "Custom List3",
+      "width": "80",
+      "groupable": true,
+      "filterable": true
+    },
+    "custom_list4_value": {
+      "displayName": "Custom List4",
+      "width": "80",
+      "groupable": true,
+      "filterable": true
+    },
+    "custom_list5_value": {
+      "displayName": "Custom List5",
+      "width": "80",
+      "groupable": true,
+      "filterable": true
+    },
+    "custom_list6_value": {
+      "displayName": "Custom List6",
+      "width": "80",
+      "groupable": true,
+      "filterable": true
+    },
+    "custom_list7_value": {
+      "displayName": "Custom List7",
+      "width": "80",
+      "groupable": true,
+      "filterable": true
+    },
+    "custom_list8_value": {
+      "displayName": "Custom List8",
+      "width": "80",
+      "groupable": true,
+      "filterable": true
+    },
+    "custom_list9_value": {
+      "displayName": "Custom List9",
+      "width": "80",
+      "groupable": true,
+      "filterable": true
+    },
+    "family_id": {
+      "displayName": "Family Id",
+      "width": "80",
+      "groupable": true,
+      "filterable": true
+    },
+    "oldmrno": {
+      "displayName": "Case File No.",
+      "width": "60"
+    },
+    "timeofbirth": {
+      "displayName": "Time Of Birth",
+      "width": "60"
+    },
+    "patient_area": {
+      "displayName": "Area",
+      "width": "70",
+      "groupable": true,
+      "filterable": true,
+      "allowNull": true,
+      "allowedValuesQuery": "SELECT area_name AS patient_area FROM area_master GROUP BY area_name ORDER BY area_name"
+    },
+    "city_name": {
+      "displayName": "City",
+      "width": "70",
+      "groupable": true,
+      "filterable": true,
+      "allowNull": true,
+      "allowedValuesQuery": "SELECT city_name FROM city ORDER BY city_name"
+    },
+    "state_name": {
+      "displayName": "State",
+      "width": "70",
+      "groupable": true,
+      "filterable": true,
+      "allowNull": true,
+      "allowedValuesQuery": "SELECT state_name FROM state_master ORDER BY state_name"
+    },
+    "country_name": {
+      "displayName": "Country",
+      "width": "70",
+      "groupable": true,
+      "filterable": true,
+      "allowNull": true,
+      "allowedValuesQuery": "SELECT country_name FROM country_master ORDER BY country_name"
+    },
+    "deposit": {
+      "dataType": "numeric",
+      "aggFunction": "sum",
+      "displayName": "Advance",
+      "width": "60",
+      "filterable": true,
+      "decimalType": "amount"
+    },
+    "approval_amount": {
+      "dataType": "numeric",
+      "displayName": "Approved Limit",
+      "width": "60",
+      "filterable": true
+    },
+    "occupied_status": {
+      "displayName": "Occupied Status",
+      "width": "50",
+      "groupable": true,
+      "filterable": true,
+      "allowNull": true,
+      "allowedValues": ["Retained","Current","Vacant"]
+    },
+    "billing_status": {
+      "displayName": "Billing Status",
+      "width": "50",
+      "groupable": true,
+      "filterable": true,
+      "allowNull": false,
+      "allowedValues": ["Open","Finalized"]
+    },
+    "center_name": {
+      "displayName": "Center",
+      "width": "70",
+      "groupable": false,
+      "filterable": true,
+      "allowedValuesQuery": "SELECT center_name FROM hospital_center_master  ORDER BY center_id"
+    }
+  }
+}

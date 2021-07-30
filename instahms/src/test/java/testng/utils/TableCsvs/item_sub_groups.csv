@@ -1,0 +1,11 @@
+item_subgroup_id,item_subgroup_name,item_subgroup_display_order,subgroup_code,item_group_id,status
+10,'CGST-0',101,'',202,'A'
+11,'CGST-5',102,'',202,'A'
+12,'SGST-0',103,'',203,'A'
+13,'SGST-5',103,'',203,'A'
+14,'SGST-15',103,'',203,'A'
+'19','CGST(5%)','5',,'1','A'
+'20','SGST(5%)','6',,'2','A'
+'2','CGST-2.5','2',,'1','A'
+'8','SGST-2.5','7',,'2','A'
+'21','INVTX10%',,,'5','A'

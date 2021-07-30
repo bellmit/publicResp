@@ -1,0 +1,263 @@
+{
+    "title": "Doctor Appointments Report",
+    "description": "This report shows the doctor appointments, one row per appointment in the detailed view.",
+    "reportGroup": "Scheduler Reports",
+    "dateFields": [
+        "appointment_date",
+        "booked_date",
+        "orig_appt_date",
+        "arrival_date"
+    ],
+    "includes": [
+        "CommonScheduledAppointmentFields.srjs"
+    ],
+    "queryUnits": [
+        {
+            "mainTableName": "scheduler_appointments",
+            "mainTableAlias": "sa",
+            "joinTables": [
+                {
+                    "includeName": "CommonScheduledAppointmentFields.srjs"
+                },
+                {
+                    "name": "consultation_types",
+                    "alias": "ct",
+                    "dependsOn": "sa",
+                    "expression": "USING (consultation_type_id)"
+                },
+                {
+                    "name": "doctors",
+                    "alias": "doc",
+                    "dependsOn": "sa",
+                    "expression": "ON (doc.doctor_id = sa.prim_res_id)"
+                },
+                {
+                    "name": "appointment_source_master",
+                    "alias": "cas",
+                    "dependsOn": "sa",
+                    "expression": "ON (cas.appointment_source_id = sa.app_source_id)"
+                },
+                {
+                    "name": "patient_packages",
+                    "alias": "pp",
+                    "dependsOn": "sa",
+                    "expression": "ON(pp.pat_package_id = sa.pat_package_id)"
+                },
+                {
+                    "name": "packages",
+                    "alias": "pm",
+                    "dependsOn": "pp",
+                    "expression": "ON(pm.package_id = pp.package_id)"
+                },
+                {
+                    "name": "department",
+                    "alias": "d",
+                    "dependsOn": "doc",
+                    "expression": "ON (d.dept_id = doc.dept_id)"
+                },
+                {
+                    "name": "patient_registration",
+                    "alias": "pr",
+                    "dependsOn": "sa",
+                    "expression": "ON (pr.patient_id = sa.visit_id)"
+                },
+                {
+                    "name": "bill",
+                    "alias": "b",
+                    "dependsOn": "sa",
+                    "expression": "ON (b.bill_no = sa.bill_no)"
+                }
+            ],
+            "whereExpression": "sm.res_sch_category = 'DOC'",
+            "whereTable": "sm"
+        }
+    ],
+    "fields": {
+        "consultant_name": {
+            "table": "doc",
+            "displayName": "Consultant",
+            "width": 120,
+            "groupable": true,
+            "filterable": true,
+            "allowedValuesQuery": "SELECT doctor_name FROM doctors ORDER BY doctor_name",
+            "expression": "doc.doctor_name"
+        },
+        "consultation_type": {
+            "table": "ct",
+            "displayName": "Consultation Type",
+            "width": 100,
+            "groupable": true,
+            "filterable": true,
+            "allowedValuesQuery": "SELECT consultation_type FROM consultation_types"
+        },
+        "scheduler_visit_type": {
+            "table": "sa",
+            "displayName": "Scheduler Visit Type",
+            "width": 100,
+            "groupable": true,
+            "filterable": true,
+            "allowedValues": [
+                "Main",
+                "Follow Up"
+            ],
+            "expression": "case when sa.scheduler_visit_type='M' then 'Main' else 'Follow Up' end"
+        },
+        "doctor_dept_name": {
+            "table": "d",
+            "displayName": "Doctor Department",
+            "width": 100,
+            "groupable": true,
+            "filterable": true,
+            "allowedValuesQuery": "SELECT dept_name FROM department ORDER BY dept_name",
+            "expression": "d.dept_name"
+        },
+        "visit_type": {
+            "table": "pr",
+            "displayName": "Visit Type",
+            "width": 100,
+            "groupable": true,
+            "filterable": true,
+            "allowedValues": [
+                "Revisit",
+                "New Visit"
+            ],
+            "expression": "CASE WHEN pr.revisit='Y' THEN 'Revisit' ELSE 'New Visit' END"
+        },
+        "visit_mode": {
+            "table": "sa",
+            "displayName": "Visit Mode",
+            "width": 100,
+            "groupable": true,
+            "filterable": true,
+            "allowedValues": [
+                "In Person",
+                "Online"
+            ],
+            "expression": "CASE WHEN sa.visit_mode='I' then 'In Person' else 'Online' END"
+        },
+        "appointment_source_name": {
+            "table": "cas",
+            "displayName": "Appointment Source",
+            "width": 100,
+            "allowedValuesQuery": "SELECT appointment_source_name FROM appointment_source_master ORDER BY appointment_source_name",
+            "groupable": true,
+            "filterable": true
+        },
+        "appt_token": {
+            "table": "sa",
+            "displayName": "Appointment Token",
+            "width": 100,
+            "groupable": true,
+            "filterable": true
+        },
+        "package_name": {
+            "table": "pm",
+            "displayName": "Channeling Package",
+            "width": 100,
+            "groupable": true,
+            "filterable": true
+        },
+        "bill_no": {
+            "table": "sa",
+            "displayName": "Appointment Bill",
+            "width": 100,
+            "groupable": true,
+            "filterable": true
+        },
+        "paid_at_source": {
+            "table": "cas",
+            "displayName": "Paid At Source",
+            "width": 100,
+            "groupable": true,
+            "filterable": true,
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "expression": "CASE WHEN cas.paid_at_source='Y' THEN 'Yes' ELSE 'No' END"
+        },
+        "cancel_reason": {
+            "table": "sa",
+            "displayName": "Cancel Reason",
+            "width": 100,
+            "groupable": true,
+            "filterable": true
+        },
+        "payment_status": {
+            "table": "b",
+            "displayName": "Channel Bill Payment Status",
+            "width": 100,
+            "groupable": true,
+            "filterable": true,
+            "expression": "CASE WHEN b.payment_status IS NULL THEN '' WHEN b.payment_status = 'P' THEN 'Paid' ELSE 'Unpaid' END",
+            "allowedValues": [
+                "Unpaid",
+                "Paid"
+            ]
+        },
+        "changed_time": {
+            "table": "sa",
+            "displayName": "Cancelled Date/Time",
+            "width": 100,
+            "dataType": "timestampnosecs",
+            "groupable": false,
+            "filterable": true,
+            "expression": "CASE WHEN sa.appointment_status ilike 'cancel' THEN sa.changed_time ELSE null END"
+        },
+        "equipment_name": {
+            "table": "sa",
+            "displayName": "Equipment(s)",
+            "width": 70,
+            "groupable": true,
+            "filterable": true,
+            "expressionLines": [
+                " (SELECT textcat_commacat(equipment_name) ",
+                "  FROM scheduler_appointment_items  sai ",
+                "   JOIN test_equipment_master tem ON (tem.eq_id::text=sai.resource_id) ",
+                "  WHERE sa.appointment_id = sai.appointment_id AND sai.resource_type = 'EQID') "
+            ]
+        },
+        "prescribing_doctor_name": {
+            "table": "doc",
+            "displayName": "Prescribing doctor",
+            "width": 100,
+            "groupable": true,
+            "filterable": true,
+            "allowedValuesQuery": "SELECT doctor_name FROM doctors ORDER BY doctor_name",
+            "expression": "doc.doctor_name"
+        },
+        "other_resources": {
+            "table": "sa",
+            "displayName": "Other Resources",
+            "width": 70,
+            "groupable": true,
+            "filterable": true,
+            "expressionLines": [
+                " (SELECT textcat_commacat(resourcename) ",
+                "  FROM (SELECT ",
+                " CASE WHEN sai1.resource_type = 'EQID'  THEN (select equipment_name from test_equipment_master WHERE eq_id::text = sai1.resource_id) ",
+                "ELSE ",
+                "(SELECT generic_resource_name FROM generic_resource_type grt ",
+                "JOIN generic_resource_master grm ON(grm.generic_resource_type_id = grt.generic_resource_type_id) ",
+                "AND grm.generic_resource_id::text = sai1.resource_id ",
+                "WHERE sa.appointment_id = sai1.appointment_id AND grt.scheduler_resource_type = sai1.resource_type) ",
+                "END AS resourcename ",
+                "FROM scheduler_appointment_items sai1 WHERE sa.appointment_id = sai1.appointment_id) ",
+                " as foo)"
+            ]
+        }
+    },
+    "defaultShowFields": [
+        "appointment_time",
+        "consultant_name",
+        "mr_no",
+        "visit_id",
+        "patient_name",
+        "consultation_type",
+        "appointment_status",
+        "equipment_name",
+        "complaint_name",
+        "duration",
+        "other_resources"
+    ]
+}

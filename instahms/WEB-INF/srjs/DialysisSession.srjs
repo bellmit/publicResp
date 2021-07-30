@@ -1,0 +1,748 @@
+{
+	"allowNoDate": true,
+	"dateFields": [
+		"dialysis_start_date",
+		"presc_date"
+	],
+	"description": "This report shows all Dialysis Session Details  within the given date range (dialysis_start_date,prescription_date), and other Dialysis Details.",
+	"defaultShowFields": [
+    	"full_name",
+    	"mr_no",
+    	"patient_id",
+    	"dialysis_start_date",
+    	"dialysis_end_date",
+    	"presc_date",
+    	"location_name",
+    	"start_attendant",
+    	"end_attendant",
+    	"dialyzer_lot",
+    	"status_name",
+    	"machine_name",
+    	"dialysate_type"
+  	],
+
+	"fields": {
+    	"dialysis_start_date": {
+      		"displayName": "Dialysis Start Date",
+      		"width": "60",
+      		"dataType": "date",
+      		"groupable": true,
+      		"filterable": true,
+      		"expression": "date(ds.start_time)"
+    	},
+    	"dialysis_end_date": {
+      		"displayName": "Dialysis End Date",
+      		"width": "80",
+      		"dataType": "date",
+      		"groupable": true,
+      		"filterable": true,
+      		"expression": "date(ds.end_time)"
+    	},
+    	"dialysis_start_time": {
+      		"displayName": "Dialysis Start Time",
+      		"expression": "ds.start_time",
+      		"width": "60"
+    	},
+    	"dialysis_end_time": {
+      		"displayName": "Dialysis End Time",
+      		"expression": "ds.end_time",
+      		"width": "80"
+    	},
+    	"presc_date": {
+      		"displayName": "Prescribed Date",
+      		"dataType": "date",
+      		"width": "60",
+      		"groupable": true,
+      		"filterable": true,
+      		"expression":"dp.presc_date",
+      		"name":"presc_date",
+      		"table":"dp"
+    	},
+    	"weekly_frequency": {
+      		"displayName": "Weekly Frequency",
+      		"width": "60",
+      		"groupable": true,
+      		"filterable": true,
+      		"dataType" : "integer",
+      		"expression":"dp.weekly_frequency",
+      		"name":"weekly_frequency",
+      		"table":"dp"
+    	},
+    	"location_name": {
+      		"displayName": "Location",
+      		"expression": "lm.location_name",
+      		"name": "location_name",
+      		"table": "lm",
+      		"width": "100"
+    	},
+    	"start_attendant": {
+      		"displayName": "Start Attendant",
+      		"width": "100"
+    	},
+    	"end_attendant": {
+      		"displayName": "End Attendant",
+      		"width": "100"
+    	},
+    	"access_type": {
+      		"displayName": "Access Type",
+      		"expression": "dat.access_type",
+      		"name":"access_type",
+      		"table":"dat",
+      		"width": "80"
+    	},
+    	"dialysate_type": {
+      		"displayName": "Dialysate Type",
+      		"width": "80",
+      		"groupable": true,
+      		"filterable": true,
+      		"expression": "dit.dialysate_type_name",
+      		"name":"dialysate_name",
+      		"table":"dit",
+      		"allowedValuesQuery": "select dialysate_type_name from dialysate_type where status='A' order by dialysate_type_name"
+    	},
+    	"dialyzer_repr_count": {
+      		"displayName": "Reprocess No.",
+      		"width": "80"
+    	},
+    	"dialyzer_lot": {
+      		"displayName": "Dialyzer(Lot#)",
+      		"expression": "dt.dialyzer_type_name || '(' || ds.dialyzer_lot_num || ')'",
+      		"name":"dialyzer_lot",
+      		"table":"dt,ds",
+      		"width": "80"
+    	},
+    	"est_duration": {
+      		"displayName": "Duration (hrs)",
+      		"width": "160"
+    	},
+    	"administered_drugs": {
+      		"displayName": "Drugs Administered",
+      		"expression":"(SELECT textcat_commacat(medicine_name) FROM  drugs_administered da WHERE ds.order_id=da.order_id)",
+      		"name":"administered_drugs",
+      		"table":"ds",
+      		"width": "160"
+    	},
+    	"status_name": {
+      		"displayName": "Dialysis Status",
+      		"width": "60",
+      		"groupable": true,
+      		"filterable": true,
+      		"expressionLines": [
+      			"case ",
+      				"when ds.status = 'O' then 'Ordered' ",
+      				"when ds.status='P' then 'Prepared' ",
+      				"when ds.status='I' then 'In Progress' ",
+      				"when ds.status = 'F' then 'Completed' ",
+      				"when ds.status='C' then 'Closed' ",
+      			"END"
+      			],
+      		"allowedValues": ["Ordered","Prepared","In Progress","Completed","Closed"]
+    	},
+    	"in_real_wt": {
+      		"displayName": "Initial Weight (kg)",
+      		"width": "100"
+    	},
+    	"fin_real_wt": {
+      		"displayName": "Final Weight (kg)",
+      		"width": "100"
+    	},
+    	"target_wt": {
+      		"displayName": "Target Weight (kg)",
+      		"width": "100"
+    	},
+    	"total_wt_loss": {
+      		"displayName": "Weight Loss (kg)",
+      		"width": "100"
+    	},
+    	"total_heparin": {
+      		"displayName": "Total Heparin",
+      		"width": "100"
+    	},
+    	"alerts": {
+      		"displayName": "Alerts",
+      		"width": "100"
+    	},
+    	"in_temperature": {
+      		"displayName": "Initial Temperature (F)",
+      		"width": "100"
+    	},
+    	"fin_temperature": {
+      		"displayName": "Final Temperature (F)",
+      		"width": "100"
+    	},
+    	"machine_name": {
+      		"displayName": "Machine",
+      		"expression": "dmm.machine_name",
+      		"name": "machine_name",
+      		"table":"dmm",
+      		"width": "100"
+    	},
+    	"completion_status": {
+      		"displayName": "Completion Status",
+      		"expressionLines": [
+      			"case ",
+      			"when ds.completion_status='N' then 'Normal' ",
+      			"when ds.completion_status ='D' then 'Discontinued' ",
+	 			"when ds.completion_status='X' then 'Cancelled' ",
+	 			"END"
+	 		],
+      		"width": "100"
+    	},
+    	"access_site": {
+      		"displayName": "Access Site",
+      		"expression": "dac.access_site",
+      		"name": "access_site",
+      		"table": "dac",
+      		"width": "100"
+    	},
+    	"dialyzer_repr_date": {
+      		"displayName": "Reprocessed Date",
+      		"expression": "date(ds.dialyzer_repr_date)",
+      		"width": "100"
+    	},
+    	"in_bp_low_sit": {
+      		"displayName": "Initial Sitting Diastolic Blood Pressure",
+      		"width": "100"
+    	},
+    	"in_bp_high_sit": {
+      		"displayName": "Initial Sitting Systolic Blood Pressure",
+      		"width": "100"
+    	},
+    	"in_bp_high_stand": {
+      		"displayName": "Initial Standing Systolic Blood Pressure",
+      		"width": "100"
+    	},
+    	"in_bp_low_stand": {
+      		"displayName": "Initial Standing Diastolic Blood Pressure",
+      		"width": "100"
+    	},
+    	"in_pulse_stand": {
+      		"displayName": "Initial Standing Pulse",
+      		"width": "100"
+    	},
+    	"in_pulse_sit": {
+      		"displayName": "Initial Sitting Pulse",
+      		"width": "100"
+    	},
+    	"in_respiration": {
+      		"displayName": "Initial Respiration",
+      		"width": "100"
+    	},
+    	"in_total_wt": {
+      		"displayName": "Initial Total Weight",
+      		"width": "100"
+    	},
+    	"in_prosthetic_wt": {
+      		"displayName": "Initial Prosthetic Weight",
+      		"width": "100"
+    	},
+    	"in_wheelchair_wt": {
+      		"displayName": "Initial Wheelchair Weight",
+      		"width": "100"
+    	},
+    	"target_wt_removal": {
+      		"displayName": "Target Weight Removed",
+      		"width": "100"
+    	},
+    	"fluid_in_wt": {
+      		"displayName": "Initial Fluid Weight",
+      		"width": "100"
+    	},
+    	"heparin_bolus": {
+      		"displayName": "Total Heparin Bolus",
+      		"expression": "ds.heparin_bolus",
+      		"name": "heparin_bolus",
+      		"table": "ds",
+      		"width": "100"
+    	},
+
+    	"needle_type": {
+    	    "displayName": "Needle Type",
+    	    "expression": "ds.needle_type",
+    	    "name": "needle_type",
+    	    "table": "ds",
+    	    "width": "100"
+    	},
+    	 "filtration_replacement_fluid_volume": {
+    	    "displayName": "Filtration Replacement Fluid Volume(ml)",
+    	    "expression": "ds.filtration_replacement_fluid_volume",
+    	    "name": "filtration_replacement_fluid_volume",
+    	    "table": "ds",
+    	    "width": "100"
+    	},
+
+    	"heparin_type": {
+    	    "displayName": "Heparin Type",
+    	    "expressionLines": [
+      			"Case ",
+      				"WHEN ds.heparin_type='h' THEN 'Heparin' ",
+	      			"WHEN ds.heparin_type='i' THEN ' Low Molecular Heparin' ",
+	      		"END"
+	      	],
+    	    "name": "Heparin_type",
+    	    "table": "ds",
+    	    "width": "100"
+    	},
+    	 "low_heparin_initial_dose": {
+    	    "displayName": "Initial Dose",
+    	    "expression": "ds.low_heparin_initial_dose",
+    	    "name": "low_heparin_initial_dose",
+    	    "table": "ds",
+    	    "width": "100"
+    	},
+    	 "low_heparin_intrim_dose": {
+    	    "displayName": "Interim Dose",
+    	    "expression": "ds.low_heparin_intrim_dose",
+    	    "name": "low_heparin_intrim_dose",
+    	    "table": "ds",
+    	    "width": "100"
+    	},
+
+    	"heparin_left": {
+      		"displayName": "Heparin Left",
+      		"width": "100"
+    	},
+    	"heparin_rate": {
+      		"displayName": "Heparin Rate",
+      		"width": "100"
+    	},
+    	"heparin_start": {
+      		"displayName": "Start Heparin",
+      		"width": "100"
+    	},
+    	"start_notes": {
+      		"displayName": "Start Notes",
+      		"width": "100"
+    	},
+    	"in_patient_cond": {
+      		"displayName": "Initial Patient Cond.",
+      		"width": "100"
+    	},
+    	"fin_patient_cond": {
+      		"displayName": "Final Patient Cond.",
+      		"width": "100"
+    	},
+    	"fin_bp_high_sit": {
+      		"displayName": "Final Sitting Systolic Blood Pressure",
+      		"width": "100"
+    	},
+    	"fin_bp_low_sit": {
+      		"displayName": "Final Sitting Diastolic Blood Pressure",
+      		"width": "100"
+    	},
+    	"fin_bp_low_stand": {
+      		"displayName": "Final Standing Diastolic Blood Pressure",
+      		"width": "100"
+    	},
+    	"fin_bp_high_stand": {
+      		"displayName": "Final Standing Systolic Blood Pressure",
+      		"width": "100"
+    	},
+    	"fin_pulse_sit": {
+      		"displayName": "Final Sitting Pulse",
+      		"width": "100"
+    	},
+    	"fin_pulse_stand": {
+      		"displayName": "Final Standing Pulse",
+      		"width": "100"
+    	},
+    	"fin_respiration": {
+      		"displayName": "Final Respiration",
+      		"width": "100"
+    	},
+    	"fin_total_wt": {
+      		"displayName": "Final Total Weight (kg)",
+      		"width": "100"
+    	},
+    	"fin_prosthetic_wt": {
+      		"displayName": "Final Prosthetic Weight (kg)",
+      		"width": "100"
+    	},
+    	"fin_wheelchair_wt": {
+      		"displayName": "Final Wheelchair Weight (kg)",
+      		"width": "100"
+    	},
+    	"completion_notes": {
+      		"displayName": "Completion Notes",
+      		"width": "100"
+    	},
+    	"intra_min_bp_high": {
+      		"displayName": "Minimum Blood Pressure High",
+      		"width": "100"
+    	},
+    	"intra_min_bp_low": {
+      		"displayName": "Minimum Blood Pressure Low",
+      		"width": "100"
+    	},
+    	"total_fluid_removed": {
+      		"displayName": "Total Fluid Removed (kg)",
+      		"width": "100"
+    	},
+    	"min_bp_time": {
+      		"displayName": "Minimum Blood Pressure Time",
+      		"width": "100"
+    	},
+    	"total_venous_pressure": {
+      		"displayName": "Total Venus Pressure",
+      		"width": "100"
+    	},
+    	"total_dialysate_pressure": {
+      		"displayName": "Total Dialysate Pressure",
+      		"width": "100"
+    	},
+    	"weight_change": {
+      		"displayName": "Weight Changed",
+      		"width": "100"
+    	},
+    	"poll_count": {
+      		"displayName": "Poll Count",
+      		"width": "100"
+    	},
+    	"last_polled_time": {
+      		"displayName": "Last Polled Time",
+      		"width": "100"
+    	},
+    	"access_site_infection": {
+      		"displayName": "Access Site Infection",
+      		"expressionLines": [
+      			"Case ",
+      				"WHEN ds.access_site_infection='Y' THEN 'Yes' ",
+	      			"WHEN ds.access_site_infection='N' THEN 'No' ",
+	      		"END"
+	      	],
+      		"width": "100"
+    	},
+    	"access_patency": {
+      		"displayName": "Access Patency",
+      		"expression": "ds.access_patency",
+      		"width": "100"
+    	},
+    	"fin_odometer_reading": {
+      		"displayName": "Final Odometer Reading",
+      		"width": "100"
+    	},
+    	"in_odometer_reading": {
+      		"displayName": "Initial Odometer Reading",
+      		"width": "100"
+    	},
+    	"patency_bruit_thrill": {
+      		"displayName": "Patency Bruit Thrill (kg)",
+      		"expressionLines": [
+      			"Case ",
+      				"WHEN ds.patency_bruit_thrill='Y' THEN 'Yes' ",
+	      			"WHEN ds.patency_bruit_thrill='N' THEN 'No'",
+	      		"END"
+	      	],
+      		"width": "100"
+    	},
+    	"patency_nf": {
+      		"displayName": "Patency NF",
+      		"width": "100",
+      		"expressionLines":  [
+      			"Case ",
+      			"WHEN ds.patency_nf='Y' THEN 'Yes' ",
+	      		"WHEN ds.patency_nf='N' THEN 'No' ",
+	      		"END"
+	      	]
+    	},
+    	"patency_rf": {
+      		"displayName": "Patency RF",
+      		"width": "100",
+      		"expressionLines": [
+      			"Case ",
+      			"WHEN ds.patency_rf='Y' THEN 'Yes' ",
+	      		"WHEN ds.patency_rf='N' THEN 'No' ",
+	      		"END"
+	      	]
+    	},
+    	"patency_thrill": {
+      		"displayName": "Patency Thrill",
+      		"expression": "(Case WHEN ds.patency_thrill='Y' THEN 'Yes' WHEN ds.patency_thrill='N' THEN 'No' END)",
+      		"width": "100"
+    	},
+    	"secondary_check_done": {
+      		"displayName": "Secondary Check Done",
+      		"expressionLines": [
+      			"Case ",
+      			"WHEN ds.secondary_check_done='Y' THEN 'Yes' ",
+	      		"WHEN ds.secondary_check_done='N' THEN 'No' ",
+	      		"END"
+	      	],
+      		"width": "100"
+    	},
+    	"in_bun": {
+      		"displayName": "Initial Bun",
+      		"width": "100"
+    	},
+    	"fin_bun": {
+      		"displayName": "Final Bun",
+      		"width": "100"
+    	},
+    	"fin_ktv": {
+      		"displayName": "Final KTV",
+      		"width": "100"
+    	},
+    	"iso_uf": {
+      		"displayName": "ISO UF",
+      		"width": "100",
+      		"expressionLines": [
+      			"Case ",
+      				"WHEN ds.iso_uf='Y' THEN 'Yes'",
+	      			"WHEN ds.iso_uf='N' THEN 'No'",
+	      		"END"
+	      	]
+    	},
+    	"iso_uf_time": {
+      		"displayName": "ISO UF Time",
+      		"width": "100"
+    	},
+    	"chest_auscultation_clear": {
+      		"displayName": "Chest Auscultation Clear",
+      		"width": "100",
+      		"expressionLines": [
+      			"Case ",
+      				"WHEN ds.chest_auscultation_clear='Y' THEN 'Yes' ",
+	      			"WHEN ds.chest_auscultation_clear='N' THEN 'No' ",
+	      		"END"
+	      	]
+    	},
+    	"peripheral_edema": {
+      		"displayName": "Peripheral Edema",
+      		"width": "100",
+      		"expressionLines": [
+      			"Case ",
+      				"WHEN ds.peripheral_edema='Y' THEN 'Yes' ",
+	      			"WHEN ds.peripheral_edema='N' THEN 'No' ",
+	      		"END"
+	      	]
+    	},
+    	"chest_pain_discomfort": {
+      		"displayName": "Chest Pain Discomfort",
+      		"width": "100",
+      		"expressionLines": [
+      			"Case ",
+      				"WHEN ds.chest_pain_discomfort='Y' THEN 'Yes' ",
+      				"WHEN ds.chest_pain_discomfort='N' THEN 'No' ",
+      			"END"
+      		]
+    	},
+    	"recent_surgery": {
+      		"displayName": "Recent Surgery",
+      		"width": "100",
+      		"expressionLines": [
+      			"Case ",
+      				"WHEN ds.recent_surgery='Y' THEN 'Yes' ",
+	      			"WHEN ds.recent_surgery='N' THEN 'No' ",
+	      		"END"
+	      	]
+    	},
+    	"intradialysis_complaints": {
+      		"displayName": "Intradialysis Complaints",
+      		"width": "100",
+      		"expressionLines": [
+      			"Case ",
+      				"WHEN ds.intradialysis_complaints='Y' THEN 'Yes' ",
+	      			"WHEN ds.intradialysis_complaints='N' THEN 'No' ",
+	      		"END"
+	      	]
+    	},
+    	"breakfast_lunch_dinner": {
+      		"displayName": "Break Fast Lunch Dinner",
+      		"width": "100",
+      		"expressionLines": [
+      			"Case ",
+      				"WHEN ds.breakfast_lunch_dinner='Y' THEN 'Yes' ",
+	      			"WHEN ds.breakfast_lunch_dinner='N' THEN 'No' ",
+	      		"END"
+	      	]
+    	},
+    	"perm_cath_flow": {
+      		"displayName": "Perm Cath Flow",
+      		"expressionLines": [
+      			"Case ",
+      				"WHEN ds.perm_cath_flow='Y' THEN 'Yes' ",
+	      			"WHEN ds.perm_cath_flow='N' THEN 'No' ",
+	      		"END"
+	      	],
+      		"width": "100"
+    	},
+    	"cannulation": {
+      		"displayName": "Cannulation",
+      		"expressionLines": [
+      			"Case ",
+      				"WHEN ds.cannulation='Y' THEN 'Yes' ",
+	      			"WHEN ds.cannulation='N' THEN 'No' ",
+	      		"END"
+	      	],
+      		"width": "100"
+    	},
+    	"cannulation_reattempt": {
+      		"displayName": "Cannulation Reattempt",
+      		"width": "100"
+    	},
+    	"fin_patency_nf": {
+      		"displayName": "Final Patency NF",
+      		"expressionLines":[
+      			"Case ",
+      				"WHEN ds.fin_patency_nf='Y' THEN 'Yes' ",
+	      			"WHEN ds.fin_patency_nf='N' THEN 'No' ",
+	      		"END"
+	      	],
+      		"width": "100"
+    	},
+    	"fin_patency_rf": {
+      		"displayName": "Final Patency RF",
+      		"expressionLines": [
+      			"Case ",
+      				"WHEN ds.fin_patency_rf='Y' THEN 'Yes' ",
+	      		 	"WHEN ds.fin_patency_rf='N' THEN 'No' ",
+	      		 "END"
+	      	],
+      		"width": "100"
+    	},
+    	"anticoagulation": {
+      		"displayName": "Anticoagulation",
+      		"expressionLines": [
+      			"Case ",
+      				"WHEN ds.anticoagulation='H' THEN 'Heparin' ",
+	      			"WHEN ds.anticoagulation='F' THEN 'Heparin Free' ",
+	      		"END"
+	      	],
+    	    "name": "anticoagulation",
+    	    "table": "ds",
+    	    "width": "100"
+    	},
+    	"frequency": {
+      		"displayName": "Frequency",
+      		"width": "100"
+    	},
+    	"volume": {
+      		"displayName": "Volume",
+      		"width": "100"
+    	},
+    	"post_session_notes": {
+      		"displayName": "Post Session Notes",
+      		"width": "100"
+    	},
+    	"nxt_dialysis_date": {
+      		"displayName": "Next Dialysis Date",
+      		"width": "100"
+    	},
+    	"shift": {
+      		"displayName": "Shift",
+      		"width": "100"
+    	},
+    	"other_staff": {
+      		"displayName": "Other Staff",
+      		"width": "100"
+    	},
+    	"single_use_dialyzer": {
+      		"displayName": "Single use dialyzer",
+      		"width": "100",
+      		"expressionLines": [
+      			"case ",
+      				"WHEN ds.single_use_dialyzer='Y' THEN 'Yes' ",
+	 	  			"WHEN ds.single_use_dialyzer='N' THEN  'No' ",
+	 	  		"END"
+	 	  	]
+    	},
+    	"single_use_dialyzer_count": {
+    		"displayName": "Single Use Dialyzer Count",
+    		"width": "50",
+    		"dataType": "numeric",
+    		"aggFunction": "sum",
+    		"expressionLines":[
+    			"(SELECT COUNT(single_use_dialyzer) ",
+    			"FROM dialysis_session ds1 ",
+    			"WHERE ds1.order_id = ds.order_id ",
+    				"AND single_use_dialyzer='Y')::numeric "
+    		],
+    		"name":"single_use_dialyzer_count",
+    		"table":"ds"
+    	}
+	},
+	"includes": [
+		"PatientDetailFields.srjs",
+		"PatientVisitFields.srjs"
+	],
+	"queryUnits": [
+		{
+            "joinTables": [
+            	{
+					"alias": "dp",
+                    "dependsOn": "ds",
+                    "expression": "ON (dp.dialysis_presc_id = ds.prescription_id)",
+                    "name": "dialysis_prescriptions",
+                    "type": "JOIN"
+            	},
+            	{
+					"alias": "sp",
+                    "dependsOn": "ds",
+                    "expression": "ON (sp.prescription_id = ds.order_id)",
+                    "name": "services_prescribed",
+                    "type": "JOIN"
+            	},
+            	{
+					"alias": "pr",
+                    "dependsOn": "sp",
+                    "expression": "ON (pr.patient_id = sp.patient_id)",
+                    "name": "patient_registration",
+                    "type": "JOIN"
+            	},
+            	{
+					"alias": "pd",
+                    "dependsOn": "dp",
+                    "expression": "ON (pd.mr_no = dp.mr_no)",
+                    "name": "patient_details",
+                    "type": "JOIN"
+            	},
+            	{
+					"alias": "lm",
+                    "dependsOn": "ds",
+                    "expression": "ON (lm.location_id = ds.location_id)",
+                    "name": "location_master",
+                    "type": "LEFT"
+            	},
+            	{
+					"alias": "dmm",
+                    "dependsOn": "ds",
+                    "expression": "ON(dmm.machine_id=ds.machine_id)",
+                    "name": "dialysis_machine_master",
+                    "type": "JOIN"
+            	},
+            	{
+					"alias": "dac",
+                    "dependsOn": "ds",
+                    "expression": "ON(dac.access_site_id=ds.access_site_id)",
+                    "name": "dialysis_access_sites",
+                    "type": "JOIN"
+            	},
+            	{
+					"alias": "dat",
+                    "dependsOn": "ds",
+                    "expression": "ON(dat.access_type_id = ds.access_type_id)",
+                    "name": "dialysis_access_types",
+                    "type": "LEFT"
+            	},
+            	{
+					"alias": "dt",
+                    "dependsOn": "ds",
+                    "expression": "ON(dt.dialyzer_type_id= ds.dialyzer_type_id)",
+                    "name": "dialyzer_types",
+                    "type": "LEFT"
+            	},
+            	{
+					"alias": "dit",
+                    "dependsOn": "ds",
+                    "expression": "ON(dit.dialysate_type_id = ds.dialysate_type_id)",
+                    "name": "dialysate_type",
+                    "type": "LEFT"
+            	}
+            ],
+            "mainTableAlias": "ds",
+            "mainTableName": "dialysis_session"
+		}
+	],
+	"reportGroup": "Dialysis Reports",
+	"title": "Dialysis Session Report"
+}

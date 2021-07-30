@@ -1,0 +1,191 @@
+.bar {
+    position: relative;
+    width: 750px;
+    height: 1px;
+    background-color: #CCCCCC;
+    z-index: -1px;
+    top: 18px;
+    left: 75px;
+}
+.checkholder {
+    display: inline-block;
+    width: 901px;
+    height: 85px;
+    background-color: Transparent;
+    padding: 19px;
+}
+.circlecontainer {
+    float: left;
+    display: inline;
+    width: 20%;
+    height: 100%;
+    text-align: center;
+    background-color: Transparent;
+}
+.checkmark {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    -ms-transform: rotate(45deg); /* IE 9 */
+    -webkit-transform: rotate(45deg); /* Chrome, Safari, Opera */
+    transform: rotate(45deg);
+}
+.checkmark>.checkmark_circle {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    background-color: white;
+    border-radius: 16px;
+    border: solid;
+    border-color: 01A400;
+    border-width: 1px;
+    left: 0;
+    top: 0;
+}
+.checkmark>.checkmark_stem {
+    position: absolute;
+    width: 2px;
+    height: 14px;
+    background-color: 01A400;
+    left: 17px;
+    top: 8px;
+}
+.checkmark>.checkmark_kick {
+    position: absolute;
+    width: 5px;
+    height: 2px;
+    background-color: 01A400;
+    left: 12px;
+    top: 20px;
+}
+.label {
+    position: initial;
+    font-size: 13;
+    color: 01A400;
+    word-wrap: break-word;
+    white-space: normal;
+    padding-top: 10px;
+    line-height:19px;
+}
+.labeldatetime {
+	font-size:11px;
+	color:grey;
+}
+.labeluser {
+	font-size:11px;
+	color:grey;
+}
+.uncheckmark {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    -ms-transform: rotate(45deg); /* IE 9 */
+    -webkit-transform: rotate(45deg); /* Chrome, Safari, Opera */
+    transform: rotate(45deg);
+}
+.uncheckmark>.checkmark_circle {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    background-color: white;
+    border-radius: 16px;
+    border: solid;
+    border-color: #CCCCCC;
+    border-width: 1px;
+    left: 0;
+    top: 0;
+}
+.uncheckmark>.checkmark_stem {
+    position: absolute;
+    width: 2px;
+    height: 14px;
+    background-color: Transparent;
+    left: 17px;
+    top: 8px;
+}
+.uncheckmark>.checkmark_kick {
+    position: absolute;
+    width: 5px;
+    height: 2px;
+    background-color: Transparent;
+    left: 12px;
+    top: 20px;
+}
+.unlabel {
+    position: initial;
+    font-size: small;
+    color: #CCCCCC;
+    word-wrap: break-word;
+    white-space: normal;
+    padding-top: 10px;
+}
+.detailsdiv {
+    width: 85%;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 20px;
+    float: left;
+}
+.savebutton {
+	position: absolute;
+	right:    0;
+	bottom:   0;
+}
+.buttondiv {
+    width:100px;
+    height:100%;
+    float: left;
+    position:relative;
+}
+.divline {
+    height: 1px;
+    background-color: #CCCCCC;
+    margin: 15px;
+}
+.pendingContainer {
+    width: 33.3%;
+    background-color: transparent;
+    float: left
+}
+.pending {
+    position: relative;
+    width: 80%;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    padding-left: 15px;
+    padding-right:15px;
+    margin-top: 10px;
+    margin-left: 15px;
+    font-size: initial;
+    float: left;
+    background-color: #f0f0f0;
+    border-radius: 2px;
+}
+.viewContainer {
+    background-color: transparent;
+    padding-right: 10px;
+    padding-top: 2px;
+    float: right;
+    color: #3396fe;
+}
+.exclam {
+    position: relative;
+    top: 11px;
+    font-size: 15;
+    margin-right: 14px;
+    color: red;
+    float: left;
+}
+.activity {
+    position: relative;
+    top: 11px;
+    font-size: 15;
+}
+.num {
+    font-size: 32;
+    float: right;
+}
+textarea:disabled {
+	color: #999;
+	background-color: #efebe7;
+}

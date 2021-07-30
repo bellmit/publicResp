@@ -1,0 +1,370 @@
+{
+    "mockData": [
+        {
+            "package_contents": [
+                {
+                    "activity_qty": 2,
+                    "activity_type": "Service",
+                    "display_order": 1,
+                    "activity_id": "1",
+                    "activity_remarks": ""
+                },
+                {
+                    "activity_qty": 1,
+                    "display_order": 3,
+                    "activity_type": "Radiology",
+                    "activity_id": "2",
+                    "activity_remarks": ""
+                },
+                {
+                    "activity_qty": 2,
+                    "display_order": 4,
+                    "activity_type": "Equipment",
+                    "activity_id": "3",
+                    "activity_remarks": ""
+                }
+            ],
+            "tpa_package_applicability": [
+                {
+                    "tpa_id": "TPAID001"
+                }
+            ],
+            "dept_package_applicability": [
+                {
+                    "dept_id": "DEP0001"
+                }
+            ],
+            "center_package_applicability": [
+                {
+                    "center_id": 1
+                }
+            ],
+            "visit_applicability": "I",
+            "gender_applicability": "*",
+            "status": "A",
+            "description": "description 1",
+            "package_name": "Test 1",
+            "package_code": "code",
+            "valid_till": "28-02-2018",
+            "valid_from": "05-09-2017",
+            "service_sub_group_id": 5
+        },
+        {
+            "package_contents": [
+                {
+                    "activity_qty": 2,
+                    "activity_type": "Service",
+                    "display_order": 1,
+                    "activity_id": "1",
+                    "activity_remarks": ""
+                },
+                {
+                    "activity_qty": 1,
+                    "display_order": 3,
+                    "activity_type": "Radiology",
+                    "activity_id": "2",
+                    "activity_remarks": ""
+                },
+                {
+                    "activity_qty": 2,
+                    "display_order": 4,
+                    "activity_type": "Equipment",
+                    "activity_id": "3",
+                    "activity_remarks": ""
+                }
+            ],
+            "tpa_package_applicability": [
+                {
+                    "tpa_id": "TPAID0002"
+                }
+            ],
+            "dept_package_applicability": [
+                {
+                    "dept_id": "DEP0002"
+                },
+                {
+                    "dept_id": "DEP0003"
+                }
+            ],
+            "center_package_applicability": [],
+            "visit_applicability": "O",
+            "gender_applicability": "M",
+            "status": "I",
+            "description": "description 2",
+            "package_name": "Test 2",
+            "package_code": "code 2",
+            "valid_till": "27-02-2018",
+            "valid_from": "04-09-2017",
+            "service_sub_group_id": 5
+        }
+    ],
+    "dataProviderInsert": [
+        {
+            "package_contents": [
+                {
+                    "activity_qty": 2,
+                    "activity_type": "Service",
+                    "display_order": 1,
+                    "activity_id": "1",
+                    "activity_remarks": "remarks 1"
+                },
+                {
+                    "activity_qty": 2,
+                    "display_order": 2,
+                    "activity_type": "Equipment",
+                    "activity_id": "3",
+                    "activity_remarks": "remarks 2"
+                }
+            ],
+            "tpa_package_applicability": [
+                {
+                    "tpa_id": "TPAID004"
+                },
+                {
+                    "tpa_id": "TPAID07"
+                }
+            ],
+            "dept_package_applicability": [
+                {
+                    "dept_id": "DEP0004"
+                }
+            ],
+            "center_package_applicability": [],
+            "visit_applicability": "I",
+            "gender_applicability": "*",
+            "status": "A",
+            "description": "description 1",
+            "package_name": "Test 4",
+            "package_code": "code 4",
+            "valid_till": "28-02-2018",
+            "valid_from": "05-09-2017",
+            "service_sub_group_id": 4
+        },
+        {
+            "package_contents": [
+                {
+                    "activity_qty": 2,
+                    "activity_type": "Service",
+                    "display_order": 1,
+                    "activity_id": "1",
+                    "activity_remarks": ""
+                },
+                {
+                    "activity_qty": 1,
+                    "display_order": 3,
+                    "activity_type": "Radiology",
+                    "activity_id": "2",
+                    "activity_remarks": ""
+                },
+                {
+                    "activity_qty": 2,
+                    "display_order": 4,
+                    "activity_type": "Equipment",
+                    "activity_id": "3",
+                    "activity_remarks": ""
+                }
+            ],
+            "tpa_package_applicability": [
+                {
+                    "tpa_id": "TPAID0002"
+                }
+            ],
+            "dept_package_applicability": [
+                {
+                    "dept_id": "DEP0002"
+                },
+                {
+                    "dept_id": "DEP0005"
+                }
+            ],
+            "center_package_applicability": [],
+            "visit_applicability": "O",
+            "gender_applicability": "F",
+            "status": "I",
+            "description": "description 3",
+            "package_name": "Test 3",
+            "package_code": "code 3",
+            "valid_till": "27-02-2019",
+            "valid_from": "04-09-2015",
+            "service_sub_group_id": 3
+        }
+    ],
+    "dataProviderUpdate": [
+        {
+            "package_contents": [
+                {
+                    "activity_qty": 2,
+                    "activity_type": "Service",
+                    "display_order": 3,
+                    "activity_id": "1_updated",
+                    "activity_remarks": "remarks 1"
+                },
+                {
+                    "activity_qty": 2,
+                    "display_order": 4,
+                    "activity_type": "Equipment",
+                    "activity_id": "3_updated",
+                    "activity_remarks": "remarks 2"
+                }
+            ],
+            "tpa_package_applicability": [],
+            "dept_package_applicability": [
+                {
+                    "dept_id": "DEP0004"
+                },
+                {
+                    "dept_id": "DEP0005"
+                }
+            ],
+            "center_package_applicability": [
+                {
+                    "center_id": 4
+                }
+            ],
+            "visit_applicability": "O",
+            "gender_applicability": "M",
+            "status": "A",
+            "description": "description 4",
+            "package_name": "Test 4_updated",
+            "package_code": "code 4",
+            "valid_till": "28-02-2019",
+            "valid_from": "05-09-2016",
+            "service_sub_group_id": 4
+        },
+        {
+            "package_contents": [
+                {
+                    "activity_qty": 2,
+                    "activity_type": "Service",
+                    "display_order": 1,
+                    "activity_id": "1_updated",
+                    "activity_remarks": ""
+                },
+                {
+                    "activity_qty": 1,
+                    "display_order": 3,
+                    "activity_type": "Radiology",
+                    "activity_id": "2_updated",
+                    "activity_remarks": ""
+                },
+                {
+                    "activity_qty": 2,
+                    "display_order": 4,
+                    "activity_type": "Equipment",
+                    "activity_id": "3_updated",
+                    "activity_remarks": ""
+                }
+            ],
+            "tpa_package_applicability": [],
+            "dept_package_applicability": [
+                {
+                    "dept_id": "DEP0002"
+                },
+                {
+                    "dept_id": "DEP0005"
+                }
+            ],
+            "center_package_applicability": [
+                {
+                    "center_id": 3
+                },
+                {
+                    "center_id": 1
+                }
+            ],
+            "visit_applicability": "O",
+            "gender_applicability": "F",
+            "status": "I",
+            "description": "description 3",
+            "package_name": "Test 3_updated",
+            "package_code": "code 3",
+            "valid_till": "27-02-2019",
+            "valid_from": "04-09-2015",
+            "service_sub_group_id": 3
+        }
+    ],
+    "quantityRule": [
+    	{
+    		"package_contents": [
+                {
+                    "activity_qty": 2,
+                    "activity_type": "Service",
+                    "display_order": 1,
+                    "activity_id": "1",
+                    "activity_remarks": ""
+                },
+                {
+                    "activity_qty": 2,
+                    "display_order": 3,
+                    "activity_type": "Radiology",
+                    "activity_id": "2",
+                    "activity_remarks": ""
+                },
+                {
+                    "activity_qty": 0,
+                    "display_order": 4,
+                    "activity_type": "Equipment",
+                    "activity_id": "3",
+                    "activity_remarks": ""
+                }
+            ],
+            "tpa_package_applicability": [],
+            "dept_package_applicability": [],
+            "center_package_applicability": [],
+            "visit_applicability": "I",
+            "gender_applicability": "*",
+            "status": "A",
+            "description": "description 5",
+            "package_name": "Test 5",
+            "package_code": "code 5",
+            "valid_till": "28-02-2018",
+            "valid_from": "05-09-2017",
+            "service_sub_group_id": 5
+    	}
+    ],
+    "BadRequest": [
+    	{
+    		"package_contents": [
+                {
+                    "activity_qty": 2,
+                    "activity_type": "Service",
+                    "display_order": 1,
+                    "activity_id": "1",
+                    "activity_remarks": "",
+                    "package_id": 2
+                }
+            ],
+            "tpa_package_applicability": [],
+            "dept_package_applicability": [],
+            "center_package_applicability": [],
+            "package_id": 1,
+            "visit_applicability": "I",
+            "gender_applicability": "*",
+            "status": "A",
+            "description": "description 5",
+            "package_name": "Test 1",
+            "package_code": "code 1",
+            "valid_till": "28-02-2018",
+            "valid_from": "05-09-2017",
+            "service_sub_group_id": 1
+    	}
+    ],
+    "entityNotFound": [
+    	{
+    		"package_contents": [],
+            "tpa_package_applicability": [],
+            "dept_package_applicability": [],
+            "center_package_applicability": [],
+            "package_id": -1,
+            "visit_applicability": "I",
+            "gender_applicability": "*",
+            "status": "A",
+            "description": "description 5",
+            "package_name": "Test 1",
+            "package_code": "code 1",
+            "valid_till": "28-02-2018",
+            "valid_from": "05-09-2017",
+            "service_sub_group_id": 1
+    	}
+    ]
+}

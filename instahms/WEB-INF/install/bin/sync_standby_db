@@ -1,0 +1,22 @@
+#!/bin/bash
+
+#
+# This script will sync the standby database with the customer db dumps
+# The script would be run periodically via a cron job, on apps.instahealthsolutions.com only
+#
+
+HOST=`hostname`
+[ $HOST != "apps.instahealthsolutions.com" ] && exit 0
+
+STANDBYDB=hmsbkp
+sudo mkdir -p /root/remote-backups
+cd /root/remote-backups
+
+for folder in $( ls . ) ; do
+	if [ -f $folder/sync ] ; then
+		sudo cp $folder/latest.dump  $folder/previous.dump
+		sudo /usr/bin/pg_restore -c -d $STANDBYDB latest.dump > /dev/null
+		sudo rm $folder/sync
+	fi
+done
+

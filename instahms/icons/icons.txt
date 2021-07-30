@@ -1,0 +1,25 @@
+Add
+Cancel
+Change
+Close
+Collect
+Delete
+Docket
+Doctor Vists
+Edit
+Get
+History
+Manage
+Order
+Prescribe
+Print
+Readmit
+Refund
+Report
+Replace
+Send
+Show
+Sign off
+Stock
+Upload
+View

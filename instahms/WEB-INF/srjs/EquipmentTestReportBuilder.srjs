@@ -1,0 +1,56 @@
+{
+  "title": "Equipment Test Report",
+  "defaultOrder": "equipment_name",
+  "reportGroup": "Diagnostics Reports",
+  "dateFields": ["conducted_on"],
+  "description": "This report builder gives a detailed description of all equipment tests resluts within the selected date range. (Note: The builder describes only comepleted equipment result values)",
+  "tableName": ["rpt_test_equipment_result_values_view"],
+  "defaultShowFields": [
+    "equipment_name",
+    "resultlabel",
+    "test_value",
+    "conducted_by",
+    "conducted_on",
+    "sample_info",
+    "remarks"
+  ],
+  "fields": {
+    "equipment_name": {
+      "displayName": "Equipment Name",
+      "width": "100",
+      "filterable": true,
+      "groupable": true,
+      "allowedValuesQuery": "SELECT equipment_name FROM test_equipment_master"
+    },
+    "resultlabel": {
+      "displayName": "Result Name",
+      "width": "100"
+    },
+    "test_value": {
+      "displayName": "Result Value",
+      "width": "65"
+    },
+    "conducted_by": {
+      "displayName": "Conducted By",
+      "width": "65",
+      "filterable": true,
+      "groupable": true,
+      "allowedValuesQuery": "SELECT emp_username FROM u_user WHERE emp_status='A' AND hosp_user='Y' ORDER BY emp_username"
+    },
+    "conducted_on": {
+      "displayName": "Conducted Date",
+      "width": "65",
+      "dataType": "date",
+      "filterable": true,
+      "groupable": true
+    },
+    "sample_info": {
+      "displayName": "Sample Information",
+      "width": "65"
+    },
+    "remarks": {
+      "displayName": "Remarks",
+      "width": "65"
+    }
+  }
+}

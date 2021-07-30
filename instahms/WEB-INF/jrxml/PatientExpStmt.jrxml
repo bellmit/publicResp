@@ -1,0 +1,609 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="BillExpStmt" pageWidth="595" pageHeight="842" whenNoDataType="NoDataSection" columnWidth="515" leftMargin="50" rightMargin="30" topMargin="40" bottomMargin="40" scriptletClass="com.insta.hms.common.JRCommonScriptlet">
+	<property name="ireport.scriptlethandling" value="2"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
+	<parameter name="detailed" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["SUM"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="printerId" class="java.lang.Integer" isForPrompting="false"/>
+	<parameter name="mr_no" class="java.lang.String"/>
+	<parameter name="fromDate" class="java.util.Date"/>
+	<parameter name="toDate" class="java.util.Date"/>
+	<parameter name="center_id" class="java.lang.Integer" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new Integer(0)]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT bill_no, bill_type, b.status, visit_id, open_date,
+finalized_date, deposit_set_off, total_claim,b.procedure_no,procedure_code
+,procedure_name,procedure_limit,COALESCE(claim_recd_amount,0) AS claim_recd_amount,sponsor_bill_no,
+ COALESCE(insurance_deduction,0) AS insurance_deduction,pr.primary_sponsor_id AS tpa_id
+FROM bill b
+left join patient_registration pr on(b.visit_id=pr.patient_id)
+LEFT OUTER JOIN sponsor_procedure_limit using(procedure_no)
+WHERE mr_no = $P{mr_no} AND date_trunc('day',finalized_date) BETWEEN $P{fromDate} AND  $P{toDate}
+ORDER BY finalized_date]]>
+	</queryString>
+	<field name="bill_no" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="bill_type" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="status" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="visit_id" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="open_date" class="java.sql.Timestamp">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="finalized_date" class="java.sql.Timestamp">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="deposit_set_off" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="total_claim" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="procedure_code" class="java.lang.String"/>
+	<field name="procedure_name" class="java.lang.String"/>
+	<field name="procedure_no" class="java.lang.Integer"/>
+	<field name="procedure_limit" class="java.math.BigDecimal"/>
+	<field name="claim_recd_amount" class="java.math.BigDecimal"/>
+	<field name="insurance_deduction" class="java.math.BigDecimal"/>
+	<field name="tpa_id" class="java.lang.String"/>
+	<variable name="billAmount" class="java.math.BigDecimal" resetType="Group" resetGroup="bill" calculation="Sum"/>
+	<variable name="receiptAmount" class="java.math.BigDecimal"/>
+	<variable name="sponsorTaxAmt" class="java.math.BigDecimal"/>
+	<variable name="discountAmount" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[BigDecimal.ZERO]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="billCumReceipt" class="java.lang.Boolean" resetType="None">
+		<variableExpression><![CDATA[new Boolean($F{bill_type}.equalsIgnoreCase("P") &&
+$F{status}.equals("C"))]]></variableExpression>
+	</variable>
+	<variable name="SUM_billAmount" class="java.math.BigDecimal" resetType="Group" resetGroup="patient" calculation="Sum">
+		<variableExpression><![CDATA[$V{billAmount}]]></variableExpression>
+	</variable>
+	<variable name="SUM_discountAmount" class="java.math.BigDecimal" resetType="Group" resetGroup="patient" calculation="Sum">
+		<variableExpression><![CDATA[$V{discountAmount}]]></variableExpression>
+	</variable>
+	<variable name="SUM_sponsorTaxAmt" class="java.math.BigDecimal" resetType="Group" resetGroup="patient" calculation="Sum">
+		<variableExpression><![CDATA[$V{sponsorTaxAmt}]]></variableExpression>
+	</variable>
+	<variable name="SUM_receiptAmount" class="java.math.BigDecimal" resetType="Group" resetGroup="patient" calculation="Sum">
+		<variableExpression><![CDATA[$V{receiptAmount}]]></variableExpression>
+	</variable>
+	<variable name="COUNT_bills" class="java.lang.Integer" calculation="Count">
+		<variableExpression><![CDATA[$F{bill_no}]]></variableExpression>
+	</variable>
+	<variable name="SUM_sponsorReceiptAmount" class="java.math.BigDecimal" resetType="Group" resetGroup="patient" calculation="Sum">
+		<variableExpression><![CDATA[$V{sponsorReceiptAmount}]]></variableExpression>
+	</variable>
+	<variable name="sponsorReceiptAmount" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[BigDecimal.ZERO]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="SUM_claimRecdAmount" class="java.math.BigDecimal" resetType="Group" resetGroup="patient" calculation="Sum">
+		<variableExpression><![CDATA[$F{claim_recd_amount}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="claimAmount" class="java.math.BigDecimal" resetType="Group" resetGroup="patient" calculation="Sum">
+		<variableExpression><![CDATA[]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="SUM_claimAmount" class="java.math.BigDecimal" resetType="Group" resetGroup="patient" calculation="Sum">
+		<variableExpression><![CDATA[$V{claimAmount}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="SUM_depositAmount" class="java.math.BigDecimal" resetType="Group" resetGroup="patient" calculation="Sum">
+		<variableExpression><![CDATA[$F{deposit_set_off}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="totalDeduction" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[BigDecimal.ZERO]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="SUM_totalDeduction" class="java.math.BigDecimal" resetType="Group" resetGroup="patient" calculation="Sum">
+		<variableExpression><![CDATA[$F{insurance_deduction}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<group name="Patient Demography">
+		<groupHeader>
+			<band height="50">
+				<subreport isUsingCache="true">
+					<reportElement key="subreport-6" x="2" y="4" width="515" height="46"/>
+					<subreportParameter name="patientid">
+						<subreportParameterExpression><![CDATA[$F{visit_id}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "/GeneralPatientDemographyDetails.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<group name="PageBreak" isStartNewPage="true">
+		<groupExpression><![CDATA[$F{visit_id}]]></groupExpression>
+		<groupFooter>
+			<band height="7"/>
+		</groupFooter>
+	</group>
+	<group name="patient" minHeightToStartNewPage="100">
+		<groupExpression><![CDATA[$F{visit_id}]]></groupExpression>
+		<groupHeader>
+			<band height="76">
+				<subreport isUsingCache="true">
+					<reportElement key="subreport-6" x="2" y="4" width="515" height="72"/>
+					<subreportParameter name="patientid">
+						<subreportParameterExpression><![CDATA[$F{visit_id}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "/GeneralPatientVisitDetails.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="136" isSplitAllowed="false">
+				<rectangle>
+					<reportElement key="rectangle-2" x="0" y="11" width="515" height="13" isPrintWhenDetailOverflows="true" backcolor="#EEEEEE"/>
+					<graphicElement fill="Solid">
+						<pen lineWidth="0.0" lineStyle="Solid"/>
+					</graphicElement>
+				</rectangle>
+				<staticText>
+					<reportElement key="staticText-9" x="340" y="47" width="113" height="13"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="10" isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<text><![CDATA[Less Net Payments]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement key="textField-12" x="453" y="47" width="62" height="13"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="10" isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{SUM_billAmount}!=null?
+    ($V{SUM_receiptAmount}.intValue()==0?
+    BigDecimal.ZERO :$V{SUM_receiptAmount})
+:BigDecimal.ZERO]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement key="staticText-10" x="362" y="23" width="91" height="13"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="10" isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<text><![CDATA[Total Billed Amount]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement key="textField-13" x="453" y="23" width="62" height="13"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="10" isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{SUM_billAmount}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement key="staticText-11" x="362" y="35" width="91" height="13"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="10" isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<text><![CDATA[Less Discounts]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement key="textField-14" x="453" y="35" width="62" height="13"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="10" isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{SUM_discountAmount}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement key="staticText-12" x="0" y="10" width="515" height="13" backcolor="#BCA5A5"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[Total Expenses]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-9" x="342" y="73" width="111" height="13"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="10" isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<text><![CDATA[Deposit Set-Offs ]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement key="textField-7" x="453" y="73" width="62" height="13"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="10" isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{SUM_depositAmount}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement key="staticText-4" x="344" y="123" width="111" height="13" isRemoveLineWhenBlank="true">
+						<printWhenExpression><![CDATA[$F{tpa_id} == null ||
+$F{tpa_id}.equals("")?Boolean.FALSE:Boolean.TRUE]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[Sponsor Due]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement key="textField-7" x="453" y="98" width="60" height="13" isRemoveLineWhenBlank="true">
+						<printWhenExpression><![CDATA[$F{tpa_id} == null ||
+$F{tpa_id}.equals("")?Boolean.FALSE:Boolean.TRUE]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="10" isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{SUM_claimAmount}.subtract($V{SUM_totalDeduction})]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement key="textField-7" x="453" y="60" width="62" height="13" isRemoveLineWhenBlank="true">
+						<printWhenExpression><![CDATA[$P{detailed}.equalsIgnoreCase("INS")
+||$P{detailed}.equalsIgnoreCase("PAT")
+|| $F{tpa_id}==null || $F{tpa_id}.equals("")
+?Boolean.FALSE:Boolean.TRUE]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="10" isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{SUM_totalDeduction}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement key="textField-7" x="453" y="110" width="60" height="13" isRemoveLineWhenBlank="true">
+						<printWhenExpression><![CDATA[$F{tpa_id} == null ||
+$F{tpa_id}.equals("")?Boolean.FALSE:Boolean.TRUE]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="10" isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{SUM_claimRecdAmount}.compareTo(BigDecimal.ZERO) > 0 ?
+$V{SUM_claimRecdAmount}:$V{SUM_sponsorReceiptAmount}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement key="staticText-9" x="307" y="60" width="146" height="13" isRemoveLineWhenBlank="true">
+						<printWhenExpression><![CDATA[$P{detailed}.equalsIgnoreCase("INS")
+||$P{detailed}.equalsIgnoreCase("PAT")
+|| $F{tpa_id}==null || $F{tpa_id}.equals("")
+?Boolean.FALSE:Boolean.TRUE]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="10" isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<text><![CDATA[Deductions (Patient Amt.)]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement key="textField-11" x="452" y="85" width="63" height="13" isRemoveLineWhenBlank="true"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{SUM_billAmount}
+.subtract($V{SUM_receiptAmount})
+.subtract($V{SUM_discountAmount}).subtract($V{SUM_depositAmount})
+.subtract($V{SUM_claimAmount}).subtract($V{SUM_sponsorTaxAmt})
+.add($V{SUM_totalDeduction})]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement key="textField-6" x="454" y="123" width="60" height="13" isRemoveLineWhenBlank="true">
+						<printWhenExpression><![CDATA[$F{tpa_id} == null ||
+$F{tpa_id}.equals("")?Boolean.FALSE:Boolean.TRUE]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{SUM_claimRecdAmount}.compareTo(BigDecimal.ZERO) > 0 ?
+$V{SUM_claimAmount}.subtract($V{SUM_claimRecdAmount})
+.subtract($V{SUM_totalDeduction}):
+$V{SUM_claimAmount}.subtract($V{SUM_sponsorReceiptAmount})
+.subtract($V{SUM_totalDeduction}).add($V{SUM_sponsorTaxAmt})]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement key="staticText-9" x="342" y="98" width="112" height="13" isRemoveLineWhenBlank="true">
+						<printWhenExpression><![CDATA[$F{tpa_id} == null ||
+$F{tpa_id}.equals("")?Boolean.FALSE:Boolean.TRUE]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="10" isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<text><![CDATA[Total Claim Amount]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-9" x="319" y="110" width="135" height="13" isRemoveLineWhenBlank="true">
+						<printWhenExpression><![CDATA[$F{tpa_id} == null ||
+$F{tpa_id}.equals("")?Boolean.FALSE:Boolean.TRUE]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="10" isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<text><![CDATA[Less Sponsor Payments]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-8" x="362" y="85" width="91" height="13" isRemoveLineWhenBlank="true"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[Patient Due]]></text>
+				</staticText>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="SponsorHeader">
+		<groupExpression><![CDATA[$F{procedure_no}]]></groupExpression>
+		<groupHeader>
+			<band height="27">
+				<staticText>
+					<reportElement x="0" y="0" width="63" height="13">
+						<printWhenExpression><![CDATA[new Boolean($F{procedure_no}.intValue() != 0)]]></printWhenExpression>
+					</reportElement>
+					<textElement/>
+					<text><![CDATA[Procedure:]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="65" y="12" width="265" height="14">
+						<printWhenExpression><![CDATA[new Boolean($F{procedure_no}.intValue() != 0)]]></printWhenExpression>
+					</reportElement>
+					<textElement/>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{procedure_limit}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement key="staticText-9" mode="Transparent" x="330" y="0" width="83" height="13" isRemoveLineWhenBlank="true">
+						<printWhenExpression><![CDATA[new Boolean($F{procedure_no}.intValue() != 0)]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Left" verticalAlignment="Bottom">
+						<font size="10" pdfFontName="Helvetica"/>
+					</textElement>
+					<text><![CDATA[Code:]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="65" y="0" width="265" height="13">
+						<printWhenExpression><![CDATA[new Boolean($F{procedure_no}.intValue() != 0)]]></printWhenExpression>
+					</reportElement>
+					<textElement/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{procedure_name}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="13" width="63" height="14">
+						<printWhenExpression><![CDATA[new Boolean($F{procedure_no}.intValue() != 0)]]></printWhenExpression>
+					</reportElement>
+					<textElement/>
+					<text><![CDATA[Limit(Rs):]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement key="textField-9" mode="Transparent" x="413" y="0" width="104" height="13" isRemoveLineWhenBlank="true">
+						<printWhenExpression><![CDATA[new Boolean($F{procedure_no}.intValue() != 0)]]></printWhenExpression>
+					</reportElement>
+					<box topPadding="0" leftPadding="0"/>
+					<textElement textAlignment="Left" verticalAlignment="Bottom">
+						<font size="10" pdfFontName="Helvetica"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{procedure_code}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<group name="bill">
+		<groupExpression><![CDATA[$F{bill_no}]]></groupExpression>
+		<groupHeader>
+			<band height="19">
+				<rectangle>
+					<reportElement key="rectangle-1" x="0" y="6" width="515" height="13" isPrintWhenDetailOverflows="true" backcolor="#EEEEEE"/>
+					<graphicElement fill="Solid">
+						<pen lineWidth="0.0" lineStyle="Solid"/>
+					</graphicElement>
+				</rectangle>
+				<staticText>
+					<reportElement key="staticText-1" x="0" y="6" width="70" height="13"/>
+					<textElement verticalAlignment="Middle">
+						<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[Bill No:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement key="textField-2" x="70" y="6" width="59" height="13"/>
+					<textElement verticalAlignment="Middle">
+						<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{bill_no}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement key="staticText-2" x="338" y="6" width="75" height="13"/>
+					<textElement verticalAlignment="Middle">
+						<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[Bill Date:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" pattern="dd-MM-yyyy" isBlankWhenNull="true">
+					<reportElement key="textField-3" x="413" y="6" width="98" height="13"/>
+					<textElement verticalAlignment="Middle">
+						<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression class="java.util.Date"><![CDATA[$F{finalized_date}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement key="textField-10" x="128" y="6" width="59" height="13"/>
+					<textElement verticalAlignment="Middle">
+						<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{bill_type}.equals("C") ? "(Bill Later)" : "(Bill Now)"]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band>
+				<printWhenExpression><![CDATA[Boolean.FALSE]]></printWhenExpression>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="receipts" minHeightToStartNewPage="100">
+		<groupExpression><![CDATA[]]></groupExpression>
+		<groupHeader>
+			<band/>
+		</groupHeader>
+		<groupFooter>
+			<band height="50" isSplitAllowed="false">
+				<subreport isUsingCache="true">
+					<reportElement key="subreport-5" x="0" y="10" width="515" height="40" isRemoveLineWhenBlank="true"/>
+					<subreportParameter name="receiptFilter">
+						<subreportParameterExpression><![CDATA[$P{detailed}.equalsIgnoreCase( "PAT" ) ? " and payment_type != 'S'":
+$P{detailed}.equalsIgnoreCase( "INS" ) ? " and payment_type = 'S'":""]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="billNo">
+						<subreportParameterExpression><![CDATA[$F{bill_no}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<returnValue subreportVariable="receiptsTotal" toVariable="SUM_receiptAmount" calculation="Sum"/>
+					<returnValue subreportVariable="sponsorReceiptsTotal" toVariable="SUM_sponsorReceiptAmount" calculation="Sum"/>
+					<subreportExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "/BillPaymentsSub.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="discount">
+		<groupExpression><![CDATA[]]></groupExpression>
+		<groupHeader>
+			<band/>
+		</groupHeader>
+		<groupFooter>
+			<band height="50">
+				<subreport isUsingCache="true">
+					<reportElement key="subreport-7" x="0" y="10" width="515" height="40" isRemoveLineWhenBlank="true"/>
+					<subreportParameter name="chargeGroup">
+						<subreportParameterExpression><![CDATA["ALL"]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="billNo">
+						<subreportParameterExpression><![CDATA[$F{bill_no}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="detailed">
+						<subreportParameterExpression><![CDATA[$P{detailed}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<returnValue subreportVariable="totalDiscount" toVariable="SUM_discountAmount" calculation="Sum"/>
+					<subreportExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "/BillDiscountsSub.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band/>
+	</background>
+	<title>
+		<band/>
+	</title>
+	<pageHeader>
+		<band height="90">
+			<subreport isUsingCache="true">
+				<reportElement key="subreport-1" x="-48" y="-20" width="595" height="110"/>
+				<subreportParameter name="printerId">
+					<subreportParameterExpression><![CDATA[$P{printerId}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="center_id">
+					<subreportParameterExpression><![CDATA[$P{center_id}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="type">
+					<subreportParameterExpression><![CDATA["Bill"]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR}+"/PrintmasterHeader.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="25">
+			<staticText>
+				<reportElement key="staticText-13" x="1" y="4" width="514" height="20"/>
+				<textElement textAlignment="Center">
+					<font size="14" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Visit Statement]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="40">
+			<subreport isUsingCache="true">
+				<reportElement key="subreport-4" x="0" y="0" width="515" height="40" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[new Boolean($P{detailed}.equalsIgnoreCase("DET"))]]></printWhenExpression>
+				</reportElement>
+				<subreportParameter name="billNo">
+					<subreportParameterExpression><![CDATA[$F{bill_no}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="detailed">
+					<subreportParameterExpression><![CDATA[$P{detailed}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<returnValue subreportVariable="totalAmount" toVariable="SUM_billAmount" calculation="Sum"/>
+				<returnValue subreportVariable="totalClaimAmount" toVariable="SUM_claimAmount" calculation="Sum"/>
+				<returnValue subreportVariable="totalsponsorTaxAmt" toVariable="SUM_sponsorTaxAmt" calculation="Sum"/>
+				<subreportExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "/BillChargeDetailsSub.jasper"]]></subreportExpression>
+			</subreport>
+			<subreport isUsingCache="true">
+				<reportElement key="subreport-8" x="0" y="0" width="323" height="40" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[new Boolean($P{detailed}.equalsIgnoreCase("CHS"))]]></printWhenExpression>
+				</reportElement>
+				<subreportParameter name="billNo">
+					<subreportParameterExpression><![CDATA[$F{bill_no}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<returnValue subreportVariable="totalAmount" toVariable="SUM_billAmount" calculation="Sum"/>
+				<returnValue subreportVariable="totalClaimAmount" toVariable="SUM_claimAmount" calculation="Sum"/>
+				<subreportExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "/BillChargeHeadSummarySub.jasper"]]></subreportExpression>
+			</subreport>
+			<subreport isUsingCache="true">
+				<reportElement key="subreport-8" x="0" y="0" width="217" height="40" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[new Boolean($P{detailed}.equalsIgnoreCase("SUM"))]]></printWhenExpression>
+				</reportElement>
+				<subreportParameter name="billNo">
+					<subreportParameterExpression><![CDATA[$F{bill_no}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<returnValue subreportVariable="totalAmount" toVariable="SUM_billAmount" calculation="Sum"/>
+				<returnValue subreportVariable="totalClaimAmount" toVariable="SUM_claimAmount" calculation="Sum"/>
+				<subreportExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "/BillChargeSummarySub.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<columnFooter>
+		<band/>
+	</columnFooter>
+	<pageFooter>
+		<band height="30">
+			<subreport isUsingCache="true">
+				<reportElement key="subreport-2" x="1" y="0" width="515" height="30"/>
+				<subreportParameter name="center_id">
+					<subreportParameterExpression><![CDATA[$P{center_id}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="type">
+					<subreportParameterExpression><![CDATA["bill"]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "/PrintmasterFooter.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</pageFooter>
+	<summary>
+		<band/>
+	</summary>
+	<noData>
+		<band height="27">
+			<staticText>
+				<reportElement x="0" y="0" width="515" height="27"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="15" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[No data for the given date range]]></text>
+			</staticText>
+		</band>
+	</noData>
+</jasperReport>

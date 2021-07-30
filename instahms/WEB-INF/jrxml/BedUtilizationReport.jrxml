@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="BedUtilizationReport" pageWidth="860" pageHeight="594" whenNoDataType="NoDataSection" columnWidth="820" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<parameter name="whereCondition" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="departments" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="wardsCondition" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="whereWardsCondition" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="andWardsCondition" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="centerCond" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="left" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select count(b.bed_id) as total,coalesce(foo.occupied,0) as occupied,coalesce(foo1.blocked,0) as blocked,
+ 	coalesce(foo2.vacant,0) as vacant,ward_name from bed_names b
+		join ward_names wn on (wn.ward_no=b.ward_no) and wn.status = 'A' AND b.status = 'A'
+	LEFT JOIN(
+		SELECT 0 as total,
+		SUM(case when b.occupancy = 'Y' and ip.status is not null then 1 else 0 end)  as occupied,
+		0 AS blocked,
+		wn.ward_name
+		FROM  bed_names b
+		JOIN ward_names wn USING(ward_no)
+		JOIN ip_bed_details ip on(b.bed_id = ip.bed_id and ip.status in ('A','R','C'))
+		JOIN patient_registration pr on(ip.patient_id = pr.patient_id and pr.status = 'A'
+		$P!{departments}  )
+	    $P!{whereWardsCondition}
+	   GROUP BY wn.ward_name) as foo using(ward_name)
+
+	LEFT JOIN(
+		 SELECT 0 as total,0 as occupied,count(bed_id) AS blocked,wn.ward_name
+		 FROM bed_names
+		 JOIN ward_names wn USING (ward_no)
+		 WHERE NOT (bed_names.bed_id IN ( SELECT bn.bed_id
+		 FROM bed_names bn
+		 JOIN ip_bed_details ibd ON bn.bed_id = ibd.bed_id
+		 JOIN patient_registration pra ON ibd.patient_id = pra.patient_id
+		 AND (ibd.status = 'A' OR ibd.status = 'C' OR ibd.status = 'R')
+		 AND pra.status = 'A'
+		 WHERE bn.occupancy = 'Y' AND bn.status = 'A'))
+		 AND bed_names.occupancy = 'Y'
+		 $P!{andWardsCondition}
+		 GROUP BY wn.ward_name) AS  foo1 using(ward_name)
+	LEFT JOIN(
+		select 0 as total,0 as occupied,0 as blocked,
+ 		count(b.bed_id) as vacant,ward_name from bed_names b
+		join ward_names wn on (wn.ward_no=b.ward_no)
+		$P!{whereWardsCondition} AND occupancy = 'N' AND b.status= 'A'
+		GROUP BY wn.ward_name ) as foo2 using(ward_name)
+	$P!{whereWardsCondition} $P!{centerCond}
+	group by wn.ward_name,foo.occupied,foo1.blocked,foo2.vacant]]>
+	</queryString>
+	<field name="ward_name" class="java.lang.String"/>
+	<field name="occupied" class="java.lang.Integer"/>
+	<field name="blocked" class="java.lang.Integer"/>
+	<field name="total" class="java.lang.Integer"/>
+	<field name="vacant" class="java.lang.Integer"/>
+	<variable name="occupiedtotal" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{occupied}]]></variableExpression>
+	</variable>
+	<variable name="totalbedscount" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{total}]]></variableExpression>
+	</variable>
+	<variable name="blockedtotal" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{blocked}]]></variableExpression>
+	</variable>
+	<variable name="vacanttotal" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{vacant}]]></variableExpression>
+	</variable>
+	<group name="Total">
+		<groupHeader>
+			<band/>
+		</groupHeader>
+		<groupFooter>
+			<band height="33">
+				<line>
+					<reportElement x="0" y="2" width="820" height="1"/>
+				</line>
+				<textField>
+					<reportElement x="170" y="4" width="49" height="20"/>
+					<textElement textAlignment="Center">
+						<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression class="java.lang.Integer"><![CDATA[$V{totalbedscount}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="289" y="4" width="49" height="20"/>
+					<textElement textAlignment="Center">
+						<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression class="java.lang.Integer"><![CDATA[$V{occupiedtotal}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="381" y="4" width="49" height="20"/>
+					<textElement textAlignment="Center">
+						<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression class="java.lang.Integer"><![CDATA[$V{blockedtotal}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="585" y="5" width="49" height="20"/>
+					<textElement textAlignment="Center">
+						<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[msg("{0,number,##0%}", new Float($V{occupiedtotal}.floatValue() / ($V{totalbedscount}.floatValue()-$V{blockedtotal}.floatValue())))]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="19" y="4" width="100" height="20"/>
+					<textElement>
+						<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[Totals]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="472" y="4" width="49" height="20"/>
+					<textElement textAlignment="Center">
+						<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression class="java.lang.Integer"><![CDATA[$V{vacanttotal}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="0" y="25" width="820" height="1"/>
+				</line>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band/>
+	</background>
+	<title>
+		<band/>
+	</title>
+	<pageHeader>
+		<band height="17">
+			<line>
+				<reportElement x="0" y="-1" width="820" height="1"/>
+			</line>
+			<line>
+				<reportElement x="0" y="15" width="820" height="1"/>
+			</line>
+			<staticText>
+				<reportElement x="0" y="0" width="839" height="17"/>
+				<textElement textAlignment="Center">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Bed Utilization Report]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="23">
+			<staticText>
+				<reportElement mode="Opaque" x="19" y="7" width="142" height="15"/>
+				<textElement textAlignment="Left">
+					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Ward Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="170" y="7" width="98" height="15"/>
+				<textElement>
+					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Total Beds]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="281" y="7" width="88" height="15"/>
+				<textElement>
+					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Occupied]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="477" y="7" width="80" height="15"/>
+				<textElement>
+					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Vaccant]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="379" y="7" width="83" height="15"/>
+				<textElement>
+					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Blocked]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="579" y="7" width="117" height="15"/>
+				<textElement>
+					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Utilization]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="22" width="820" height="1"/>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="19">
+			<textField>
+				<reportElement x="19" y="-2" width="142" height="20"/>
+				<textElement>
+					<font size="9" pdfFontName="Helvetica"/>	
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{ward_name}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="170" y="-1" width="49" height="20"/>
+				<textElement textAlignment="Center">
+					<font size="9" pdfFontName="Helvetica"/>	
+				</textElement>
+				<textFieldExpression class="java.lang.Integer"><![CDATA[$F{total}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="379" y="-1" width="51" height="20"/>
+				<textElement textAlignment="Center">
+					<font size="9" pdfFontName="Helvetica"/>	
+				</textElement>
+				<textFieldExpression class="java.lang.Integer"><![CDATA[$F{blocked}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="281" y="-1" width="57" height="20"/>
+				<textElement textAlignment="Center">
+					<font size="9" pdfFontName="Helvetica"/>	
+				</textElement>
+				<textFieldExpression class="java.lang.Integer"><![CDATA[$F{occupied}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="462" y="-1" width="58" height="20"/>
+				<textElement textAlignment="Center">
+					<font size="9" pdfFontName="Helvetica"/>	
+				</textElement>
+				<textFieldExpression class="java.lang.Integer"><![CDATA[$F{vacant}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="579" y="-1" width="55" height="15"/>
+				<textElement textAlignment="Center">
+					<font size="9" pdfFontName="Helvetica"/>	
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[msg("{0,number,##0%}", new Float($F{occupied}.floatValue() / ($F{total}.floatValue()-$F{blocked}.floatValue())))]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band/>
+	</columnFooter>
+	<pageFooter>
+		<band/>
+	</pageFooter>
+	<summary>
+		<band/>
+	</summary>
+	<noData>
+		<band height="50">
+			<staticText>
+				<reportElement x="0" y="18" width="820" height="20"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[No Data found for the given criteria]]></text>
+			</staticText>
+		</band>
+	</noData>
+</jasperReport>

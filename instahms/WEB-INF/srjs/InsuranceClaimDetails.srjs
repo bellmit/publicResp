@@ -1,0 +1,1654 @@
+{
+    "title": "Insurance Claim Details Report",
+    "reportGroup": "Insurance Reports",
+    "dateFields": [
+        "pri_created_date",
+        "pri_submission_date",
+        "open_date",
+        "finalized_date",
+        "closed_date",
+        "posted_date"
+    ],
+    "allowNoDate": true,
+    "defaultOrder": "bill_no",
+    "description": "This report shows all charges added to the Bills connected to Insurance, within the specified date range.",
+    "includes": [
+        "PatientDetailFields.srjs",
+        "PatientVisitFields.srjs",
+        "BillDetailFields.srjs"
+    ],
+    "queryUnits": [
+        {
+            "mainTableName": "bill_charge",
+            "mainTableAlias": "bcc",
+            "joinTables": [
+                {
+                    "type": "JOIN",
+                    "name": "chargehead_constants",
+                    "alias": "chc",
+                    "dependsOn": "bcc",
+                    "expression": "ON (chc.chargehead_id = bcc.charge_head)"
+                },
+                {
+                    "type": "JOIN",
+                    "name": "chargegroup_constants",
+                    "alias": "cgc",
+                    "dependsOn": "chc",
+                    "expression": "ON (cgc.chargegroup_id = chc.chargegroup_id)"
+                },
+                {
+                    "name": "consultation_types",
+                    "alias": "ct",
+                    "dependsOn": "bcc",
+                    "expression": "on (bcc.consultation_type_id=ct.consultation_type_id )"
+                },
+                {
+                    "name": "service_sub_groups",
+                    "alias": "ssg",
+                    "dependsOn": "bcc",
+                    "expression": "ON (ssg.service_sub_group_id = bcc.service_sub_group_id)"
+                },
+                {
+                    "name": "service_groups",
+                    "alias": "sg",
+                    "dependsOn": "ssg",
+                    "expression": "ON (sg.service_group_id = ssg.service_group_id)"
+                },
+                {
+                    "type": "JOIN",
+                    "name": "bill_account_heads",
+                    "alias": "bahc",
+                    "dependsOn": "chc",
+                    "expression": "ON (bahc.account_head_id = chc.account_head_id)"
+                },
+                {
+                    "name": "account_group_master",
+                    "alias": "bcagm",
+                    "dependsOn": "bcc",
+                    "expression": "ON (bcagm.account_group_id = bcc.account_group)"
+                },
+                {
+                    "name": "treating_departments_view",
+                    "alias": "tdep",
+                    "dependsOn": "bcc",
+                    "expression": "ON (tdep.dept_id = bcc.act_department_id)"
+                },
+                {
+                    "name": "doctors",
+                    "alias": "cdoc",
+                    "dependsOn": "bcc",
+                    "expression": "ON(cdoc.doctor_id=bcc.payee_doctor_id)"
+                },
+                {
+                    "name": "doctors",
+                    "alias": "predoc",
+                    "dependsOn": "bcc",
+                    "expression": "ON (predoc.doctor_id=bcc.prescribing_dr_id)"
+                },
+                {
+                    "name": "discount_authorizer",
+                    "alias": "daov",
+                    "dependsOn": "bcc",
+                    "expression": "ON (bcc.overall_discount_auth = daov.disc_auth_id)"
+                },
+                {
+                    "type": "JOIN",
+                    "name": "bill",
+                    "alias": "b",
+                    "dependsOn": "bcc",
+                    "expression": "ON (bcc.bill_no = b.bill_no AND is_tpa)"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "bill_claim",
+                    "alias": "pbcl",
+                    "dependsOn": "b",
+                    "expression": "ON(b.bill_no = pbcl.bill_no AND pbcl.priority = 1)"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "bill_charge_claim",
+                    "alias": "pbcc",
+                    "dependsOn": "pbcl,bcc",
+                    "expression": "ON(pbcl.claim_id = pbcc.claim_id AND pbcc.charge_id = bcc.charge_id )"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "insurance_claim",
+                    "alias": "picl",
+                    "dependsOn": "pbcl",
+                    "expression": "ON(pbcl.claim_id = picl.claim_id)"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "bill_claim",
+                    "alias": "sbcl",
+                    "dependsOn": "b",
+                    "expression": "ON(b.bill_no = sbcl.bill_no AND sbcl.priority =2)"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "bill_charge_claim",
+                    "alias": "sbcc",
+                    "dependsOn": "sbcl,bcc",
+                    "expression": "ON(sbcl.claim_id = sbcc.claim_id AND bcc.charge_id = sbcc.charge_id)"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "insurance_claim",
+                    "alias": "sicl",
+                    "dependsOn": "sbcl",
+                    "expression": "ON(sbcl.claim_id = sicl.claim_id)"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "(SELECT remittance_id, charge_id, claim_id, row_number() OVER (PARTITION BY charge_id, claim_id ORDER by remittance_id DESC) as rank from insurance_payment_allocation)",
+                    "alias": "pipa",
+                    "dependsOn": "pbcc",
+                    "expression": "ON(pbcc.claim_id = pipa.claim_id AND pbcc.charge_id = pipa.charge_id AND pipa.rank = 1)"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "insurance_remittance",
+                    "alias": "pir",
+                    "dependsOn": "pipa",
+                    "expression": "ON(pir.remittance_id = pipa.remittance_id)"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "(SELECT remittance_id, charge_id, claim_id, row_number() OVER (PARTITION BY charge_id, claim_id ORDER by remittance_id DESC) as rank from insurance_payment_allocation)",
+                    "alias": "sipa",
+                    "dependsOn": "sbcc",
+                    "expression": "ON(sbcc.claim_id = sipa.claim_id AND sbcc.charge_id = sipa.charge_id AND sipa.rank = 1)"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "insurance_remittance",
+                    "alias": "sir",
+                    "dependsOn": "sipa",
+                    "expression": "ON(sir.remittance_id = sipa.remittance_id)"
+                },
+                {
+                    "name": "prior_auth_modes",
+                    "alias": "pamc",
+                    "dependsOn": "pbcc",
+                    "expression": "ON (pamc.prior_auth_mode_id = pbcc.prior_auth_mode_id)"
+                },
+                {
+                    "name": "prior_auth_modes",
+                    "alias": "samc",
+                    "dependsOn": "sbcc",
+                    "expression": "ON (samc.prior_auth_mode_id = sbcc.prior_auth_mode_id)"
+                },
+                {
+                    "includeName": "BillDetailFields.srjs"
+                },
+                {
+                    "includeName": "PatientVisitFields.srjs"
+                },
+                {
+                    "includeName": "PatientDetailFields.srjs"
+                },
+                {
+                    "name": "item_insurance_categories",
+                    "alias": "it_c",
+                    "dependsOn": "bcc",
+                    "expression": "ON (it_c.insurance_category_id = bcc.insurance_category_id)"
+                },
+                {
+                    "name": "insurance_denial_codes",
+                    "alias": "pidc",
+                    "dependsOn": "pbcc",
+                    "expression": "ON (pidc.denial_code = pbcc.denial_code)"
+                },
+                {
+                    "name": "insurance_denial_codes",
+                    "alias": "sidc",
+                    "dependsOn": "sbcc",
+                    "expression": "ON (sidc.denial_code = sbcc.denial_code)"
+                },
+                {
+                    "name": "insurance_submission_batch",
+                    "alias": "prifirstsub",
+                    "dependsOn": "picl",
+                    "expression": "ON (prifirstsub.submission_batch_id = picl.last_submission_batch_id AND prifirstsub.is_resubmission = 'N')"
+                },
+                {
+                    "name": "insurance_submission_batch",
+                    "alias": "secfirstsub",
+                    "dependsOn": "sicl",
+                    "expression": "ON (secfirstsub.submission_batch_id = sicl.last_submission_batch_id AND secfirstsub.is_resubmission = 'N')"
+                },
+                {
+                    "name": "(SELECT claim_id, max(submission_batch_id) as submission_batch_id FROM claim_submissions GROUP by claim_id)",
+                    "alias": "pcs",
+                    "dependsOn": "picl",
+                    "expression": "ON (pcs.claim_id = picl.claim_id)"
+                },
+                {
+                    "name": "insurance_submission_batch",
+                    "alias": "priresub",
+                    "dependsOn": "pcs",
+                    "expression": "ON (priresub.submission_batch_id = pcs.submission_batch_id)"
+                },
+                {
+                    "name": "(SELECT claim_id, max(submission_batch_id) as submission_batch_id FROM claim_submissions GROUP by claim_id)",
+                    "alias": "scs",
+                    "dependsOn": "sicl",
+                    "expression": "ON (scs.claim_id = sicl.claim_id)"
+                },
+                {
+                    "name": "insurance_submission_batch",
+                    "alias": "secresub",
+                    "dependsOn": "scs",
+                    "expression": "ON (secresub.submission_batch_id = scs.submission_batch_id)"
+                },
+                {
+                    "name": "(SELECT count(cs.submission_batch_id) AS resubmission_count, cs.claim_id FROM insurance_claim ic JOIN claim_submissions cs ON (cs.claim_id = ic.claim_id) JOIN insurance_submission_batch isb ON (cs.submission_batch_id = isb.submission_batch_id) WHERE isb.is_resubmission = 'Y' GROUP BY cs.claim_id)",
+                    "alias": "pcsx",
+                    "dependsOn": "picl",
+                    "expression": "ON (picl.claim_id = pcsx.claim_id)"
+                },
+                {
+                    "name": "(SELECT count(cs.submission_batch_id) AS resubmission_count, cs.claim_id FROM insurance_claim ic JOIN claim_submissions cs ON (cs.claim_id = ic.claim_id) JOIN insurance_submission_batch isb ON (cs.submission_batch_id = isb.submission_batch_id) WHERE isb.is_resubmission = 'Y' GROUP BY cs.claim_id)",
+                    "alias": "scsx",
+                    "dependsOn": "sicl",
+                    "expression": "ON (sicl.claim_id = scsx.claim_id)"
+                },
+                {
+                    "name": "mrd_diagnosis",
+                    "alias": "pdiag",
+                    "dependsOn": "pr",
+                    "expression": "ON (pdiag.diag_type = 'P' AND pdiag.visit_id = pr.patient_id)"
+                },
+                {
+                    "name": "mrd_diagnosis",
+                    "alias": "vdiag",
+                    "dependsOn": "pr",
+                    "expression": "ON (vdiag.diag_type = 'V' AND vdiag.visit_id = pr.patient_id)"
+                },
+                {
+                    "type": "LEFTLATERAL",
+                    "name": "(SELECT mrdd.visit_id,textcat_linecat(mrdd.description::text) AS secondary_diagnosis,textcat_linecat(mrdd.icd_code::text) AS secondary_diag_icd_code,textcat_linecat(mrdd.code_type::text) AS secondary_code_type FROM mrd_diagnosis mrdd WHERE mrdd.visit_id = pr.patient_id AND mrdd.diag_type = 'S' GROUP BY mrdd.visit_id)",
+                    "alias": "sdiag",
+                    "dependsOn": "pr",
+                    "expression": "ON (true)"
+                },
+                {
+                    "name": "mrd_supported_code_types",
+                    "alias": "msct",
+                    "dependsOn": "bcc",
+                    "expression": "ON (msct.code_type = bcc.code_type)"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "doctors",
+                    "alias": "aDoc",
+                    "dependsOn": "pr",
+                    "expression": "ON(aDoc.doctor_id = pr.doctor)"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "(SELECT 'Referal' AS doctor_type,referal_no, referal_name, clinician_id AS doctor_license_number FROM referral UNION ALL SELECT 'Doctor' AS doctor_type,doctor_id, doctor_name, doctor_license_number FROM doctors)",
+                    "alias": "refDoc",
+                    "dependsOn": "pr",
+                    "expression": "ON(refDoc.referal_no = pr.reference_docto_id)"
+                }
+            ],
+            "whereExpression": " (b.status != 'X') AND bcc.status!='X' AND bcc.charge_head NOT IN ('PHMED','PHCMED','PHRET','PHCRET') ",
+            "whereTable": "b"
+        },
+        {
+            "mainTableName": "store_sales_details",
+            "mainTableAlias": "s",
+            "joinTables": [
+                {
+                    "type": "JOIN",
+                    "name": "store_sales_main",
+                    "alias": "ssm",
+                    "dependsOn": "s",
+                    "expression": "ON (s.sale_id = ssm.sale_id)"
+                },
+                {
+                    "type": "JOIN",
+                    "name": "store_item_details",
+                    "alias": "m",
+                    "dependsOn": "s",
+                    "expression": "ON (s.medicine_id = m.medicine_id)"
+                },
+                {
+                    "type": "JOIN",
+                    "name": "bill_charge",
+                    "alias": "bc",
+                    "dependsOn": "ssm",
+                    "expression": "ON (ssm.charge_id= bc.charge_id)"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "bill_claim",
+                    "alias": "pbcl",
+                    "dependsOn": "ssm",
+                    "expression": "ON(ssm.bill_no = pbcl.bill_no AND pbcl.priority = 1)"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "sales_claim_details",
+                    "alias": "pscl",
+                    "dependsOn": "s,pbcl",
+                    "expression": "ON(s.sale_item_id = pscl.sale_item_id AND pbcl.claim_id = pscl.claim_id)"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "insurance_claim",
+                    "alias": "picl",
+                    "dependsOn": "pbcl",
+                    "expression": "ON(picl.claim_id = pbcl.claim_id)"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "bill_claim",
+                    "alias": "sbcl",
+                    "dependsOn": "ssm",
+                    "expression": "ON(ssm.bill_no = sbcl.bill_no AND sbcl.priority = 2)"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "sales_claim_details",
+                    "alias": "sscl",
+                    "dependsOn": "sbcl,s",
+                    "expression": "ON(sbcl.claim_id = sscl.claim_id AND s.sale_item_id = sscl.sale_item_id)"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "insurance_claim",
+                    "alias": "sicl",
+                    "dependsOn": "sbcl",
+                    "expression": "ON(sbcl.claim_id = sicl.claim_id)"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "(SELECT remittance_id, charge_id, claim_id,sale_item_id, row_number() OVER (PARTITION BY charge_id, claim_id, sale_item_id ORDER by remittance_id DESC) as rank from insurance_payment_allocation)",
+                    "alias": "pipa",
+                    "dependsOn": "pscl",
+                    "expression": "ON(pscl.claim_id = pipa.claim_id AND pscl.sale_item_id = pipa.sale_item_id AND pipa.rank = 1)"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "insurance_remittance",
+                    "alias": "pir",
+                    "dependsOn": "pipa",
+                    "expression": "ON(pir.remittance_id = pipa.remittance_id)"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "(SELECT remittance_id, charge_id, claim_id, sale_item_id, row_number() OVER (PARTITION BY charge_id, claim_id, sale_item_id ORDER by remittance_id DESC) as rank from insurance_payment_allocation)",
+                    "alias": "sipa",
+                    "dependsOn": "sscl",
+                    "expression": "ON(sscl.claim_id = sipa.claim_id AND sscl.sale_item_id = sipa.sale_item_id AND sipa.rank = 1)"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "insurance_remittance",
+                    "alias": "sir",
+                    "dependsOn": "sipa",
+                    "expression": "ON(sir.remittance_id = sipa.remittance_id)"
+                },
+                {
+                    "type": "JOIN",
+                    "name": "chargehead_constants",
+                    "alias": "chc",
+                    "dependsOn": "bc",
+                    "expression": "ON (chc.chargehead_id = bc.charge_head)"
+                },
+                {
+                    "type": "JOIN",
+                    "name": "chargegroup_constants",
+                    "alias": "cgc",
+                    "dependsOn": "chc",
+                    "expression": "ON (cgc.chargegroup_id = chc.chargegroup_id)"
+                },
+                {
+                    "name": "consultation_types",
+                    "alias": "ct",
+                    "dependsOn": "bc",
+                    "expression": " ON (bc.consultation_type_id=ct.consultation_type_id )"
+                },
+                {
+                    "name": "service_sub_groups",
+                    "alias": "ssg",
+                    "dependsOn": "bc",
+                    "expression": "ON (ssg.service_sub_group_id = bc.service_sub_group_id)"
+                },
+                {
+                    "name": "service_groups",
+                    "alias": "sg",
+                    "dependsOn": "ssg",
+                    "expression": "ON (sg.service_group_id = ssg.service_group_id)"
+                },
+                {
+                    "type": "JOIN",
+                    "name": "bill_account_heads",
+                    "alias": "bahc",
+                    "dependsOn": "chc",
+                    "expression": "ON (bahc.account_head_id = chc.account_head_id)"
+                },
+                {
+                    "name": "account_group_master",
+                    "alias": "bcagm",
+                    "dependsOn": "bc",
+                    "expression": "ON (bcagm.account_group_id = bc.account_group)"
+                },
+                {
+                    "name": "treating_departments_view",
+                    "alias": "tdep",
+                    "dependsOn": "bc",
+                    "expression": "ON (tdep.dept_id = bc.act_department_id)"
+                },
+                {
+                    "name": "doctors",
+                    "alias": "cdoc",
+                    "dependsOn": "bc",
+                    "expression": "ON(cdoc.doctor_id=bc.payee_doctor_id)"
+                },
+                {
+                    "name": "doctors",
+                    "alias": "predoc",
+                    "dependsOn": "bc",
+                    "expression": "ON (predoc.doctor_id=bc.prescribing_dr_id)"
+                },
+                {
+                    "name": "discount_authorizer",
+                    "alias": "daov",
+                    "dependsOn": "bc",
+                    "expression": "ON (bc.overall_discount_auth = daov.disc_auth_id)"
+                },
+                {
+                    "name": "prior_auth_modes",
+                    "alias": "pamc",
+                    "dependsOn": "pscl",
+                    "expression": "ON (pamc.prior_auth_mode_id = pscl.prior_auth_mode_id)"
+                },
+                {
+                    "name": "prior_auth_modes",
+                    "alias": "samc",
+                    "dependsOn": "sscl",
+                    "expression": "ON (samc.prior_auth_mode_id = sscl.prior_auth_mode_id)"
+                },
+                {
+                    "type": "JOIN",
+                    "name": "bill",
+                    "alias": "b",
+                    "dependsOn": "bc",
+                    "expression": "ON (bc.bill_no = b.bill_no AND is_tpa)"
+                },
+                {
+                    "includeName": "BillDetailFields.srjs"
+                },
+                {
+                    "includeName": "PatientVisitFields.srjs"
+                },
+                {
+                    "includeName": "PatientDetailFields.srjs"
+                },
+                {
+                    "name": "item_insurance_categories",
+                    "alias": "it_c",
+                    "dependsOn": "bc",
+                    "expression": "ON (it_c.insurance_category_id = bc.insurance_category_id)"
+                },
+                {
+                    "name": "insurance_denial_codes",
+                    "alias": "pidc",
+                    "dependsOn": "pscl",
+                    "expression": "ON (pidc.denial_code = pscl.denial_code)"
+                },
+                {
+                    "name": "insurance_denial_codes",
+                    "alias": "sidc",
+                    "dependsOn": "sscl",
+                    "expression": "ON (sidc.denial_code = sscl.denial_code)"
+                },
+                {
+                    "name": "insurance_submission_batch",
+                    "alias": "prifirstsub",
+                    "dependsOn": "picl",
+                    "expression": "ON (prifirstsub.submission_batch_id = picl.last_submission_batch_id AND prifirstsub.is_resubmission = 'N')"
+                },
+                {
+                    "name": "(select count(cs.submission_batch_id) as resubmission_count, cs.claim_id FROM insurance_claim ic JOIN claim_submissions cs ON (cs.claim_id = ic.claim_id) JOIN insurance_submission_batch isb ON (cs.submission_batch_id = isb.submission_batch_id) WHERE isb.is_resubmission = 'Y' GROUP BY cs.claim_id)",
+                    "alias": "pcsx",
+                    "dependsOn": "picl",
+                    "expression": "ON (picl.claim_id = pcsx.claim_id)"
+                },
+                {
+                    "name": "(SELECT count(cs.submission_batch_id) AS resubmission_count, cs.claim_id FROM insurance_claim ic JOIN claim_submissions cs ON (cs.claim_id = ic.claim_id) JOIN insurance_submission_batch isb ON (cs.submission_batch_id = isb.submission_batch_id) WHERE isb.is_resubmission = 'Y' GROUP BY cs.claim_id)",
+                    "alias": "scsx",
+                    "dependsOn": "sicl",
+                    "expression": "ON (sicl.claim_id = scsx.claim_id)"
+                },
+                {
+                    "name": "insurance_submission_batch",
+                    "alias": "secfirstsub",
+                    "dependsOn": "sicl",
+                    "expression": "ON (secfirstsub.submission_batch_id = sicl.last_submission_batch_id AND secfirstsub.is_resubmission = 'N')"
+                },
+                {
+                    "name": "(SELECT claim_id, max(submission_batch_id) as submission_batch_id FROM claim_submissions GROUP by claim_id)",
+                    "alias": "pcs",
+                    "dependsOn": "picl",
+                    "expression": "ON (pcs.claim_id = picl.claim_id)"
+                },
+                {
+                    "name": "insurance_submission_batch",
+                    "alias": "priresub",
+                    "dependsOn": "pcs",
+                    "expression": "ON (priresub.submission_batch_id = pcs.submission_batch_id)"
+                },
+                {
+                    "name": "(SELECT claim_id, max(submission_batch_id) as submission_batch_id FROM claim_submissions GROUP by claim_id)",
+                    "alias": "scs",
+                    "dependsOn": "sicl",
+                    "expression": "ON (scs.claim_id = sicl.claim_id)"
+                },
+                {
+                    "name": "insurance_submission_batch",
+                    "alias": "secresub",
+                    "dependsOn": "scs",
+                    "expression": "ON (secresub.submission_batch_id = scs.submission_batch_id)"
+                },
+                {
+                    "name": "mrd_diagnosis",
+                    "alias": "pdiag",
+                    "dependsOn": "pr",
+                    "expression": "ON (pdiag.diag_type = 'P' AND pdiag.visit_id = pr.patient_id)"
+                },
+                {
+                    "name": "mrd_diagnosis",
+                    "alias": "vdiag",
+                    "dependsOn": "pr",
+                    "expression": "ON (vdiag.diag_type = 'V' AND vdiag.visit_id = pr.patient_id)"
+                },
+                {
+                    "type": "LEFTLATERAL",
+                    "name": "(SELECT mrdd.visit_id,textcat_linecat(mrdd.description::text) AS secondary_diagnosis,textcat_linecat(mrdd.icd_code::text) AS secondary_diag_icd_code,textcat_linecat(mrdd.code_type::text) AS secondary_code_type FROM mrd_diagnosis mrdd WHERE mrdd.visit_id = pr.patient_id AND mrdd.diag_type = 'S' GROUP BY mrdd.visit_id)",
+                    "alias": "sdiag",
+                    "dependsOn": "pr",
+                    "expression": "ON (true)"
+                },
+                {
+                    "name": "mrd_supported_code_types",
+                    "alias": "msct",
+                    "dependsOn": "bc",
+                    "expression": "ON (msct.code_type = bc.code_type)"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "doctors",
+                    "alias": "aDoc",
+                    "dependsOn": "pr",
+                    "expression": "ON(aDoc.doctor_id = pr.doctor)"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "(SELECT 'Referal' AS doctor_type,referal_no, referal_name, clinician_id AS doctor_license_number FROM referral UNION ALL SELECT 'Doctor' AS doctor_type,doctor_id, doctor_name, doctor_license_number FROM doctors)",
+                    "alias": "refDoc",
+                    "dependsOn": "pr",
+                    "expression": "ON(refDoc.referal_no = pr.reference_docto_id)"
+                }
+            ],
+            "fieldExpressions": {
+                "charge_id": {
+                    "table": "bc"
+                },
+                "pri_item_prior_auth_id": {
+                    "table": "pscl",
+                    "expression": "pscl.prior_auth_id"
+                },
+                "sec_item_prior_auth_id": {
+                    "table": "sscl",
+                    "expression": "sscl.prior_auth_id"
+                },
+                "act_remarks": {
+                    "table": "bc"
+                },
+                "user_remarks": {
+                    "table": "bc"
+                },
+                "posted_date": {
+                    "table": "ssm",
+                    "expression": "DATE(ssm.sale_date)"
+                },
+                "activity_date_time": {
+                    "table": "ssm",
+                    "expression": "ssm.sale_date"
+                },
+                "doctor_amount": {
+                    "expression": "0"
+                },
+                "prescribing_dr_amount": {
+                    "expression": "0"
+                },
+                "referal_amount": {
+                    "expression": "0"
+                },
+                "discount": {
+                    "table": "s",
+                    "expression": "s.disc"
+                },
+                "ch_username": {
+                    "table": "ssm",
+                    "expression": "ssm.username"
+                },
+                "pri_claim_recd_total": {
+                    "table": "pscl",
+                    "expression": "pscl.claim_recd"
+                },
+                "sec_claim_recd_total": {
+                    "table": "sscl",
+                    "expression": "sscl.claim_recd"
+                },
+                "consultation_type": {
+                    "expression": " ''::text "
+                },
+                "code_type": {
+                    "table": "bc"
+                },
+                "primary_denial_code": {
+                    "table": "pscl",
+                    "expression": "pscl.denial_code"
+                },
+                "secondary_denial_code": {
+                    "table": "sscl",
+                    "expression": "sscl.denial_code"
+                },
+                "orig_rate": {
+                    "table": "s",
+                    "expression": "s.orig_rate"
+                },
+                "orig_amount": {
+                    "table": "s",
+                    "expression": "s.amount"
+                },
+                "amount": {
+                    "table": "s",
+                    "expression": "(COALESCE(s.amount,0) - COALESCE(s.tax,0) )"
+                },
+                "quantity": {
+                    "table": "s",
+                    "expression": "(s.quantity + s.return_qty)"
+                },
+                "item_code": {
+                    "table": "s"
+                },
+                "main_visit_id": {
+                    "table": "picl",
+                    "expression": "picl.main_visit_id"
+                },
+                "activity_charge_id": {
+                    "table": "bc,s",
+                    "expression": "'P-'||bc.charge_id||'-'||s.sale_item_id"
+                },
+                "activity_group": {
+                    "expression": "'Pharmacy'::text"
+                },
+                "act_type": {
+                    "table": "msct",
+                    "expression": "msct.haad_code"
+                },
+                "act_item_code": {
+                    "table": "bc"
+                },
+                "pri_payers_reference_no": {
+                    "table": "picl",
+                    "expression": "picl.payers_reference_no"
+                },
+                "sec_payers_reference_no": {
+                    "table": "sicl",
+                    "expression": "sicl.payers_reference_no"
+                },
+                "pri_resubmission_count": {
+                    "table": "picl,pcsx",
+                    "expression": "pcsx.resubmission_count"
+                },
+                "sec_resubmission_count": {
+                    "table": "sicl,scsx",
+                    "expression": "scsx.resubmission_count"
+                },
+                "patient_amount": {
+                    "table": "s,pscl,sscl",
+                    "expression": "(COALESCE(s.amount,0)  - COALESCE(pscl.insurance_claim_amt,0) - COALESCE(pscl.tax_amt,0) - COALESCE(sscl.insurance_claim_amt,0) - COALESCE(sscl.tax_amt,0))::NUMERIC"
+                },
+                "pri_insurance_claim_amount": {
+                    "table": "pscl",
+                    "expression": "(COALESCE(pscl.insurance_claim_amt,0) + COALESCE(pscl.tax_amt,0))"
+                },
+                "sec_insurance_claim_amount": {
+                    "table": "sscl",
+                    "expression": "(COALESCE(sscl.insurance_claim_amt,0) + COALESCE(sscl.tax_amt,0))"
+                },
+                "pri_claim_id": {
+                    "table": "pscl",
+                    "expression": "pscl.claim_id"
+                },
+                "sec_claim_id": {
+                    "table": "sscl",
+                    "expression": "sscl.claim_id"
+                },
+                "pri_reference_no": {
+                    "table": "pir",
+                    "expression": "pir.reference_no"
+                },
+                "sec_reference_no": {
+                    "table": "sir",
+                    "expression": "sir.reference_no"
+                },
+                "net_amount": {
+                    "table": "s",
+                    "expression": "(COALESCE(s.insurance_claim_amt,0) + COALESCE(s.return_insurance_claim_amt,0))"
+                },
+                "patient_tax_amt": {
+                    "table": "s,pscl,sscl",
+                    "expression": "(COALESCE(s.tax,0) - COALESCE(pscl.tax_amt,0) - COALESCE(sscl.tax_amt,0))"
+                },
+                "item_amount_tax": {
+                    "table": "s",
+                    "expression": "(COALESCE(s.amount,0))"
+                },
+                "pri_sponsor_due_amt": {
+                    "table": "pscl",
+                    "expression": "(COALESCE(pscl.insurance_claim_amt,0) + COALESCE(pscl.tax_amt,0) - COALESCE(pscl.claim_recd,0)) "
+                },
+                "sec_sponsor_due_amt": {
+                    "table": "sscl",
+                    "expression": "(COALESCE(sscl.insurance_claim_amt,0) + COALESCE(sscl.tax_amt,0) - COALESCE(sscl.claim_recd,0))"
+                },
+                "patient_amt_wo_tax": {
+                    "table": "s,pscl,sscl",
+                    "expression": "(COALESCE(s.amount,0) - COALESCE(pscl.insurance_claim_amt,0) - COALESCE(sscl.insurance_claim_amt,0)  - COALESCE(s.tax,0) )"
+                },
+                "tax_amt": {
+                    "table": "s",
+                    "expression": "( COALESCE(s.tax,0) )"
+                },
+                "pri_sponsor_amt_wo_taxes": {
+                    "table": "pscl",
+                    "expression": "pscl.insurance_claim_amt"
+                },
+                "pri_sponsor_tax_amt": {
+                    "table": "pscl",
+                    "expression": "pscl.tax_amt"
+                },
+                "sec_sponsor_amt_wo_taxes": {
+                    "table": "sscl",
+                    "expression": "sscl.insurance_claim_amt"
+                },
+                "sec_sponsor_tax_amt": {
+                    "table": "sscl",
+                    "expression": "sscl.tax_amt"
+                },
+                "activity_conducted": {
+                    "table": "bc",
+                    "expression": "CASE WHEN bc.activity_conducted ='Y' THEN 'Yes' WHEN bc.activity_conducted ='N' THEN 'No' ELSE 'N/A' END"
+                },
+                "claim_due_total": {
+                    "table": "pscl,sscl",
+                    "expression": "((COALESCE(pscl.insurance_claim_amt,0) + COALESCE(pscl.tax_amt,0) - COALESCE(pscl.claim_recd,0)) + (COALESCE(sscl.insurance_claim_amt,0) + COALESCE(sscl.tax_amt,0) - COALESCE(sscl.claim_recd,0))) "
+                },
+                "overall_discount_auth_name": {
+                    "table": "daov,bda",
+                    "expression": "coalesce(daov.disc_auth_name, bda.disc_auth_name)"
+                },
+                "first_charge_for_episode": {
+                    "table": "bc",
+                    "expression": "CASE WHEN bc.first_of_category=true THEN 'Yes' ELSE 'No' END"
+                },
+                "item_claim_status": {
+                    "table": "s,b,bc",
+                    "expression": "CASE WHEN s.claim_status = 'O' AND b.is_tpa THEN 'Open' WHEN s.claim_status = 'D' AND b.is_tpa THEN 'Denied' WHEN s.claim_status = 'C' AND b.is_tpa THEN 'Closed' ELSE NULL END"
+                },
+                "act_description": {
+                    "table": "m,bc",
+                    "expression": "bc.act_description||' ('||m.medicine_name||')' "
+                },
+                "doctor_license_no": {
+                    "table": "pr,aDoc,refDoc",
+                    "displayName": "Clinician Id",
+                    "width": "100",
+                    "expression": "CASE WHEN (pr.op_type != 'O') THEN aDoc.doctor_license_number ELSE refDoc.doctor_license_number END"
+                }
+            },
+            "whereExpression": " (b.status != 'X') AND (bc.status!='X') AND b.is_tpa ",
+            "whereTable": "b,bc,pscl"
+        }
+    ],
+    "fields": {
+        "patient_amount": {
+            "table": "bcc",
+            "displayName": "Patient Amt with Taxes",
+            "width": 70,
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "aggFunction": "sum",
+            "filterable": true,
+            "expression": "(bcc.amount + bcc.tax_amt - bcc.insurance_claim_amount - bcc.sponsor_tax_amt)::NUMERIC"
+        },
+        "codification_remarks": {
+            "table": "pr",
+            "displayName": "Codification Remarks",
+            "width": 70,
+            "filterable": true,
+            "expression": "(pr.codification_remarks)"
+        },
+        "primary_sponsor_type": {
+            "displayName": "Primary Sponsor Type ",
+            "width": "100",
+            "dataType": "string",
+            "expression": "(pst.sponsor_type_name)",
+            "table": "pst",
+            "groupable": true,
+            "filterable": true
+        },
+        "secondary_sponsor_type": {
+            "displayName": "Secondary Sponsor Type ",
+            "width": "100",
+            "dataType": "string",
+            "expression": "(sst.sponsor_type_name)",
+            "table": "sst",
+            "groupable": true,
+            "filterable": true
+        },
+        "pri_claim_recd_total": {
+            "table": "pbcc",
+            "displayName": "Pri Item Claim Recd Amt.",
+            "width": 70,
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "aggFunction": "sum",
+            "filterable": true,
+            "expression": "pbcc.claim_recd_total"
+        },
+        "sec_claim_recd_total": {
+            "table": "sbcc",
+            "displayName": "Sec Item Claim Recd Amt.",
+            "width": 70,
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "aggFunction": "sum",
+            "filterable": true,
+            "expression": "sbcc.claim_recd_total"
+        },
+        "conducting_doctor": {
+            "table": "cdoc",
+            "displayName": "Conducting Doctor",
+            "width": 110,
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT doctor_name FROM doctors ORDER BY doctor_name",
+            "expression": "cdoc.doctor_name"
+        },
+        "secondary_diagnosis": {
+            "table": "sdiag",
+            "displayName": "Secondary Diagnosis Description",
+            "width": 150,
+            "filterable": true,
+            "allowNull": true
+        },
+        "activity_date_time": {
+            "table": "bcc",
+            "displayName": "Activity Date Time",
+            "width": 100,
+            "dataType": "timestamp",
+            "groupable": true,
+            "expression": "bcc.posted_date"
+        },
+        "orig_rate": {
+            "table": "bcc",
+            "displayName": "Orig. Rate",
+            "width": 70,
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "aggFunction": "sum",
+            "filterable": true,
+            "expression": "bcc.act_rate"
+        },
+        "orig_amount": {
+            "table": "bcc",
+            "displayName": "Orig. Amount",
+            "width": 70,
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "aggFunction": "sum",
+            "filterable": true,
+            "expression": "bcc.amount"
+        },
+        "amount": {
+            "table": "bcc",
+            "displayName": "Item Amount w/o Taxes",
+            "width": 70,
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "aggFunction": "sum",
+            "filterable": true,
+            "expression": "(bcc.amount + bcc.return_amt)"
+        },
+        "secondary_code_type": {
+            "table": "sdiag",
+            "displayName": "Sec. Diagnosis Code Type",
+            "width": 40,
+            "description": "Secondary Diagnosis Code Types"
+        },
+        "primary_denial_code": {
+            "table": "pbcc",
+            "displayName": "Pri. Denial Code",
+            "width": 80,
+            "allowedValuesQuery": "SELECT denial_code FROM insurance_denial_codes",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "expression": "pbcc.denial_code"
+        },
+        "secondary_denial_code": {
+            "table": "sbcc",
+            "displayName": "Sec. Denial Code",
+            "width": 80,
+            "allowedValuesQuery": "SELECT denial_code FROM insurance_denial_codes",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "expression": "sbcc.denial_code"
+        },
+        "item_code": {
+            "table": "bcc",
+            "displayName": "Item Code",
+            "width": 40,
+            "expression": "(bcc.act_rate_plan_item_code)"
+        },
+        "treating_dept": {
+            "table": "tdep",
+            "displayName": "Treating Department",
+            "width": 120,
+            "allowedValuesQuery": "SELECT dept_name AS treating_dept FROM treating_departments_view ORDER BY dept_name",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "expression": "tdep.dept_name"
+        },
+        "quantity": {
+            "table": "bcc",
+            "displayName": "Item Quantity",
+            "width": 70,
+            "dataType": "numeric",
+            "decimalType": "quantity",
+            "aggFunction": "sum",
+            "filterable": true,
+            "expression": "(bcc.act_quantity + bcc.return_qty)"
+        },
+        "pri_item_prior_auth_mode_name": {
+            "table": "pamc",
+            "displayName": "Item Pri Prior Auth Mode",
+            "width": 70,
+            "allowedValuesQuery": "SELECT prior_auth_mode_name FROM prior_auth_modes ORDER BY prior_auth_mode_name",
+            "expression": "pamc.prior_auth_mode_name"
+        },
+        "sec_item_prior_auth_mode_name": {
+            "table": "samc",
+            "displayName": "Item Sec Prior Auth Mode",
+            "width": 70,
+            "allowedValuesQuery": "SELECT prior_auth_mode_name FROM prior_auth_modes ORDER BY prior_auth_mode_name",
+            "expression": "samc.prior_auth_mode_name"
+        },
+        "main_visit_id": {
+            "table": "picl",
+            "displayName": "Claim Main Visit Id"
+        },
+        "pri_created_date": {
+            "table": "priresub,prifirstsub",
+            "displayName": "Pri. Claim Created Date",
+            "dataType": "date",
+            "groupable": true,
+            "expression": "COALESCE(priresub.created_date, prifirstsub.created_date)::date"
+        },
+        "sec_created_date": {
+            "table": "secresub,secfirstsub",
+            "displayName": "Sec Claim Created Date",
+            "dataType": "date",
+            "groupable": true,
+            "expression": "COALESCE(secresub.created_date, secfirstsub.created_date)::date"
+        },
+        "charge_account_group": {
+            "table": "bcagm",
+            "displayName": "Charge Account Group",
+            "width": 80,
+            "allowedValuesQuery": "SELECT account_group_name AS account_group_name FROM account_group_master ORDER BY account_group_name",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "expression": "bcagm.account_group_name"
+        },
+        "claim_service_reg_no": {
+            "table": "bcagm",
+            "displayName": "Charge Acc. Group Service Reg. No.",
+            "width": 65,
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "expression": "bcagm.account_group_service_reg_no"
+        },
+        "center_service_reg_no": {
+            "table": "hcm",
+            "displayName": "Center Service Reg. No.",
+            "width": 65,
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "expression": "hcm.hospital_center_service_reg_no"
+        },
+        "pres_doc_name": {
+            "table": "predoc",
+            "displayName": "Prescribing Doctor",
+            "width": 110,
+            "allowedValuesQuery": "SELECT doctor_name FROM doctors ORDER BY doctor_name",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "expression": "predoc.doctor_name"
+        },
+        "pri_submission_date": {
+            "table": "priresub,prifirstsub",
+            "displayName": "Pri Claim Submission Date",
+            "dataType": "date",
+            "groupable": true,
+            "expression": "COALESCE(priresub.submission_date, prifirstsub.submission_date)::date"
+        },
+        "sec_submission_date": {
+            "table": "secresub,secfirstsub",
+            "displayName": "Sec Claim Submission Date",
+            "dataType": "date",
+            "groupable": true,
+            "expression": "COALESCE(secresub.submission_date, secfirstsub.submission_date)::date"
+        },
+        "posted_date": {
+            "table": "bcc",
+            "displayName": "Posted Date",
+            "width": 70,
+            "dataType": "date",
+            "groupable": true,
+            "expression": "DATE(bcc.posted_date)"
+        },
+        "chargehead_name": {
+            "table": "chc",
+            "displayName": "Charge Head",
+            "width": 100,
+            "allowedValuesQuery": "SELECT chargehead_name FROM chargehead_constants  ORDER BY chargehead_name",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true
+        },
+        "secondary_diag_icd_code": {
+            "table": "sdiag",
+            "displayName": "Sec. Diagnosis Codes",
+            "width": 40,
+            "description": "Secondary Diagnosis Codes"
+        },
+        "activity_charge_id": {
+            "table": "bcc",
+            "displayName": "Activity Charge Id",
+            "width": 35,
+            "expression": "'A-'||bcc.charge_id"
+        },
+        "discount": {
+            "displayName": "Discount",
+            "width": 70,
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "aggFunction": "sum",
+            "expression": "bcc.discount"
+        },
+        "case_policy_validity_end": {
+            "table": "icase",
+            "displayName": "Case Policy Validity End",
+            "dataType": "date",
+            "filterable": true,
+            "groupable": true,
+            "expression": "icase.policy_validity_end::date"
+        },
+        "ac_head": {
+            "table": "bahc",
+            "displayName": "Account Head",
+            "width": 75,
+            "allowedValuesQuery": "SELECT account_head_name AS ac_head FROM bill_account_heads ORDER BY account_head_name",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "expression": " bahc.account_head_name"
+        },
+        "code_type": {
+            "table": "bcc",
+            "displayName": "Code Type",
+            "width": 80,
+            "allowedValuesQuery": "SELECT code_type FROM mrd_supported_code_types ORDER BY code_type",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true
+        },
+        "net_amount": {
+            "table": "bcc",
+            "displayName": "Item Claim Net Amount",
+            "width": 70,
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "aggFunction": "sum",
+            "filterable": true,
+            "expression": "(bcc.insurance_claim_amount + bcc.return_insurance_claim_amt)"
+        },
+        "consultation_type": {
+            "table": "ct",
+            "displayName": "Consultation Type",
+            "width": 100,
+            "allowedValuesQuery": "SELECT consultation_type FROM consultation_types",
+            "filterable": true,
+            "groupable": true
+        },
+        "pri_denial_description": {
+            "table": "pidc",
+            "displayName": "Pri. Denial Description",
+            "width": 120,
+            "allowNull": true,
+            "expression": "pidc.code_description"
+        },
+        "sec_denial_description": {
+            "table": "sidc",
+            "displayName": "Sec. Denial Description",
+            "width": 120,
+            "allowNull": true,
+            "expression": "sidc.code_description"
+        },
+        "first_charge_for_episode": {
+            "table": "bcc",
+            "displayName": "First Of Category",
+            "width": 100,
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "filterable": true,
+            "groupable": true,
+            "expressionLines": [
+                "CASE WHEN bcc.first_of_category=true ",
+                " THEN 'Yes' ELSE 'No' END"
+            ]
+        },
+        "prisubmission_batch_id": {
+            "table": "priresub,prifirstsub",
+            "displayName": "Pri. Submission Id.",
+            "width": 65,
+            "filterable": true,
+            "groupable": true,
+            "expression": "COALESCE(priresub.submission_batch_id, prifirstsub.submission_batch_id)"
+        },
+        "secsubmission_batch_id": {
+            "table": "secresub,secfirstsub",
+            "displayName": "Sec. Submission Id.",
+            "width": 65,
+            "filterable": true,
+            "groupable": true,
+            "expression": "COALESCE(secresub.submission_batch_id, secfirstsub.submission_batch_id)"
+        },
+        "doctor_amount": {
+            "table": "bcc",
+            "displayName": "Conducting Doctor Payment Amt.",
+            "width": 70,
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "aggFunction": "sum",
+            "expression": "(COALESCE(bcc.doctor_amount,0) + COALESCE(bcc.dr_discount_amt,0)) ",
+            "filterable": true
+        },
+        "ch_username": {
+            "table": "bcc",
+            "displayName": "User",
+            "width": 70,
+            "allowedValuesQuery": " SELECT emp_username AS username FROM u_user JOIN u_role USING(role_id) WHERE  portal_id='N'  ORDER BY username ",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "expression": "bcc.username"
+        },
+        "charge_id": {
+            "table": "bcc",
+            "displayName": "Charge ID"
+        },
+        "pri_payers_reference_no": {
+            "table": "picl",
+            "displayName": "Pri. Payer Reference No.",
+            "width": 55,
+            "filterable": true,
+            "groupable": true,
+            "expression": "picl.payers_reference_no"
+        },
+        "sec_payers_reference_no": {
+            "table": "sicl",
+            "displayName": "Sec. Payer Reference No.",
+            "width": 55,
+            "filterable": true,
+            "groupable": true,
+            "expression": "sicl.payers_reference_no"
+        },
+        "activity_conducted": {
+            "table": "bcc",
+            "displayName": "Activity Conducted By",
+            "width": 100,
+            "allowedValues": [
+                "Yes",
+                "No",
+                "Not Applicable"
+            ],
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "expression": "CASE WHEN bcc.activity_conducted ='Y' THEN 'Yes' WHEN bcc.activity_conducted ='N' THEN 'No' ELSE 'N/A' END"
+        },
+        "overall_discount_auth_name": {
+            "table": "daov,bda",
+            "displayName": "Overall Discount Authorizer",
+            "width": 110,
+            "allowedValuesQuery": "SELECT disc_auth_name AS  overall_discount_auth_name FROM discount_authorizer GROUP BY disc_auth_name",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "expression": "coalesce(daov.disc_auth_name, bda.disc_auth_name)"
+        },
+        "primary_code_type": {
+            "table": "pdiag",
+            "displayName": "Pri. Diagnosis Code Type",
+            "width": 40,
+            "description": "Primary Diagnosis Code Type",
+            "expression": "pdiag.code_type"
+        },
+        "rvf_code_type": {
+            "table": "vdiag",
+            "displayName": "Reason for Visit Diagnosis Code Type",
+            "width": 40,
+            "description": "Reason For Visit Diagnosis Code Type",
+            "expression": "vdiag.code_type"
+        },
+        "user_remarks": {
+            "table": "bcc",
+            "displayName": "Remarks",
+            "width": 150,
+            "filterable": true,
+            "groupable": true
+        },
+        "primary_diag_icd_code": {
+            "table": "pdiag",
+            "displayName": "Pri. Diagnosis Code",
+            "width": 40,
+            "description": "Primary Diagnosis Code",
+            "expression": "pdiag.icd_code"
+        },
+        "rvf_diag_icd_code": {
+            "table": "vdiag",
+            "displayName": "Reason for Visit Diagnosis Code",
+            "width": 40,
+            "description": "Reason For Visit Diagnosis Code",
+            "expression": "vdiag.icd_code"
+        },
+        "act_remarks": {
+            "table": "bcc",
+            "displayName": "Item Details",
+            "width": 150,
+            "filterable": true,
+            "groupable": true
+        },
+        "prescribing_dr_amount": {
+            "table": "bcc",
+            "displayName": "Prescribing Doctor Payment Amt",
+            "width": 70,
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "aggFunction": "sum",
+            "expression": "COALESCE(bcc.prescribing_dr_amount,0)",
+            "filterable": true
+        },
+        "primary_diagnosis": {
+            "table": "pdiag",
+            "displayName": "Primary Diagnosis Description",
+            "width": 150,
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "expression": "pdiag.description"
+        },
+        "rvf_diagnosis": {
+            "table": "vdiag",
+            "displayName": "Reason for Visit Diagnosis Description",
+            "width": 150,
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "expression": "vdiag.description"
+        },
+        "chargegroup_name": {
+            "table": "cgc",
+            "displayName": "Charge Group",
+            "width": 75,
+            "allowedValuesQuery": "SELECT chargegroup_name FROM chargegroup_constants  ORDER BY chargegroup_name",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true
+        },
+        "pri_insurance_claim_amount": {
+            "table": "pbcc",
+            "displayName": "Pri Sponsor Amt",
+            "width": 70,
+            "aggFunction": "sum",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "filterable": true,
+            "expression": "pbcc.insurance_claim_amt + pbcc.tax_amt"
+        },
+        "sec_insurance_claim_amount": {
+            "table": "sbcc",
+            "displayName": "Sec. Sponsor Amt",
+            "width": 70,
+            "aggFunction": "sum",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "filterable": true,
+            "expression": "sbcc.insurance_claim_amt + sbcc.tax_amt"
+        },
+        "pri_claim_id": {
+            "table": "pbcc",
+            "displayName": "Pri. Claim ID",
+            "expression": "pbcc.claim_id",
+            "width": "60"
+        },
+        "sec_claim_id": {
+            "table": "sbcc",
+            "expression": "sbcc.claim_id",
+            "displayName": "Sec. Claim ID",
+            "width": "60"
+        },
+        "pri_reference_no": {
+            "table": "pir",
+            "expression": "pir.reference_no",
+            "displayName": "Pri. Reference No",
+            "width": "60"
+        },
+        "sec_reference_no": {
+            "table": "sir",
+            "expression": "sir.reference_no",
+            "displayName": "Sec. Reference No",
+            "width": "60"
+        },
+        "insurance_category_name": {
+            "table": "it_c",
+            "displayName": "Insurance Category",
+            "width": 80,
+            "allowedValuesQuery": "SELECT insurance_category_name FROM item_insurance_categories ORDER BY insurance_category_name",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true
+        },
+        "activity_group": {
+            "table": "bcc",
+            "displayName": "Activity Group",
+            "width": 35,
+            "allowedValues": [
+                "Pharmacy",
+                "Hospital"
+            ],
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "expression": "'Hospital'::text"
+        },
+        "referal_amount": {
+            "table": "bcc",
+            "displayName": "Referral Doctor Payment Amt.",
+            "width": 70,
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "aggFunction": "sum",
+            "expression": "COALESCE(bcc.referal_amount,0)",
+            "filterable": true
+        },
+        "item_claim_status": {
+            "table": "bcc,b",
+            "displayName": "Item Claim Status",
+            "width": 50,
+            "allowedValues": [
+                "Open",
+                "Denied",
+                "Closed"
+            ],
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "expression": "CASE WHEN bcc.claim_status = 'O' AND b.is_tpa THEN 'Open' WHEN bcc.claim_status = 'D' AND b.is_tpa THEN 'Denied' WHEN bcc.claim_status = 'C' AND b.is_tpa THEN 'Closed' ELSE NULL END"
+        },
+        "service_sub_group_name": {
+            "table": "ssg",
+            "displayName": "Service Sub Group",
+            "width": 90,
+            "allowedValuesQuery": "SELECT service_sub_group_name FROM service_sub_groups ORDER BY service_sub_group_name",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true
+        },
+        "pri_resubmission_count": {
+            "table": "picl,pcsx",
+            "displayName": "Pri. Claim Resubmission Count",
+            "width": 40,
+            "dataType": "integer",
+            "description": "Pri. Claim Resubmission Count",
+            "filterable": true,
+            "groupable": true,
+            "expression": "pcsx.resubmission_count"
+        },
+        "sec_resubmission_count": {
+            "table": "sicl,scsx",
+            "displayName": "Sec Claim Resubmission Count",
+            "width": 40,
+            "dataType": "integer",
+            "description": "Resubmission Count",
+            "filterable": true,
+            "groupable": true,
+            "expression": "scsx.resubmission_count"
+        },
+        "act_description": {
+            "table": "bcc",
+            "displayName": "Item Description",
+            "width": 150,
+            "filterable": true,
+            "groupable": true
+        },
+        "case_policy_validity_start": {
+            "table": "icase",
+            "displayName": "Case Policy Validity Start",
+            "dataType": "date",
+            "filterable": true,
+            "groupable": true,
+            "expression": "icase.policy_validity_start::date"
+        },
+        "is_resubmission_batch_p": {
+            "table": "priresub,prifirstsub",
+            "displayName": "Pri. Claim Resubmission Batch",
+            "width": 50,
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "description": "Pri. Is Resubmission Batch",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "expression": "CASE WHEN COALESCE(priresub.is_resubmission, prifirstsub.is_resubmission) ='Y' THEN 'Yes' WHEN COALESCE(priresub.is_resubmission, prifirstsub.is_resubmission) ='N' THEN 'No' END"
+        },
+        "is_resubmission_batch_s": {
+            "table": "secresub,secfirstsub",
+            "displayName": "Sec. Claim Resubmission Batch",
+            "width": 50,
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "description": "Sec. Is Resubmission Batch",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "expression": "CASE WHEN COALESCE(secresub.is_resubmission, secfirstsub.is_resubmission) ='Y' THEN 'Yes' WHEN COALESCE(secresub.is_resubmission, secfirstsub.is_resubmission) ='N' THEN 'No' END"
+        },
+        "service_group_name": {
+            "table": "sg",
+            "displayName": "Service Group",
+            "width": 80,
+            "allowedValuesQuery": "SELECT service_group_name FROM service_groups ORDER BY service_group_name",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true
+        },
+        "claim_due_total": {
+            "table": "bcc",
+            "displayName": "Total Sponsor Due Amt.",
+            "width": 70,
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "aggFunction": "sum",
+            "filterable": true,
+            "expression": "((bcc.insurance_claim_amount + bcc.sponsor_tax_amt + bcc.return_insurance_claim_amt) - bcc.claim_recd_total)"
+        },
+        "pri_item_prior_auth_id": {
+            "table": "pbcc",
+            "displayName": "Item Pri Prior Auth",
+            "width": 50,
+            "expression": "pbcc.prior_auth_id"
+        },
+        "sec_item_prior_auth_id": {
+            "table": "sbcc",
+            "displayName": "Item Sec Prior Auth",
+            "width": 50,
+            "expression": "sbcc.prior_auth_id"
+        },
+        "doctor_license_no": {
+            "table": "pr,aDoc,refDoc",
+            "displayName": "Clinician Id",
+            "width": "100",
+            "expression": "CASE WHEN (pr.op_type != 'O') THEN aDoc.doctor_license_number ELSE refDoc.doctor_license_number END",
+            "filterable": true
+        },
+        "tax_amt": {
+            "table": "bcc",
+            "expression": "bcc.tax_amt ",
+            "displayName": "Total Tax Amt",
+            "width": 80,
+            "filterable": true,
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "aggFunction": "sum"
+        },
+        "pri_sponsor_amt_wo_taxes": {
+            "displayName": "Pri. Sponsor Amt w/o Taxes",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "width": "100",
+            "aggFunction": "sum",
+            "table": "pbcc",
+            "expression": "(COALESCE(pbcc.insurance_claim_amt,0))",
+            "filterable": true
+        },
+        "pri_sponsor_tax_amt": {
+            "displayName": "Pri. Sponsor Tax Amt",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "width": "100",
+            "aggFunction": "sum",
+            "table": "pbcc",
+            "expression": "(COALESCE(pbcc.tax_amt,0))",
+            "filterable": true
+        },
+        "sec_sponsor_amt_wo_taxes": {
+            "displayName": "Sec. Sponsor Amt w/o Taxes",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "width": "100",
+            "aggFunction": "sum",
+            "table": "sbcc",
+            "expression": "(COALESCE(sbcc.insurance_claim_amt,0))",
+            "filterable": true
+        },
+        "sec_sponsor_tax_amt": {
+            "displayName": "Sec. Sponsor Tax Amt",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "width": "100",
+            "aggFunction": "sum",
+            "table": "sbcc",
+            "expression": "(COALESCE(sbcc.tax_amt,0))",
+            "filterable": true
+        },
+        "patient_tax_amt": {
+            "displayName": "Patient Tax Amt",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "width": "100",
+            "aggFunction": "sum",
+            "table": "bcc",
+            "expression": "(COALESCE(bcc.tax_amt,0) - COALESCE(bcc.sponsor_tax_amt,0))",
+            "filterable": true
+        },
+        "item_amount_tax": {
+            "table": "bcc",
+            "displayName": "Item Amount with Taxes",
+            "width": 70,
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "aggFunction": "sum",
+            "filterable": true,
+            "expression": "(COALESCE(bcc.amount,0) + COALESCE(bcc.tax_amt,0) + COALESCE(bcc.return_amt,0))"
+        },
+        "pri_sponsor_due_amt": {
+            "displayName": "Pri. Sponsor Due Amt",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "width": "100",
+            "aggFunction": "sum",
+            "table": "pbcc",
+            "expression": "(COALESCE(pbcc.insurance_claim_amt,0) + COALESCE(pbcc.tax_amt,0) - COALESCE(pbcc.claim_recd_total,0)) ",
+            "filterable": true
+        },
+        "sec_sponsor_due_amt": {
+            "displayName": "Sec. Sponsor Due Amt",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "width": "100",
+            "aggFunction": "sum",
+            "table": "sbcc",
+            "expression": "(COALESCE(sbcc.insurance_claim_amt,0) + COALESCE(sbcc.tax_amt,0) - COALESCE(sbcc.claim_recd_total,0))",
+            "filterable": true
+        },
+        "patient_amt_wo_tax": {
+            "displayName": "Patient Amt w/o Tax",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "width": "100",
+            "aggFunction": "sum",
+            "table": "bcc",
+            "expression": "(COALESCE(bcc.amount,0) - COALESCE(bcc.insurance_claim_amount,0))",
+            "filterable": true
+        }
+    },
+    "defaultShowFields": [
+        "bill_no",
+        "claim_id",
+        "finalized_date",
+        "full_name",
+        "chargehead_name",
+        "insurance_category_name",
+        "act_description",
+        "amount",
+        "discount",
+        "net_amount"
+    ]
+}

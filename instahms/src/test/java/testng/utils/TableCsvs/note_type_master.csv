@@ -1,0 +1,3 @@
+note_type_id,note_type_name,assoc_hosp_role_id,editable_by,status,billing_option,transcribing_role_id,created_by,created_time,mod_user,mod_time
+1,'Doctor Notes',-1,'O','A','Y',1,'InstaAdmin','2018-10-12 12:38:33','InstaAdmin','2018-10-12 12:38:33.120892'
+2,'nurse Notes',-2,'O','A','Y',1,'InstaAdmin','2018-10-12 12:39:33','InstaAdmin','2018-10-12 12:39:33.120892'

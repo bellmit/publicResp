@@ -1,0 +1,674 @@
+FORMAT: 1A
+HOST: http://localhost:8080/instahms
+
+# Insta In Patients API
+
+This document defines the API endpoints for incoming patient lists.
+
+## IP List [/inpatients/list.json?status=&page_num=&page_size=&sort_order=&sort_reverse=&search_id=&find_string=]
+### Get IP list [GET]
+
+This endpoint gives list of all IP patients with their details.
+
+
++ Parameters
+  + page_num (Optional, int) - 1 (which page number to fetch)
+  + page_size (Optional, int) - 20 (number of items in a page)
+  + sort_order (Optional, String) - "mr no" (name of the field on which to sort)
+  + sort_reverse (Optional, Boolean) - true (sort in ascending or descending; will only work if sortOrder is specified)
+  + search_id (Optional, int) - 10 (id of the search name, when present ignore query params get the patient list based on this parameter)
+  + find_string (Optional, String) - "Anup" (search by mrno or patientname or patient phone)
+  
++ Response 200 (application/json)
+    {
+        "patients": [
+            {
+                "mr_no": "MR008522",
+                "full_name": "Mr. Sonam ",
+                "patient_name": "Rajeswari",
+                "middle_name": null,
+                "last_name": "R.",
+                "patient_gender": "M",
+                "patient_phone": "35435",
+                "country_code": null,
+                "age": 24,
+                "age_text": "Y",
+                "dob": null,
+                "visits": [
+                    {
+                        "visit_id": "IP000648",
+                        "discharge_status": "N",
+                        "ward_name": "General 1",
+                        "bed_name": "GENERAL2",
+                    }
+                ]
+            },
+            {
+                "mr_no": "MR008531",
+                "full_name": "Mrs. Sonam Ippp ",
+                "patient_name": "raja",
+                "middle_name": babu,
+                "last_name": "R.",
+                "patient_gender": "F",
+                "patient_phone": "45645",
+                "country_code": null,
+                "age": 35,
+                "age_text": "Y",
+                "dob": null,
+                "visits": [
+                    {
+                        "visit_id": "IP000649",
+                        "discharge_status": "N",
+                        "ward_name": "General 1",
+                        "bed_name": "GENERAL5"
+                    }
+                ]
+            },
+            {
+                "mr_no": "MR011565",
+                "full_name": "Mr. Betta ",
+                "patient_name": "sajan",
+                "middle_name": singh,
+                "last_name": null,
+                "patient_gender": "M",
+                "patient_phone": "97",
+                "country_code": null,
+                "age": 30,
+                "age_text": "Y",
+                "dob": null,
+                "visits": [
+                    {
+                        "visit_id": "IP000668",
+                        "discharge_status": "N",
+                        "ward_name": "Ward ICU",
+                        "bed_name": "ICU7"
+                    }
+                ]
+            }
+        ],
+      "page_size": 15,
+      "page_num": 1,
+      "total_records": 150
+    }
+
+
+## Advance Filter Data [/inpatients/getFilterData.json]
+### Get Filter Data for Advance Search [GET]
+
+This endpoint gives list of data which is used as filter in Advance Search.
+
++ Response 200 (application/json)
+    {
+        "visit_status": {
+            "Active": "A",
+            "Inactive": "I"
+        },
+        "discharge_status": {
+            "Financial Discharge Pending": "C",
+            "Clinical Discharge Pending": "I",
+            "Discharge Not Initaited": "N"
+        },
+        "bill_status":{
+            "Finalized": "F",
+            "Open": "A",
+            "Closed": "C"
+        },
+        "departments": [
+            {
+                "dept_id": "DEP0001",
+                "dept_name": "ANAESTHESIOLOGY"
+            },
+            {
+                "dept_id": "DEP0002",
+                "dept_name": "APIDept1"
+            },
+            {
+                "dept_id": "DEP0003",
+                "dept_name": "Accident & Emergency"
+            },
+            {
+                "dept_id": "DEP0004",
+                "dept_name": "Andrology"
+            }
+        ],
+        "doctors": [
+            {
+                "doctor_id": "DOC0115",
+                "doctor_name": " MRS.PRIYANKA SINGH"
+            },
+            {
+                "doctor_id": "DOC0232",
+                "doctor_name": " ASMITHA"
+            },
+            {
+                "doctor_id": "DOC0198",
+                "doctor_name": " Cen Doc2"
+            },
+            {
+                "doctor_id": "DOC0118",
+                "doctor_name": " DR  Ajit Mehta"
+            },
+            {
+                "doctor_id": "DOC0123",
+                "doctor_name": " DR  Prasad Shah"
+            }
+        ],
+        "wards": [
+            {
+                "ward_no": "WARD0014",
+                "ward_name": "GENERAL"
+            },    
+            {
+                "ward_no": "WARD0015",
+                "ward_name": "Private"
+            },    
+            {
+                "ward_no": "WARD0016",
+                "ward_name": "Semi Private"
+            },
+            {
+                "ward_no": "WARD0017",
+                "ward_name": "Ultra Deluxe"
+            }
+        ]
+    }
+
+## Advance Search Records [/inpatients/advanceFilterList.json]
+### Get Advance Search Records [GET]
+
+This endpoint gives list of records from Advance Search.
+
++ Response 200 (application/json)
+    {
+        "patients": [
+            {
+                "mr_no": "MR008522",
+                "full_name": "Mrs. Jayalakshmi  ",
+                "patient_name": "Bhai",
+                "middle_name": "bro",
+                "last_name": "anna",
+                "patient_gender": "M",
+                "patient_phone": "9841351006",
+                "country_code": +91,
+                "age": 35,
+                "age_text": "Y",
+                "dob": null,
+                "visits": [
+                    {
+                        "visit_id": "IP000532",
+                        "discharge_status": "N",
+                        "visit_status": "A",
+                        "ward_name": null,
+                        "bed_name": null,
+                        "doctor_name": "DR.BHIMASHANKAR",
+                        "visit_date": "21-12-2015",
+                        "visit_status": "A",
+                        "dep_name": "CARDIOLOGY"
+                    },
+                    {
+                        "visit_id": "IP000440",
+                        "discharge_status": "D",
+                        "visit_status": "I",
+                        "ward_name": null,
+                        "bed_name": null,
+                        "doctor_name": null,
+                        "visit_date": "07-12-2009",
+                        "visit_status": "I",
+                        "dep_name": "Laboratory"
+                    }
+                ],
+                "bills": [
+                    {
+                        "visit_id": "IP000532",
+                        "bill_no": "BL1222126",
+                        "bill_status": "F",
+                        "payment_status": "U"
+                    },
+                    {
+                        "visit_id": "IP000440",
+                        "bill_no": "BL1222129",
+                        "bill_status": "F",
+                        "payment_status": "U"
+                    }
+                ]
+            },
+            {
+                "mr_no": "MR008525",
+                "full_name": "Mrs. anup  ",
+                "patient_gender": "M",
+                "patient_phone": "9841351006",
+                "country_code": +91,
+                "age": 35,
+                "age_text": "Y",
+                "dob": null,
+                "visits": [
+                    {
+                        "visit_id": "IP000539",
+                        "discharge_status": "N",
+                        "ward_name": null,
+                        "bed_name": null,
+                        "doctor_name": null,
+                        "visit_date": "07-12-2009",
+                        "visit_status": "I",
+                        "dep_name": "Laboratory"
+                    },
+                    {
+                        "visit_id": "IP000441",
+                        "discharge_status": "D",
+                        "ward_name": null,
+                        "bed_name": null,
+                        "doctor_name": null,
+                        "visit_date": "07-12-2009",
+                        "visit_status": "I",
+                        "dep_name": "Laboratory"
+                    }
+                ],
+                "bills": [
+                    {
+                        "visit_id": "IP000539",
+                        "bill_no": "BL1222126",
+                        "bill_status": "F",
+                        "payment_status": "U"
+                    },
+                    {
+                        "visit_id": "IP000441",
+                        "bill_no": "BL1222129",
+                        "bill_status": "F",
+                        "payment_status": "U"
+                    }
+                ]
+            }            
+        ]
+    }
+
+
+
+## Group Discharge Summary
+
+### Get All Visits [/inpatients/dischargesummary/getAllVisits.json]
+
+#### Get All Active/Inactive visits[GET]
+
+This endpoint gives list of all active/inactive visits against given mrno.
+
++ Parameters
+  + mr_no (Mandatory, String) - "MR012820" (All visit against given Mr No)
+  
+  
++ Response 200 (application/json)
+    {
+        "visit_details": [
+            {
+                "patient_discharge_status": "D",
+                "discharge_doctor_id": "DOC0232",
+                "status": "A",
+                "visit_time": "18:10:24",
+                "visit_date": "2017-07-10",
+                "discharge_finalized_user": "",
+                "discharge_format": null,
+                "dept_name": "General",
+                "discharge_doc_id": null,
+                "discharge_time": "12:33:00",
+                "last_updated_by": "",
+                "discharge_date": "2017-08-02",
+                "doctor_id": "DOC0232",
+                "discharge_doctor_name": "ASMITHA",
+                "bed_name": "first14",
+                "patient_id": "IP000806",
+                "loggedin_docornurse_visit": "Y",
+                "report_status": "Open",
+                "doctor_name": "ASMITHA",
+                "ward_name": "Arjun",
+                "visit_type": "i"            
+            },
+            {
+                "status": "A",
+                "doctor_id": "DOC0125",
+                "visit_time": "18:12:39",
+                "discharge_date": "2017-07-09",
+                "visit_date": "2017-07-10",
+                "dept_name": "CARDIOLOGY",
+                "discharge_finalized_user": null,
+                "last_updated_by": "InstaAdmin",
+                "ward_name": "Shilpi",
+                "discharge_format": "T",
+                "discharge_doctor_name": "DR  Prasad Shah  ",
+                "doctor_name": "DR  Prasad Shah  ",
+                "discharge_doc_id": 116,
+                "patient_id": "IP000807",
+                "discharge_time": "19:32:00",
+                "loggedin_docornurse_visit": "Y",
+                "patient_discharge_status": "N",
+                "report_status": "Open",
+                "discharge_doctor_id": "DOC0125",
+                "bed_name": "SEMI PRIVATE47",
+                "visit_type": "i"
+            }
+        ],
+        "rights_for_inactive_visit": "Y"
+    }
+  
+
+### Get All Templates [/inpatients/dischargesummary/getTemplates.json]
+
+#### Get All Active Templates [GET]
+
+This endpoint gives list of all active templates.
+
++ Response 200 (application/json)
+    {
+        "templates": [
+            {
+                "title" : "TREATMENT SUMMARY",
+                "format" : "F",
+                "id" : "frm4",
+                "caption": "OPERATION ROOM DISCHARGE SUMMARY"
+            }
+            {
+                "title" : "Discharge Summary",
+                "format" : "F",
+                "id" : "frm5",
+                "title": "DISCHARGE SUMMARY"
+            }
+            {
+                "title" : "INtlab",
+                "format" : "T",
+                "id" : "FORMAT0001",
+                "caption": "New-intlab"
+            }
+        ]
+    }
+
+
+### Get Template Content, for Rich Text [/inpatients/dischargesummary/getTemplateContent.json?discharge_doc_id=5&id=frm1&discharge_format=T]
+
+#### Get template content for the selected visit [GET]
+
+This endpoint gives template content of the selected visit and template.
+
++ Parameters
+  + discharge_doc_id (Dependent, int) - 5 (Doc id if the template is already saved. Pass it only, if it is not null.)
+  + discharge_format (Mandatory, String) - "T" (Type of the template.)
+  + id (Dependent, String) - "FORMAT0001" (id of a template. Pass only if discharge_doc_id is null)
+    
+
++ Response 200 (application/json)
+    {
+        "template_content": [
+            {
+                "report_file": "<div class=\"patientHeader\">\r\n<table style=\"width: 100%;\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\r\n<tbody>\r\n<!-- [#escape x as x?html] --> \r\n<tr>\r\n<td valign=\"top\">\r\n<table style=\"width: 100%;\" border=\"0\" cellspacing=\"0\" cellpadding=\"1\">\r\n<tbody>\r\n<tr>\r\n<td align=\"left\" valign=\"top\">Name:</td>\r\n<td align=\"left\" valign=\"top\">${visitdetails.full_name!}</td>\r\n</tr>\r\n<tr>\r\n<td align=\"left\" valign=\"top\">Age/Gender:</td>\r\n<td align=\"left\" valign=\"top\">${visitdetails.age!} ${visitdetails.agein!}/${visitdetails.patient_gender!}</td>\r\n</tr>\r\n<tr>\r\n<td align=\"left\" valign=\"top\">Address:</td>\r\n<td align=\"left\" valign=\"top\">${visitdetails.patient_address!}</td>\r\n</tr>\r\n<tr>\r\n<td align=\"left\" valign=\"top\">Location:</td>\r\n<td align=\"left\" valign=\"top\">${visitdetails.cityname!}, ${visitdetails.statename!}</td>\r\n</tr>\r\n<tr>\r\n<td align=\"left\" valign=\"top\">Doctor:</td>\r\n<td align=\"left\" valign=\"top\">${visitdetails.doctor_name!}</td>\r\n</tr>\r\n<tr>\r\n<td align=\"left\" valign=\"top\">Department:</td>\r\n<td align=\"left\" valign=\"top\">${visitdetails.dept_name!}</td>\r\n</tr>\r\n<!-- [#if (visitdetails.org_name!'GENERAL')!='GENERAL'] --> \r\n<tr>\r\n<td align=\"left\" valign=\"top\">Rate Plan:</td>\r\n<td align=\"left\" valign=\"top\">${visitdetails.org_name}</td>\r\n</tr>\r\n<!-- [/#if] --> <!-- [#if ((visitdetails.tpa_name!'')!='')] --> \r\n<tr>\r\n<td align=\"left\" valign=\"top\">Sponsor:</td>\r\n<td align=\"left\" valign=\"top\">${visitdetails.tpa_name!}</td>\r\n</tr>\r\n<!-- [/#if] --> <!-- [#if visitdetails.visit_type == 'i']] --> <!-- [#if ((visitdetails.referred_to_hosp!'')!='')] --> \r\n<tr>\r\n<td align=\"left\" valign=\"top\">Referred To:</td>\r\n<td align=\"left\" valign=\"top\">${visitdetails.referred_to_hosp!}</td>\r\n</tr>\r\n<!-- [/#if] --> <!-- [/#if] -->\r\n</tbody>\r\n</table>\r\n</td>\r\n<td width=\"45%\" align=\"right\" valign=\"top\">\r\n<table style=\"empty-cells: none; width: 100%;\" border=\"0\" cellspacing=\"0\" cellpadding=\"1\">\r\n<tbody>\r\n<!-- [#if ((label!'')!='')] --> \r\n<tr>\r\n<td align=\"left\" valign=\"top\">${label1!}</td>\r\n<td align=\"left\" valign=\"top\">${labelvalue1!}</td>\r\n</tr>\r\n<!-- [/#if] --> <!-- [#if ((label2!'')!='')] --> \r\n<tr>\r\n<td align=\"left\" valign=\"top\">${label2!}</td>\r\n<td align=\"left\" valign=\"top\">${labelvalue2!}</td>\r\n</tr>\r\n<!-- [/#if] --> \r\n<tr>\r\n<td align=\"left\" valign=\"top\">MR No:</td>\r\n<td align=\"left\" valign=\"top\">${visitdetails.mr_no}</td>\r\n</tr>\r\n<tr>\r\n<td align=\"left\" valign=\"top\">Visit ID:</td>\r\n<td align=\"left\" valign=\"top\">${visitdetails.patient_id}</td>\r\n</tr>\r\n<tr>\r\n<td align=\"left\" valign=\"top\">[#if (visitdetails.visit_type)! = 'i']Admission Date: \t\t\t\t\t\t\t[#else]Visit Date: \t\t\t\t\t\t\t[/#if]</td>\r\n<td align=\"left\" valign=\"top\">${visitdetails.reg_date!} ${visitdetails.reg_time!}</td>\r\n</tr>\r\n<tr>\r\n<!-- [#assign disType=(visitdetails.discharge_type)!''] -->\r\n<td align=\"left\" valign=\"top\">[#if disType == 'Expiry'] \t\t\t\t\t\t\tDeath Date: \t\t\t\t\t\t[#else]Discharge Date: \t\t\t\t\t\t[/#if]</td>\r\n<td align=\"left\" valign=\"top\">[#if disType == 'Expiry'] \t\t\t\t\t\t\t\t${visitdetails.death_date!} ${visitdetails.death_time!} \t\t\t\t\t\t\t[#else] \t\t\t\t\t\t\t\t${visitdetails.discharge_date!} ${visitdetails.discharge_time!} \t\t\t\t\t\t\t[/#if]</td>\r\n</tr>\r\n<!--\t[#if visitdetails.visit_type = 'i'] --> \r\n<tr>\r\n<td align=\"left\" valign=\"top\">Ward/Bed:</td>\r\n<td align=\"left\" valign=\"top\">[#if (modules_activated.mod_ipservices!'') == 'Y'] \t\t\t\t\t\t\t\t[#if (visitdetails.alloc_bed_name!'')=='' ](Not Allocated) \t\t\t\t\t\t\t\t[#else]${(visitdetails.alloc_ward_name)!}/${(visitdetails.alloc_bed_name)!} \t\t\t\t\t\t\t\t[/#if] \t\t\t\t\t\t\t[#else] \t\t\t\t\t\t\t\t${(visitdetails.reg_ward_name)!}/${(visitdetails.bill_bed_type)!} \t\t\t\t\t\t\t[/#if]</td>\r\n</tr>\r\n<!-- [/#if] --> <!-- [#if ((visitdetails.refdoctorname!'')!='')] --> \r\n<tr>\r\n<td style=\"width: 40%;\" align=\"left\" valign=\"top\">Referred By:</td>\r\n<td style=\"width: 60%;\" align=\"left\" valign=\"top\">${(visitdetails.refdoctorname)!}</td>\r\n</tr>\r\n<!-- [/#if] -->\r\n</tbody>\r\n</table>\r\n</td>\r\n</tr>\r\n<!-- [/#escape] -->\r\n</tbody>\r\n</table>\r\n</div>\r\n<div><!-- [#assign empty=[] ] --> \r\n<table style=\"margin-top: 20px; width: 100%;\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" align=\"center\">\r\n<tbody>\r\n<tr>\r\n<td colspan=\"2\" align=\"center\"><strong>${form_title?html}</strong></td>\r\n</tr>\r\n<tr height=\"30px\">\r\n<td>&nbsp;</td>\r\n</tr>\r\n<!--\t[#list fieldvalues as values] --> <!--\t[#if ((values.field_value)!'') != ''] --> \r\n<tr>\r\n<td colspan=\"2\"><strong>${(values.caption)?html}</strong></td>\r\n</tr>\r\n<tr>\r\n<td colspan=\"2\">&nbsp;</td>\r\n</tr>\r\n<tr>\r\n<td width=\"30px\">&nbsp;</td>\r\n<td>${(((values.field_value)?html)?replace(\"\\n\",\"<br />\"))?replace(\"--break--\", '\r\n<p class=\"pagebreak\">&nbsp;</p>\r\n')}</td>\r\n</tr>\r\n<tr>\r\n<td colspan=\"2\">&nbsp;</td>\r\n</tr>\r\n<!--\t[/#if] --> <!--\t[/#list] -->\r\n</tbody>\r\n</table>\r\n</div>\r\n<div id=\"followupDetailsDiv\"><!-- [#list dischargedetails as followupdetails] --> <!-- [#assign fdetails=(followupdetails.followup_doctorname)!'notexists'] --> <!-- [#break] --> <!-- [/#list]--> \r\n<table style=\"margin-top: 20px; width: 100%;\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" align=\"center\">\r\n<tbody>\r\n<!-- [#if fdetails!='notexists'] --> \r\n<tr>\r\n<td colspan=\"3\" align=\"left\"><strong>Follow Up Details</strong></td>\r\n</tr>\r\n<tr style=\"height: 10px;\">\r\n<td colspan=\"3\" width=\"5px\">&nbsp;</td>\r\n</tr>\r\n<!-- [#list dischargedetails as followupdetails] --> \r\n<tr>\r\n<td width=\"15%\">${(followupdetails.followup_date)!}</td>\r\n<td width=\"25%\">${((followupdetails.followup_doctorname)!)?html}</td>\r\n<td width=\"60%\">${((followupdetails.followup_remarks)!)?html}</td>\r\n</tr>\r\n<!-- [/#list] --> \r\n<tr style=\"height: 15px;\">\r\n<td>&nbsp;</td>\r\n</tr>\r\n<!-- [/#if] --> <!-- [#if visitdetails.signatory_username?has_content] --> \r\n<tr>\r\n<td colspan=\"3\" align=\"left\"><img src=\"/instahms107/master/UserImage.do?_method=view&amp;doctor_id=${visitdetails.signatory_username}\" alt=\"\" /></td>\r\n</tr>\r\n<!-- [/#if] --> \r\n<tr>\r\n<td colspan=\"3\" align=\"left\"><strong>Doctor's Signature</strong></td>\r\n</tr>\r\n<tr>\r\n<td colspan=\"3\"><!--\t[#list dischargedetails as doctors] --> ${((doctors.discharge_doctor)!)?html} ${((doctors.discharge_doctor_specialization)!)?html} \t\t\t\t<!--\t\t[#break] --> <!--\t[/#list] --></td>\r\n</tr>\r\n</tbody>\r\n</table>\r\n</div>"
+            }
+        ],
+        "followup_details": [
+            {
+                "doctor_name": "DR.ASHOK PATIL",
+                "followup_date": "17-07-2017",
+                "followup_id": "FUD0080",
+                "followup_remarks": "asdasda",
+                "followup_doctor_id": "DOC0038"
+            },
+            {
+                "doctor_name": " MRS.PRIYANKA SINGH",
+                "followup_doctor_id": "DOC0115",
+                "followup_date": "21-07-2017",
+                "followup_id": "FUD0081",
+                "followup_remarks": "asxascx"
+            }
+        ]
+    } 
+    
+
+
+### Get Template Content, for HVF [/inpatients/dischargesummary/getTemplateContent.json?discharge_doc_id=5&id=frm1&discharge_format=F]
+
+#### Get template content for the selected visit [GET]
+
+This endpoint gives template content of the selected visit and template.
+
++ Parameters
+  + discharge_doc_id (Dependent, int) - 5 (Doc id if the template is already saved. Pass it only, if it is not null.)
+  + discharge_format (Mandatory, String) - "F" (Type of the template.)
+  + id (Dependent, String) - "frm1" (id of a template. Pass only if discharge_doc_id is null)
+    
+
++ Response 200 (application/json)
+    {
+        "template_content": [
+            {
+                "caption": "Final Diagnosis",
+                "field_value": "Bilateral Contracted Kidney - CKD Stage V on MHD thrice a week\r\nRight IJVC Access\r\nHypertension\r\nAnemia of CKD",
+                "no_of_lines": 3,
+                "field_id": "fld21",
+                "username": "InstaAdmin",
+                "template_name": "DISCHARGE SUMMARY"
+            },
+            {
+                "field_value": "Patient evaluated and found to have advanced renal failure recently , has come for further evaluation and management.",
+                "caption": "Chief Complaints",
+                "no_of_lines": 3,
+                "field_id": "fld1",
+                "username": "InstaAdmin",
+                "template_name": "DISCHARGE SUMMARY",
+            }
+        ],
+        "followup_details": [
+            {
+                "followup_date": "02-08-2017",
+                "doctor_name": " MRS.PRIYANKA SINGH",
+                "followup_doctor_id": "DOC0115",
+                "followup_remarks": "jbjj",
+                "followup_id": "FUD0083"
+            },
+            {
+                "followup_remarks": "ninkjikj ",
+                "followup_doctor_id": "DOC0125",
+                "followup_date": "02-08-2017",
+                "doctor_name": "DR  Prasad Shah  ",
+                "followup_id": "FUD0084"
+            }
+        ]
+    } 
+    
+
+### Discharge Value List [/inpatients/dischargesummary/getDischargeValueItems.json]
+
+#### Get Insert Discharge Value List [GET]
+
+This endpoint gives all list of all possible discharge value.
+
++ Response 200 (application/json)
+    {
+        "service_detail" : "Services",
+        "doctor_note" : "Doctor Notes",
+        "medicine_detail" : "Medicines",
+        "operation_detail" : "Operations",
+        "ot_detail" : "OT Sections",
+        "dicharge_medication" : "Discharge Medications",
+        "inv_detail" : "Investigations",
+        "vital_detail" : "Vitals",
+        "past_inv_detail" : "Past Investigations(last 3 month)",
+        "ip_record" : "Ip Record Sections",
+        "diag_detail" : "Diagnoses",
+        "generic_form" : "Patient Generic Forms"
+    }
+
+
+### Get Selected Item Details [/inpatients/dischargesummary/getSelectedItemDetails.json]
+
+#### List of tokens for selected Items[GET]
+
+This endpoint is used to fetch all available tokens for the selected items.
+
++ Parameters
+  + selected_item (Mandatory, String) - "inv_detail" (Selected item detail id)
+  + patient_id (Mandatory, String) - "IP000754" (Selected visit id)
+  
+  
++ Response 200 (application/json)
+    {
+        "inv_detail": [
+            {
+                "prescribed_id": 42346,
+                "test_id": "DGC1141",
+                "test_name": "24 HR URINE UREA"
+            }
+            {
+                "prescribed_id": 42347,
+                "test_id": "DGC0288",
+                "test_name": "A F B SMEAR"
+            }
+            {
+                "prescribed_id": 42345,
+                "test_id": "DGC1142",
+                "test_name": "ADENOSINE DE AMINASE"
+            }
+        ]
+    }
+
+
+### Get Selected Item Details [/inpatients/dischargesummary/getSelectedItemDetails.json]
+
+#### List of tokens for selected Items[GET]
+
+This endpoint is used to fetch all available tokens for the selected items.
+
++ Parameters
+  + selected_item (Mandatory, String) - "inv_detail" (Selected item detail id)
+  + patient_id (Mandatory, String) - "IP000754" (Selected visit id)
+  
+  
++ Response 200 (application/json)
+    {
+        "inv_detail": [
+            {
+                "prescribed_id": 42346,
+                "test_id": "DGC1141",
+                "test_name": "24 HR URINE UREA"
+            }
+            {
+                "prescribed_id": 42347,
+                "test_id": "DGC0288",
+                "test_name": "A F B SMEAR"
+            }
+            {
+                "prescribed_id": 42345,
+                "test_id": "DGC1142",
+                "test_name": "ADENOSINE DE AMINASE"
+            }
+        ]
+    }
+
+
+### Process Selected Tokens [/inpatients/dischargesummary/processSelectedTokens.json]
+
+#### Process selected tokens with corresponding template [GET]
+
+This endpoint is used to process the selected tokens with the corresponding template.
+
++ Parameters
+  + itemKey (Mandatory, String) - "inv_detail" (Identification of selected item)
+  + itemValue (Mandatory, String) - "42345" (Id of selected tokens)
+  
+  
++ Response 200 (application/json)
+{
+    "token_html": "<!--  -->\n\n<!--  -->\n<!--  -->\n\t<h3>Test one</h3>\n<!--  -->\n<!--  -->\n\t\t<table>\n\t\t\t<tbody>\n\t\t\t\t<tr>\n\t\t\t\t\t<th>Result</th>\n\t\t\t\t\t<th>Units</th>\n\t\t\t\t\t<th>Severity</th>\n\t\t\t\t\t<th>Reference Range</th>\n\t\t\t\t</tr>\t\n\t\t\t\t<!--  -->\n\t\t\t\t\t<!--  -->\n\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t<td>r1</td>\n\t\t\t\t\t\t\t<td></td>\n\t\t\t\t\t\t\t<td>Y</td>\n\t\t\t\t\t\t\t<td></td>\t\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t<!--  -->\n\t\t\t\t<!--  -->\n\t\t\t\t\t<!--  -->\n\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t<td>r2</td>\n\t\t\t\t\t\t\t<td>kg</td>\n\t\t\t\t\t\t\t<td>##</td>\n\t\t\t\t\t\t\t<td></td>\t\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t<!--  -->\n\t\t\t\t<!--  -->\t\t\n\t\t\t</tbody>\n\t\t</table>\n\t\t\n<!-- <!--  -->\n\n<p> Key: *=Abnormal Low, **=Critical Low,***=Improbable Low,<br/> #=Abnormal High, ##=Critical High, ###=Improbable High</p>"
+}
+
+
+### Save And Signoff [/inpatients/dischargesummary/saveAndSignoff.json]
+
+#### Save or Save and Signoff [POST]
+
+This endpoint is used to save or save and signoff the contents of the discharge summary(HVF,Template and PDF).
+
++ Response 200 (application/json)
+{
+    "visit_details": {
+        "mr_no": "MR012836",
+        "patient_id": "IP000754",
+        "discharge_format": "T",
+        "format_id": "FORMAT0001",
+        "discharge_doc_id": 5,
+        "discharge_doctor_id": "DOC0006",
+        "discharge_date": "02-07-2015",
+        "discharge_time": "03:55"
+        "is_signoff": "Y"
+    },
+    "document_details": {
+        "richtext": [
+            {
+                "report_file": "<p>sabka malik ek hai</p>"
+                "pheader_template_id": ""
+            }
+        ],
+        "hvf": [
+            {
+                "field_id": "fld001"
+                "field_value": "ABCD"
+            },
+            {
+                "field_id": "fld004"
+                "field_value": "XYZ"
+            },
+            {
+                "field_id": "fld008"
+                "field_value": "Bang Bang"
+            }
+        ],
+        "followupdetails": [
+            {
+                "followup_id": "FUD0008"
+                "followup_status" : "newadded"
+                "followup_doctor_id": "DOC001"
+                "followup_date": "02-07-2015"
+                "followup_remarks": "Xyz"
+            },
+            {
+                "followup_id": "FUD0009"
+                "followup_status" : "deleted"
+                "followup_doctor_id": "DOC002"
+                "followup_date": "02-07-2014"
+                "followup_remarks": "something"
+            },
+            {
+                "followup_id": "FUD0008"
+                "followup_status" : "exists"
+                "followup_doctor_id": "DOC003"
+                "followup_date": "02-07-2017"
+                "followup_remarks": "Abc"
+            }
+        ]
+    }
+
+
+
+### Delete Discharge Summary [/inpatients/dischargesummary/deleteDischargeSummary.json]
+
+#### Delete Discharge Summary for a visit [POST]
+
+This endpoint is used to delete the existing Discharge Summary
+
++ Response 200 (application/json)
+{
+    "discharge_doc_details": {
+        "patient_id": "IP000754"
+        "discharge_doc_id": 5
+        "discharge_format": T
+    }
+}
+
+
+### Revert Finalized Discharge Summary [/inpatients/dischargesummary/revertFinalized.json]
+
+#### Revert Finalized Discharge Summary for a visit [POST]
+
+This endpoint is used to revert the finalized Discharge Summary
+
++ Response 200 (application/json)
+{
+    "discharge_doc_details": {
+        "patient_id": "IP000754"
+        "discharge_doc_id": 5
+    }
+}

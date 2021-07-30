@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+  <Appenders>
+    <Console name="console" target="SYSTEM_OUT">
+      <PatternLayout pattern="%-5p %c{1}: %enc{%m}{CRLF}%n"/>
+    </Console>
+    <RollingFile name="logfile" fileName="/var/log/insta/hmstestng.log" filePattern="/var/log/insta/hmstestng-%i.log">
+      <ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="DENY"/>
+      <PatternLayout>
+        <Pattern>%d{yyyy-MM-dd HH:mm:ss} [%X{username}@%X{schema}] %-5p %c{1}: %enc{%m}{CRLF}%n</Pattern>
+      </PatternLayout>
+      <Policies>
+        <SizeBasedTriggeringPolicy size="10 MB"/>
+      </Policies>
+      <DefaultRolloverStrategy max="5"/>
+    </RollingFile>
+  </Appenders>
+  <Loggers>
+    <Logger name="org.springframework" level="warn"></Logger>
+    <Logger name="org.apache.struts.util.PropertyMessageResources" level="error"></Logger>
+    <Logger name="com.insta.hms" level="info" additivity="false">
+      <AppenderRef ref="logfile"/>
+    </Logger>
+    <Logger name="com.bob.hms" level="info" additivity="false">
+      <AppenderRef ref="logfile"/>
+    </Logger>
+    <Logger name="com.insta.hms.common.Logger" level="info"></Logger>
+    <Logger name="com.insta.hms.batchjob.EmailReportJob" level="info"></Logger>
+    <Logger name="com.insta.hms.batchjob" level="debug"></Logger>
+    <Logger name="com.insta.hms.instaforms.AbstractInstaForms" level="debug"></Logger>
+    <Logger name="com.insta.hms.common.GenericControllerAdvice" level="warn"></Logger>
+    <Logger name="testng.com.insta.hms" level="info"></Logger>
+    <Root level="info">
+      <AppenderRef ref="console"/>
+      <AppenderRef ref="logfile"/>
+    </Root>
+  </Loggers>
+</Configuration>

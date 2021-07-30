@@ -1,0 +1,511 @@
+#!/bin/bash
+
+#
+# Functions for use in all scripts
+#
+#
+# returns the full path name after resolving links for the given directory
+#
+function get_full_path() {
+	local dir=$1
+
+	local link=`readlink $dir`
+	[ ! -z $link ] && dir=$link
+
+	local fulldir=`cd $dir; pwd`
+	echo $fulldir
+}
+
+#
+# Set some global variables (these get set when this file is sourced, can be overridden)
+# These variables are also used by some of the functions. Assumed convention is that the
+# approot directory name is instaDDD where DDD is the db to which it connects.
+#
+BINPATH=$(get_full_path `dirname $0`)
+
+HOST=`hostname`
+HOST=${HOST#instahms-}
+
+HUBVPN=10.11.0.1
+nc -w 10 $HUBVPN 22 &> /dev/null
+if [[ $? -ne 0 ]] ; then
+	echo "Failed to ping hub. Setting HUBVPN to Dev2."
+	HUBVPN=Dev2
+fi
+
+# set java home.
+function set_java_home() {
+	if [[ $# -ne 1 ]]
+	then
+		REQUIRED_VERSION="8"
+	else
+		REQUIRED_VERSION=$1
+	fi
+
+	OS=`uname -s`
+	OP=""
+	if [[ $OS == 'Darwin' ]]
+	then 
+		OP=$(/usr/libexec/java_home -v $REQUIRED_VERSION -f)
+	else
+		JAVAC_INSTALLS=`sudo update-alternatives --list javac`
+		for JAVAC in $JAVAC_INSTALLS; do
+			THIS_JAVA=${JAVAC/'javac'/'java'}
+			THIS_VERSION=$($THIS_JAVA -version 2>&1 | grep -i version | cut -d'"' -f2 | sed 's/^1\.//g' | sed 's/\_/\./g' | cut -d'.' -f1)
+			THIS_FLAVOUR=$($THIS_JAVA -version 2>&1 | grep -i "runtime environment" | cut -d' ' -f1)
+			if [[ ${THIS_VERSION} == $REQUIRED_VERSION && $THIS_FLAVOUR == "OpenJDK" ]]
+			then
+				OP=${JAVAC/'/bin/javac'/''}
+			fi
+		done
+	fi
+	if [[ $OP == "" ]]
+	then
+		echo "OpenJDK $REQUIRED_VERSION not detected on this machine"
+		export JAVA_HOME=""
+	else
+		echo "Detected OpenJDK $REQUIRED_VERSION at $OP"
+		export JAVA_HOME=$OP
+	fi
+}
+
+set_java_home 8
+
+# Get the per-server preferences file
+# Get the per-app preferences and override server preferences
+[ -f /etc/hms/options ] && source /etc/hms/options
+
+if [ -z "$APPHOME" ] ; then
+	if [[ ${BINPATH%/WEB-INF*} =~ ^.*\/insta.*$ ]] ; then
+		APPHOME=$(sed -r 's/^(.*)\/insta.*$/\1/' <<< ${BINPATH%/*/WEB-INF*})
+	else
+		APPHOME=/root/webapps
+	fi	
+fi
+
+if [ -z "$APPROOT" ] ; then
+	if [[ ${BINPATH%/WEB-INF*} =~ ^.*\/insta.*$ ]] ; then
+		APPROOT=${BINPATH%/WEB-INF*}
+	else
+		if [ -z "$APP" ] ; then
+			APPROOT=${APPHOME}/instahms
+		else
+			APPROOT=${APPHOME}/insta${APP}
+		fi
+	fi	
+fi
+
+INSTPATH=$APPROOT/WEB-INF/install
+SQLPATH=$INSTPATH/sql
+
+DB=$(sed 's/^.*insta//g' <<< $APPROOT)
+APP=$DB
+QUARTZDB=${APP}_q
+
+[ -f /etc/hms/options.$APP ] && source /etc/hms/options.$APP
+
+LOGDIR=/var/log/insta/${APP}
+LOGFILE=${LOGDIR}/scripts.log		# please override in your script
+
+if [ -z "$DBUSER" ] ; then 
+	export DBUSER=postgres
+fi
+
+export PGDATABASE=$DB
+export PGUSER=$DBUSER
+export PGHOST=$DBHOST
+# export PGHOSTADDR=$DBHOST
+export PGPASSWORD=$DBPASSWORD
+export PGREADHOST=$READ_DBHOST
+export PGPORT=$DBPORT
+
+if [ -z "$TOMCAT_HOME" ] ; then
+	TOMCAT_HOME="/usr/local/tomcat-9"
+fi
+
+if [ -z "$HMS_DIST_HOME" ] ; then
+	HMS_DIST_HOME="/root"
+fi
+
+if [ -z "$HMS_BIN_DIR" ] ; then
+	HMS_BIN_DIR="/root/bin"
+fi
+
+if [ -z "$HMS_WORK_HOME" ] ; then
+	HMS_WORK_HOME="/root"
+fi
+
+#
+# Get the postgres version from the server
+#
+function get_db_version() {
+
+# Query the server for the version number
+
+	version=$(echo "show server_version;" | psql -q -t --no-psqlrc | awk '{print $1}')
+
+# if we did not get the version from the server, for any reason, we will 
+# fallback on the local installation folder
+
+	if [ -z "$version" -o "$version" = " " ]; then
+		if [ -e /usr/lib/postgresql/9.3 ] ; then
+			version=9.3
+		elif [ -e /usr/lib/postgresql/9.1 ] ; then
+			version=9.1
+		elif [ -e /usr/lib/postgresql/8.4 ] ; then
+			version=8.4
+		else
+			version=8.3
+		fi
+	fi
+		 
+# Remove the minor release number if the version number was 
+# obtained from the server
+
+	version=$(echo $version | cut -d. -f1,2)
+	
+	echo $version
+}
+
+# Get the postgres version from the server. This should always
+# be done after the PG* environment variables are exported, since 
+# it connects to postgres to get the version
+#
+
+PG_VER=`get_db_version`
+
+PG_DIR=/var/lib/postgresql/$PG_VER
+
+if [ -e /etc/init.d/postgresql ] ; then
+	PG_SCRIPT="sudo /etc/init.d/postgresql"
+else
+	PG_SCRIPT="sudo /etc/init.d/postgresql-${PG_VER}"
+fi
+
+#
+# Log the given message(s), with a timestamp prefix
+# Expects the global variable LOGFILE to have been set.
+#
+function do_log() {
+	dt=`date +"%F %T"`
+	echo $dt: "$*" >> $LOGFILE
+}
+
+function date_echo() {
+	dt=`date +"%F %T"`
+	echo $dt: "$*"
+}
+
+#
+# Get currently installed version: echoes the version of software currently
+# active in the given HMS root directory.
+#
+function get_current_version() {
+	get_version_of $APPROOT
+}
+
+function get_current_version_numeric() {
+	local curver=`get_current_version`
+	local curvern=`get_numeric_version $curver`
+	echo $curvern
+}
+
+function get_current_version_major() {
+	local curvern=`get_current_version_numeric`
+	echo $((curvern/100))
+}
+
+#
+# Get version of a build/installation given a base directory
+#
+function get_version_of() {
+	local PROPSFILE=$1/WEB-INF/classes/java/resources/application.properties
+	if [ -f $PROPSFILE ] ; then
+		grep 'insta.software.version' $PROPSFILE | awk '{print $3}'
+		return 0
+	fi
+	echo ""
+	return 1
+}
+
+#
+# Gets the numeric version from the string version. Numeric
+# version numbers are good for comparing using -gt or -lt. Note that the
+# build number is not used, it is expected that all released versions will
+# have a unique version number disregarding the build number.
+#
+function get_numeric_version() {
+	local ver=$1
+	ver=${ver%-*}
+	local parts=(${ver//./ })
+	echo $(( (${parts[0]}*100+${parts[1]})*100+${parts[2]} ))
+}
+
+#
+# Determines if we are a "local" server
+# testsvr, staging and apps are not local servers. Only all hospital local servers
+# are included.
+#
+function is_local_server() {
+	local host=`hostname`
+	[[ $host == instahms-* ]] && return 0
+	[ $host == apps.instahealthsolutions.com ] && return 0
+	return 1
+}
+
+#
+# Determines if we are a "backup" server to an existing local server.
+# convention is that it ends with the letters "bkp", eg, instahms-scs is the main server
+# and instahms-scsbkp is the backup server.
+#
+function is_backup_server() {
+	local host=`hostname`
+	[[ $host == instahms-*bkp ]] && return 0 || return 1
+}
+
+#
+# Determines if we are the "default" app. Useful for running stuff that are not app
+# specific: we restrict these to run only if the default app's script is being run.
+#
+function is_default_app() {
+	[ "$APP" == "hms" ] && return 0 || return 1
+}
+
+#
+# Backup the current db to the given file name: optionally doing a partial dump and/or
+# using no compression to speed up the backup.
+#
+function backup_db() {
+	local bkp_name=$1
+	local partial=$2
+	local nocompress=$3
+	local schema_name=$4
+
+	options=
+	if [ "$partial" = 'partial' ] ; then
+		 if (( $(echo "$PG_VER 9.3" | awk '{print ($1 >= $2)}') )); then			
+				options="$options --exclude-table-data *.patient_documents --exclude-table-data *.test_report_files"
+                options="$options --exclude-table-data *.*audit_log"
+                options="$options --exclude-table-data *.message_log_attachments"
+			else
+				options="$options --exclude-table *.patient_documents --exclude-table *.test_report_files"
+				options="$options --exclude-table *.*audit_log"
+                options="$options --exclude-table *.message_log_attachments"
+		fi
+	fi
+
+	if [ "$nocompress" = 'nocompress' ] ; then
+		options="$options -Z0"
+	fi
+
+	pg_dump -Fc $options -n $schema_name -f $bkp_name
+}
+
+#
+# Get all the schemas in the given database
+#
+function get_all_schemas() {
+	if [ "$HA_IS_STANDBY" != 'Y' ] ; then
+		echo "\\t\\dn" | psql -q --no-psqlrc | awk '{print $1}' | \
+			grep -v ^pg_ | grep -v information_schema | grep -v ^public |  grep -v extensions | grep -v _temp$
+	fi
+}
+
+#
+# Get all the live schemas in the given database
+# Updated to remove _o,_n,_t and  _pr schemas
+function get_live_schemas() {
+	if [ "$HA_IS_STANDBY" != 'Y' ] ; then
+		echo "\\t\\dn" | psql -q --no-psqlrc | awk '{print $1}' | \
+			grep -v ^pg_ | grep -v information_schema | grep -v extensions | grep -v ^public | grep -v _t$ | grep -v _o$ | grep -v _n$ | grep -v _pr$
+	fi
+}
+
+#
+# Run the given script FILE in all schemas
+# Usage: run_in_all_schemas <filename>
+#
+function run_in_all_schemas() {
+	local script=$1
+	local message=$2
+	[ -z $message ] && message="Running $script on"
+
+	for schema in `get_all_schemas` ; do
+		echo "$message $schema"
+		run_in_schema $schema $script
+		RETVAL=$?
+		[ $RETVAL -ne 0 ] && break
+	done
+	return $RETVAL
+}
+#
+# Run the given script FILE in live schemas
+# Usage: run_in_live_schemas <filename>
+#
+function run_in_live_schemas() {
+	local script=$1
+	local message=$2
+	[ -z $message ] && message="Running $script on"
+
+	for schema in `get_live_schemas` ; do
+		echo "$message $schema"
+		run_in_schema $schema $script
+		RETVAL=$?
+		[ $RETVAL -ne 0 ] && break
+	done
+	return $RETVAL
+}
+
+#
+# Runs a script FILE in the given schema. To run a statment(s), use run_stmt_in_schema
+#
+function run_in_schema() {
+	local schema=$1
+	local script=$2
+	psql --no-psqlrc --no-align --variable SQLPATH=$SQLPATH <<EOF
+		set search_path to $schema;
+		-- \set ON_ERROR_STOP t
+		\i $script
+EOF
+}
+
+#
+# Run the given statment in all schemas
+# Usage: run_stmt_in_all_schemas "<sql statment>"
+#
+function run_stmt_in_all_schemas() {
+	local stmt="$1"
+	local message="$2"
+	[ -z "$message" ] && message="Running $script on"
+
+	for schema in `get_all_schemas` ; do
+		echo "$message $schema"
+		run_stmt_in_schema $schema "$stmt"
+		RETVAL=$?
+		[ $RETVAL -ne 0 ] && break
+	done
+	return $RETVAL
+}
+
+#
+# Run the given statment in live schemas
+# Usage: run_stmt_in_live_schemas "<sql statment>"
+#
+function run_stmt_in_live_schemas() {
+	local stmt="$1"
+	local message="$2"
+	[ -z "$message" ] && message="Running $stmt on"
+	for schema in `get_live_schemas` ; do
+		echo "$message $schema"
+		run_stmt_in_schema $schema "$stmt"
+		RETVAL=$?
+		[ $RETVAL -ne 0 ] && break
+	done
+	return $RETVAL
+}
+
+function run_stmt_in_schema() {
+	local schema=$1
+	local stmt="$2"
+	echo "set search_path to $schema; $stmt; " | psql
+}
+
+#
+# return the schemas which satisfy the given condition
+# Eg:
+#  check_for_schemas '(select count(*) from medical_fileupload) > 100000'
+#
+function check_for_schemas() {
+	local STMT="$1"
+	for SCHEMA in `get_all_schemas` ; do
+		psql -q << EOF
+		\t
+		set search_path to $SCHEMA;
+		select '$SCHEMA' WHERE $STMT;
+EOF
+	done
+}
+
+#
+# Function to refresh the messages on screen in all schemas: this clears the
+# AbstractCachingDAO cache # that is maintained for system messages, so that the messages
+# will be refreshed on next request.
+# (We will be automatically redirected to https if it is enabled, but we need the
+# --no-check-certificate at least for https, otherwise it will fail)
+#
+function refresh_messages() {
+	for schema in `get_all_schemas` ; do
+		wget --no-check-certificate -q -O /dev/null \
+			"http://localhost/insta${APP}/signal.do?method=refreshSystemMessages&schema=$schema"
+	done;
+}
+
+# getting the major and minor parts of the version as a string ie 10.1
+
+function get_string_maj_min() {
+	local ver=$1
+	ver=${ver%-*}
+	local parts=(${ver//./ })
+	if [[ ${#parts[1]} -eq 1 ]]
+	then
+		parts[1]="0${parts[1]}"
+	fi
+	echo "${parts[0]}.${parts[1]}"
+}
+
+function get_string_maj_min_nopadding() {
+	local ver=$1
+	ver=${ver%-*}
+	local parts=(${ver//./ })
+	if [[ ${#parts[1]} -eq 1 ]]
+	then
+		parts[1]="${parts[1]}"
+	fi
+	echo "${parts[0]}.${parts[1]}"
+}
+
+# Finds if the value is the list
+function is_value_in_list(){
+  local list="$1"
+  local value="$2"
+  local found=0
+  for list_value in $list; do
+     if [[ $list_value == $value ]] ; then
+       found=1
+       break
+     fi
+  done
+  echo $found 
+}
+
+function run_pre_upgrade_checks() {
+	local failed_schemas=""
+	local schema_list=""
+	local failed=0
+	local schemas=""
+	local qry=""
+        for f in $BINPATH/pre_upgrade_checks*.sql
+        do
+		qry=`cat $f`
+		failed_schemas=`check_for_schemas "$qry"`
+		for schema in $failed_schemas ; do
+			schema_list="$schema_list$schema "
+		done
+		schemas=$(echo $schema_list | xargs)
+		if [ ${#schemas} -ne 0 ] ; then
+			failed=1
+			do_log "Following schemas failed pre-upgrade checks in $f : $schemas"
+		fi
+	done
+	return $failed
+}
+
+function get_pg_numeric_version() {
+	local ver=$1
+	ver=${ver%-*}
+	local parts=(${ver//./ })
+	echo $(( (${parts[0]}*100+${parts[1]})*100 ))
+}
+
+PG_VER_NUM=`get_pg_numeric_version $PG_VER`
+

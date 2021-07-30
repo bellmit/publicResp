@@ -1,0 +1,1080 @@
+{
+    "title": "Day Book Report",
+    "defaultOrder": "username",
+    "reportGroup": "Billing Reports",
+    "dateFields": [
+        "date"
+    ],
+    "description": "This report gives the details of all hospital collections within the specified date range.",
+    "defaultShowFields": [
+        "date",
+        "receipt_no",
+        "main_type",
+        "bill_no",
+        "patname",
+        "counter_no",
+        "payment_mode",
+        "card_type",
+        "amt"
+    ],
+    "queryUnits": [
+        {
+            "mainTableName": "receipts",
+            "mainTableAlias": "r",
+            "joinTables": [
+                {
+                    "name": "bill_receipts",
+                    "alias": "br",
+                    "type": "LEFT",
+                    "expression": "ON (r.receipt_id = br.receipt_no AND NOT r.is_deposit)",
+                    "dependsOn": "br"
+                },
+                {
+                    "name": "bill",
+                    "alias": "b",
+                    "type": "LEFT",
+                    "expression": "ON (b.bill_no = br.bill_no)",
+                    "dependsOn": "br"
+                },
+                {
+                    "name": "patient_registration",
+                    "alias": "pr",
+                    "type": "LEFT",
+                    "expression": "ON (pr.patient_id = b.visit_id)",
+                    "dependsOn": "b"
+                },
+                {
+                    "name": "patient_category_master",
+                    "alias": "pcm",
+                    "type": "LEFT",
+                    "expression": "ON (pcm.category_id = pr.patient_category_id)",
+                    "dependsOn": "pr"
+                },
+                {
+                    "name": "patient_details",
+                    "alias": "pd",
+                    "type": "LEFT",
+                    "expression": "ON (r.mr_no = pd.mr_no)",
+                    "dependsOn": "r"
+                },
+                {
+                    "name": "salutation_master",
+                    "alias": "sm",
+                    "type": "LEFT",
+                    "expression": "ON (sm.salutation_id = pd.salutation)",
+                    "dependsOn": "pd"
+                },
+                {
+                    "name": "store_retail_customers",
+                    "alias": "prc",
+                    "type": "LEFT",
+                    "expression": "ON (prc.customer_id = b.visit_id)",
+                    "dependsOn": "b"
+                },
+                {
+                    "name": "incoming_sample_registration",
+                    "alias": "isr",
+                    "type": "LEFT",
+                    "expression": "ON (isr.incoming_visit_id = b.visit_id)",
+                    "dependsOn": "b"
+                },
+                {
+                    "name": "counters",
+                    "alias": "c",
+                    "type": "JOIN",
+                    "expression": "ON (c.counter_id = r.counter)",
+                    "dependsOn": "r"
+                },
+                {
+                    "name": "payment_mode_master",
+                    "alias": "pm",
+                    "type": "JOIN",
+                    "expression": "ON (r.payment_mode_id = pm.mode_id AND r.payment_mode_id<>-9 )",
+                    "dependsOn": "r"
+                },
+                {
+                    "name": "hospital_center_master",
+                    "alias": "hcm",
+                    "type": "JOIN",
+                    "expression": "ON (c.center_id=hcm.center_id)",
+                    "dependsOn": "c"
+                },
+                {
+                    "name": "card_type_master",
+                    "alias": "ctm",
+                    "type": "LEFT",
+                    "expression": "ON (r.card_type_id = ctm.card_type_id)",
+                    "dependsOn": "r"
+                },
+                {
+                    "name": "foreign_currency",
+                    "alias": "fc",
+                    "type": "LEFT",
+                    "expression": "ON (fc.currency_id = r.currency_id)",
+                    "dependsOn": "r"
+                },
+                {
+                    "name": "visit_type_names",
+                    "alias": "vtn",
+                    "expression": "ON (b.visit_type = vtn.visit_type)",
+                    "dependsOn": "b",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "op_type_names",
+                    "alias": "otn",
+                    "expression": "ON (otn.op_type = pr.op_type)",
+                    "dependsOn": "pr",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "edc_machine_master",
+                    "alias": "edm",
+                    "expression": "ON (edm.imei = r.edc_imei)",
+                    "dependsOn": "r",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "payment_transactions",
+                    "alias": "pt",
+                    "type": "LEFT",
+                    "expression": "ON(pt.payment_transaction_id = r.payment_transaction_id)",
+                    "dependsOn": "r"
+                }
+            ],
+            "fieldExpressions": {
+                "main_type": {
+                    "table": "r,b,br",
+                    "expressionLines": [
+                        " CASE ",
+                        "WHEN receipt_type='R' AND r.tpa_id IS NULL AND NOT r.is_deposit ",
+                        "  THEN  ",
+                        " CASE WHEN bill_type='C' ",
+                        " THEN CASE WHEN NOT is_settlement THEN 'Advance' ELSE 'Settlement' END ",
+                        " ELSE 'Bill Now' END ",
+                        " WHEN receipt_type = 'R' AND r.tpa_id IS NOT NULL THEN 'Sponsor Receipts' ",
+                        " WHEN r.is_deposit THEN ",
+                        " CASE WHEN receipt_type='R' THEN 'Deposit Receipt' ELSE 'Deposit Refund' END ",
+                        " WHEN receipt_type = 'F' THEN 'Refund' ",
+                        " END "
+                    ]
+                },
+                "payment_type": {
+                    "table": "r",
+                    "expression": "CASE WHEN NOT is_deposit THEN CASE WHEN r.receipt_type='R' AND r.tpa_id IS NOT NULL THEN 'S' ELSE r.receipt_type END ELSE '' END "
+                },
+                "sub_type": {
+                    "table": "br",
+                    "expression": "CASE WHEN r.is_settlement THEN 'S' ELSE 'A' END "
+                },
+                "payment_mode_id": {
+                    "table": "r"
+                },
+                "card_type_id": {
+                    "table": "r"
+                },
+                "payment_mode": {
+                    "table": "pm"
+                },
+                "ext_payment_mode": {
+                    "table": "pt",
+                    "expression": "pt.payment_mode"
+                    
+                },
+                "transaction_id" : {
+                    "table" : "pt"
+                },
+                "card_type": {
+                    "table": "ctm"
+                },
+                "bank_name": {
+                    "table": "r"
+                },
+                "reference_no": {
+                    "table": "r"
+                },
+                "receipt_no": {
+                    "table": "r",
+                    "expression": "r.receipt_id"
+                },
+                "bill_no": {
+                    "table": "b",
+                    "expression": "CASE WHEN NOT is_deposit THEN b.bill_no ELSE '' END"
+                },
+                "bill_type": {
+                    "table": "b",
+                    "expression": "CASE WHEN NOT is_deposit THEN b.bill_type ELSE '' END"
+                },
+                "visittype": {
+                    "table": "b",
+                    "expression": "CASE WHEN NOT is_deposit THEN b.visit_type ELSE '' END"
+                },
+                "mr_no": {
+                    "table": "pd"
+                },
+                "patient_id": {
+                    "table": "pr"
+                },
+                "op_type": {
+                    "table": "pr"
+                },
+                "tds_amt": {
+                    "table": "r",
+                    "expression": "r.tds_amount",
+                    "alias": "tds_amt"
+                },
+                "patient_title": {
+                    "table": "sm",
+                    "expressionLines": [
+                        "sm.salutation"
+                    ]
+                },
+                "patname_wo_title": {
+                    "table": "pd,prc,isr",
+                    "expressionLines": [
+                        "COALESCE ( ",
+                        "get_patient_full_name(null, pd.patient_name, pd.middle_name, pd.last_name), ",
+                        "prc.customer_name, isr.patient_name) "
+                    ]
+                },
+                "patname": {
+                    "table": "pd,prc,sm,isr",
+                    "expressionLines": [
+                        "COALESCE ( ",
+                        "get_patient_full_name(sm.salutation, pd.patient_name, pd.middle_name, pd.last_name), ",
+                        "prc.customer_name, isr.patient_name) "
+                    ]
+                },
+                "username": {
+                    "table": "r",
+                    "expression": "r.created_by"
+                },
+                "counter": {
+                    "table": "r"
+                },
+                "counter_no": {
+                    "table": "c"
+                },
+                "counter_type": {
+                    "table": "c",
+                    "expression": "CASE WHEN c.counter_type='B' THEN 'Billing' ELSE 'Pharmacy' END "
+                },
+                "collection_counter": {
+                    "table": "c",
+                    "expression": "CASE WHEN c.collection_counter='Y' THEN 'Yes' ELSE 'No' END "
+                },
+                "amt": {
+                    "table": "r",
+                    "expression": "r.amount"
+                },
+                "date": {
+                    "table": "r",
+                    "expression": "r.display_date::date"
+                },
+                "receipt_datetime": {
+                    "table": "r",
+                    "expression": "r.display_date"
+                },
+                "bank_batch_no": {
+                    "table": "r"
+                },
+                "card_auth_code": {
+                    "table": "r"
+                },
+                "card_holder_name": {
+                    "table": "r"
+                },
+                "currency_id": {
+                    "table": "r"
+                },
+                "exchange_rate": {
+                    "table": "r"
+                },
+                "exchange_date": {
+                    "table": "r"
+                },
+                "currency_amt": {
+                    "table": "r",
+                    "expression": "COALESCE(r.currency_amt, 0)"
+                },
+                "card_exp_date": {
+                    "table": "r"
+                },
+                "card_number": {
+                    "table": "r"
+                },
+                "currency": {
+                    "table": "fc"
+                },
+                "center_name": {
+                    "table": "hcm"
+                },
+                "sponsor_type": {
+                    "table": "br",
+                    "expressionLines": [
+                        "CASE ",
+                        " WHEN br.sponsor_index = 'P' THEN 'Primary' ",
+                        " WHEN br.sponsor_index = 'S' THEN 'Secondary' END "
+                    ]
+                },
+                "patient_category": {
+                    "table": "pcm",
+                    "expression": "pcm.category_name"
+                },
+                "visit_type_name": {
+                    "table": "vtn"
+                },
+                "op_type_name": {
+                    "table": "otn"
+                },
+                "open_date": {
+                    "table": "b",
+                    "expression": "CASE WHEN NOT is_deposit THEN date(open_date) END"
+                },
+                "display_name": {
+                    "table": "edm",
+                    "expression": "edm.display_name"
+                },
+                "name_local_language": {
+                     "table": "pd",
+                     "expression": "pd.name_local_language"
+                }
+            }
+        },
+        {
+            "mainTableName": "payments",
+            "mainTableAlias": "p",
+            "joinTables": [
+                {
+                    "name": "counters",
+                    "alias": "c",
+                    "type": "JOIN",
+                    "expression": "ON (c.counter_id = p.counter)",
+                    "dependsOn": "p"
+                },
+                {
+                    "name": "payment_mode_master",
+                    "alias": "pm",
+                    "type": "JOIN",
+                    "expression": "ON (p.payment_mode_id = pm.mode_id)",
+                    "dependsOn": "p"
+                },
+                {
+                    "name": "hospital_center_master",
+                    "alias": "hcm",
+                    "type": "JOIN",
+                    "expression": "ON (c.center_id=hcm.center_id)",
+                    "dependsOn": "c"
+                },
+                {
+                    "name": "card_type_master",
+                    "alias": "ctm",
+                    "type": "LEFT",
+                    "expression": "ON (p.card_type_id = ctm.card_type_id)",
+                    "dependsOn": "p"
+                },
+                {
+                    "name": "payment_transactions",
+                    "alias": "pt",
+                    "type": "LEFT",
+                    "expression": "ON (p.payment_mode_id = pt.mode_id)",
+                    "dependsOn": "p"
+                }
+            ],
+            "fieldExpressions": {
+                "main_type": {
+                    "table": "p",
+                    "expressionLines": [
+                        "CASE ",
+                        " WHEN payment_type='D' THEN 'Doctor Payments' ",
+                        " WHEN payment_type='R' THEN 'Referral Payments' ",
+                        " WHEN payment_type='F' THEN 'Referral Payments' ",
+                        " WHEN payment_type='P' THEN 'Presc. Dr. Payments' ",
+                        " WHEN payment_type='O' THEN 'Outhouse Payments'  ",
+                        " WHEN payment_type='S' THEN 'Supplier Payments' ",
+                        " ELSE 'Misc. Payments'  END "
+                    ]
+                },
+                "payment_type": {
+                    "expression": "''::text"
+                },
+                "sub_type": {
+                    "table": "p",
+                    "expression": "p.payment_type"
+                },
+                "payment_mode_id": {
+                    "table": "p"
+                },
+                "card_type_id": {
+                    "table": "p"
+                },
+                "payment_mode": {
+                    "table": "pm"
+                },
+                "ext_payment_mode": {
+                    "table": "pt",
+                    "expression": "pt.payment_mode"
+                },
+                "transaction_id" : {
+                    "table": "pt"
+                },
+                "card_type": {
+                    "table": "ctm"
+                },
+                "bank_name": {
+                    "table": "p",
+                    "expression": "p.bank"
+                },
+                "reference_no": {
+                    "table": "p"
+                },
+                "receipt_no": {
+                    "table": "p",
+                    "expression": "p.voucher_no"
+                },
+                "bill_no": {
+                    "expression": "''::text"
+                },
+                "card_exp_date": {
+                    "expression": "NULL"
+                },
+                "bill_type": {
+                    "expression": "''::text"
+                },
+                "visittype": {
+                    "expression": "''::text"
+                },
+                "mr_no": {
+                    "expression": "''::text"
+                },
+                "patient_id": {
+                    "expression": "''::text"
+                },
+                "op_type": {
+                    "expression": "''::text"
+                },
+                "patient_title": {
+                    "expression": "''::text"
+                },
+                "patname_wo_title": {
+                    "expression": "''::text"
+                },
+                "patname": {
+                    "table": "p",
+                    "expressionLines": [
+                        "CASE  ",
+                        " WHEN payment_type='D' THEN (SELECT doctor_name FROM doctors WHERE  doctor_id=payee_name) ",
+                        " WHEN payment_type='R' THEN (SELECT doctor_name FROM  doctors WHERE doctor_id=payee_name) ",
+                        " WHEN payment_type='F' THEN (SELECT referal_name FROM  referral where referal_no=payee_name) ",
+                        " WHEN payment_type='O' THEN (SELECT oh_name FROM  outhouse_master where oh_id=payee_name) ",
+                        " WHEN payment_type='P' THEN (SELECT doctor_name FROM doctors WHERE  doctor_id=payee_name) ",
+                        " WHEN payment_type='S' THEN (SELECT supplier_name FROM supplier_master WHERE  supplier_code=payee_name) ",
+                        " ELSE payee_name END "
+                    ]
+                },
+                "username": {
+                    "table": "p"
+                },
+                "counter": {
+                    "table": "p"
+                },
+                "counter_no": {
+                    "table": "c"
+                },
+                "counter_type": {
+                    "table": "c",
+                    "expression": "CASE WHEN c.counter_type='B' THEN 'Billing' ELSE 'Pharmacy' END "
+                },
+                "collection_counter": {
+                    "table": "c",
+                    "expression": "CASE WHEN c.collection_counter='Y' THEN 'Yes' ELSE 'No' END "
+                },
+                "amt": {
+                    "table": "p",
+                    "expression": "(0-p.amount)"
+                },
+                "tds_amt": {
+                    "expression": "0.00::numeric"
+                },
+                "date": {
+                    "table": "p",
+                    "expression": "p.date::date"
+                },
+                "receipt_datetime": {
+                    "table": "p",
+                    "expression": "p.date"
+                },
+                "bank_batch_no": {
+                    "expression": "NULL::text"
+                },
+                "card_auth_code": {
+                    "expression": "NULL::text"
+                },
+                "card_holder_name": {
+                    "expression": "NULL::text"
+                },
+                "currency_id": {
+                    "expression": "NULL::text"
+                },
+                "exchange_rate": {
+                    "expression": "NULL"
+                },
+                "exchange_date": {
+                    "expression": "NULL"
+                },
+                "currency_amt": {
+                    "expression": "0.00::numeric"
+                },
+                "card_expdate": {
+                    "expression": "NULL"
+                },
+                "card_number": {
+                    "expression": "NULL::text"
+                },
+                "currency": {
+                    "expression": "NULL::text"
+                },
+                "center_name": {
+                    "table": "hcm",
+                    "expression": "hcm.center_name"
+                },
+                "sponsor_type": {
+                    "expression": "NULL::text"
+                },
+                "patient_category": {
+                    "expression": "NULL::text"
+                },
+                "visit_type_name": {
+                    "expression": "NULL::text"
+                },
+                "op_type_name": {
+                    "expression": "NULL::text"
+                },
+                "open_date": {
+                    "expression": "NULL::date"
+                },
+                "display_name": {
+                    "expression": "NULL::text"
+                },
+               "name_local_language": {
+                    "expression": "NULL::text"
+               }
+            }
+        },
+        {
+            "mainTableName": "insurance_claim_receipt",
+            "mainTableAlias": "icr",
+            "joinTables": [
+                {
+                    "name": "tpa_master",
+                    "alias": "tp",
+                    "type": "LEFT",
+                    "expression": "ON (tp.tpa_id = icr.tpa_id)",
+                    "dependsOn": "icr"
+                },
+                {
+                    "name": "insurance_company_master",
+                    "alias": "ic",
+                    "type": "LEFT",
+                    "expression": "ON (ic.insurance_co_id = icr.insurance_co_id)",
+                    "dependsOn": "icr"
+                },
+                {
+                    "name": "counters",
+                    "alias": "c",
+                    "type": "JOIN",
+                    "expression": "ON (c.counter_id = icr.counter)",
+                    "dependsOn": "icr"
+                },
+                {
+                    "name": "payment_mode_master",
+                    "alias": "pm",
+                    "type": "JOIN",
+                    "expression": "ON (icr.payment_mode_id = pm.mode_id)",
+                    "dependsOn": "icr"
+                },
+                {
+                    "name": "hospital_center_master",
+                    "alias": "hcm",
+                    "type": "JOIN",
+                    "expression": "ON (c.center_id=hcm.center_id)",
+                    "dependsOn": "c"
+                },
+                {
+                    "name": "card_type_master",
+                    "alias": "ctm",
+                    "type": "LEFT",
+                    "expression": "ON (icr.card_type_id = ctm.card_type_id)",
+                    "dependsOn": "icr"
+                },
+                {
+                    "name": "foreign_currency",
+                    "alias": "fc",
+                    "type": "LEFT",
+                    "expression": "ON (fc.currency_id = icr.currency_id)",
+                    "dependsOn": "icr"
+                },
+                {
+                    "name": "payment_transactions",
+                    "alias": "pt",
+                    "type": "LEFT",
+                    "expression": "ON (icr.payment_mode_id = pt.mode_id)",
+                    "dependsOn": "icr"
+                }
+            ],
+            "fieldExpressions": {
+                "main_type": {
+                    "expression": "'Consolidated Claim Receipts'::text"
+                },
+                "payment_type": {
+                    "expression": "'S'::text"
+                },
+                "sub_type": {
+                    "expression": "'Consolidated Claim Receipts'::text"
+                },
+                "payment_mode_id": {
+                    "table": "icr"
+                },
+                "card_type_id": {
+                    "table": "icr"
+                },
+                "payment_mode": {
+                    "table": "pm"
+                },
+                "ext_payment_mode": {
+                    "table": "pt",
+                    "expression": "pt.payment_mode"                
+                },
+                "transaction_id" : {
+                    "table": "pt"
+                },
+                "card_type": {
+                    "table": "ctm"
+                },
+                "bank_name": {
+                    "table": "icr"
+                },
+                "reference_no": {
+                    "table": "icr"
+                },
+                "receipt_no": {
+                    "table": "icr"
+                },
+                "bill_no": {
+                    "expression": "''::text"
+                },
+                "card_exp_date": {
+                    "expression": "NULL"
+                },
+                "bill_type": {
+                    "expression": "NULL::text"
+                },
+                "visittype": {
+                    "expression": "''::text"
+                },
+                "mr_no": {
+                    "expression": "''::text"
+                },
+                "patient_id": {
+                    "expression": "''::text"
+                },
+                "op_type": {
+                    "expression": "''::text"
+                },
+                "patient_title": {
+                    "expression": "''::text"
+                },
+                "patname_wo_title": {
+                    "expression": "''::text"
+                },
+                "patname": {
+                    "table": "tp,ic",
+                    "expression": " tpa_name||','||insurance_co_name "
+                },
+                "username": {
+                    "table": "icr"
+                },
+                "counter": {
+                    "table": "icr"
+                },
+                "counter_no": {
+                    "table": "c"
+                },
+                "counter_type": {
+                    "table": "c",
+                    "expression": "CASE WHEN c.counter_type='B' THEN 'Billing' ELSE 'Pharmacy' END"
+                },
+                "collection_counter": {
+                    "table": "c",
+                    "expression": "CASE WHEN c.collection_counter='Y' THEN 'Yes' ELSE 'No' END"
+                },
+                "amt": {
+                    "table": "icr",
+                    "expression": "icr.amount"
+                },
+                "tds_amt": {
+                    "expression": "0.00::numeric"
+                },
+                "date": {
+                    "table": "icr",
+                    "expression": "icr.display_date::date"
+                },
+                "receipt_datetime": {
+                    "table": "icr",
+                    "expression": "icr.display_date"
+                },
+                "bank_batch_no": {
+                    "table": "icr"
+                },
+                "card_auth_code": {
+                    "table": "icr"
+                },
+                "card_holder_name": {
+                    "table": "icr"
+                },
+                "currency_id": {
+                    "table": "icr"
+                },
+                "exchange_rate": {
+                    "table": "icr"
+                },
+                "exchange_date": {
+                    "table": "icr"
+                },
+                "currency_amt": {
+                    "table": "icr",
+                    "expression": "COALESCE(icr.currency_amt, 0)"
+                },
+                "card_expdate": {
+                    "table": "icr"
+                },
+                "card_number": {
+                    "table": "icr"
+                },
+                "currency": {
+                    "table": "fc"
+                },
+                "center_name": {
+                    "table": "hcm"
+                },
+                "sponsor_type": {
+                    "expression": "NULL::text"
+                },
+                "patient_category": {
+                    "expression": "NULL::text"
+                },
+                "visit_type_name": {
+                    "expression": "NULL::text"
+                },
+                "op_type_name": {
+                    "expression": "NULL::text"
+                },
+                "open_date": {
+                    "expression": "NULL::date"
+                },
+                "display_name": {
+                    "expression": "NULL::text"
+                },
+                "name_local_language": {
+                    "expression": "NULL::text"
+                }
+            }
+        }
+    ],
+    "fields": {
+        "date": {
+            "displayName": "Receipt Date",
+            "width": "60",
+            "dataType": "date",
+            "expression": "DATE(date)",
+            "groupable": true
+        },
+        "receipt_datetime": {
+            "displayName": "Receipt Date Time",
+            "width": "60",
+            "dataType": "timestamp",
+            "filterable": true
+        },
+        "receipt_no": {
+            "displayName": "Receipt No.",
+            "width": "100",
+            "filterable": false,
+            "groupable": false
+        },
+        "main_type": {
+            "displayName":
+            "Type",
+            "width": "100",
+            "groupable": true,
+            "filterable": true,
+            "allowedValues": [
+                "Bill Now",
+                "Advance",
+                "Settlement",
+                "Refund",
+                "Consolidated Sponsor Receipts",
+                "Consolidated Claim Receipts",
+                "Deposit Receipts",
+                "Deposit Returns",
+                "Doctor Payments",
+                "Referral Payments",
+                "Presc. Dr. Payments",
+                "Outhouse Payments",
+                "Supplier Payments",
+                "Misc. Payments",
+                "Unknown"
+            ]
+        },
+        "bill_no": {
+            "displayName": "Bill No.",
+            "width": "100",
+            "filterable": false,
+            "groupable": false
+        },
+        "visit_type_name": {
+            "displayName": "Patient Type",
+            "width": "65",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValues": [
+                "IP",
+                "OP",
+                "Retail",
+                "Test"
+            ]
+        },
+        "op_type_name": {
+            "displayName": "Visit/OP Type",
+            "width": "80",
+            "groupable": true,
+            "filterable": true,
+            "allowedValuesQuery": "SELECT op_type_name FROM op_type_names"
+        },
+        "mr_no": {
+            "displayName": "MR No.",
+            "width": "100",
+            "filterable": true,
+            "groupbale": true
+        },
+        "patient_category": {
+            "displayName": "Patient Category",
+            "width": "100",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT category_name FROM  patient_category_master WHERE status='A' ORDER BY category_name"
+        },
+        "patient_title": {
+            "displayName": "Patient Title",
+            "width": "70"
+        },
+        "patname_wo_title": {
+            "displayName": "Patient Name W/O Title",
+            "width": "130"
+        },
+        "patname": {
+            "displayName": "Patient Name",
+            "width": "130"
+        },
+        "counter_no": {
+            "displayName": "Counter",
+            "width": "120",
+            "groupable": true,
+            "allowNull": true,
+            "filterable": true,
+            "expression": "counter_no",
+            "allowedValuesQuery": "SELECT counter_no FROM counters ORDER BY counter_no"
+        },
+        "counter_type": {
+            "displayName": "Counter Type",
+            "width": "75",
+            "groupable": true,
+            "allowNull": true,
+            "filterable": true,
+            "allowedValues": [
+                "Billing",
+                "Pharmacy"
+            ]
+        },
+        "collection_counter": {
+            "displayName": "Collection Counter",
+            "width": "75",
+            "groupable": true,
+            "allowNull": true,
+            "filterable": true,
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "payment_mode": {
+            "displayName": "Payment Mode",
+            "width": "75",
+            "groupable": true,
+            "filterable": true,
+            "allowedValuesQuery": "SELECT payment_mode FROM payment_mode_master WHERE mode_id<>-9 ORDER BY payment_mode"
+        },
+        "card_type": {
+            "displayName": "Card Type",
+            "width": "75",
+            "groupable": true,
+            "allowNull": true,
+            "filterable": true,
+            "allowedValuesQuery": "SELECT card_type FROM card_type_master ORDER BY card_type"
+        },
+        "currency": {
+            "displayName": "Foreign Currency",
+            "width": "50",
+            "groupable": true,
+            "filterable": true,
+            "allowedValuesQuery": "SELECT currency FROM foreign_currency ORDER BY currency"
+        },
+        "bank_batch_no": {
+            "displayName": "Bank Batch No.",
+            "width": "65",
+            "groupable": true,
+            "filterable": true
+        },
+        "card_auth_code": {
+            "displayName": "Card Auth Code",
+            "width": "65",
+            "groupable": true,
+            "filterable": true
+        },
+        "card_holder_name": {
+            "displayName": "Card Holder Name",
+            "width": "65",
+            "groupable": true,
+            "filterable": true
+        },
+        "exchange_rate": {
+            "displayName": "Exchange Rate",
+            "width": "65",
+            "filterable": true,
+            "dataType": "numeric"
+        },
+        "exchange_date": {
+            "displayName": "Exchange Date",
+            "width": "65",
+            "groupable": true,
+            "filterable": true,
+            "expression": "DATE(exchange_date)",
+            "dataType": "date"
+        },
+        "currency_amt": {
+            "displayName": "Currency Amt",
+            "width": "65",
+            "filterable": true,
+            "dataType": "numeric",
+            "decimalType": "amount"
+        },
+        "card_number": {
+            "displayName": "Card Number",
+            "width": "65",
+            "filterable": true
+        },
+        "card_exp_date": {
+            "displayName": "Card Exp. Date",
+            "width": "65",
+            "filterable": true,
+            "dataType": "date"
+        },
+        "bank_name": {
+            "displayName": "Bank Name",
+            "width": "75",
+            "groupable": true,
+            "allowNull": true,
+            "filterable": true
+        },
+        "reference_no": {
+            "displayName": "Ref No.",
+            "width": "75",
+            "groupable": false,
+            "allowNull": true,
+            "filterable": false
+        },
+        "username": {
+            "displayName": "User",
+            "width": "80",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT distinct u.emp_username AS username FROM u_user u JOIN u_role USING(role_id) JOIN user_center_billing_counters ucbc ON (u.emp_username = ucbc.emp_username) WHERE portal_id='N' AND (ucbc.counter_id !='' OR ucbc.counter_id IS NOT NULL) ORDER BY u.emp_username"
+        },
+        "amt": {
+            "dataType": "numeric",
+            "displayName": "Receipt Amount",
+            "aggFunction": "sum",
+            "width": "80",
+            "filterable": true,
+            "decimalType": "amount"
+        },
+        "tds_amt": {
+            "dataType": "numeric",
+            "displayName": "TDS",
+            "aggFunction": "sum",
+            "width": "60",
+            "filterable": true,
+            "decimalType": "amount"
+        },
+        "center_name": {
+            "displayName": "Center Name",
+            "width": "80",
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT center_name FROM hospital_center_master WHERE center_id!=0"
+        },
+        "sponsor_type": {
+            "displayName": "Sponsor Type",
+            "width": "80",
+            "filterable": true,
+            "groupable": true,
+            "allowedValues": [
+                "Primary",
+                "Secondary"
+            ]
+        },
+        "open_date": {
+            "displayName": "Bill Open Date",
+            "width": "80",
+            "dataType": "date",
+            "filterable": true,
+            "groupable": true,
+            "expression": " date(open_date) "
+        },
+        "display_name": {
+            "table": "edm,r",
+            "displayName": "EDC Machine Name",
+            "expression": "edm.display_name",
+            "width": "100",
+            "dataType": "string",
+            "filterable": true,
+            "groupable": true
+        },
+        "name_local_language": {
+              "table": "pd",
+              "displayName": "Name In Local Language",
+              "width": 150,
+              "expression": "pd.name_local_language"
+         },
+         "ext_payment_mode": {
+            "displayName": "Ext. Payment Mode",
+            "width": "80",
+            "groupable": true,
+            "allowNull": true,
+            "filterable": true,
+            "expression": "pt.payment_mode",
+            "allowedValuesQuery": "SELECT payment_mode FROM payment_transactions ORDER BY payment_mode"
+         },
+         "transaction_id": {
+            "displayName": "Ext. Reference No.",
+            "width": "120",
+            "groupable": false,
+            "filterable": false,
+            "allowNull": true,
+            "expression": "pt.transaction_id",
+            "allowedValuesQuery": "SELECT transaction_id FROM payment_transactions ORDER BY transaction_id"
+         }
+    }
+}

@@ -1,0 +1,375 @@
+{
+    "title": "Sample Rejections Report",
+    "defaultOrder": "test_name",
+    "reportGroup": "Diagnostics Reports",
+    "description": "This report builder gives a description of all lab test results within the selected date range.",
+    "dateFields": [
+        "pres_date",
+        "sample_date"
+    ],
+    "defaultShowFields": [
+        "cust_id",
+        "test_name",
+        "patient_name",
+        "rejected_time",
+        "rejection_remarks",
+        "rejected_by"
+    ],
+    "fields": {
+        "rejected_time": {
+            "table": "sc",
+            "displayName": "Rejected Date Time",
+            "width": "80",
+            "allowNull": true,
+            "dataType": "timestamp",
+            "expression": "sc.rejected_time"
+        },
+        "rejection_remarks": {
+            "table": "sc",
+            "displayName": "Rejection Remarks",
+            "expression": "sc.rejection_remarks",
+            "width": "80"
+        },
+        "rejected_by": {
+            "table": "sc",
+            "displayName": "Rejected By",
+            "width": "100",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "expression": "sc.rejected_by"
+        },
+        "presc_dr": {
+            "table": "doc",
+            "displayName": "Presc. Doctor",
+            "width": "120",
+            "description": "Prescribing Doctor",
+            "filterable": true,
+            "groupable": true,
+            "expression": "doc.doctor_name"
+        },
+        "test_name": {
+            "table": "diag",
+            "displayName": "Test Name",
+            "width": "150",
+            "groupable": true,
+            "filterable": true,
+            "expression": "diag.test_name"
+        },
+        "cust_id": {
+            "table": "pd,isr",
+            "displayName": "Patient ID",
+            "width": "60",
+            "expression": "COALESCE (pd.mr_no, isr.incoming_visit_id)"
+        },
+        "pres_datetime": {
+            "table": "tp",
+            "displayName": "Ordered Date Time",
+            "width": "60",
+            "dataType": "timestamp",
+            "expression": "tp.pres_date"
+        },
+        "transfer_batch_id": {
+            "displayName": "Transfer Batch Id",
+            "width": "120",
+            "description": "Transfer Batch Id",
+            "filterable": true,
+            "groupable": true,
+            "expression": "sc.transfer_batch_id"
+        },
+        "sample_no": {
+            "table": "sc",
+            "displayName": "Sample No",
+            "width": "60",
+            "filterable": true,
+            "expression": "COALESCE(sc.coll_sample_no,sc.sample_sno)"
+        },
+        "pres_date": {
+            "displayName": "Ordered Date",
+            "width": "60",
+            "dataType": "date",
+            "description": "Prescribed Date",
+            "filterable": true,
+            "expression": "DATE(tp.pres_date)"
+        },
+        "pres_time": {
+            "displayName": "Ordered Time",
+            "width": "70",
+            "expression": "to_char(pres_date,'HH24:MI')"
+        },
+        "ddept_name": {
+            "table": "ddep",
+            "displayName": "Department",
+            "width": "100",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "expression": "ddep.ddept_name",
+            "allowedValuesQuery": "SELECT ddept_name FROM diagnostics_departments ORDER BY ddept_name"
+        },
+        "labno": {
+            "table": "tp",
+            "displayName": "Lab No.",
+            "width": "60"
+        },
+        "patient_name": {
+            "table": "sm,pd,isr",
+            "displayName": "Patient Name",
+            "expression": "COALESCE(get_patient_full_name(sm.salutation, pd.patient_name, pd.middle_name, pd.last_name),isr.patient_name)",
+            "width": "150"
+        },
+        "name_local_language": {
+                    "table": "pd",
+                    "displayName": "Name In Local Language",
+                    "width": 150,
+                    "expression": "pd.name_local_language"
+          },
+        "gender": {
+            "table": "pd,isr",
+            "displayName": "Gender",
+            "width": "50",
+            "filterable": true,
+            "groupable": true,
+            "expression": "CASE WHEN COALESCE(pd.patient_gender,isr.patient_gender)='M' THEN 'Male' WHEN COALESCE(pd.patient_gender,isr.patient_gender)='F' THEN 'Female' WHEN COALESCE(pd.patient_gender,isr.patient_gender)='C' THEN 'Couple' ELSE 'Others' END",
+            "allowedValues": [
+                "Male",
+                "Female",
+                "Couple",
+                "Others"
+            ]
+        },
+        "patient_type": {
+            "table": "pr",
+            "displayName": "Patient Type",
+            "width": "50",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValues": [
+                "In-Patient",
+                "Out-Patient",
+                "Incoming Sample"
+            ],
+            "expression": "CASE WHEN pr.visit_type='i' THEN 'In-Patient' WHEN pr.visit_type='o' THEN 'Out-Patient' ELSE 'Incoming Sample' END"
+        },
+        "op_type_name": {
+            "table": "otn",
+            "displayName": "Visit/OP Type",
+            "width": "80",
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT op_type_name FROM op_type_names"
+        },
+        "sample_datetime": {
+            "table": "sc",
+            "displayName": "Sample Date Time",
+            "width": "80",
+            "allowNull": true,
+            "dataType": "timestamp",
+            "expression": "sc.sample_date"
+        },
+        "sample_date": {
+            "table": "sc",
+            "displayName": "Sample Date",
+            "width": "80",
+            "dataType": "date",
+            "expression": "DATE(sc.sample_date)"
+        },
+        "sample_type": {
+            "table": "sac",
+            "displayName": "Sample Type",
+            "width": "70",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT sample_type FROM sample_type ORDER BY sample_type"
+        },
+        "dept_category": {
+            "table": "ddep",
+            "displayName": "Department Type",
+            "width": "70",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "expression": "CASE WHEN ddep.category='DEP_LAB' THEN 'Lab' ELSE 'Radiology'END",
+            "allowedValues": [
+                "Lab",
+                "Radiology"
+            ]
+        },
+        "source_name": {
+            "table": "ss",
+            "displayName": "Sample Source",
+            "width": "70"
+        },
+        "center_name": {
+            "table": "hcm",
+            "displayName": "Center Name",
+            "width": "100",
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT center_name FROM hospital_center_master WHERE center_id!=0"
+        },
+        "collection_center": {
+            "table": "scc",
+            "displayName": "Collection Center",
+            "width": "70",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT collection_center FROM sample_collection_centers"
+        },
+        "age": {
+            "table": "pd,isr",
+            "displayName": "Age",
+            "width": "50",
+            "filterable": true,
+            "dataType": "numeric",
+            "decimalType": "integer",
+            "expression": "get_patient_age(pd.dateofbirth, pd.expected_dob,isr.isr_dateofbirth,isr.patient_age)"
+        },
+        "age_in": {
+            "displayName": "Age In",
+            "expression": "get_patient_age_in(pd.dateofbirth, pd.expected_dob,isr.isr_dateofbirth,isr.age_unit)",
+            "width": "50"
+        },
+        "priority": {
+            "table": "tp",
+            "displayName": "Priority",
+            "width": "60",
+            "groupable": true,
+            "filterable": true,
+            "allowedValues": [
+                "Stat",
+                "Regular"
+            ],
+            "expression": "CASE WHEN tp.priority='S' THEN 'Stat' ELSE 'Regular' END"
+        }
+    },
+    "queryUnits": [
+        {
+            "mainTableAlias": "sr",
+            "mainTableName": "sample_rejections",
+            "joinTables": [
+                {
+                    "name": "tests_prescribed",
+                    "alias": "tp",
+                    "expression": "ON (tp.prescribed_id = sr.test_prescribed_id)",
+                    "dependsOn": "sr"
+                },
+                {
+                    "name": "sample_collection",
+                    "alias": "sc",
+                    "expression": "ON (sc.sample_collection_id = sr.sample_collection_id)",
+                    "dependsOn": "sr",
+                    "type": "LEFT"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "tests_conducted",
+                    "alias": "tc",
+                    "dependsOn": "tp",
+                    "expression": "ON tp.prescribed_id = tc.prescribed_id"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "test_visit_reports",
+                    "alias": "tvr",
+                    "dependsOn": "tp",
+                    "expression": "ON tp.report_id=tvr.report_id"
+                },
+                {
+                    "type": "JOIN",
+                    "name": "diagnostics",
+                    "alias": "diag",
+                    "dependsOn": "tp",
+                    "expression": "ON (tp.test_id=diag.test_id)"
+                },
+                {
+                    "type": "JOIN",
+                    "name": "diagnostics_departments",
+                    "alias": "ddep",
+                    "dependsOn": "diag",
+                    "expression": "ON (ddep.ddept_id = diag.ddept_id)"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "patient_registration",
+                    "alias": "pr",
+                    "dependsOn": "tp",
+                    "expression": "ON pr.patient_id = tp.pat_id"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "op_type_names",
+                    "alias": "otn",
+                    "dependsOn": "pr",
+                    "expression": "ON otn.op_type = pr.op_type"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "patient_details",
+                    "alias": "pd",
+                    "dependsOn": "pr",
+                    "expression": "ON pr.mr_no=pd.mr_no"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "salutation_master",
+                    "alias": "sm",
+                    "dependsOn": "pd",
+                    "expression": "ON sm.salutation_id = pd.salutation"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "incoming_sample_registration",
+                    "alias": "isr",
+                    "dependsOn": "tp",
+                    "expression": "ON isr.incoming_visit_id = tp.pat_id"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "hospital_center_master",
+                    "alias": "hcm",
+                    "dependsOn": "pr,isr",
+                    "expression": "ON pr.center_id = hcm.center_id or isr.center_id=hcm.center_id"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "sample_sources",
+                    "alias": "ss",
+                    "dependsOn": "sc",
+                    "expression": "ON ss.source_id = sc.sample_source_id"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "sample_type",
+                    "alias": "sac",
+                    "dependsOn": "sc",
+                    "expression": "ON sac.sample_type_id = sc.sample_type_id"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "doctors",
+                    "alias": "doc",
+                    "dependsOn": "tp",
+                    "expression": "ON doc.doctor_id=tp.pres_doctor"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "doctors",
+                    "alias": "cdoc",
+                    "dependsOn": "tc",
+                    "expression": "ON cdoc.doctor_id=tc.conducted_by"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "sample_collection_centers",
+                    "alias": "scc",
+                    "dependsOn": "pr",
+                    "expression": "ON pr.collection_center_id = scc.collection_center_id"
+                }
+            ]
+        }
+    ]
+}

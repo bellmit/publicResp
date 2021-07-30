@@ -1,0 +1,2 @@
+chargegroup_id,chargehead_id,chargehead_name,ip_applicable,op_applicable,associated_module,display_order,account_head_id,payment_eligible,ordereable,dependent_module,insurance_payable,claim_service_tax_applicable,codification_supported,service_sub_group_id,obsolete_excluded_charge,insurance_category_id,allow_rate_increase,allow_rate_decrease,service_charge_applicable
+'DIA','LTDIA','Lab Tests','Y','Y',,'52','24','Y','t',,'Y','Y','Y','0','N','-1','t','t','Y'

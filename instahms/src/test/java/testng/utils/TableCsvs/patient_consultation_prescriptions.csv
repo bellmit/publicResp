@@ -1,0 +1,3 @@
+cons_remarks,username,mod_time,activity_due_date,doctor_id,prescription_id,preauth_required,admin_strength,dept_id,presc_activity_type
+'','vinay','2019-07-25 15:06:05',,'DOC0202',2300,'N','','','DOC'
+'','vinay','2019-07-25 15:06:05',,'',2301,'N','','DEP0010','DEPT'

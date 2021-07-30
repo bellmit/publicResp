@@ -1,0 +1,298 @@
+{
+    "title": "Surgery / Procedure Schedule Report",
+    "reportGroup": "OT Reports",
+    "description": "This report builder gives a detailed description of all Surgeries/procedures scheduled between the given date range.",
+    "defaultOrder": "operation_name",
+    "dateFields": [
+        "startdate",
+        "enddate",
+        "prescribed_date"
+    ],
+    "includes": [
+        "PatientDetailFields.srjs",
+        "PatientVisitFields.srjs"
+    ],
+    "queryUnits": [
+        {
+            "mainTableName": "bed_operation_schedule",
+            "mainTableAlias": "bos",
+            "joinTables": [
+                {
+                    "type": "JOIN",
+                    "name": "operation_master",
+                    "alias": "om",
+                    "dependsOn": "bos",
+                    "expression": "ON bos.operation_name=om.op_id"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "theatre_master",
+                    "alias": "tm",
+                    "dependsOn": "bos",
+                    "expression": "ON bos.theatre_name=tm.theatre_id"
+                },
+                {
+                    "type": "JOIN",
+                    "name": "bill_activity_charge",
+                    "alias": "bac",
+                    "dependsOn": "bos",
+                    "expression": "ON (bac.activity_id=bos.prescribed_id::text AND bac.activity_code='OPE')"
+                },
+                {
+                    "type": "JOIN",
+                    "name": "bill_charge",
+                    "alias": "bc",
+                    "dependsOn": "bac",
+                    "expression": "ON (bc.charge_id = bac.charge_id)"
+                },
+                {
+                    "type": "JOIN",
+                    "name": "bill",
+                    "alias": "b",
+                    "dependsOn": "bc",
+                    "expression": "ON (b.bill_no = bc.bill_no)"
+                },
+                {
+                    "name": "doctors",
+                    "alias": "doc",
+                    "dependsOn": "bos",
+                    "expression": "ON doc.doctor_id=bos.surgeon"
+                },
+                {
+                    "name": "doctors",
+                    "alias": "doctor",
+                    "dependsOn": "bos",
+                    "expression": "ON doctor.doctor_id=bos.anaesthetist"
+                },
+                {
+                    "name": "doctors",
+                    "alias": "cdoc",
+                    "dependsOn": "bos",
+                    "expression": "ON cdoc.doctor_id=bos.consultant_doctor"
+                },
+                {
+                    "name": "department",
+                    "alias": "d",
+                    "dependsOn": "om",
+                    "expression": "ON d.dept_id=om.dept_id"
+                },
+                {
+                    "name": "patient_details",
+                    "alias": "pd",
+                    "dependsOn": "bos",
+                    "expression": "ON pd.mr_no=bos.mr_no"
+                },
+                {
+                    "includeName": "PatientDetailFields.srjs"
+                },
+                {
+                    "name": "patient_registration",
+                    "alias": "pr",
+                    "dependsOn": "bos",
+                    "expression": "ON bos.patient_id = pr.patient_id"
+                },
+                {
+                    "includeName": "PatientVisitFields.srjs"
+                },
+                {
+                    "name": "mrd_diagnosis",
+                    "alias": "md",
+                    "dependsOn": "bos",
+                    "expression": "ON (md.visit_id = bos.patient_id AND md.diag_type = 'P')"
+                }
+            ],
+            "whereExpression": "bos.status !='X'"
+        }
+    ],
+    "fields": {
+        "diag_code": {
+            "table": "md",
+            "displayName": "Diagnosis Code",
+            "width": "80",
+            "expression": "md.icd_code"
+        },
+        "diag_descr": {
+            "table": "md",
+            "displayName": "Diagnosis Description",
+            "width": "120",
+            "groupable": true,
+            "filterable": true,
+            "expression": "md.description"
+        },
+        "bill_no": {
+            "table": "b",
+            "displayName": "Bill No.",
+            "width": "65"
+        },
+        "bill_amount": {
+            "table": "b",
+            "displayName": "Amount",
+            "width": "60",
+            "dataType": "numeric",
+            "aggFunction": "sum",
+            "filterable": true,
+            "expression": "(b.total_amount+b.total_discount)"
+        },
+        "total_discount": {
+            "table": "b",
+            "displayName": "Discount",
+            "width": "60",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "aggFunction": "sum",
+            "filterable": true
+        },
+        "total_amount": {
+            "table": "b",
+            "displayName": "Net Amt",
+            "width": "60",
+            "dataType": "numeric",
+            "aggFunction": "sum",
+            "filterable": true
+        },
+        "total_receipts": {
+            "table": "b",
+            "displayName": "Paid Amt",
+            "width": "60",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "aggFunction": "sum",
+            "filterable": true
+        },
+        "total_claim": {
+            "table": "b",
+            "displayName": "Total Claim Amt",
+            "width": "60",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "aggFunction": "sum",
+            "filterable": true,
+            "expression": "(b.total_claim -  b.insurance_deduction)"
+        },
+        "operation_name": {
+            "table": "om",
+            "displayName": "Surgery / Procedure Name",
+            "width": "100",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT operation_name FROM operation_master GROUP BY operation_name ORDER BY operation_name"
+        },
+        "theatre_name": {
+            "table": "tm",
+            "displayName": "Theater / Room Name",
+            "width": "100",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT theatre_name FROM theatre_master GROUP BY theatre_name ORDER BY theatre_name"
+        },
+        "startdate": {
+            "table": "bos",
+            "displayName": "Surgery / Procedure Start Date",
+            "width": "70",
+            "dataType": "date",
+            "expression": "start_datetime::DATE"
+        },
+        "st_time": {
+            "table": "bos",
+            "displayName": "Surgery / Procedure Start Time",
+            "width": "60",
+            "expression": "to_char(bos.start_datetime,'hh24:mi')"
+        },
+        "consultant": {
+            "table": "cdoc",
+            "displayName": "Consultant Doctor",
+            "width": "100",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT doctor_name AS consultant FROM doctors ORDER BY doctor_name",
+            "expression": "(cdoc.doctor_name)"
+        },
+        "surgeon": {
+            "table": "doc",
+            "displayName": "Surgeon / Doctor",
+            "width": "100",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT doctor_name AS surgeon FROM doctors ORDER BY doctor_name",
+            "expression": "doc.doctor_name"
+        },
+        "anaesthetist": {
+            "table": "doctor",
+            "displayName": "Anaesthetist",
+            "width": "100",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT doctor_name AS anaesthetist FROM doctors ORDER BY doctor_name",
+            "expression": "doctor.doctor_name"
+        },
+        "anesthesia_type_name": {
+            "table": "bos",
+            "displayName": "Anaesthesia Type(s)",
+            "width": "100",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "expressionLines": [
+                " (SELECT textcat_commacat(anesthesia_type_name) ",
+                "  FROM surgery_anesthesia_details sad ",
+                "JOIN anesthesia_type_master atm ON(atm.anesthesia_type_id = sad.anesthesia_type)",
+                "  WHERE bos.prescribed_id=sad.prescribed_id) "
+            ]
+        },
+        "status": {
+            "displayName": "Status",
+            "width": "80",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValues": [
+                "Completed",
+                "Not Completed"
+            ],
+            "expression": "CASE WHEN bos.status='C' THEN 'Completed' ELSE 'Not Completed' END"
+        },
+        "remarks": {
+            "table": "bos",
+            "displayName": "Remarks",
+            "width": "60"
+        },
+        "enddate": {
+            "table": "bos",
+            "displayName": "Surgery / Procedure End Date",
+            "width": "70",
+            "dataType": "date",
+            "expression": "bos.end_datetime::DATE"
+        },
+        "end_time": {
+            "table": "bos",
+            "displayName": "Surgery / Procedure End Time",
+            "width": "60",
+            "expression": "to_char(bos.end_datetime,'hh24:mi')"
+        },
+        "prescribed_date": {
+            "table": "bos",
+            "displayName": "Order Date",
+            "width": "60",
+            "expression": "bos.prescribed_date::DATE",
+            "dataType": "date"
+        }
+    },
+    "defaultShowFields": [
+        "mr_no",
+        "full_name",
+        "bed_name",
+        "ward_name",
+        "operation_name",
+        "theatre_name",
+        "startdate",
+        "st_time",
+        "surgeon",
+        "anaesthetist",
+        "prescribed_date"
+    ]
+}

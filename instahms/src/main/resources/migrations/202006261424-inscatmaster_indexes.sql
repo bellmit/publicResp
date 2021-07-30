@@ -1,0 +1,8 @@
+-- liquibase formatted sql
+-- changeset shilpanr:adding-indexes-to-insurance-category-master-table failOnError:false
+
+CREATE INDEX insurance_category_master_status_idx ON insurance_category_master(status);
+CREATE INDEX insurance_category_center_master_category_id_idx ON insurance_category_center_master(category_id);
+CREATE INDEX insurance_category_center_master_center_id_idx ON insurance_category_center_master(center_id);
+CREATE INDEX insurance_category_center_master_status_idx ON insurance_category_center_master(status);
+CREATE INDEX patient_registration_category_id_idx ON patient_registration(category_id);

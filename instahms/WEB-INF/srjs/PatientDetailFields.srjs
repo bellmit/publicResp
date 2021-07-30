@@ -1,0 +1,613 @@
+{
+    "fields": {
+        "passport_validity": {
+            "table": "pd",
+            "displayName": "Passport Validity",
+            "width": 60,
+            "dataType": "date"
+        },
+        "dateofbirth": {
+            "table": "pd",
+            "displayName": "Date of Birth",
+            "width": 60,
+            "dataType": "date"
+        },
+        "family_id": {
+            "table": "pd",
+            "displayName": "Family Id",
+            "width": 80,
+            "filterable": true,
+            "groupable": true
+        },
+        "age_text": {
+            "table": "pd",
+            "displayName": "Age Text",
+            "width": 50,
+            "description": "Age in Years, Months and Days",
+            "expressionLines": [
+                "CASE WHEN pd.dateofbirth IS NOT NULL THEN ",
+                "  CASE WHEN age(pd.dateofbirth) >= interval '20 years' ",
+                "    THEN to_char(age(pd.dateofbirth), 'FMYYYY\"y\"') ",
+                "   WHEN age(pd.dateofbirth) >= interval '1 year' ",
+                "    THEN to_char(age(pd.dateofbirth), 'FMYYYY\"y\" FMMM\"m\"') ",
+                "   WHEN age(pd.dateofbirth) >= interval '2 months' ",
+                "    THEN to_char(age(pd.dateofbirth), 'FMMM\"m\" FMDD\"d\"') ",
+                "   ELSE to_char(age(pd.dateofbirth), 'FMDD\"d\"') END ",
+                " ELSE ",
+                "  CASE WHEN age(pd.expected_dob) >= interval '1 years' ",
+                "    THEN to_char(age(pd.expected_dob), 'FMYYYY\"y\"') ",
+                "   WHEN age(pd.expected_dob) >= interval '1 months' ",
+                "    THEN to_char(age(pd.expected_dob), 'FMMM\"m\"') ",
+                "   ELSE to_char(age(pd.expected_dob), 'FMDD\"d\"') END ",
+                " END "
+            ]
+        },
+        "state_name": {
+            "table": "st",
+            "displayName": "State",
+            "width": 70,
+            "allowNull": true,
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT state_name FROM state_master  ORDER BY state_name"
+        },
+        "country_name": {
+            "table": "c",
+            "displayName": "Country",
+            "width": 70,
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT country_name  FROM country_master ORDER BY country_name"
+        },
+        "nationality_name": {
+            "expression": "nc.country_name",
+            "displayName": "Nationality",
+            "table": "nc",
+            "filterable": true,
+            "allowedValuesQuery": "SELECT country_name FROM country_master where status='A' ORDER BY country_name"
+        },
+        "patient_phone2": {
+            "table": "pd",
+            "displayName": "Patient Phone 2",
+            "width": 80
+        },
+        "passport_issue_country": {
+            "table": "pasc",
+            "displayName": "Passport Country",
+            "width": 60,
+            "groupable": true,
+            "expression": "pasc.country_name"
+        },
+        "age": {
+            "table": "pd",
+            "displayName": "Age",
+            "width": 40,
+            "dataType": "numeric",
+            "decimalType": "integer",
+            "filterable": true,
+            "groupable": true,
+            "expressionLines": [
+                "CASE WHEN current_date - COALESCE(pd.dateofbirth, pd.expected_dob) < 31 ",
+                " THEN (floor(current_date - COALESCE(pd.dateofbirth, pd.expected_dob)))::integer ",
+                "WHEN current_date - COALESCE(pd.dateofbirth, pd.expected_dob) < 730 ",
+                " THEN (floor((current_date - COALESCE(pd.dateofbirth, pd.expected_dob))/30.43))::integer ",
+                "ELSE (floor((current_date - COALESCE(pd.dateofbirth, pd.expected_dob))/365.25))::integer ",
+                "END "
+            ]
+        },
+        "email_id": {
+            "table": "pd",
+            "displayName": "Email Id",
+            "width": 80
+        },
+        "visa_validity": {
+            "table": "pd",
+            "displayName": "Visa Validity",
+            "width": 60,
+            "dataType": "date"
+        },
+        "custom_field1": {
+            "table": "pd",
+            "displayName": "Custom Field1",
+            "width": 80,
+            "filterable": true,
+            "groupable": true
+        },
+        "custom_field2": {
+            "table": "pd",
+            "displayName": "Custom Field2",
+            "width": 80,
+            "filterable": true,
+            "groupable": true
+        },
+        "custom_field3": {
+            "table": "pd",
+            "displayName": "Custom Field3",
+            "width": 80,
+            "filterable": true,
+            "groupable": true
+        },
+        "custom_field4": {
+            "table": "pd",
+            "displayName": "Custom Field4",
+            "width": 80,
+            "filterable": true,
+            "groupable": true
+        },
+        "custom_field5": {
+            "table": "pd",
+            "displayName": "Custom Field5",
+            "width": 80,
+            "filterable": true,
+            "groupable": true
+        },
+        "custom_field6": {
+            "table": "pd",
+            "displayName": "Custom Field6",
+            "width": 80,
+            "filterable": true,
+            "groupable": true
+        },
+        "custom_field7": {
+            "table": "pd",
+            "displayName": "Custom Field7",
+            "width": 80,
+            "filterable": true,
+            "groupable": true
+        },
+        "custom_field8": {
+            "table": "pd",
+            "displayName": "Custom Field8",
+            "width": 80,
+            "filterable": true,
+            "groupable": true
+        },
+        "custom_field9": {
+            "table": "pd",
+            "displayName": "Custom Field9",
+            "width": 80,
+            "filterable": true,
+            "groupable": true
+        },
+        "custom_field10": {
+            "table": "pd",
+            "displayName": "Custom Field10",
+            "width": 80,
+            "filterable": true,
+            "groupable": true
+        },
+        "custom_field11": {
+            "table": "pd",
+            "displayName": "Custom Field11",
+            "width": 80,
+            "filterable": true,
+            "groupable": true
+        },
+        "custom_field12": {
+            "table": "pd",
+            "displayName": "Custom Field12",
+            "width": 80,
+            "filterable": true,
+            "groupable": true
+        },
+        "custom_field13": {
+            "table": "pd",
+            "displayName": "Custom Field13",
+            "width": 80,
+            "filterable": true,
+            "groupable": true
+        },
+        "custom_field14": {
+            "table": "pd",
+            "displayName": "Custom Field14",
+            "width": 80,
+            "filterable": true,
+            "groupable": true,
+            "dataType": "date"
+        },
+        "custom_field15": {
+            "table": "pd",
+            "displayName": "Custom Field15",
+            "width": 80,
+            "filterable": true,
+            "groupable": true,
+            "dataType": "date"
+        },
+        "custom_field16": {
+            "table": "pd",
+            "displayName": "Custom Field16",
+            "width": 80,
+            "filterable": true,
+            "groupable": true,
+            "dataType": "date"
+        },
+        "custom_field17": {
+            "table": "pd",
+            "displayName": "Custom Field17",
+            "width": 80,
+            "filterable": true,
+            "groupable": true,
+            "dataType": "numeric"
+        },
+        "custom_field18": {
+            "table": "pd",
+            "displayName": "Custom Field18",
+            "width": 80,
+            "filterable": true,
+            "groupable": true,
+            "dataType": "numeric"
+        },
+        "custom_field19": {
+            "table": "pd",
+            "displayName": "Custom Field19",
+            "width": 80,
+            "filterable": true,
+            "groupable": true,
+            "dataType": "numeric"
+        },
+        "custom_list1_value": {
+            "table": "pd",
+            "displayName": "Custom List1",
+            "width": 80,
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT custom_value from custom_list1_master order by custom_value"
+        },
+        "custom_list2_value": {
+            "table": "pd",
+            "displayName": "Custom List2",
+            "width": 80,
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT custom_value from custom_list2_master order by custom_value"
+        },
+        "custom_list3_value": {
+            "table": "pd",
+            "displayName": "Custom List3",
+            "width": 80,
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT custom_value from custom_list3_master order by custom_value"
+        },
+        "custom_list4_value": {
+            "table": "pd",
+            "displayName": "Custom List4",
+            "width": 80,
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT custom_value from custom_list4_master order by custom_value"
+        },
+        "custom_list5_value": {
+            "table": "pd",
+            "displayName": "Custom List5",
+            "width": 80,
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT custom_value from custom_list5_master order by custom_value"
+        },
+        "custom_list6_value": {
+            "table": "pd",
+            "displayName": "Custom List6",
+            "width": 80,
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT custom_value from custom_list6_master order by custom_value"
+        },
+        "custom_list7_value": {
+            "table": "pd",
+            "displayName": "Custom List7",
+            "width": 80,
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT custom_value from custom_list7_master order by custom_value"
+        },
+        "custom_list8_value": {
+            "table": "pd",
+            "displayName": "Custom List8",
+            "width": 80,
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT custom_value from custom_list8_master order by custom_value"
+        },
+        "custom_list9_value": {
+            "table": "pd",
+            "displayName": "Custom List9",
+            "width": 80,
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT custom_value from custom_list9_master order by custom_value"
+        },
+        "patient_remarks": {
+            "table": "pd",
+            "displayName": "Patient Remarks",
+            "width": 85,
+            "expression": "pd.remarks "
+        },
+        "first_visit_date": {
+            "table": "pd",
+            "displayName": "First Visit Date",
+            "width": 60,
+            "dataType": "date",
+            "expression": "pd.first_visit_reg_date "
+        },
+        "passport_no": {
+            "table": "pd",
+            "displayName": "Passport No.",
+            "width": 60
+        },
+        "patient_status": {
+            "table": "pd",
+            "displayName": "Patient Status",
+            "width": 55,
+            "allowedValues": [
+                "Active",
+                "Inactive"
+            ],
+            "filterable": true,
+            "groupable": true,
+            "expression": "CASE WHEN pd.visit_id IS NULL THEN 'Inactive' ELSE 'Active' END "
+        },
+        "patient_gender": {
+            "table": "pd",
+            "displayName": "Gender",
+            "width": 40,
+            "allowedValues": [
+                "Male",
+                "Female",
+                "Couple",
+                "Other"
+            ],
+            "filterable": true,
+            "groupable": true,
+            "expression": "CASE WHEN pd.patient_gender = 'M' THEN 'Male' WHEN pd.patient_gender = 'F' THEN 'Female' WHEN pd.patient_gender = 'C' THEN 'Couple' ELSE 'Other' END "
+        },
+        "mr_no": {
+            "table": "pd",
+            "displayName": "MR No.",
+            "width": 100,
+            "filterable": true,
+            "groupable": true
+        },
+        "casefile_no": {
+            "table": "pd",
+            "displayName": "MRD Case File No.",
+            "width": 60
+        },
+        "city_name": {
+            "table": "ci",
+            "displayName": "City",
+            "width": 70,
+            "allowedValuesQuery": "SELECT city_name  FROM city ORDER BY city_name",
+            "filterable": true,
+            "groupable": true
+        },
+        "previous_visit_id": {
+            "table": "pd",
+            "displayName": "Previous Visit",
+            "width": 65
+        },
+        "government_identifier": {
+            "table": "pd",
+            "displayName": "Govt. Identifier",
+            "width": 100,
+            "filterable": true,
+            "groupable": true
+        },
+        "cur_visit_id": {
+            "table": "pd",
+            "displayName": "Current Visit",
+            "width": 65,
+            "expression": "pd.visit_id "
+        },
+        "patient_area": {
+            "table": "pd",
+            "displayName": "Area",
+            "width": 70,
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT area_name FROM area_master GROUP BY area_name ORDER BY area_name",
+            "expression": "CASE WHEN pd.patient_area = '' THEN NULL ELSE pd.patient_area END "
+        },
+        "identifier_id": {
+            "table": "gov",
+            "displayName": "Govt. Identifier Type",
+            "width": 100,
+            "filterable": true,
+            "groupable": true,
+            "expression": "gov.remarks ",
+            "allowedValuesQuery": "SELECT remarks FROM govt_identifier_master ORDER BY remarks"
+        },
+        "patient_phone": {
+            "table": "pd",
+            "displayName": "Mobile No.",
+            "width": 80
+        },
+        "age_in": {
+            "table": "pd",
+            "displayName": "Age In",
+            "width": 30,
+            "allowedValues": [
+                "D",
+                "M",
+                "Y"
+            ],
+            "expression": "  CASE       WHEN current_date - COALESCE(pd.dateofbirth, pd.expected_dob) < 31 THEN 'D'        WHEN (current_date - COALESCE(pd.dateofbirth, pd.expected_dob) < 730) THEN 'M'       ELSE 'Y'     END "
+        },
+        "patient_address": {
+            "table": "pd",
+            "displayName": "Address",
+            "width": 250
+        },
+        "oldmrno": {
+            "table": "pd",
+            "displayName": "Old No.",
+            "width": 60
+        },
+        "vip_status": {
+            "table": "pd",
+            "displayName": "VIP Status",
+            "width": 70,
+            "filterable": true,
+            "groupable": true,
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "expression": "CASE WHEN pd.vip_status IS NOT NULL AND pd.vip_status = 'Y' THEN 'Yes' ELSE 'No' END "
+        },
+        "patient_title": {
+            "table": "sm",
+            "displayName": "Patient Title",
+            "width": 70,
+            "expression": "sm.salutation || ' '"
+        },
+        "full_name_wo_title": {
+            "table": "pd",
+            "displayName": "Patient Name W/O Title",
+            "width": 150,
+            "expressionLines": [
+                "pd.patient_name || ",
+                "CASE WHEN coalesce(pd.middle_name, '') = '' THEN '' ELSE (' ' || pd.middle_name) END ",
+                " || CASE WHEN coalesce(pd.last_name, '') = '' THEN '' ELSE (' ' || pd.last_name) END "
+            ]
+        },
+        "full_name": {
+            "table": "pd,sm",
+            "displayName": "Patient Name",
+            "width": 150,
+            "expressionLines": [
+                "sm.salutation || ' ' || pd.patient_name || ",
+                "CASE WHEN coalesce(pd.middle_name, '') = '' THEN '' ELSE (' ' || pd.middle_name) END ",
+                " || CASE WHEN coalesce(pd.last_name, '') = '' THEN '' ELSE (' ' || pd.last_name) END "
+            ]
+        },
+        "patient_name": {
+            "table": "pd",
+            "displayName": "First Name",
+            "width": 150
+        },
+        "is_unidentified_patient": {
+            "table": "pd",
+            "displayName": "Unidentified Patient",
+            "width": 70,
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "filterable": true,
+            "groupable": true,
+            "expression": "CASE WHEN pd.is_unidentified_patient = true THEN 'Yes' ELSE 'No' END"
+        },
+        "last_visit_date": {
+            "table": "cur",
+            "displayName": "Last Visit Date",
+            "width": 100,
+            "dataType": "date",
+            "expression": "cur.reg_date"
+        },
+        "next_of_kin_relation": {
+            "table": "pd",
+            "displayName": "Next of Kin Relation",
+            "width": 150
+        },
+        "current_patient_category": {
+            "table": "pcm",
+            "displayName": "Current Patient Category",
+            "width": 150,
+            "allowNull": true,
+            "filterable": true,
+            "groupable": true,
+            "description": "Patient Category Name fetching from Patient Details",
+            "expression": "pcm.category_name",
+            "allowedValuesQuery": "SELECT category_name FROM patient_category_master  ORDER BY category_name"
+        },
+        "patient_group": {
+            "table": "cgm",
+            "displayName": "Patient Confidentiality Group",
+            "width": 150,
+            "expression": "cgm.name",
+            "filterable": true,
+            "groupable": true
+        },
+        "name_local_language": {
+            "table": "pd",
+            "displayName": "Name In Local Language",
+            "width": 150,
+            "expression": "pd.name_local_language"
+        }
+    },
+    "queryUnits": [
+        {
+            "joinTables": [
+                {
+                    "name": "salutation_master",
+                    "alias": "sm",
+                    "dependsOn": "pd",
+                    "expression": "ON pd.salutation= sm.salutation_id"
+                },
+                {
+                    "name": "country_master",
+                    "alias": "c",
+                    "dependsOn": "pd",
+                    "expression": " ON pd.country = c.country_id"
+                },
+                {
+                    "name": "country_master",
+                    "alias": "nc",
+                    "dependsOn": "pd",
+                    "expression": " ON pd.nationality_id = nc.country_id"
+                },
+                {
+                    "name": "city",
+                    "alias": "ci",
+                    "dependsOn": "pd",
+                    "expression": " ON pd.patient_city= ci.city_id"
+                },
+                {
+                    "name": "state_master",
+                    "alias": "st",
+                    "dependsOn": "pd",
+                    "expression": " ON pd.patient_state= st.state_id"
+                },
+                {
+                    "name": "patient_category_master",
+                    "alias": "pcm",
+                    "dependsOn": "pd",
+                    "expression": " ON (pcm.category_id = pd.patient_category_id)"
+                },
+                {
+                    "name": "govt_identifier_master",
+                    "alias": "gov",
+                    "dependsOn": "pd",
+                    "expression": " ON (gov.identifier_id = pd.identifier_id)"
+                },
+                {
+                    "name": "death_reason_master",
+                    "alias": "drm",
+                    "dependsOn": "pd",
+                    "expression": " ON (drm.reason_id=pd.death_reason_id)"
+                },
+                {
+                    "name": "country_master",
+                    "alias": "pasc",
+                    "dependsOn": "pd",
+                    "expression": " ON(pasc.country_id=pd.passport_issue_country)"
+                },
+                {
+                    "name": "patient_registration",
+                    "alias": "cur",
+                    "dependsOn": "pd",
+                    "expression": " ON(COALESCE(pd.visit_id,pd.previous_visit_id)=cur.patient_id)"
+                },
+                {
+                    "name": "confidentiality_grp_master",
+                    "alias": "cgm",
+                    "dependsOn": "pd",
+                    "expression": "ON(pd.patient_group=cgm.confidentiality_grp_id)"
+                }
+            ]
+        }
+    ]
+}

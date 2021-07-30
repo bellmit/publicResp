@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE struts-config PUBLIC
+      "-//Apache Software Foundation//DTD Struts Configuration 1.3//EN"
+      "http://struts.apache.org/dtds/struts-config_1_3.dtd">
+
+<struts-config>
+		<action-mappings>
+		    <action path="/getAPIVersion" type="com.insta.instaapi.common.ApiVersionAction" parameter="_method" scope="request">
+		    <set-property key="auth_mode" value="passthru"/>
+		</action>
+			<action path="/login" type="com.insta.mhms.patient.login.LoginAction" parameter="_method" scope="request">
+			<set-property key="auth_mode" value="passthru"/>
+				<forward name="loginpage" path="/login.jsp"/>
+				<forward name="loginSuccess" path="/loginsuccess.jsp"/>
+				<forward name="loginFailure" path="/loginfailure.jsp"/>
+			</action>
+			
+			<action path="/changePassword"
+					type="com.insta.mhms.patient.changepassword.ChangePasswordAction" parameter="_method" scope="request">
+			<set-property key="auth_mode" value="passthru"/>
+			</action>
+			<action path="/logout"
+					type="com.insta.mhms.patient.login.LogOutAction" parameter="_method" scope="request">
+			<set-property key="auth_mode" value="passthru"/>
+			</action>
+			<action path="/images"
+					type="com.insta.mhms.patient.photo.ImageAction" parameter="_method" scope="request">
+			<set-property key="auth_mode" value="passthru"/>
+			</action>							
+			<action path="/Registration/GeneralRegistration"
+					type="com.insta.mhms.patient.registration.GeneralRegistrationAction" parameter="_method" scope="request">
+			<set-property key="auth_mode" value="passthru"/>
+			</action>
+					
+			<action path="/doctorscheduler" type="com.insta.mhms.patient.scheduler.DoctorSchedulerAction" parameter="_method" scope="request">
+			<set-property key="auth_mode" value="passthru"/>
+			</action>
+
+			<action path="/patientEmrView" type="com.insta.mhms.patient.emrview.EmrViewAction" parameter="_method" scope="request">	
+				<set-property key="auth_mode" value="passthru"/>
+			</action>
+
+			<!-- ========== Emr Print Realted Action Configs =============== -->
+
+			<action path="/Outpatient/OutpatientDocumentsPrint"
+				type="com.insta.hms.genericdocuments.CaseFormDocumentsPrintAction" parameter="_method">
+				<set-property key="documentType" value="op_case_form_template"/>
+				<set-property key="specialized" value="true"/>
+			<set-property key="auth_mode" value="passthru"/>
+		</action>
+
+			<action path="/outpatient/OpPrescribeAction"
+				type="com.insta.hms.outpatient.OpPrescribeAction" parameter="_method">
+				<set-property key="auth_mode" value="passthru"/>
+				<forward name="printConsultation" path="/emr/print.do?method=printConsultation" redirect="true"/>
+		</action>
+
+			<action path="/emr/print"
+				type="com.insta.hms.emr.EmrPrintAction"
+				scope="request" parameter="method" >
+				<set-property key="auth_mode" value="passthru"/>
+			<set-property key="auth_mode" value="passthru"/>
+		</action>
+
+			<action path="/pages/DiagnosticModule/DiagReportPrint"
+				type="com.insta.hms.diagnosticmodule.laboratory.DiagReportPrintAction" parameter="_method"
+				scope="request">
+				<set-property key="auth_mode" value="passthru"/>
+				<forward name="generateAndPrint" path="/pages/DiagnosticModule/DiagReportPrint.do?_method=printReport"/>
+		</action>
+			<action path="/Service/ServicesConductionPrint" type="com.insta.hms.services.ServicePrintAction" parameter="_method" scope="request">
+		    <set-property key="auth_mode" value="passthru"/>
+		</action>
+			
+			<action path="/dischargesummary/dischargesummaryPrint"
+				type="com.insta.hms.dischargesummary.DischargeSummaryPrintAction" parameter="_method"
+				scope="request" input="/pages/DischargeSummary/DischargeSummary.jsp">
+		    <set-property key="auth_mode" value="passthru"/>
+		</action>
+
+			<action path="/InitialAssessment/InitialAssessmentPrint" type="com.insta.hms.initialassessment.InitialAssessmentAction"
+				parameter="_method" >
+		    <set-property key="auth_mode" value="passthru"/>
+		</action>
+
+			<action path="/pages/GenericDocuments/GenericDocumentsPrint"
+				type="com.insta.hms.genericdocuments.GenericDocumentsPrintAction"
+				parameter="_method" >
+		    <set-property key="auth_mode" value="passthru"/>
+		</action>
+
+			<action path="/vitalForm/genericVitalForm" type="com.insta.hms.vitalForm.genericVitalFormAction"
+				parameter="method" >
+				<set-property key="param_type" value="V"/>
+			<set-property key="auth_mode" value="passthru"/>
+		</action>
+		<action path="/vitalForm/genericVitalFormPrint" type="com.insta.hms.vitalForm.genericVitalFormAction"
+			parameter="method" >
+			<set-property key="auth_mode" value="passthru"/>
+			<set-property key="param_type" value="V"/>
+		</action>
+		
+				<action path="/GenericForms/GenericFormPrintAction" type="com.insta.hms.GenericForms.GenericFormPrintAction" parameter="_method">
+			<set-property key="auth_mode" value="passthru"/>
+		</action>
+
+			<action path="/IntakeOutput/genericIntakeOutputForm" type="com.insta.hms.vitalForm.genericVitalFormAction"
+				parameter="method" >
+				<set-property key="param_type" value="I/O"/>
+			<set-property key="auth_mode" value="passthru"/>
+		</action>
+
+			<action path="/Service/ServiceReportsPrint"
+				type="com.insta.hms.genericdocuments.GenericDocumentsPrintAction" parameter="_method">
+				<set-property key="documentType" value="service"/>
+				<set-property key="specialized" value="true"/>
+			<set-property key="auth_mode" value="passthru"/>
+		</action>
+
+			<action path="/dietary/DietaryMasterPrint" type="com.insta.hms.master.DietaryMaster.DietaryMasterAction"
+				parameter="method">
+		    <set-property key="auth_mode" value="passthru"/>
+		</action>
+
+			<action path="/Dietary/DietaryGenericDocumentsPrint"
+				type="com.insta.hms.genericdocuments.GenericDocumentsPrintAction" parameter="_method">
+				<set-property key="documentType" value="dietary"/>
+				<set-property key="specialized" value="true"/>
+			<set-property key="auth_mode" value="passthru"/>
+		</action>
+			
+			<action path="/Laboratory/TestDocumentsPrint"
+				type="com.insta.hms.genericdocuments.GenericDocumentsPrintAction"
+				parameter="_method" >
+				<set-property key="documentType" value="lab_test_doc"/>
+				<set-property key="specialized" value="true"/>
+			<set-property key="auth_mode" value="passthru"/>
+		</action>
+	
+			<action path="/Radiology/TestDocumentsPrint"
+				type="com.insta.hms.genericdocuments.GenericDocumentsPrintAction"
+				parameter="_method" >
+				<set-property key="documentType" value="rad_test_doc"/>
+				<set-property key="specialized" value="true"/>
+			<set-property key="auth_mode" value="passthru"/>
+		</action>
+
+			<action path="/MLCDocuments/MLCDocumentPrint"
+				type="com.insta.hms.genericdocuments.GenericDocumentsPrintAction" parameter="_method">
+				<set-property key="documentType" value="mlc"/>
+				<set-property key="specialized" value="true"/>
+			<set-property key="auth_mode" value="passthru"/>
+		</action>
+
+			<action path="/pages/RegistrationDocuments/RegistrationDocumentsPrint"
+				type="com.insta.hms.genericdocuments.GenericDocumentsPrintAction" parameter="_method">
+				<set-property key="documentType" value="reg"/>
+				<set-property key="specialized" value="true"/>
+			<set-property key="auth_mode" value="passthru"/>
+		</action>
+
+			<action path="/otservices/OperationDocumentsPrint"
+				type="com.insta.hms.OTServices.OperationDocPrintAction" parameter="_method">
+				<set-property key="documentType" value="ot"/>
+				<set-property key="specialized" value="true"/>
+			<set-property key="auth_mode" value="passthru"/>
+		</action>
+
+			<action path="/dialysis/DialysisSessionReport" id="dialysis_sessions_report"
+				type="com.insta.hms.dialysis.DialysisSessionReportAction"
+				parameter="method">
+		    <set-property key="auth_mode" value="passthru"/>
+		</action>
+
+			<action path="/pages/medicalrecorddepartment/MRDUpdate"
+				type="com.insta.hms.medicalrecorddepartment.MRDUpdateScreenAction" parameter="_method"
+				scope="request">
+		    <set-property key="auth_mode" value="passthru"/>
+		</action>
+
+
+
+			<action path="/Registration/GeneralRegistrationPlanCard"
+				type="com.insta.hms.Registration.GeneralRegistrationAction" parameter="_method">
+		    <set-property key="auth_mode" value="passthru"/>
+		</action>
+
+			<action path="/Registration/GeneralRegistrationCorporateCard"
+				type="com.insta.hms.Registration.GeneralRegistrationAction" parameter="_method">
+		    <set-property key="auth_mode" value="passthru"/>
+		</action>
+
+			<action path="/Registration/GeneralRegistrationNationalCard"
+				type="com.insta.hms.Registration.GeneralRegistrationAction" parameter="_method"
+				name="GeneralRegistrationForm" >
+		    <set-property key="auth_mode" value="passthru"/>
+		</action>
+
+			<action path="/clinical/ScoreCardList"
+				type="com.insta.hms.ScoreCard.ScoreCardAction"
+				parameter="_method">
+				<set-property key="report-name" value="Scorecard"/>
+			<set-property key="auth_mode" value="passthru"/>
+		</action>
+
+			<action path="/master/ClinicalDataLabResultsMaster"
+				type="com.insta.hms.master.ClinicalData.ClinicalDataLabResultsMasterAction"
+				parameter="_method" scope="request">
+			<set-property key="auth_mode" value="passthru"/>
+		</action>
+
+			<action path="/progress/PatientProgress"
+				type="com.insta.hms.progress.PatientProgressAction"
+				parameter="_method"
+				scope="request">
+		    <set-property key="auth_mode" value="passthru"/>
+		</action>
+
+			<action path="/wardactivities/DoctorOrderPrint" type="com.insta.hms.wardactivities.prescription.DoctorOrderPrintAction"
+				scope="request" parameter="_method" >
+			<set-property key="auth_mode" value="passthru"/>
+		</action>
+
+			<action path="/wardactivities/DoctorsNotes" type="com.insta.hms.wardactivities.doctorsnotes.DoctorsNotesAction"
+				scope="request" parameter="_method">
+		    <set-property key="auth_mode" value="passthru"/>
+		</action>
+
+			<action path="/wardactivities/NurseNotes" type="com.insta.hms.wardactivities.nursenotes.NurseNotesAction"
+				scope="request" parameter="_method">
+		    <set-property key="auth_mode" value="passthru"/>
+		</action>
+
+			<action path="/wardactivities/VisitSummaryRecord" type="com.insta.hms.wardactivities.visitsummaryrecord.VisitSummaryRecordAction"
+				scope="request" parameter="_method">
+		    <set-property key="auth_mode" value="passthru"/>
+		</action>
+
+
+			<!-- ========== action mappings for APIS =============== -->
+			<action path="/Customer/Login"
+					type="com.insta.instaapi.customer.login.CustomerLoginAction" parameter="_method" scope="request">
+			<set-property key="auth_mode" value="passthru"/>
+		</action>
+			<action path="/Customer/getAPILevel" type="com.insta.instaapi.customer.ApiLevelAction" parameter="_method" scope="request">
+		    <set-property key="auth_mode" value="passthru"/>
+		</action>
+			<action path="/Customer/ChangePassword"
+					type="com.insta.instaapi.customer.changepassword.ChangePasswordAction" parameter="_method" scope="request">
+			<set-property key="auth_mode" value="passthru"/>
+		</action>
+			<action path="/Customer/Registration/GeneralRegistration"
+					type="com.insta.instaapi.patient.registration.GeneralRegistrationAction" parameter="_method" scope="request">
+			<set-property key="auth_mode" value="passthru"/>
+		</action>
+			<action path="/Customer/Orders/PatientOrders"
+					type="com.insta.instaapi.patient.orders.PatientOrdersAction" parameter="_method" scope="request">
+			<set-property key="auth_mode" value="passthru"/>
+			</action>
+			<action path="/Customer/Bills"
+					type="com.insta.instaapi.customer.bill.BillAction" parameter="_method" scope="request">
+					<set-property key="auth_mode" value="passthru"/>
+			</action>
+			<action path="/Customer/doctorscheduler" type="com.insta.instaapi.customer.scheduler.DoctorSchedulerAction" parameter="_method" scope="request">
+			<set-property key="auth_mode" value="passthru"/>
+		</action>
+			
+			<action path="/Customer/patientclinicaldata" type="com.insta.instaapi.customer.patientclinicaldata.PatientClinicalDataAction" parameter="_method">
+			<set-property key="auth_mode" value="passthru"/>
+		</action>
+
+			<action path="/Customer/patientdemographicsdata" type="com.insta.instaapi.customer.patientclinicaldata.PatientClinicalDataAction" parameter="_method">
+			<set-property key="auth_mode" value="passthru"/>
+		</action>
+						
+			<action path="/Customer/mobileaccess"
+					type="com.insta.instaapi.patient.mobileaccess.PatientMobileAccessAction" parameter="_method" scope="request">
+			<set-property key="auth_mode" value="passthru"/>
+		</action>
+			
+			<action path="/Customer/DiagnosticModule/DiagPrint"
+                    type="com.insta.instaapi.diagnosticmodule.prints.DiagnosticReportAction" parameter="_method">
+			<set-property key="auth_mode" value="passthru"/>
+		</action>
+			
+			<action path="/Customer/emr/VisitEMRView"
+				type="com.insta.instaapi.customer.visitemr.VisitEMRViewAction"
+				scope="request" parameter="_method">
+				
+			<set-property key="auth_mode" value="passthru"/>
+		</action>
+			
+			<!-- ========== action mappings for preferences APIS =============== -->
+			<action path="/Customer/preferences"
+					type="com.insta.instaapi.customer.preferences.PreferencesAction"  parameter="_method" scope="request">
+			<set-property key="auth_mode" value="passthru"/>
+		</action>
+			<action path="/preferences"
+					type="com.insta.instaapi.patient.preferences.PreferencesAction"  parameter="_method" scope="request">
+			<set-property key="auth_mode" value="passthru"/>
+		</action>
+			
+			<action path="/Customer/isr" type="com.insta.instaapi.diagnosticmodule.ohsampleregistration.OhSampleRegistrationAction" parameter="_method" scope="request">
+			<set-property key="auth_mode" value="passthru"/>
+		</action>
+			
+		</action-mappings>
+        <message-resources parameter="java.resources.application"/>
+		<plug-in className="com.insta.hms.common.AppInit">
+				<set-property property="key" value="thisapp"/>
+		</plug-in>
+</struts-config>

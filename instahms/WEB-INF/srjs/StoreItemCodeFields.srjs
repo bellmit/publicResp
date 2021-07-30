@@ -1,0 +1,40 @@
+{
+    "queryUnits": [
+        {
+            "joinTables": [
+                {
+                    "name": "ha_item_code_type",
+                    "alias": "hict",
+                    "type": "LEFT",
+                    "dependsOn": "sid,hcm",
+                    "expression": "ON (sid.medicine_id=hict.medicine_id AND hcm.health_authority = hict.health_authority)"
+                },
+                {
+                    "name": "store_item_codes",
+                    "alias": "sic",
+                    "type": "LEFT",
+                    "dependsOn": "hict",
+                    "expression": "ON (sic.medicine_id = hict.medicine_id AND hict.code_type=sic.code_type)"
+                }
+            ]
+        }
+    ],
+    "fields": {
+        "item_code": {
+            "table": "sic",
+            "displayName": "Drug Code",
+            "width": 50,
+            "filterable": true,
+            "groupable": true,
+            "description": "Item Code of the item as per the master"
+        },
+        "code_type": {
+            "table": "hict",
+            "displayName": "Code Type",
+            "width": 40,
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT msc.code_type FROM mrd_supported_codes msc JOIN (select regexp_split_to_table(drug_code_type,E',') as drug_code_type,health_authority FROM health_authority_preferences) as hap ON(msc.code_type = hap.drug_code_type) JOIN health_authority_master ham ON(hap.health_authority=ham.health_authority) WHERE msc.code_category = 'Drug' order by drug_code_type"
+        }
+    }
+}

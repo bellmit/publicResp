@@ -1,0 +1,6 @@
+CONFIG = {
+	"github_tokens" : {
+		"buildbot" : "add oauthtoken here",
+		"gitbot" : "add oauthtoken here"
+	}
+}

@@ -1,0 +1,382 @@
+{
+    "title": "Detailed Stock Report",
+    "description": "This report builder gives a detailed batch-wise description of the stock currently available at various stores. It includes the value of the stock based on its MRP and Cost Price.",
+    "reportGroup": "Store Mgmt Reports",
+    "dateFields": [
+        "exp_dt"
+    ],
+    "allowNoDate": true,
+    "defaultDate": "None",
+    "defaultOrder": "item_name",
+    "includes": [
+        "StoreItemFields.srjs",
+        "StoreItemCodeFields.srjs"
+    ],
+    "queryUnits": [
+        {
+            "mainTableName": "store_stock_details",
+            "mainTableAlias": "ssd",
+            "joinTables": [
+                {
+                    "name": "store_item_batch_details",
+                    "alias": "sibd",
+                    "dependsOn": "ssd",
+                    "expression": "USING (item_batch_id)"
+                },
+                {
+                    "name": "store_item_lot_details",
+                    "alias": "sild",
+                    "dependsOn": "ssd",
+                    "expression": "USING (item_lot_id)"
+                },
+                {
+                    "name": "store_item_details",
+                    "alias": "sid",
+                    "dependsOn": "ssd",
+                    "expression": "ON (sid.medicine_id = ssd.medicine_id)"
+                },
+                {
+                    "includeName": "StoreItemFields.srjs"
+                },
+                {
+                    "name": "stores",
+                    "alias": "s",
+                    "dependsOn": "ssd",
+                    "expression": "USING (dept_id)"
+                },
+                {
+                    "name": "hospital_center_master",
+                    "alias": "hcm",
+                    "dependsOn": "s",
+                    "expression": "ON(hcm.center_id=s.center_id)"
+                },
+                {
+                    "includeName": "StoreItemCodeFields.srjs"
+                },
+                {
+                    "name": "store_type_master",
+                    "alias": "stm",
+                    "dependsOn": "s",
+                    "expression": "ON (stm.store_type_id = s.store_type_id)"
+                },
+                {
+                    "name": "store_grn_main",
+                    "alias": "gm",
+                    "dependsOn": "sild",
+                    "expression": "ON (gm.grn_no = sild.grn_no)"
+                },
+                {
+                    "name": "store_grn_details",
+                    "alias": "gd",
+                    "dependsOn": "sild",
+                    "expression": "ON (gd.grn_no = sild.grn_no AND gd.item_batch_id = sild.item_batch_id)"
+                },
+                {
+                    "name": "store_invoice",
+                    "alias": "si",
+                    "dependsOn": "gm",
+                    "expression": "USING (supplier_invoice_id)"
+                },
+                {
+                    "name": "supplier_master",
+                    "alias": "sup",
+                    "dependsOn": "si",
+                    "expression": "ON (si.supplier_id = sup.supplier_code)"
+                },
+                {
+                    "name": "item_store_level_details",
+                    "alias": "srl",
+                    "dependsOn": "ssd,s",
+                    "expression": "ON (srl.dept_id=s.dept_id) AND (srl.medicine_id=sid.medicine_id) AND (ssd.dept_id=srl.dept_id) AND (srl.medicine_id=ssd.medicine_id)"
+                }
+            ]
+        }
+    ],
+    "fields": {
+        "dept_name": {
+            "table": "s",
+            "displayName": "Store Name",
+            "width": 100,
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT dept_name FROM stores ORDER BY dept_name"
+        },
+        "center_name": {
+            "table": "hcm",
+            "displayName": "Center Name",
+            "width": 100,
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT center_name FROM hospital_center_master WHERE center_id!=0 order by center_name"
+        },
+        "batch_no": {
+            "table": "sibd",
+            "displayName": "Batch",
+            "width": 60,
+            "filterable": false,
+            "groupable": false
+        },
+        "exp_dt_str": {
+            "table": "sibd",
+            "displayName": "Expiry Date",
+            "dataType": "datewithoutdays",
+            "width": 70,
+            "filterable": false,
+            "groupable": true,
+            "description": "Expiry Date",
+            "expression": "sibd.exp_dt"
+        },
+        "reorder_level": {
+            "table": "srl",
+            "displayName": "Reorder Level",
+            "width": 60,
+            "dataType": "numeric",
+            "filterable": true
+        },
+        "min_level": {
+            "table": "srl",
+            "displayName": "Min Level",
+            "width": 60,
+            "dataType": "numeric",
+            "filterable": true
+        },
+        "max_level": {
+            "table": "srl",
+            "displayName": "Max Level",
+            "width": 60,
+            "dataType": "numeric",
+            "filterable": true
+        },
+        "danger_level": {
+            "table": "srl",
+            "displayName": "Danger Level",
+            "width": 60,
+            "dataType": "numeric",
+            "filterable": true
+        },
+        "bin": {
+            "table": "srl",
+            "displayName": "Bin/Rack",
+            "width": 60,
+            "filterable": true,
+            "groupable": true,
+            "expression": "COALESCE(srl.bin,sid.bin)"
+        },
+        "received_date": {
+            "table": "sild",
+            "displayName": "Purchase Date",
+            "width": 70,
+            "dataType": "date",
+            "expression": "date(lot_time)"
+        },
+        "grn_no": {
+            "table": "sild",
+            "displayName": "GRN No.",
+            "width": 50,
+            "expression": "sild.grn_no"
+        },
+        "suppliers": {
+            "table": "sup",
+            "displayName": "Supplier",
+            "width": 180,
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT supplier_name FROM supplier_master ORDER BY supplier_name",
+            "expression": "sup.supplier_name"
+        },
+        "cust_supplier_code": {
+            "table": "sup",
+            "displayName": "Supplier Code",
+            "width": 180,
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "expression": "sup.cust_supplier_code"
+        },
+        "stock_age": {
+            "table": "sild",
+            "displayName": "Age",
+            "width": 70,
+            "dataType": "integer",
+            "description": "Number of days since the stock was purchased",
+            "expression": "current_date - date(lot_time)"
+        },
+        "stock_date": {
+            "table": "ssd",
+            "displayName": "Stock Date",
+            "dataType": "date",
+            "width": 70,
+            "expression": "DATE(stock_time)"
+        },
+        "qty": {
+            "table": "ssd",
+            "displayName": "Unit Qty.",
+            "dataType": "numeric",
+            "width": 80,
+            "decimalType": "quantity",
+            "aggFunction": "sum",
+            "description": "Stock Qty. (Unit UOM)",
+            "filterable": true
+        },
+        "pkg_qty": {
+            "table": "ssd",
+            "displayName": "Package Qty.",
+            "width": 80,
+            "dataType": "numeric",
+            "decimalType": "quantity",
+            "aggFunction": "sum",
+            "description": "Stock Qty. (Package UOM)",
+            "filterable": true,
+            "expression": "ROUND((ssd.qty/sid.issue_base_unit),2)"
+        },
+        "qty_in_use": {
+            "table": "ssd",
+            "displayName": "Qty In Use",
+            "width": 70,
+            "dataType": "numeric",
+            "filterable": true
+        },
+        "qty_maint": {
+            "table": "ssd",
+            "displayName": "Qty Maint",
+            "width": 70,
+            "dataType": "numeric",
+            "filterable": true
+        },
+        "qty_lost": {
+            "table": "ssd",
+            "displayName": "Qty Lost",
+            "width": 70,
+            "dataType": "numeric",
+            "filterable": true
+        },
+        "qty_unknown": {
+            "table": "ssd",
+            "displayName": "Qty Unknown",
+            "width": 70,
+            "dataType": "numeric",
+            "filterable": true
+        },
+        "package_cp": {
+            "table": "ssd",
+            "displayName": "Pkg Cost Price",
+            "width": 60,
+            "dataType": "numeric",
+            "filterable": true
+        },
+        "package_cp_value": {
+            "table": "ssd",
+            "displayName": "Cost Price Value",
+            "width": 60,
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "aggFunction": "sum",
+            "filterable": true,
+            "expression": "ROUND(ssd.package_cp*qty/sid.issue_base_unit, 2)"
+        },
+        "mrp": {
+            "table": "sibd",
+            "displayName": "Pkg MRP",
+            "width": 60,
+            "dataType": "numeric",
+            "filterable": true
+        },
+        "mrp_value": {
+            "table": "sibd",
+            "displayName": "MRP Value",
+            "width": 60,
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "aggFunction": "sum",
+            "filterable": true,
+            "expression": "ROUND(sibd.mrp*qty/sid.issue_base_unit, 2)"
+        },
+        "tax_rate": {
+            "table": "gd",
+            "displayName": "Tax Rate",
+            "width": 60,
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "expression": "gd.tax_rate",
+            "filterable": true
+        },
+        "tax_type": {
+            "table": "gd",
+            "displayName": "Tax Basis",
+            "width": 90,
+            "filterable": true,
+            "groupable": true,
+            "allowedValues": [
+                "MRP with bonus",
+                "MRP without bonus",
+                "Cost Price Based"
+            ],
+            "expressionLines": [
+                " CASE WHEN gd.tax_type='MB' then 'MRP with bonus' ",
+                " WHEN gd.tax_type='M' then 'MRP without bonus' ",
+                " WHEN gd.tax_type='C' then 'CP Based without bonus' ELSE 'CP Based with bonus' END "
+            ]
+        },
+        "item_ced_amt": {
+            "table": "ssd",
+            "displayName": "CED/Pkg Unit",
+            "width": 60,
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "filterable": true
+        },
+        "package_sp": {
+            "table": "sibd,gd",
+            "displayName": "Pkg Selling Price",
+            "width": 60,
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "filterable": true,
+            "description": "MRP Less tax",
+            "expression": "ROUND(sibd.mrp*100/(100+gd.tax_rate), 2)"
+        },
+        "package_sp_value": {
+            "table": "ssd,sibd,sid,gd",
+            "displayName": "Selling Price Value",
+            "width": 60,
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "aggFunction": "sum",
+            "filterable": true,
+            "description": "MRP Less tax Value",
+            "expression": "ROUND(sibd.mrp*qty*100/(100+gd.tax_rate)/sid.issue_base_unit, 2)"
+        },
+        "username": {
+            "table": "ssd",
+            "displayName": "User",
+            "width": 80,
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT emp_username AS username FROM u_user ORDER BY username"
+        },
+        "store_type_name": {
+            "table": "stm",
+            "displayName": "Store Type",
+            "width": 80,
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT store_type_name FROM store_type_master ORDER BY store_type_name"
+        }
+    },
+    "defaultShowFields": [
+        "dept_name",
+        "item_name",
+        "batch_no",
+        "exp_dt_str",
+        "qty",
+        "issue_base_unit",
+        "package_cp",
+        "package_cp_value",
+        "mrp",
+        "mrp_value"
+    ]
+}

@@ -1,0 +1,90 @@
+{
+    "integrations" : [
+        {
+            "type" : "x2insta",
+            "csv_uri" : "/Users/adeshashok/Desktop/scm/import/cen",
+            "x_type" : "db",
+            "x_type_config" : {
+                "classpath" : "/Users/adeshashok/Desktop/ojdbc7.jar",
+                "driver_class" : "oracle.jdbc.driver.OracleDriver",
+                "jdbc_uri" : "jdbc:oracle:thin:@172.16.1.230:1521:instatest",
+                "db_username" : "instatest",
+                "db_password" : "instatest1"
+            },
+            "entities" : {
+                "item_master" : {
+                    "x_type_config" : {
+                        "status_column" : "status",
+                        "status_description_column" : "status_msg", 
+                        "txn_id_column" : "transaction_id" ,
+                        "status_success" : "3",
+                        "status_inprogress" :  "2",
+                        "status_unprocessed" :  "1",
+                        "status_failure" : "4",
+                        "table" : "item_master_scm"
+                    },
+                    "mapper" : {
+                        "cust_item_code" : "row['oracle_itemcode']",
+                        "medicine_name" :"row['oracle_description']",
+                        "medicine_short_name" :"row['oracle_description']",
+                        "med_category_id" :"'C1'",
+                        "item_barcode_id" :"None",
+                        "manf_code" :"row['manufacturer_name'] if row['manufacturer_name'] else 'MAN008'",
+                        "generic_name_code" :"row['item_generic_id']",
+                        "status" :"'A' if row['item_status'] == 'Y' else 'I'",
+                        "max_cost_price" :"None",
+                        "package_type" :"None",
+                        "package_uom" :"row['oracle_secondary_uom_code']",
+                        "issue_units" :"row['oracle_primary_uom_code']",
+                        "batch_no_applicable" :"'Y'",
+                        "control_type_id" :"'CT001'",
+                        "value" :"'M'",
+                        "supplier_name" :"None",
+                        "invoice_details" :"None",
+                        "code_type" :"None",
+                        "code_desc" :"None",
+                        "high_cost_consumable" :"'N'",
+                        "allow_zero_claim_amount" :"'N'",
+                        "prior_auth_required" :"'N'",
+                        "item_selling_price" :"row['sales_price']",
+                        "bin" :"''",
+                        "item_strength_units" :"row['strength_name']",
+                        "route_of_admin" :"''",
+                        "consumption_uom" :"''",
+                        "consumption_capacity" :"'1'",
+                        "item_form_id" :"row['form_name']",
+                        "item_strength" :"row['strength_name']",
+                        "insurance_category_id" :"'INS04'",
+                        "tax_type" :"'MB'",
+                        "tax_sub_groups" :"'OTS001'",
+                        "billing_group_id" :"None",
+                        "transaction_id" : "row['transaction_id']"
+                    }
+                }
+            }
+        },
+        {
+            "type" : "insta2x",
+            "csv_uri" : "/Users/adeshashok/Desktop/scm/export/cen",
+            "x_type" : "db",
+            "x_type_config" : {
+                "classpath" : "/Users/adeshashok/Desktop/ojdbc7.jar",
+                "driver_class" : "oracle.jdbc.driver.OracleDriver",
+                "jdbc_uri" : "jdbc:oracle:thin:@172.16.1.230:1521:instatest",
+                "db_username" : "instatest",
+                "db_password" : "instatest1"
+            },
+            "entities" : {
+                "inv_outbound" : {
+                    "x_type_config" : {
+                        "table" : "inv_outbound"
+                    },
+                    "mapper" : {
+                        "TRANSACTION_ID":"row['TRANSACTION_ID'][2:]",
+                        "TRANSACTION_TYPE":"quote(row['TRANSACTION_TYPE'])"
+                    }
+                }
+            }
+        }
+    ]
+}

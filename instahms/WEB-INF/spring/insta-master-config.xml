@@ -1,0 +1,1052 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans default-lazy-init="true" xmlns="http://www.springframework.org/schema/beans"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+		xmlns:p="http://www.springframework.org/schema/p"
+		xmlns:context="http://www.springframework.org/schema/context"
+		xmlns:mvc="http://www.springframework.org/schema/mvc" 
+		xmlns:tx="http://www.springframework.org/schema/tx"
+		xmlns:jpa="http://www.springframework.org/schema/data/jpa" xmlns:aop="http://www.springframework.org/schema/aop"
+		xsi:schemaLocation="http://www.springframework.org/schema/beans  
+		http://www.springframework.org/schema/beans/spring-beans.xsd  
+		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/mvc
+		http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/tx
+	    http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+	<!-- ==================================== -->
+	<!-- 	  Master Index for React		  -->
+	<!-- ==================================== -->
+	
+	<bean id="indexController" class="com.insta.hms.mdm.common.IndexController">
+		<property name = "authMode" value = "passthru"/>
+	</bean>
+	
+	<!-- ==================================== -->
+	<!-- 	  Sample Source Master  	      -->
+	<!-- ==================================== -->
+	
+	<bean id="sampleSourceController" class="com.insta.hms.mdm.samplesources.SampleSourceController">
+		<property name="actionId" value="mas_sam_sources"/>
+	</bean>
+
+	<!-- ==================================== -->
+	<!-- 			Region Master			  -->
+	<!-- ==================================== -->
+	
+	<bean id="regionController" class="com.insta.hms.mdm.regions.RegionController">
+		<property name="actionId" value="mas_region"/>
+	</bean> 
+	
+	<!-- ==================================== -->
+	<!-- 	Sponsor Procedure Master		  -->
+	<!-- ==================================== -->
+	<!-- 
+	<bean id="sponsorProcedureController" class="com.insta.hms.master.SponsorProcedureMaster.SponsorProcedureController">
+		<property name="actionId" value="sponsor_procedure_master" />
+	</bean>
+ 	-->
+	<!-- ==================================== -->
+	<!-- 	       Store Master     		  -->
+	<!-- ==================================== -->
+	
+	<bean id="storeController" class="com.insta.hms.mdm.stores.StoreController">
+		<property name="actionId" value="mas_store_dept" />
+	</bean>
+	
+	<!-- ==================================== -->
+	<!--       Govt Identifier Master  		  -->
+	<!-- ==================================== -->
+	
+	<bean id="govtIdentifierController" class="com.insta.hms.mdm.govtidentifiers.GovtIdentifierController">
+		<property name="actionId" value="mas_govt_type_id" />
+	</bean>
+
+	<!-- ==================================== -->
+	<!--       Other Identifier Master  		  -->
+	<!-- ==================================== -->
+	
+	<bean id="otherIdentificationDocumentTypesController" class="com.insta.hms.mdm.otheridentificationdocument.OtherIdentificationDocumentTypesController">
+		<property name="actionId" value="mas_other_type_id" />
+	</bean>
+
+	
+	<!-- ==================================== -->
+	<!-- 	       Search Master     	      -->
+	<!-- ==================================== -->
+	
+	<bean id = "searchController" class = "com.insta.hms.search.SearchController">
+		<property name = "actionId" value = "saved_searches"/>
+		<property name = "authMode" value = "passthru"/>
+	</bean>
+	
+	<!-- ==================================== -->
+	<!-- 	   RecurrenceDailyMaster          -->
+	<!-- ==================================== -->
+	
+	<bean id="recurrenceDailyController" class="com.insta.hms.mdm.dailyrecurrences.RecurrenceDailyController">
+        <property name="actionId" value="mas_recurrence_daily_master" />
+    </bean>
+    
+    <!-- ==================================== -->
+	<!-- 	   StrengthUnitMaster             -->
+	<!-- ==================================== -->
+	
+	<bean id="strengthUnitController" class="com.insta.hms.mdm.strengthunits.StrengthUnitController">
+        <property name="actionId" value="mas_strength_unit" />
+    </bean>
+
+	
+	<!-- ==================================== -->
+	<!-- 			Area Master			  -->
+	<!-- ==================================== -->
+	
+	<bean id="areaController" class="com.insta.hms.mdm.areas.AreaController">
+		<property name="actionId" value="mas_areas"/>
+	</bean>
+	
+	<!-- ==================================== -->
+	<!-- 			City Master			  -->
+	<!-- ==================================== -->
+	
+	<bean id="cityController" class="com.insta.hms.mdm.cities.CityController">
+		<property name="actionId" value="mas_cities"/>
+	</bean>
+	
+	<!-- ==================================== -->
+	<!-- 	  Dental Supplier Master  	      -->
+	<!-- ==================================== -->
+	
+	<bean id = "dentalSupplierController" class = "com.insta.hms.mdm.dentalsuppliers.DentalSupplierController">
+		<property name = "actionId" value = "mas_dental_supplier_master"/>
+	</bean>
+	
+	<!-- ==================================== -->
+	<!-- 	  Dental Supplies Master  	      -->
+	<!-- ==================================== -->
+	
+	<bean id = "dentalSuppliesController" class = "com.insta.hms.mdm.dentalsupplies.DentalSuppliesController">
+		<property name = "actionId" value = "mas_dental_supplies_master"/>
+	</bean>
+
+	
+	<!-- ==================================== -->
+	<!-- 	  Transfer Hospitals Master  	  -->
+	<!-- ==================================== -->
+	<bean id = "transferHospitalsController" class = "com.insta.hms.mdm.transferhospitals.TransferHospitalsController">
+		<property name = "actionId" value = "mas_transfer_hospitals"></property>
+	</bean>
+	
+	<!-- ==================================== -->
+	<!-- 	  DocumentType Master  	          -->
+	<!-- ==================================== -->
+	<bean id = "documentTypeController" class = "com.insta.hms.mdm.documenttypes.DocumentTypeController">
+		<property name = "actionId" value = "mas_scan_doc_types"></property>
+	</bean>
+	
+	<!-- ==================================== -->
+
+	<!-- 	       Rejection Reason Master     	      -->
+	<!-- ==================================== -->
+	
+	<bean id = "rejectionReasonController" class = "com.insta.hms.mdm.rejectionreasons.RejectionReasonController">
+		<property name = "actionId" value = "mas_rejection_reason"></property>
+	</bean>
+
+	
+	<!-- ==================================== -->
+
+	<!-- 	       Supplier Category Master	  -->
+	<!-- ==================================== -->
+	<bean id="supplierCategoryController" class="com.insta.hms.mdm.suppliercategories.SupplierCategoryController">
+		<property name="actionId" value="stores_supp_cat_mas" />
+	</bean>
+	
+	<!-- ==================================== -->
+	<!-- 	  Payment Terms Master  	      -->
+	<!-- ==================================== -->
+	
+	<bean id = "paymentTermsController" class = "com.insta.hms.mdm.paymentterms.PaymentTermsController">
+		<property name ="actionId" value ="mas_payment_terms"></property>
+	</bean>
+	
+	<!-- ==================================== -->
+	<!-- 	       Counter Master	  -->
+	<!-- ==================================== -->
+	
+	<bean id="counterController" class="com.insta.hms.mdm.counters.CounterController">
+		<property name="actionId" value="mas_counters" />
+	</bean>
+	
+	<!-- ==================================== -->
+	<!-- 	       Department Master	      -->
+	<!-- ==================================== -->
+	
+	<bean id="departmentController" class="com.insta.hms.mdm.departments.DepartmentController">
+		<property name="actionId" value="mas_dept" />
+	</bean>
+	
+	<!-- ==================================== -->
+	<!-- 	       Bill Label Master     	      -->
+	<!-- ==================================== -->
+	
+	<bean id = "billLabelController" class = "com.insta.hms.mdm.billlabel.BillLabelController">
+		<property name = "actionId" value = "mas_bill_label"></property>
+	</bean>
+	
+	<!-- ==================================== -->
+	<!-- 	       Accounting Group Master     	      -->
+	<!-- ==================================== -->
+	
+	<bean id = "accountingGroupController" class = "com.insta.hms.mdm.accounting.AccountingGroupController">
+		<property name = "actionId" value = "accounting_group_master"></property>
+	</bean>
+	
+	<!-- ==================================== -->
+	<!-- 	       Dialyzer Ratings Master    -->
+	<!-- ==================================== -->
+	
+	<bean id = "dialyzerRatingController" class = "com.insta.hms.mdm.dialyzerratings.DialyzerRatingController">
+		<property name = "actionId" value = "mas_dial_ratings"></property>
+	</bean>
+	
+	<!-- ==================================== -->
+	<!-- 	     Dialyzer Type Master         -->
+	<!-- ==================================== -->
+	
+	<bean id="dialyzerTypeController" class="com.insta.hms.mdm.dialyzertypes.DialyzerTypeController">
+		<property name="actionId" value="mas_dialyzer_types" />
+	</bean>
+	
+	<!-- ==================================== -->
+	<!--    Dialysis Access Types Master	  -->
+	<!-- ==================================== -->
+	
+	<bean id="dialysisAccessTypeController" class="com.insta.hms.mdm.dialysisaccesstypes.DialysisAccessTypeController">
+		<property name="actionId" value="mas_dial_access_types" />
+	</bean>
+	
+	<!-- ==================================== -->
+	<!-- Store Item Control Type Master	      -->
+	<!-- ==================================== -->
+	
+	<bean id="storeItemControlTypeController" class="com.insta.hms.mdm.storeitemcontroltypes.StoreItemControlTypeController">
+		<property name="actionId" value="mas_store_item_control_type" />
+	</bean>
+	
+	<!-- ==================================== -->
+	<!-- 	       Charge Heads Master	      -->
+	<!-- ==================================== -->
+	
+	<bean id="chargeHeadsController" class="com.insta.hms.mdm.chargeheads.ChargeHeadsController">
+		<property name="actionId" value="charge_head" />
+	</bean>
+	
+	
+	<!-- ==================================== -->
+	<!-- 	Diagnostics Methodology Master		  -->
+	<!-- ==================================== -->
+	
+	<bean id="diagMethodologyController" class="com.insta.hms.mdm.diagmethodologies.DiagMethodologyController">
+		<property name="actionId" value="diag_methodology_master_id" />
+	</bean>
+
+	<!-- ==================================== -->
+	<!-- 	Phrase Suggestions Category Master		  -->
+	<!-- ==================================== -->
+	
+	<bean id="phraseSuggestionsCategoryController" class="com.insta.hms.mdm.phrasesuggestionscategories.PhraseSuggestionsCategoryController">
+		<property name="actionId" value="mas_phrase_suggestions_category_master"/>
+	</bean>
+	<!-- 
+	<bean id="contractTypeController" class="com.insta.hms.mdm.contracttypes.ContractTypeController">
+		<property name="actionId" value="contracts_list"/>
+	</bean>
+	 -->
+	 
+	<!-- ==================================== -->
+	<!-- 		Incoming Hospitals Master     -->
+	<!-- ==================================== -->
+	
+	<bean id="incomingHospitalsController" class="com.insta.hms.mdm.incominghospitals.IncomingHospitalsController">
+		<property name="actionId" value="mas_incoming_samples"/>
+	</bean>
+
+	<!-- ==================================== -->
+	<!-- 		Sections Master     -->
+	<!-- ==================================== -->
+	
+	<bean id="sectionsController" class="com.insta.hms.mdm.sections.SectionsController">
+		<property name="actionId" value="mas_sections"/>
+	</bean>
+	
+	
+	<!-- ==================================== -->
+	<!-- 		 Regular Expression Master     -->
+	<!-- ==================================== -->
+	
+	<bean id="regularExpressionController" class="com.insta.hms.mdm.regularexpression.RegularExpressionController">
+		<property name="actionId" value="reg_expression"/>
+	</bean>
+	
+	<!-- ==================================== -->
+	<!-- 		Sample Collection Center     -->
+	<!-- ==================================== -->
+	
+	<bean id="sampleCollectionCenterController" class="com.insta.hms.mdm.samplecollectioncenters.SampleCollectionCenterController">
+		<property name="actionId" value="mas_sam_collection"/>
+	</bean>
+	
+	<!-- ==================================== -->
+	<!-- 	       Sponsor Type Master     	  -->
+	<!-- ==================================== -->
+	
+	<bean id = "sponsorTypeController" class = "com.insta.hms.mdm.sponsors.SponsorTypeController">
+		<property name = "actionId" value = "mas_ins_sponsor"></property>
+	</bean>
+	
+	<!-- ==================================== -->
+	<!-- 			State Master			  -->
+	<!-- ==================================== -->
+	
+	<bean id="stateController" class="com.insta.hms.mdm.states.StateController">
+		<property name="actionId" value="mas_states"/>
+	</bean>
+
+	
+	<!--        Center Master                 -->
+	<!-- ==================================== -->
+	
+	<bean id = "centerController" class = "com.insta.hms.mdm.centers.CenterController">
+		<property name = "actionId" value = "mas_centers"/>
+	</bean>
+
+	<!-- ==================================== -->
+	<!--        Store Type Master             -->
+	<!-- ==================================== -->
+	
+	<bean id = "storeTypeController" class = "com.insta.hms.mdm.storetypes.StoreTypeController">
+		<property name = "actionId" value = "mas_store_type"/>
+	</bean>
+	
+	<!-- ==================================== -->
+	<!-- 			Country Master			  -->
+	<!-- ==================================== -->
+	
+	<bean id="countryController" class="com.insta.hms.mdm.countries.CountryController">
+		<property name="actionId" value="mas_countries"/>
+	</bean>
+	
+	<!-- ==================================== -->
+	<!-- 	Health Authority Preferences      -->
+	<!-- ==================================== -->
+	
+	<bean id="healthAuthorityPreferencesController" class="com.insta.hms.mdm.healthauthoritypreferences.HealthAuthorityPreferencesController">
+		<property name="actionId" value="mas_health_authority_pref"/>
+	</bean>
+	
+	<!-- ==================================== -->
+	<!-- 	       Appointment Source Master     	      -->
+	<!-- ==================================== -->
+	
+	<bean id = "appointmentSourceController" class = "com.insta.hms.mdm.appointmentsources.AppointmentSourceController">
+		<property name = "actionId" value = "channeling_source"></property>
+	</bean>
+	
+	<!-- ==================================== -->
+	<!-- 	       Complaint Types Master     	      -->
+	<!-- ==================================== -->
+	
+	<bean id = "complaintTypesController" class = "com.insta.hms.mdm.complainttypes.ComplaintTypesController">
+		<property name="authMode" value="passthru"/>
+	</bean>
+	
+	<!-- 	Encounter Type Master     -->
+	<!-- ==================================== -->
+	
+	<bean id="encounterTypeController" class="com.insta.hms.mdm.encountertype.EncounterTypeController">
+		<property name="actionId" value="mas_encounter_type"/>
+	</bean>
+	
+	<!-- ==================================== -->
+	<!-- 	Death Reason Master     -->
+	<!-- ==================================== -->
+	
+	<bean id="deathReasonController" class="com.insta.hms.mdm.deathreasons.DeathReasonController">
+		<property name="actionId" value="mas_death_reason"/>
+	</bean>
+	
+	<!-- =================================================== -->
+	<!--       System Generated Sections Master     -->
+	<!-- =================================================== -->
+	
+	<bean id="systemGeneratedSectionsController" class="com.insta.hms.mdm.systemgeneratedsections.SystemGeneratedSectionsController">
+		<property name="actionId" value="mas_system_gen_sections"/>
+	</bean>
+	
+	<!-- 	Phrase Suggestions master         -->
+	<!-- ==================================== -->
+	
+	<bean id="phraseSuggestionsController" class="com.insta.hms.mdm.phrasesuggestions.PhraseSuggestionsController">
+		<property name="actionId" value="mas_phrase_suggestions_master"/>
+	</bean>
+
+	<!-- 	Saved Searches      -->
+	<!-- ==================================== -->
+	<bean id="savedSearchController" class="com.insta.hms.mdm.savedsearches.SavedSearchController">
+		<property name="authMode" value="passthru"/>
+	</bean>
+  
+  	<!-- 	Card Type master         -->
+	<!-- ==================================== -->
+	
+	<bean id="cardTypeController" class="com.insta.hms.mdm.cardtypes.CardTypeController">
+		<property name="actionId" value="mas_card_type"/>
+  </bean>
+  
+  	<!-- 	Payment Mode master         -->
+	<!-- ==================================== -->
+	
+	<bean id="paymentModeController" class="com.insta.hms.mdm.paymentmode.PaymentModeController">
+		<property name="actionId" value="mas_payment_mode"/>
+	</bean>
+	
+	<!-- 	Payment Category Mode master         -->
+	<!-- ==================================== -->
+	
+	<bean id="paymentCategoryController" class="com.insta.hms.mdm.paymentcategories.PaymentCategoryController">
+		<property name="actionId" value="mas_payment_category"/>
+	</bean>
+
+	<!-- ===================================  -->	
+	<!-- Contractor Master	                  -->
+	<!-- ==================================== -->
+	
+	<bean id="contractorController" class="com.insta.hms.mdm.storescontractor.ContractorController">
+		<property name="actionId" value="mas_contractor" />
+	</bean>
+	
+	<!-- ===================================  -->	
+	<!--     Doctor Master 	                  -->
+	<!-- ==================================== -->
+	
+	<bean id="doctorController" class="com.insta.hms.mdm.doctors.DoctorController">
+		<property name="authMode" value="passthru"/>
+	</bean>
+	
+	<!-- ===================================  -->	
+	<!--    Referral Doctor Master 	          -->
+	<!-- ==================================== -->
+	
+	<bean id="referralDoctorController" class="com.insta.hms.mdm.referraldoctors.ReferralDoctorController">
+		<property name="authMode" value="passthru"/>
+	</bean>
+
+	<!-- ==================================== -->
+	<!-- 	 Section Role Rights Master       -->
+	<!-- ==================================== -->
+	
+	<bean id="sectionRoleRightsController" class="com.insta.hms.mdm.sectionrolerights.SectionRoleRightsController">
+		<property name="actionId" value="stn_role_rights"/>
+	</bean>
+
+	 <!-- 	Center Group master         -->
+	<!-- ==================================== -->
+	
+	<bean id="centerGroupController" class="com.insta.hms.mdm.centergroup.CenterGroupController">
+		<property name="actionId" value="mas_center_group"/>
+  </bean>
+  
+  <!-- ===================================  -->	
+	<!--     Insurance Company 	                  -->
+	<!-- ==================================== -->
+	
+	<bean id="insuranceCompanyController" class="com.insta.hms.mdm.insurancecompanies.InsuranceCompanyController">
+		<property name="authMode" value="passthru"/>
+	</bean>
+	<!-- ===================================  -->	
+	<!--     Route of Administration 	                  -->
+	<!-- ==================================== -->
+	
+	<bean id="medicineRouteController" class="com.insta.hms.mdm.medicineroute.MedicineRouteController">
+		<property name="actionId" value="medicine_route"/>
+	</bean>
+	
+	<bean id="icdCodesController" class="com.insta.hms.mdm.icdcodes.IcdCodesController">
+		<property name="actionId" value="mas_icd_codes"/>
+	</bean>
+	
+	<!-- ===================================  -->	
+	<!--     Insurance Company 	                  -->
+	<!-- ==================================== -->
+	
+	<bean id="tpaController" class="com.insta.hms.mdm.tpas.TpaController">
+		<property name="authMode" value="passthru"/>
+	</bean>
+
+  	<!-- ==================================== -->
+	<!--            Discount Plan Master      -->
+	<!-- ==================================== -->
+
+	<bean id="discountPlanController" class="com.insta.hms.mdm.discountplans.DiscountPlanController">
+		<property name="actionId" value="mas_discount_plan"/>
+	</bean>
+	
+  	<!-- ==================================== -->
+	<!--            OP VISIT TYPE RULES MASTER      -->
+	<!-- ==================================== -->
+
+	<bean id="opVisitTypeRulesController" class="com.insta.hms.mdm.opvisittyperules.OpVisitTypeRulesController">
+		<property name="actionId" value="mas_op_visit_type_rules"/>
+	</bean>
+
+	<!-- ==================================== -->
+	<!-- 	     Image Markers Master         -->
+	<!-- ==================================== -->
+
+	<bean id="imageMarkersController" class="com.insta.hms.mdm.imagemarkers.ImageMarkersController">
+		<property name="actionId" value="mas_image_markers"/>
+	</bean>
+
+	<!-- ==================================== -->
+	<!-- 	  ICD Supported Codes Master      -->
+	<!-- ==================================== -->
+
+	<bean id="icdSupportedCodesController" class="com.insta.hms.mdm.icdsupportedcodes.IcdSupportedCodesController">
+		<property name="actionId" value="mas_supported_codes"/>
+	</bean>
+
+	<!-- ====================== -->
+	<!-- 		Cron job 		-->
+	<!-- ====================== -->
+	<bean id="cronJobController" class="com.insta.hms.jobs.CronJobController">
+		<property name="actionId" value="mas_scheduler_cron" />
+		<property name="authMode" value="instaonly" />
+	</bean>
+
+	<!-- ===================================  -->	
+	<!-- Hospital Id Patterns	                  -->
+	<!-- ==================================== -->
+	
+	<bean id="hospitalIdPatternsController" class="com.insta.hms.mdm.sequences.hospitalidpatterns.HospitalIdPatternsController">
+		<property name="actionId" value="hospital_id_patterns" />
+		<property name="authMode" value="instaonly" />
+	</bean>
+	
+	<!-- ===================================  -->	
+	<!-- Bill Sequence Master	                  -->
+	<!-- ==================================== -->
+	
+	<bean id="billSequenceController" class="com.insta.hms.mdm.sequences.billsequences.BillSequenceController">
+		<property name="actionId" value="bill_sequence" />
+		<property name="authMode" value="instaonly" />
+	</bean>
+	
+	<!-- ===================================  -->	
+	<!-- Claim Id Sequence Master	                  -->
+	<!-- ==================================== -->
+	
+	<bean id="claimIdSequenceController" class="com.insta.hms.mdm.sequences.claimidsequences.ClaimIdSequenceController">
+		<property name="actionId" value="claim_id_sequence" />
+		<property name="authMode" value="instaonly" />
+	</bean>
+		
+		<!-- ==================================== -->
+		<!-- 	       GRN Print templates  -->
+		<!-- ==================================== -->
+	<bean id="grnPrintTemplatesController" class="com.insta.hms.mdm.grnprinttemplates.GrnPrintTemplatesController">
+		<property name="actionId" value="mas_grn_template" />
+		<property name="authMode" value="instaonly" />
+	</bean>
+	
+	
+	<!-- ===================================  -->	
+	<!-- Visit Id Sequence Master	                  -->
+	<!-- ==================================== -->
+	
+	<bean id="visitIdSequenceController" class="com.insta.hms.mdm.sequences.visitidsequences.VisitIdSequenceController">
+		<property name="actionId" value="visit_id_sequence" />
+		<property name="authMode" value="instaonly" />
+	</bean>
+	<!-- ==================================== -->
+	<!-- 	 VITAL PARAMETERS      -->
+	<!-- ==================================== -->
+
+	<bean id="vitalParameterController" class="com.insta.hms.mdm.vitalparameters.VitalParameterController">
+		<property name="actionId" value="mas_vitalparameters"/>
+	</bean>
+	<bean id="referenceRangesController" class="com.insta.hms.mdm.vitalparameter.referenceranges.ReferenceRangesController">
+		<property name="actionId" value="mas_vitalparameter_resultranges"/>
+	</bean>
+	<bean id="vitalsController" class="com.insta.hms.mdm.vitals.VitalsController">
+		<property name="actionId" value="new_mas_vitalparameters"/>
+	</bean>
+	<!-- ==================================== -->
+	<!-- 	    op visit type applicability        -->
+	<!-- ==================================== -->
+
+	<bean id="opVisitTypeApplicabilityController" class="com.insta.hms.mdm.opvisittyperuleapplicability.OpVisitTypeApplicabilityController">
+		<property name="actionId" value="mas_op_visit_type_applicability"/>
+	</bean>
+	
+	<!-- ==================================== -->
+	<!-- 	    Form Components Master        -->
+	<!-- ==================================== -->
+
+	<bean id="formComponentsController" class="com.insta.hms.mdm.formcomponents.FormComponentsController">
+		<property name="actionId" value="mas_form_components"/>
+	</bean>
+	
+	<!--  Diagnostic Test Master -->
+  	<bean id="diagnosticTestController" class="com.insta.hms.mdm.diagnostics.DiagnosticTestController">
+  		<property name="actionId" value="mas_diag_test_list"/>
+  	</bean>
+  	
+  	<bean id="addEditDiagnosticController" class="com.insta.hms.mdm.addeditdiagnostics.AddEditDiagnosticController">
+  		<property name="actionId" value="diag_edit_master_id"/>
+  	</bean>
+  	
+  	<!-- ==================================== -->
+	<!-- 	       Item Form Master	  		  -->
+	<!-- ==================================== -->
+	
+	<bean id="itemFormController" class="com.insta.hms.mdm.itemforms.ItemFormController">
+		<property name="actionId" value="mas_item_form" />
+	</bean>
+	
+	<!-- ========================================= -->
+	<!-- 	   Generic Classification Master       -->
+	<!-- ========================================= -->
+	<bean id="genericClassificationController" class="com.insta.hms.mdm.genericclassifications.GenericClassificationController">
+		<property name="actionId" value="mas_generic_classification_names" />
+	</bean>
+	
+	<!-- ========================================= -->
+	<!-- 	   Generic Sub Classification Master   -->
+	<!-- ========================================= -->
+	<bean id="genericSubClassificationController" class="com.insta.hms.mdm.genericsubclassifications.GenericSubClassificationController">
+		<property name="actionId" value="mas_sub_classification_names" />
+	</bean>
+	
+	<!-- ===================================  -->	
+	<!-- Issue User Master	                  -->
+	<!-- ==================================== -->
+	
+	<bean id="issueUserController" class="com.insta.hms.mdm.issueuser.IssueUserController">
+		<property name="actionId" value="mas_Issue_users" />
+	</bean>
+	
+	<!-- ===================================  -->	
+	<!-- Stock Adjustment Reason Master	                  -->
+	<!-- ==================================== -->
+	
+	<bean id="stockAdjustmentReasonController" class="com.insta.hms.mdm.stockadjustmentreason.StockAdjustmentReasonController">
+		<property name="actionId" value="mas_stock_adj_reason" />
+	</bean>
+    
+	<!-- ===================================  -->	
+	<!-- Insurance Aggregator Centers Master  -->
+	<!-- ==================================== -->
+	<bean id="insAggregatorCentersController" class="com.insta.hms.mdm.insaggregatorcenters.InsAggregatorCentersController">
+		<property name="actionId" value="mas_ins_aggregator_centers" />
+	</bean>
+	
+	<!-- ===================================  -->	
+	<!-- Insurance Aggregator Doctors Master  -->
+	<!-- ==================================== -->
+	<bean id="insAggregatorDoctorsController" class="com.insta.hms.mdm.insaggregatordoctors.InsAggregatorDoctorsController">
+		<property name="actionId" value="mas_ins_aggregator_doctors" />
+	</bean> 
+	
+	<!-- ===================================  -->	
+	<!-- Insurance Aggregator Pharmacies Master  -->
+	<!-- ==================================== -->
+	<bean id="insAggregatorPharmaciesController" class="com.insta.hms.mdm.insaggregatorpharmacies.InsAggregatorPharmaciesController">
+		<property name="actionId" value="mas_ins_aggregator_pharmacies" />
+	</bean> 
+	
+	<!-- ===================================  -->	
+	<!-- Insurance Aggregator Tpa Insurance Company Master  -->
+	<!-- ==================================== -->
+	<bean id="insAggregatorTpaInsCoController" class="com.insta.hms.mdm.insaggregatortpainsco.InsAggregatorTpaInsCoController">
+		<property name="actionId" value="mas_ins_aggregator_tpainsco" />
+	</bean>   	 
+	
+	<!-- ==================================== -->
+	<!--        Resource Availability Override      -->
+	<!-- ==================================== -->
+	
+	<bean id="resourceAvailabilityController" class="com.insta.hms.mdm.resourceavailability.ResourceAvailabilityController">
+		<property name="actionId" value="cat_resource_scheduler"/>
+	</bean>
+	
+	<!-- ==================================== -->
+	<!--        Resource Availability Override      -->
+	<!-- ==================================== -->
+
+	<bean id="resourceOverrideController" class="com.insta.hms.mdm.resourceoverride.ResourceOverrideController">
+		<property name="actionId" value="res_availability"/> 
+	</bean> 
+	
+	<!-- ===================================  -->	
+	<!--        Equipment Master  -->
+	<!-- ==================================== -->
+	<bean id="equipmentController" class="com.insta.hms.mdm.equipment.EquipmentController">
+		<property name="actionId" value="mas_equipment" />
+	</bean>
+	
+	<!-- ===================================== -->
+  	<!--        Insurance Plan Master          -->
+  	<!--  ==================================== -->
+  	
+  	<bean id="insurancePlanController" class="com.insta.hms.mdm.insuranceplans.InsurancePlanController">
+  		<property name="actionId" value="mas_plan"/>
+  		<property name="screenId" value="mas_plan"/>
+		<property name="authMode" value="passthru"/>
+  	</bean> 	
+  	
+  	<!-- ===================================  -->	
+	<!--  Test Equipment Master  -->
+	<!-- ==================================== -->
+	<bean id="testEquipmentController" class="com.insta.hms.mdm.testequipments.TestEquipmentController">
+		<property name="actionId" value="test_equipment_master" />
+  	</bean>
+
+  	<!-- ==================================== -->
+	<!--        Item Groups Master      -->
+	<!-- ==================================== -->
+
+	<bean id="taxGroupController" class="com.insta.hms.mdm.taxgroups.TaxGroupController">
+		<property name="actionId" value="master_tax_groups"/> 
+	</bean> 
+	
+	<!-- ==================================== -->
+	<!--        Item Sub Groups Master      -->
+	<!-- ==================================== -->
+
+	<bean id="taxSubGroupController" class="com.insta.hms.mdm.taxsubgroups.TaxSubGroupController">
+		<property name="actionId" value="master_tax_sub_groups"/>
+	</bean> 	
+
+	<!-- ===================================  -->	
+ 	<!-- Order Sets Master	                  -->
+ 	<!-- ==================================== -->
+ 	
+	<bean id="orderSetsController" class="com.insta.hms.mdm.ordersets.OrderSetsController">
+		<property name="actionId" value="mas_order_sets" />
+	</bean>
+	
+	<bean id="reviewTypesController" class="com.insta.hms.mdm.coderclaimreview.ReviewTypesController">
+		<property name="actionId" value="mas_review_types" />
+	</bean>
+
+	<bean id="reviewCategoryController" class="com.insta.hms.mdm.coderclaimreview.ReviewCategoryController">
+		<property name="actionId" value="mas_review_category" />
+	</bean>
+	
+	<bean id="roleController" class="com.insta.hms.mdm.role.RoleController">
+		<property name="actionId" value="mas_roles" />
+	</bean>
+
+	<!-- ===================================  -->	
+	<!--     Practitioner Type 	              -->
+	<!-- ==================================== -->
+	
+	<bean id="practitionerTypeController" class="com.insta.hms.mdm.practitionertypes.PractitionerTypeController">
+		<property name="authMode" value="passthru"/>
+	</bean>
+	
+	<!-- ===================================  -->	
+	<!--     Center Preferences Master 	      -->
+	<!-- ==================================== -->
+	
+	<bean id="centerPreferencesController" class="com.insta.hms.mdm.centerpreferences.CenterPreferencesController">
+		<property name="actionId" value="mas_center_prefs"/>
+	</bean>
+		
+	<!-- ===================================  -->
+	<!-- Pharmacy Bill Id Sequence Master	  -->
+	<!-- ==================================== -->
+	
+	<bean id="pharmacyBillSequenceController" class="com.insta.hms.mdm.sequences.pharmacybillsequences.PharmacyBillSequenceController">
+		<property name="actionId" value="pharmacy_bill_id_sequence" />
+		<property name="authMode" value="instaonly" />
+	</bean>
+	<!-- ===================================  -->	
+	<!-- Bill Audit Number Sequence Master	  -->
+	<!-- ==================================== -->
+	
+	<bean id="billAuditNumberSequenceController" class="com.insta.hms.mdm.sequences.billlauditnumbersequences.BillAuditNumberSequenceController">
+		<property name="actionId" value="bill_audit_number_sequence" />
+		<property name="authMode" value="instaonly" />
+	</bean>
+	
+	<!-- ===================================  -->	
+	<!-- Tax Upload Download	  -->
+	<!-- ==================================== -->
+	
+	<bean id="itemTaxUploadDownloadController" class="com.insta.hms.mdm.itemtaxuploaddownloads.ItemTaxUploadDownloadController">
+		<property name="actionId" value="master_tax_upload_download" />
+	</bean>
+
+	
+	<!-- ===================================  -->	
+	<!-- Voucher Number Sequence Master	                  -->
+	<!-- ==================================== -->
+	
+	<bean id="voucherNoSequenceController" class="com.insta.hms.mdm.sequences.vouchernosequences.VoucherNoSequenceController">
+		<property name="actionId" value="voucher_number_sequence" />
+		<property name="authMode" value="instaonly" />
+	</bean>
+	
+	<!-- ===================================  -->	
+	<!-- Receipt Sequence Master	                  -->
+	<!-- ==================================== -->
+	
+	<bean id="receiptNumberSequenceController" class="com.insta.hms.mdm.sequences.receiptnumber.ReceiptNumberSequenceController">
+		<property name="actionId" value="receipt_number_sequence" />
+		<property name="authMode" value="instaonly" />
+	</bean>
+	
+
+	<!-- ===================================  -->	
+	<!-- GRN Number Sequence Master	                  -->
+	<!-- ==================================== -->
+	
+	<bean id="grnNumberSequenceController" class="com.insta.hms.mdm.sequences.grnno.GrnNumberSequenceController">
+		<property name="actionId" value="grn_number_sequence" />
+		<property name="authMode" value="instaonly" />
+	</bean>
+	
+	<!-- ===================================  -->	
+	<!-- PO Sequence Master	                  -->
+	<!-- ==================================== -->
+	
+	<bean id="purchaseOrderSequenceController" class="com.insta.hms.mdm.sequences.posequences.PurchaseOrderSequenceController">
+		<property name="actionId" value="purchase_order_sequence" />
+		<property name="authMode" value="instaonly" />
+	</bean>
+	
+	<!-- ===================================  -->	
+	<!-- EDC Machines Master	              -->
+	<!-- ==================================== -->
+	
+	<bean id="edcMachinesController" class="com.insta.hms.mdm.edcmachines.EdcMachinesController">
+		<property name="actionId" value="mas_edc_machine" />
+	</bean>
+
+	<!-- ================================== -->
+	<!--  Generic Item Master  Controller	-->
+	<!-- ================================== -->
+	<bean id="genericNamesController" class="com.insta.hms.mdm.stores.genericnames.GenericNamesController">
+			<property name = "authMode" value = "passthru"/> 
+			<!-- Once All action class method migrated to controller then authMode will be actual action rights-->
+	</bean>	
+	<!-- ===================================  -->	
+	<!-- Lab Number Sequence Master	  -->
+	<!-- ==================================== -->
+	
+	<bean id="labNumberSequenceController" class="com.insta.hms.mdm.sequences.labnumbersequences.LabNumberSequenceController">
+		<property name="actionId" value="lab_number_sequence" />
+		<property name="authMode" value="instaonly" />
+	</bean>
+	<!-- ===================================  -->	
+	<!-- Radiology Number Sequence Master	  -->
+	<!-- ==================================== -->
+	
+	<bean id="radiologyNumberSequenceController" class="com.insta.hms.mdm.sequences.radiologynumbersequences.RadiologyNumberSequenceController">
+		<property name="actionId" value="radiology_number_sequence" />
+		<property name="authMode" value="instaonly" />
+	</bean>
+
+	<!-- ==================================== -->
+	<!-- 	       Accounting Heads Master	  -->
+	<!-- ==================================== -->
+	
+	<bean id="accountingHeadsController" class="com.insta.hms.mdm.accountingheads.AccountingHeadsController">
+		<property name="actionId" value="account_head" />
+	</bean>
+
+	<!-- ==================================== -->
+	<!-- 	       Diet Constituents Master	  	-->
+	<!-- ==================================== -->
+	
+	<bean id="dietConstituentsController" class="com.insta.hms.mdm.dietconstituents.DietConstituentsController">
+		<property name = "authMode" value = "passthru"/> 
+	</bean>
+	
+	<!-- ===================================  -->	
+	<!-- Practitioner Consultation Mapping 	  -->
+	<!-- ==================================== -->
+	
+	<bean id="practitionerConsultationMappingController" class="com.insta.hms.mdm.practitionerconsultationmapping.PractitionerConsultationMappingController">
+		<property name="actionId" value="mas_practitioner_types" />
+	</bean>
+	
+	<!-- ===================================  -->	
+	<!-- Confidentiality Groups Master  	  -->
+	<!-- ==================================== -->
+	
+	<bean id="confidentialityGroupController" class="com.insta.hms.mdm.confidentialitygrpmaster.ConfidentialityGroupController">
+		<property name="actionId" value="mas_confidentiality_groups" />
+	</bean>
+	
+	<!-- ===================================  -->	
+	<!-- User Mrno Association Master  	      -->
+	<!-- ==================================== -->
+	
+	<bean id="userMrnoAsssociationController" class="com.insta.hms.mdm.breaktheglass.UserMrnoAssociationController">
+		<property name="actionId" value="mas_break_the_glass" />
+	</bean>
+	
+	<!-- ===================================  -->	
+	<!-- Prescription declined reason master  -->
+	<!-- ==================================== -->
+	
+	<bean id="prescDeclinedReasonController" class="com.insta.hms.mdm.prescriptionsdeclinedreasonmaster.PrescDeclinedReasonController">
+		<property name="actionId" value="mas_pending_presc_declined_reasons" />
+	</bean>
+	
+	
+	<!-- ==================================== -->
+	<!-- 	      Note Type Master	  -->
+	<!-- ==================================== -->
+	
+	<bean id="noteTypesController" class="com.insta.hms.mdm.notetypes.NoteTypesController">
+		<property name="actionId" value="mas_note_types" />
+	</bean>
+	
+	<!-- ==================================== -->
+	<!-- 	      Manage Interfaces	  -->
+	<!-- ==================================== -->
+	
+	<bean id="manageInterfacesController" class="com.insta.hms.integration.configuration.ManageInterfacesController">
+		<property name = "authMode" value = "passthru"/> 
+	</bean>
+	
+	<!-- ==================================== -->
+	<!-- 	      Data Backload	  -->
+	<!-- ==================================== -->
+	
+	<bean id="dataBackloadController" class="com.insta.hms.integration.backload.DataBackloadController">
+		<property name="actionId" value="mas_data_backload" />
+	</bean>
+	
+	<!-- ==================================== -->
+	<!-- 			district Master			  -->
+	<!-- ==================================== -->
+	
+	<bean id="districtController" class="com.insta.hms.mdm.districts.DistrictController">
+		<property name="actionId" value="mas_districts"/>
+	</bean>
+	
+	<!-- ===================================  -->	
+	<!-- Billing Group Master	              -->
+	<!-- ==================================== -->
+	
+	<bean id="itemGroupsController" class="com.insta.hms.mdm.itemgroups.ItemGroupsController">
+		<property name="actionId" value="mas_billing_group"/>
+	</bean>
+
+ 	<bean id="caseRateController" class="com.insta.hms.mdm.caserate.CaseRateController">
+		<property name="actionId" value="mas_case_rate" />
+	</bean>
+	
+	 <bean id="hospitalRoleController" class="com.insta.hms.mdm.hospitalroles.HospitalRoleController">
+		<property name="actionId" value="mas_hosp_roles" />
+	</bean>
+
+	<bean id="indicationForCaesareanSectionController" class="com.insta.hms.mdm.indicationforcaesareansection.IndicationForCaesareanSectionController">
+		<property name="actionId" value="mas_indication_for_caesarean_section" />
+	</bean>
+
+	<bean id="reasonForReferralController" class="com.insta.hms.mdm.reasonforreferral.ReasonForReferralController">
+		<property name="actionId" value="mas_reason_for_referral" />
+	</bean>
+
+	<bean id="codeTypeController" class="com.insta.hms.mdm.codetype.CodeTypeController">
+		<property name="actionId" value="mas_code_type" />
+	</bean>
+
+	<bean id="packageMasterController" class="com.insta.hms.mdm.ordersets.PackageMasterController">
+		<property name="actionId" value="mas_packages" />
+	</bean>
+
+	<!-- ==================================== -->
+	<!--   Message Dispatcher Configuration	  -->
+	<!-- ==================================== -->
+	
+	<bean id="messageDispatcherConfigController" class="com.insta.hms.mdm.messagedispatcherconfig.MessageDispatcherConfigController">
+		<property name="actionId" value="mas_message_dispatcher_config"/>
+	</bean>
+	
+	<bean id="centerAvailabilityController" class="com.insta.hms.mdm.centeravailability.CenterAvailabilityController">
+		<property name="authMode" value="passthru"/>
+	</bean>
+	
+	<bean id="raceController" class="com.insta.hms.mdm.race.RaceController">
+		<property name="authMode" value="passthru"/>
+	</bean>
+
+	<!-- ==================================== -->
+	<!--   System Messages	-->
+	<!-- ==================================== -->
+	
+	<bean id="systemMessageController" class="com.insta.hms.mdm.systemmessage.SystemMessageController">
+		<property name = "actionId" value = "mas_system_messages"/>
+	</bean>
+	
+	
+	<!-- ==================================== -->
+	<!--              Bank Master             -->
+	<!-- ==================================== -->
+	
+	<bean id="bankController" class="com.insta.hms.mdm.bank.BankController">
+		<property name = "authMode" value = "passthru"/>
+	</bean>
+	<bean id="genderController"
+	class="com.insta.hms.mdm.gendermaster.GenderController">
+		<property name="authMode" value="passthru"/>
+	</bean>
+
+	<bean id="maritalStatusController" class="com.insta.hms.mdm.maritalstatusmaster.MaritalStatusController">
+		<property name="authMode" value="passthru"/>
+	</bean>
+	
+		<bean id="bloodGroupController" class="com.insta.hms.mdm.bloodgroup.BloodGroupController">
+		<property name="authMode" value="passthru"/>
+	</bean>
+
+	<bean id="religionController" class="com.insta.hms.mdm.religionmaster.ReligionController">
+		<property name="authMode" value="passthru"/>
+	</bean>
+
+	<bean id="malaffiController" class="com.insta.hms.malaffi.MalaffiController">
+		<property name = "authMode" value = "passthru"/>
+	</bean>
+	
+	<!-- ==================================== -->
+	<!--  User Center Billing Counter Mapping -->
+	<!-- ==================================== -->
+	<bean id="userBillingCenterCounterMappingController"
+	class="com.insta.hms.mdm.usercentercounters.UserBillingCenterCounterMappingController">
+		<property name="authMode" value="passthru" />
+	</bean>
+	
+	<!-- ===================================  -->	
+	<!-- Consumption UOM Master	                  -->
+	<!-- ==================================== -->
+	<bean id="consumptionUOMController" class="com.insta.hms.mdm.consumptionuom.ConsumptionUOMController">
+		<property name="actionId" value="mas_consumption_uom" />
+	</bean>
+	
+	<!-- ===================================  -->	
+	<!-- Code Sets Master	                  -->
+	<!-- ==================================== -->
+	<bean id="codeSetsController" class="com.insta.hms.mdm.codesets.CodeSetsController">
+		<property name="actionId" value="mas_code_sets" />
+	</bean>
+	
+</beans>

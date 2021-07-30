@@ -1,0 +1,3187 @@
+FORMAT: 1A
+HOST: http://localhost:8080/instahms
+
+# Insta Master API
+
+### Regions List [/master/regions/list.json{?status,pageNum,pageSize,sortOrder,sortReverse}]
+
+#### List all regions [GET]
+This endpoint is used for getting a list of all regions
+
+
++ Parameters
+    + status (optional,char) - 'A' (A for active,I for inactive) 
+    + pageNum (optional,int) - 1 (which page number to fetch?)
+    + pageSize (optional,int) - 20 (number of items in a page)
+    + sortOrder (optional,string) - "region_name" (name of the field on which to sort)
+    + sortReverse (optional, boolean) - true (sort in ascending or descending; will only work if sortOrder is specified)
+    
++ Response 200 (application/json)
+
+        {
+            "pagedList": {
+                            "dtoList": [
+                                {
+                                    "region_id": 1,
+                                    "status": "A",
+                                    "region_name": "Karnataka"
+                                },
+                                {
+                                    "region_id": 4,
+                                    "region_name": "Kolkata",
+                                    "status": "A"
+                                },
+                                {
+                                    "region_name": "Noida",
+                                    "status": "A",
+                                    "region_id": 7
+                                },
+                                {
+                                    "region_name": "Punjab",
+                                    "status": "A",
+                                    "region_id": 3
+                                },
+                                {
+                                    "region_id": 2,
+                                    "region_name": "Tamil Nadu",
+                                    "status": "A"
+                                },
+                                {
+                                    "region_id": 17,
+                                    "status": "A",
+                                    "region_name": "bglr05"
+                                },
+                                {
+                                    "region_name": "bglr1",
+                                    "region_id": 6,
+                                    "status": "A"
+                                },
+                                {
+                                    "region_id": 16,
+                                    "region_name": "bglr15",
+                                    "status": "A"
+                                },
+                                {
+                                    "region_name": "bglr25",
+                                    "status": "A",
+                                    "region_id": 15
+                                },
+                                {
+                                    "region_id": 9,
+                                    "status": "A",
+                                    "region_name": "bglr3"
+                                },
+                                {
+                                    "region_name": "bglr43",
+                                    "region_id": 14,
+                                    "status": "A"
+                                },
+                                {
+                                    "region_id": 21,
+                                    "status": "A",
+                                    "region_name": "bglr45"
+                                },
+                                {
+                                    "region_id": 20,
+                                    "region_name": "bglr50",
+                                    "status": "A"
+                                },
+                                {
+                                    "region_id": 18,
+                                    "status": "A",
+                                    "region_name": "bglr52"
+                                },
+                                {
+                                    "region_name": "bglr53",
+                                    "status": "A",
+                                    "region_id": 19
+                                },
+                                {
+                                    "region_id": 12,
+                                    "status": "A",
+                                    "region_name": "bglr56"
+                                },
+                                {
+                                    "region_name": "ftrttetwt",
+                                    "region_id": 10,
+                                    "status": "A"
+                                },
+                                {
+                                    "region_id": 8,
+                                    "region_name": "ldj;flaj",
+                                    "status": "A"
+                                },
+                                {
+                                    "status": "A",
+                                    "region_id": 11,
+                                    "region_name": "qwertyuio"
+                                }
+                            ],
+                            "totalRecords": 19,
+                            "pageSize": 20,
+                            "pageNumber": 1,
+                            "countInfo": {
+                            "count": 19
+                            },
+                            "numPages": 1
+                            }
+        }
+
+### Lookup [/master/regions/lookup.json{?filterText}]
+This endpoint is to filter regions based on region name only. 
+It will return all the regions which contain the text in filterText
+#### Get List of filtered regions [GET]
+
++ Parameters
+    + filterText (required,string) - D (to get all regions containing D)
+    
++ Response 200 (application/json)
+
+        {
+             "dtoList" : [ {
+            "region_id" : 140,
+            "region_name" : "delhi0001",
+            "status" : "I"
+          }, {
+            "region_id" : 152,
+            "region_name" : "delhi002",
+            "status" : " "
+          }, {
+            "region_id" : 153,
+            "region_name" : "delhi003",
+            "status" : null
+          }, {
+            "region_id" : 154,
+            "region_name" : "delhi004",
+            "status" : null
+          }, {
+            "region_id" : 156,
+            "region_name" : "delhi006",
+            "status" : null
+          }, {
+            "region_id" : 157,
+            "region_name" : "delhi007",
+            "status" : null
+          }, {
+            "region_id" : 158,
+            "region_name" : "delhi008",
+            "status" : null
+          }, {
+            "region_name" : "delhi010",
+            "region_id" : 163,
+            "status" : " "
+          }, {
+            "region_name" : "delhi019",
+            "status" : "A",
+            "region_id" : 167
+          }, {
+            "region_id" : 168,
+            "region_name" : "delhi0123",
+            "status" : "A"
+          }, {
+            "status" : "I",
+            "region_id" : 123,
+            "region_name" : "delhi0004"
+          } ],
+          "totalRecords" : 11
+        }
+
+### Show Region [/master/regions/show.json{?region_id}]
+
+#### Show one region [GET]
+
+Show endpoint is for getting list of one region.
+
++ Parameters
+    + region_id (required,int) - 1 (id of the region)
+
++ Response 200 (application/json)
+        
+        {
+            "bean" : {
+                        "region_id" : 4,
+                        "region_name" : "Kolkata",
+                        "status" : "A"
+                    }
+        }
+        
++ Response 404 (application/json)
+
+        {
+            "error": {
+                    "status": 404,
+                    "displayMessage": "Region with the given region_id doesn't exist"
+                     }
+        } 
+
+     
+## Create a region [/master/regions/create.json]
+
+#### Create [POST]
+
+Create endpoint
+
++ Request (application/x-www-form-urlencoded)
+    
+        region_name:banglore
+        status:A
+    
++ Response 200 (application/json)
+    
+        {
+            "region_id": 120,
+            "region_name": "banglore",
+            "status": "A"
+        }
+
++ Response 400 (application/json)
+    
+        {
+             "error": {
+                        "status": 400,
+                        "displayMessage": "Region already exists with name"
+                    }
+        }
+    
++ Response 500 (application/json)
+
+        {
+            "error": {
+                        "status": 500,
+                        "displayMessage": "An internal server error occured"
+                     }
+        }
+
+        
+### Update a region [/master/regions/update.json?{region_id}]
+
+#### Update[POST]
+
+Update a region endpoint
++ Parameters
+    + region_id (required,int) - 140 (id of the region)
+    
++ Request (application/x-www-form-urlencoded)
+        
+        region_name:delhi0001
+        status:A
+
++ Response 200 (application/json)
+        
+        {
+            "region_id": 140,
+            "region_name": "delhi0001",
+            "status": "I"
+        }
+
++ Response 404 (application/json)
+
+        {
+            "error": {
+                    "status": 404,
+                    "displayMessage": "Entity with the given id doesn't exist"
+                     }
+        } 
+
+## Stores List For center based hospital [/master/store/list.json{?status,pageNum,pageSize,sortOrder,sortReverse} or /master/store.htm{?status,pageNum,pageSize,sortOrder,sortReverse}] 
+
+### List all Stores [GET]
+This endpoint is for getting a list of all stores
+
++ Parameters
+    + status (optional,char) - 'A' (A for active,I for inactive) 
+    + pageNum (optional,int) - 1 (which page number to fetch?)
+    + pageSize (optional,int) - 20 (number of items in a page)
+    + sortOrder (optional,string) - "dept_name" (name of the field on which to sort)
+    + sortReverse (optional, boolean) - true (sort in ascending or descending; will only work if sortOrder is specified)
+
++ Response 200 (application/json)
+
+        {
+            "userCenterId" : 0,
+            "centers" : [ {
+            "center_name" : "BRS",
+            "center_id" : 7
+        }, {
+            "center_id" : 9,
+            "center_name" : "CHALLA"
+        } ],
+        "user_center_id" : 0,
+        "max_centers_inc_default" : 20,
+        "pagedList" : {
+        "dtoList" : [ {
+            "dept_id" : 15,
+            "center_id" : 7,
+            "status" : "A",
+            "counter_id" : "CNT0022",
+            "dept_name" : "BRS STORE",
+            "sales_store_vat_account_prefix" : "",
+            "purchases_store_cst_account_prefix" : "",
+            "center_name" : "BRS",
+            "purchases_store_vat_account_prefix" : "",
+            "allow_auto_po_generation" : "N",
+            "counter_no" : "Pharmacy Billing 2 BRS"
+        }, 
+        {
+            "counter_no" : null,
+            "center_id" : 7,
+            "status" : "A",
+            "sales_store_vat_account_prefix" : "",
+            "purchases_store_cst_account_prefix" : "",
+            "allow_auto_po_generation" : " ",
+            "dept_id" : 44,
+            "center_name" : "BRS",
+            "purchases_store_vat_account_prefix" : "",
+            "counter_id" : "CNT0002",
+            "dept_name" : "Iwc_store"
+        } ],
+        "totalRecords" : 2,
+        "pageSize" : 20,
+        "pageNumber" : 1,
+        "countInfo" : {
+        "count" : 9
+        },
+        "numPages" : 1
+        }
+        }
+
+##Show one store [/master/store/show.json{?dept_id}]
+
+### Get one store [GET]
+
++ Parameters
+    + dept_id (required,string) - 011 (id of the region)
+
++ Response 200 (application/json)
+    
+        {
+         "userCenterId" : 0,
+        "store_type_master" : [ {
+            "store_type_id" : 2,
+            "store_type_name" : "INVENTORY"
+        },{
+            "store_type_id" : 3,
+            "store_type_name" : "OTHERS"
+        },{
+            "store_type_name" : "PHARMACY",
+            "store_type_id" : 1
+        }, {
+            "store_type_id" : 4,
+            "store_type_name" : "Store"
+        } ],
+        "templates" : [ ],
+        "bean" : {
+            "updated_timestamp" : 1446533769635,
+            "is_super_store" : "N",
+            "created_timestamp" : 1446533769603,
+            "sales_store_vat_account_prefix" : "",
+            "counter_id" : "CNT0023",
+            "center_name" : "abc",
+            "allow_auto_po_generation" : "N",
+            "template_name" : "BUILTIN_HTML",
+            "allowed_raise_bill" : "Y",
+            "store_rate_plan_id" : null,
+            "account_group" : 3,
+            "presc_template_name" : "BUILTIN_HTML",
+            "purchases_store_cst_account_prefix" : "",
+            "auto_cancel_po_frequency_in_days" : null,
+            "allow_auto_cancel_po" : "N",
+            "is_sterile_store" : " ",
+            "store_type_id" : 4,
+            "last_auto_po_date" : null,
+            "auto_fill_prescriptions" : false,
+            "status" : "A",
+            "sale_unit" : "I",
+            "pharmacy_tin_no" : "",
+            "auto_po_generation_frequency_in_days" : null,
+            "presc_lbl_template_name" : "BUILTIN_HTML",
+            "purchases_store_vat_account_prefix" : "",
+            "center_id" : 18,
+            "pharmacy_drug_license_no" : "",
+            "stock_timestamp" : 13,
+            "auto_fill_indents" : true,
+            "is_sales_store" : "Y",
+            "dept_name" : "Beta",
+            "dept_id" : 42,
+            "last_auto_po_cancel_date" : null,
+            "use_batch_mrp" : "N"
+        },
+        "centers" : [ {
+            "center_name" : "BRS",
+            "center_id" : 7
+        }, {
+            "center_id" : 9,
+            "center_name" : "CHALLA"
+        }, {
+            "center_id" : 17,
+            "center_name" : "DNL ADIVA"
+        }, {
+            "center_name" : "DNL BDH",
+            "center_id" : 14
+        }, {
+            "center_id" : 15,
+            "center_name" : "DNL NEPHRINE"
+        }, {
+            "center_name" : "DNL RUBY HALL WANOWARIE",
+            "center_id" : 16
+        }, {
+            "center_name" : "DNLSHANTI NAGAR",
+            "center_id" : 1
+        }, {
+            "center_id" : 11,
+            "center_name" : "EXCELCARE"
+        }, {
+            "center_name" : "HOSUR",
+            "center_id" : 5
+        }, {
+            "center_name" : "KILPAUK",
+            "center_id" : 3
+        }, {
+            "center_id" : 4,
+            "center_name" : "KUMARAN"
+        }, {
+            "center_name" : "NOBLE",
+            "center_id" : 13
+        }, {
+            "center_id" : 8,
+            "center_name" : "PMM"
+        }, {
+            "center_id" : 10,
+            "center_name" : "POULOMI"
+        }, {
+            "center_id" : 12,
+            "center_name" : "PRIMUS"
+        }, {
+            "center_id" : 18,
+            "center_name" : "abc"
+        }, {
+            "center_id" : 19,
+            "center_name" : "center_ud1"
+        } ],
+            "account_group_master" : [ {
+            "account_group_name" : "Hospital",
+            "account_group_id" : 1
+        }, {
+            "account_group_id" : 3,
+            "account_group_name" : "Pharmacy"
+        } ],
+            "store_rate_plans" : [ {
+            "store_rate_plan_id" : 7,
+            "store_rate_plan_name" : "ST1"
+        }, {
+            "store_rate_plan_id" : 6,
+            "store_rate_plan_name" : "ST232"
+        }, {
+            "store_rate_plan_id" : 8,
+            "store_rate_plan_name" : "ST3"
+        }, {
+            "store_rate_plan_id" : 2,
+            "store_rate_plan_name" : "ST_DLS"
+          }, {
+            "store_rate_plan_id" : 5,
+            "store_rate_plan_name" : "Store Tariff 1"
+          }, {
+            "store_rate_plan_id" : 10,
+            "store_rate_plan_name" : "Store Tariff A"
+          }, {
+            "store_rate_plan_id" : 9,
+            "store_rate_plan_name" : "Tariff1"
+          }, {
+            "store_rate_plan_id" : 12,
+            "store_rate_plan_name" : "general "
+          }, {
+            "store_rate_plan_id" : 13,
+            "store_rate_plan_name" : "iwc_store_tariff"
+          }, {
+            "store_rate_plan_id" : 14,
+            "store_rate_plan_name" : "practice_store_tariff"
+          }, {
+            "store_rate_plan_name" : "sa",
+            "store_rate_plan_id" : 3
+          }, {
+            "store_rate_plan_id" : 4,
+            "store_rate_plan_name" : "sad"
+          }, {
+            "store_rate_plan_id" : 1,
+            "store_rate_plan_name" : "st1"
+          }, {
+            "store_rate_plan_id" : 11,
+            "store_rate_plan_name" : "stores"
+          } ],
+          "presc_lbl_templates" : [ ],
+          "storesLists" : [ {
+            "dept_id" : 20,
+            "dept_name" : "POULOMI STORE"
+          }, {
+            "dept_id" : 24,
+            "dept_name" : "NEW DELHI REGIONAL STORE"
+          }, {
+            "dept_name" : "TUMKUR STORE",
+            "dept_id" : 13
+          }, {
+            "dept_name" : "MH - REGIONAL STORE",
+            "dept_id" : 25
+          }, {
+            "dept_id" : 27,
+            "dept_name" : "DNL BDH STORE"
+          }, {
+            "dept_name" : "RUBY HALL WANOWARIE",
+            "dept_id" : 30
+          }, {
+            "dept_name" : "NOBLE STORE",
+            "dept_id" : 26
+          }, {
+            "dept_name" : "KA – REGIONAL STORE",
+            "dept_id" : 8
+          }, {
+            "dept_name" : "Sss",
+            "dept_id" : 32
+          }, {
+            "dept_name" : "NEPHRINE STORE",
+            "dept_id" : 28
+          }, {
+            "dept_id" : 9,
+            "dept_name" : "SHANTINAGAR STORE"
+          }, {
+            "dept_id" : 16,
+            "dept_name" : "TN – REGIONAL STORE"
+          }, {
+            "dept_name" : "KUMARAN STORE",
+            "dept_id" : 18
+          }, {
+            "dept_name" : "KILPAUK STORE",
+            "dept_id" : 17
+          }, {
+            "dept_name" : "CENTRAL STORE- PMM",
+            "dept_id" : 29
+          }, {
+            "dept_id" : 38,
+            "dept_name" : "Store_T2"
+          }, {
+            "dept_name" : "VStore 2",
+            "dept_id" : 35
+          }, {
+            "dept_id" : 40,
+            "dept_name" : "Store 1"
+          }, {
+            "dept_name" : "VStore 3",
+            "dept_id" : 36
+          }, {
+            "dept_name" : "Mystore",
+            "dept_id" : 43
+          }, {
+            "dept_name" : "PMM STORE",
+            "dept_id" : 22
+          }, {
+            "dept_name" : "Store_T3",
+            "dept_id" : 39
+          }, {
+            "dept_name" : "CHALLA STORE",
+            "dept_id" : 21
+          }, {
+            "dept_name" : "VStore 1",
+            "dept_id" : 34
+          }, {
+            "dept_id" : 23,
+            "dept_name" : "AP – REGIONAL STORE "
+          }, {
+            "dept_name" : "Beta",
+            "dept_id" : 42
+          }, {
+            "dept_id" : 11,
+            "dept_name" : "ANANYA STORE"
+          }, {
+            "dept_name" : "Store_T1",
+            "dept_id" : 37
+          }, {
+            "dept_name" : "EXCELCARE STORE",
+            "dept_id" : 14
+          }, {
+            "dept_name" : "HOSUR STORE",
+            "dept_id" : 12
+          }, {
+            "dept_name" : "INVENTORY Operation Theater",
+            "dept_id" : 7
+          }, {
+            "dept_id" : 6,
+            "dept_name" : "INVENTORY Dialysis 1st Floor"
+          }, {
+            "dept_id" : -2,
+            "dept_name" : "Dialysis 2nd Floor"
+          }, {
+            "dept_name" : "Dialysis-1",
+            "dept_id" : 1
+          }, {
+            "dept_id" : 2,
+            "dept_name" : "Dialysis-2"
+          }, {
+            "dept_id" : 10,
+            "dept_name" : "DNL CORPORATE STORE"
+          }, {
+            "dept_id" : 4,
+            "dept_name" : "Ambulance"
+          }, {
+            "dept_id" : 5,
+            "dept_name" : "Nephrolife Central Store"
+          }, {
+            "dept_name" : "Operation Theater",
+            "dept_id" : 3
+          }, {
+            "dept_name" : "OT CONSUMABLE STORE",
+            "dept_id" : -3
+          }, {
+            "dept_name" : "Diagnostics",
+            "dept_id" : -1
+          }, {
+            "dept_name" : "PRIMUS STORE",
+            "dept_id" : 19
+          }, {
+            "dept_name" : "Alfha",
+            "dept_id" : 41
+          }, {
+            "dept_id" : 0,
+            "dept_name" : "Trust Pharmacy Central Store"
+          }, {
+            "dept_id" : 15,
+            "dept_name" : "BRS STORE"
+          }, {
+            "dept_id" : 45,
+            "dept_name" : "Practice_store"
+          }, {
+            "dept_id" : 44,
+            "dept_name" : "Iwc_store"
+          }, {
+            "dept_name" : "NStore1",
+            "dept_id" : 33
+          }, {
+            "dept_id" : 46,
+            "dept_name" : "Store_y"
+          }, {
+            "dept_name" : "DNL ADIVA STORE",
+            "dept_id" : 31
+          }, {
+            "dept_name" : "Store_y3",
+            "dept_id" : 47
+          } ],
+          "genPrefs" : {
+            "points_earning_points" : 1,
+            "daily_checkpoint1" : "08:00:00",
+            "validate_cost_price" : "N",
+            "force_remarks_po_item_reject" : "Y",
+            "diag_report_print_center" : "col",
+            "scheduler_generate_order" : "Y",
+            "default_prescribe_doctor" : "Y",
+            "tooth_numbering_system" : "U",
+            "after_decimal_digits" : 2,
+            "hospital_mail_id" : "customer-support@instahealthsolutions.com",
+            "currency_format" : "Lakhs",
+            "surgery_name_required" : "O",
+            "username" : null,
+            "qty_default_to_issue_unit" : "N",
+            "vat_applicable" : "Y",
+            "fixed_ot_charges" : "N",
+            "show_central_excise_duty" : "Y",
+            "sales_print_items" : "BILLONLY",
+            "domain_name" : null,
+            "allow_bill_now_insurance" : "Y",
+            "auto_close_visit" : "P",
+            "upload_limit_in_mb" : 10,
+            "hijricalendar" : "N",
+            "default_consultation_print_template" : "BUILTIN_HTML",
+            "enable_sms" : "Y",
+            "pharmacy_schedule_h_alert" : "Y",
+            "autogenerate_labno" : "Y",
+            "issue_uom" : "Numbers",
+            "google_analytics_key" : null,
+            "sms_username" : ".instahms@smscountry.net",
+            "service_name_required" : "O",
+            "enable_nestloop" : "Y",
+            "show_hosp_amts_pharmasales" : "N",
+            "obsolete_pharmacy_defalut_vat_rate" : 5,
+            "warn_expiry" : 30,
+            "decimal" : "Paise",
+            "claim_service_tax" : 10.30,
+            "sample_assertion" : "Y",
+            "independent_generation_of_sample_id" : "N",
+            "issue_to_dept_only" : "N",
+            "dental_chart" : "Y",
+            "prescription_uses_stores" : "Y",
+            "deposit_receipt_print_default" : "BUILTIN_HTML",
+            "bill_cancellation_requires_approval" : "Y",
+            "sampleflow_required" : "Y",
+            "max_collection_centers_count" : null,
+            "ip_cases_across_doctors" : "Y",
+            "hospital_tin" : "",
+            "shafafiya_user_id_obsolete" : null,
+            "default_printer_for_bill_now" : 1,
+            "whole" : "Rupees",
+            "pharmacy_patient_type" : "R",
+            "allow_cons_qty_incr" : "N",
+            "bill_now_print_default" : "CUSTOM-Detail Bill Print(Merge)",
+            "use_smart_card" : "Y",
+            "daily_checkpoint2" : "20:00:00",
+            "auto_mail_po_to_sup" : false,
+            "operation_apllicable_for" : "i",
+            "default_emr_print_template" : "BUILTIN_HTML",
+            "package_size" : 1,
+            "bill_service_charge_percent" : 0.00,
+            "returns_against_specific_supplier" : "N",
+            "po_to_be_validated" : "Y",
+            "hospital_name" : "Davita Nephrolife India Pvt. Ltd.",
+            "bill_later_print_default" : "CUSTOM-Detail Bill Print(Merge)",
+            "allow_cross_center_indents" : "Y",
+            "allow_zero_claim_amount_for_ip" : "Y",
+            "sample_no_generation" : "P",
+            "emr_url_date" : "D",
+            "op_one_presc_doc" : "N",
+            "luxary_tax_applicable_on" : "B",
+            "pharma_allow_cp_sale" : "N",
+            "allow_consumable_stock_negative" : "Y",
+            "currency_symbol" : "Rs",
+            "gen_token_for_lab" : "Y",
+            "sales_returns_print_type" : "R",
+            "pharmacy_sale_margin_in_per" : 0.00,
+            "doctors_custom_field1" : "",
+            "doctors_custom_field2" : "",
+            "max_active_hosp_users" : 9999,
+            "cfd_max_count" : 4,
+            "blood_exp" : 90,
+            "diag_images" : "T,P,G",
+            "allow_zero_claim_amount_for_op" : "Y",
+            "default_printer_for_bill_later" : 1,
+            "doctors_custom_field5" : "",
+            "pharma_return_restricted" : "N",
+            "doctors_custom_field3" : "",
+            "default_dental_cons_print_template" : "BUILTIN_HTML",
+            "doctors_custom_field4" : "",
+            "fin_year_start_month" : 4,
+            "obsolete_eclaim_xml_schema" : "",
+            "gen_token_for_rad" : "Y",
+            "fp_authentication_url" : null,
+            "menu_background_color" : null,
+            "deposit_avalibility" : "B",
+            "points_redemption_rate" : 1.20,
+            "allow_decimals_in_qty_for_issues" : "Y",
+            "allow_only_indent_based_issue" : "N",
+            "shafafiya_pbm_active_obsolete" : "N",
+            "host_name" : "mail1.insta.lan",
+            "procurement_expiry_days" : null,
+            "fin_year_end_month" : 3,
+            "slida_mailslot_path" : null,
+            "force_sub_group_selection" : "N",
+            "receive_transfer_indent" : "Y",
+            "restrict_inactive_ip_visit" : "N",
+            "indent_approval_by" : "I",
+            "improbable_color_code" : "#E18EF3",
+            "auth_required" : false,
+            "default_voucher_print" : "summary",
+            "default_po_print_template" : "PO New",
+            "stock_inc" : "M",
+            "user_name_in_bill_print" : "Y",
+            "shafafiya_preauth_active_obsolete" : "N",
+            "deposit_cheque_realization_flow" : "Y",
+            "obsolete_default_diagnosis_code_type" : "",
+            "password" : null,
+            "port_no" : 25,
+            "points_earning_amt" : 100.00,
+            "signature_device_ip" : "",
+            "pharma_auto_roundoff" : "Y",
+            "critical_color_code" : "#FFB6B9",
+            "default_bill_later_creditsales" : "N",
+            "sale_expiry" : "N",
+            "hosp_uses_dynamic_addresses" : "N",
+            "shafafiya_preauth_password_obsolete" : null,
+            "po_approval_reqd_more_than_amt" : 0,
+            "shafafiya_password_obsolete" : null,
+            "stock_entry_agnst_do" : "N",
+            "billing_bed_type_for_op" : "GENERAL",
+            "enable_force_selection_for_mrno_search" : "N",
+            "autogenerate_sampleid" : "Y",
+            "normal_color_code" : "#FFFFFF",
+            "cess_applicable" : "Y",
+            "sample_collection_print_type" : "SL",
+            "apply_rateplan_discount" : "N",
+            "go_live_date" : "2009-12-07",
+            "consultation_validity_units" : "D",
+            "dhpo_facility_user_id_obsolete" : null,
+            "hospital_pan" : "",
+            "dhpo_facility_password_obsolete" : null,
+            "receipt_refund_print_default" : "BUILTIN_HTML",
+            "expired_items_procurement" : "N",
+            "package_uom" : "Numbers",
+            "obsolete_vat_type" : "C",
+            "check_insu_card_exp_in_sales" : "N",
+            "auto_close_claims_with_difference" : 0.00,
+            "default_prescription_print_template" : "BUILTIN_HTML",
+            "protocol" : "smtp",
+            "obsolete_prescriptions_by_generics" : "N",
+            "abnormal_color_code" : "#FFF3B6",
+            "se_with_po" : "N",
+            "max_centers_inc_default" : 20,
+            "max_dial_machine_count" : null,
+            "return_validity" : 4,
+            "auto_close_nocharge_op_bills" : "N",
+            "barcode_for_item" : "N",
+            "seperate_pharmacy_credit_bill" : "Y",
+            "validate_diagnosis_codification" : "N",
+            "prescribing_doctor_required" : "N",
+            "show_tests_in_emr" : "A",
+            "allow_decimals_for_qty" : "Y",
+            "hospital_address" : "",
+            "allow_all_cons_types_in_reg" : "N",
+            "obsolete_rate_plan_for_non_insured_bill" : "ORG0029",
+            "corporate_insurance" : "N",
+            "shafafiya_preauth_user_id_obsolete" : null,
+            "pac_validity_days" : 30,
+            "calendar_start_day" : 0,
+            "op_consultation_edit_across_doctors" : "Y",
+            "stock_negative_sale" : "A",
+            "aggregate_amt_on_remittance" : "N",
+            "consultation_reopen_time_limit" : 10000,
+            "procurement_tax_label" : "V",
+            "hospital_service_regn_no" : "",
+            "auto_close_indented_casefiles" : "N"
+          },
+          "pharmacy_counters" : [ {
+            "center_name" : "BRS",
+            "counter_type" : "P",
+            "center_id" : 7,
+            "counter_id" : "CNT0022",
+            "counter_no" : "Pharmacy Billing 2 BRS"
+          }, {
+            "center_name" : "BRS",
+            "counter_type" : "P",
+            "counter_no" : "Pharmacy Billing 1 BRS",
+            "counter_id" : "CNT0020",
+            "center_id" : 7
+          }, {
+            "counter_type" : "P",
+            "counter_id" : "CNT0002",
+            "counter_no" : "PHARMACY COUNTER",
+            "center_name" : "DNLSHANTI NAGAR",
+            "center_id" : 1
+          }, {
+            "counter_no" : "Stores Counter",
+            "counter_id" : "CNT0023",
+            "center_name" : "abc",
+            "counter_type" : "P",
+            "center_id" : 18
+          }, {
+            "center_id" : 12,
+            "counter_no" : "Shiva_billing_PH",
+            "counter_id" : "CNT0025",
+            "counter_type" : "P",
+            "center_name" : "PRIMUS"
+          }, {
+            "center_name" : "CHALLA",
+            "counter_type" : "P",
+            "counter_no" : "Pharmacy Billing 1 CHALLA",
+            "center_id" : 9,
+            "counter_id" : "CNT0021"
+          }, {
+            "counter_no" : "Challa_Pharmacy",
+            "counter_id" : "CNT0019",
+            "center_name" : "CHALLA",
+            "counter_type" : "P",
+            "center_id" : 9
+          } ],
+          "presc_templates" : [ {
+            "template_name" : "Customized Case Sheet Print Template"
+          }, {
+            "template_name" : "Default Prescription HTML Template"
+          }, {
+            "template_name" : "New Consultation Print"
+          }, {
+            "template_name" : "a html"
+          }, {
+            "template_name" : "a text"
+          } ]
+        }
+
+        
+##Add store [/master/store/add.json]
+
+This enpoint is used to populate the form on the add page
+
+### Add a Store [GET]
+
++ Response 200
+
+        {
+          "userCenterId": 0,
+          "store_type_master": [
+            {
+              "store_type_id": 5,
+              "store_type_name": "CAPITAL STORE"
+            },
+            {
+              "store_type_name": "DAYCARE",
+              "store_type_id": 7
+            },
+            {
+              "store_type_id": 4,
+              "store_type_name": "External Pharmacy"
+            },
+            {
+              "store_type_id": 6,
+              "store_type_name": "F & B STORE"
+            },
+            {
+              "store_type_id": 2,
+              "store_type_name": "INVENTORY"
+            },
+            {
+              "store_type_id": 3,
+              "store_type_name": "OTHERS"
+            },
+            {
+              "store_type_name": "PHARMACY",
+              "store_type_id": 1
+            }
+          ],
+          "templates": [
+            {
+              "template_name": "HB Rhea Pharmacy Bill"
+            },
+            {
+              "template_name": "HB RMS Pharmacy Bill"
+            },
+            {
+              "template_name": "MHC RMS Pharmacy Bill"
+            },
+            {
+              "template_name": "MHH Common Pharmacy"
+            },
+            {
+              "template_name": "MHH RMS Pharmacy Bill"
+            },
+            {
+              "template_name": "MHS RHEA Pharmacy Bill"
+            },
+            {
+              "template_name": "MHS RMS Pharmacy "
+            },
+            {
+              "template_name": "rejitha"
+            },
+            {
+              "template_name": "RHEA Chennai IP Sales Bill"
+            },
+            {
+              "template_name": "RMS Pharmacy Bill"
+            }
+          ],
+          "centers": [
+            {
+              "center_id": 1,
+              "center_name": "Motherhood Bangalore"
+            },
+            {
+              "center_name": "Motherhood Hebbal",
+              "center_id": 5
+            },
+            {
+              "center_id": 4,
+              "center_name": "Motherhood Sarjapur"
+            }
+          ],
+          "account_group_master": [
+            {
+              "account_group_name": "Hospital",
+              "account_group_id": 1
+            },
+            {
+              "account_group_name": "MHC RMS Pharmacy",
+              "account_group_id": 5
+            },
+            {
+              "account_group_name": "MHHB RMS Pharmacy",
+              "account_group_id": 9
+            },
+            {
+              "account_group_id": 7,
+              "account_group_name": "MHH RMS Pharmacy"
+            },
+            {
+              "account_group_id": 8,
+              "account_group_name": "MHS RMS Pharmacy"
+            },
+            {
+              "account_group_id": 3,
+              "account_group_name": "RMS Pharmacy"
+            }
+          ],
+          "store_rate_plans": [
+            {
+              "store_rate_plan_id": 4,
+              "store_rate_plan_name": "Chennai Rate"
+            },
+            {
+              "store_rate_plan_name": "Hyderabad Rate",
+              "store_rate_plan_id": 3
+            }
+          ],
+          "presc_lbl_templates": [],
+          "genPrefs": {
+            "points_earning_points": 1,
+            "show_central_excise_duty": "N",
+            "daily_checkpoint1": "08:00:00",
+            "validate_cost_price": "N",
+            "diag_report_print_center": "col",
+            "scheduler_generate_order": "Y",
+            "default_prescribe_doctor": "Y",
+            "points_earning_amt": 0,
+            "tooth_numbering_system": "U",
+            "after_decimal_digits": 2,
+            "email_bill_printer": 1,
+            "hospital_mail_id": "customer-support@instahealthsolutions.com",
+            "currency_format": "Lakhs",
+            "username": "",
+            "qty_default_to_issue_unit": "N",
+            "vat_applicable": "Y",
+            "fixed_ot_charges": "N",
+            "obsolete_pharmacy_defalut_vat_rate": 4,
+            "sales_print_items": "BILLONLY",
+            "obsolete_vat_type": "MB",
+            "surgery_name_required": "M",
+            "go_live_date": "2010-12-16",
+            "auto_close_visit": "P",
+            "upload_limit_in_mb": 10,
+            "hospital_name": "",
+            "hijricalendar": "N",
+            "default_consultation_print_template": "BUILTIN_HTML",
+            "is_return_against_grnno": false,
+            "pharmacy_schedule_h_alert": "Y",
+            "issue_uom": "Numbers",
+            "autogenerate_labno": "N",
+            "google_analytics_key": null,
+            "sms_username": ".instahms@smscountry.net",
+            "service_name_required": "O",
+            "apply_supplier_tax_rules": false,
+            "enable_nestloop": "Y",
+            "show_hosp_amts_pharmasales": "N",
+            "warn_expiry": 30,
+            "nurse_staff_ward_assignments_applicable": "N",
+            "decimal": "Paise",
+            "claim_service_tax": 10.3,
+            "enable_sms": "N",
+            "independent_generation_of_sample_id": "N",
+            "issue_to_dept_only": "N",
+            "dental_chart": "Y",
+            "prescription_uses_stores": "Y",
+            "deposit_receipt_print_default": "BUILTIN_HTML",
+            "sampleflow_required": "Y",
+            "max_collection_centers_count": null,
+            "allow_cons_qty_incr": "Y",
+            "ip_cases_across_doctors": "Y",
+            "hospital_tin": "",
+            "shafafiya_user_id_obsolete": null,
+            "default_printer_for_bill_now": 1,
+            "whole": "Rupees",
+            "daily_checkpoint2": "20:00:00",
+            "auto_mail_po_to_sup": false,
+            "operation_apllicable_for": "i",
+            "default_emr_print_template": "BUILTIN_HTML",
+            "package_size": 1,
+            "pharmacy_patient_type": "H",
+            "bill_service_charge_percent": 0,
+            "use_smart_card": "N",
+            "returns_against_specific_supplier": "N",
+            "obsolete_default_diagnosis_code_type": "ICD10",
+            "email_bill_later_template": "CUSTOM-Web Based Bill Later Print Template",
+            "no_of_credit_debit_card_digits": null,
+            "allow_cross_center_indents": "Y",
+            "po_to_be_validated": "N",
+            "allow_zero_claim_amount_for_ip": "Y",
+            "sample_no_generation": "P",
+            "emr_url_date": "D",
+            "op_one_presc_doc": "N",
+            "luxary_tax_applicable_on": "B",
+            "pharma_allow_cp_sale": "N",
+            "allow_consumable_stock_negative": "Y",
+            "currency_symbol": "Rs",
+            "sales_returns_print_type": "R",
+            "pharmacy_sale_margin_in_per": 0,
+            "doctors_custom_field1": "",
+            "doctors_custom_field2": "",
+            "max_active_hosp_users": 9999,
+            "cfd_max_count": 4,
+            "blood_exp": 90,
+            "diag_images": "T,P,G",
+            "allow_zero_claim_amount_for_op": "Y",
+            "gen_token_for_lab": "N",
+            "default_printer_for_bill_later": 1,
+            "doctors_custom_field5": "",
+            "pharma_return_restricted": "N",
+            "doctors_custom_field3": "",
+            "default_dental_cons_print_template": "BUILTIN_HTML",
+            "doctors_custom_field4": "",
+            "fin_year_start_month": 4,
+            "obsolete_eclaim_xml_schema": "",
+            "fp_authentication_url": null,
+            "menu_background_color": null,
+            "deposit_avalibility": "B",
+            "allow_decimals_in_qty_for_issues": "Y",
+            "separator_type": null,
+            "allow_only_indent_based_issue": "N",
+            "shafafiya_pbm_active_obsolete": "N",
+            "procurement_expiry_days": null,
+            "fin_year_end_month": 3,
+            "slida_mailslot_path": null,
+            "force_sub_group_selection": "N",
+            "deposit_cheque_realization_flow": "N",
+            "improbable_color_code": "#E18EF3",
+            "auth_required": false,
+            "default_voucher_print": "summary",
+            "mobile_number_validation": "Y",
+            "stock_inc": "M",
+            "user_name_in_bill_print": "Y",
+            "shafafiya_preauth_active_obsolete": "N",
+            "password": "",
+            "port_no": 25,
+            "receive_transfer_indent": "N",
+            "signature_device_ip": "",
+            "pharma_auto_roundoff": "Y",
+            "critical_color_code": "#FFB6B9",
+            "sale_expiry": "N",
+            "hosp_uses_dynamic_addresses": "N",
+            "gen_token_for_rad": "N",
+            "shafafiya_preauth_password_obsolete": null,
+            "po_approval_reqd_more_than_amt": 0,
+            "shafafiya_password_obsolete": null,
+            "default_bill_later_creditsales": "Y",
+            "stock_entry_agnst_do": "N",
+            "billing_bed_type_for_op": "GENERAL",
+            "enable_force_selection_for_mrno_search": "N",
+            "autogenerate_sampleid": "Y",
+            "prescribing_doctor_required": "Y",
+            "indent_approval_by": "R",
+            "restrict_inactive_visits": "N",
+            "consultation_validity_units": "T",
+            "normal_color_code": "#FFFFFF",
+            "pbm_price_threshold": 0,
+            "cess_applicable": "Y",
+            "sample_collection_print_type": "SL",
+            "email_bill_now_template": "CUSTOM-Web Based Bill Now Print Template",
+            "apply_rateplan_discount": "N",
+            "bill_cancellation_requires_approval": "N",
+            "dhpo_facility_user_id_obsolete": null,
+            "obsolete_rate_plan_for_non_insured_bill": "",
+            "hospital_pan": "",
+            "dhpo_facility_password_obsolete": null,
+            "mobile_starting_pattern": "7,8,9",
+            "receipt_refund_print_default": "BUILTIN_HTML",
+            "expired_items_procurement": "N",
+            "package_uom": "Numbers",
+            "check_insu_card_exp_in_sales": "N",
+            "auto_close_claims_with_difference": 0,
+            "default_prescription_print_template": "BUILTIN_HTML",
+            "bill_now_print_default": "CUSTOM-test",
+            "protocol": "smtp",
+            "domain_name": "mrpb",
+            "host_name": "10.11.0.1",
+            "obsolete_prescriptions_by_generics": "N",
+            "abnormal_color_code": "#FFF3B6",
+            "se_with_po": "N",
+            "default_po_print_template": "BUILTIN_HTML",
+            "bill_later_print_default": "CUSTOM-Motherhood New",
+            "points_redemption_rate": 0,
+            "seperate_pharmacy_credit_bill": "N",
+            "return_validity": null,
+            "max_dial_machine_count": null,
+            "show_tests_in_emr": "S",
+            "barcode_for_item": "N",
+            "sample_assertion": "N",
+            "auto_close_nocharge_op_bills": "A",
+            "max_centers_inc_default": 6,
+            "validate_diagnosis_codification": "N",
+            "allow_bill_reopen": "Y",
+            "mobile_length_pattern": "10",
+            "allow_decimals_for_qty": "Y",
+            "hospital_address": "",
+            "allow_bill_now_insurance": "N",
+            "force_remarks_po_item_reject": "N",
+            "corporate_insurance": "N",
+            "shafafiya_preauth_user_id_obsolete": null,
+            "pac_validity_days": 30,
+            "calendar_start_day": 0,
+            "allow_all_cons_types_in_reg": "Y",
+            "stock_negative_sale": "D",
+            "op_consultation_edit_across_doctors": "Y",
+            "aggregate_amt_on_remittance": "N",
+            "consultation_reopen_time_limit": 10000,
+            "procurement_tax_label": "V",
+            "hospital_service_regn_no": "",
+            "auto_close_indented_casefiles": "N"
+          },
+          "pharmacy_counters": [
+            {
+              "account_group": 1,
+              "counter_no": "Pharmacy Counter",
+              "counter_type": "P",
+              "counter_id": "CNT0002",
+              "center_name": "Motherhood Bangalore",
+              "center_id": 1
+            },
+            {
+              "counter_type": "P",
+              "account_group": 3,
+              "counter_no": "RMS Pharmacy",
+              "counter_id": "CNT0004",
+              "center_name": "Motherhood Bangalore",
+              "center_id": 1
+            },
+            {
+              "counter_no": "MHC RHEA Pharmacy Counter",
+              "counter_id": "CNT0006",
+              "account_group": 1,
+              "counter_type": "P",
+              "center_name": "Motherhood Chennai",
+              "center_id": 2
+            },
+            {
+              "center_id": 3,
+              "account_group": 1,
+              "center_name": "Motherhood Hyderabad",
+              "counter_type": "P",
+              "counter_no": "MHH Pharmacy",
+              "counter_id": "CNT0013"
+            },
+            {
+              "counter_id": "CNT0019",
+              "center_name": "Motherhood Hebbal",
+              "counter_no": "MHHB RMS Pharmacy Counter (OP)",
+              "account_group": 9,
+              "center_id": 5,
+              "counter_type": "P"
+            },
+            {
+              "account_group": 1,
+              "center_name": "Motherhood Hebbal",
+              "center_id": 5,
+              "counter_type": "P",
+              "counter_no": "MHHB RHEA Pharmacy Counter (IP)",
+              "counter_id": "CNT0020"
+            },
+            {
+              "center_id": 4,
+              "center_name": "Motherhood Sarjapur",
+              "account_group": 1,
+              "counter_id": "CNT0017",
+              "counter_no": "MHS RHEA COUNTER",
+              "counter_type": "P"
+            },
+            {
+              "account_group": 8,
+              "center_id": 4,
+              "center_name": "Motherhood Sarjapur",
+              "counter_no": "MHS Pharmacy Billing Counter ",
+              "counter_id": "CNT0016",
+              "counter_type": "P"
+            },
+            {
+              "counter_no": "MHC RMS Pharmacy Counter",
+              "counter_id": "CNT0007",
+              "counter_type": "P",
+              "center_name": "Motherhood Chennai",
+              "center_id": 2,
+              "account_group": 5
+            },
+            {
+              "counter_id": "CNT0011",
+              "account_group": null,
+              "center_id": 3,
+              "center_name": "Motherhood Hyderabad",
+              "counter_type": "P",
+              "counter_no": "MHH RMS Counter"
+            },
+            {
+              "account_group": null,
+              "center_id": 3,
+              "center_name": "Motherhood Hyderabad",
+              "counter_no": "MHH RHEA Pharmacy Counter",
+              "counter_type": "P",
+              "counter_id": "CNT0012"
+            }
+          ],
+          "presc_templates": [
+            {
+              "template_name": "Default Prescription HTML Template"
+            }
+          ]
+        }
+        
+##Create a store [/master/store/create.json]
+
+### Create one store [POST]
+
+Store creation endpoint. 
+
+dept_name, store_type_id and center_id are the mandatory fields.
+
++ Request (application/x-www-form-urlencoded)
+
+        dept_name:Alfha
+        center_id:18
+        counter_id:CNT0023
+        status:A
+        pharmacy_tin_no:
+        pharmacy_drug_license_no:
+        auto_fill_prescriptions:true
+        account_group:3
+        sales_store_vat_account_prefix:
+        purchases_store_vat_account_prefix:
+        purchases_store_cst_account_prefix:
+        store_type_id:4
+        is_super_store:Y
+        sale_unit:I
+        allowed_raise_bill:Y
+        presc_template_name:BUILTIN_HTML
+        presc_lbl_template_name:BUILTIN_HTML
+        template_name:BUILTIN_HTML
+        is_sales_store:Y
+        auto_fill_indents:true
+        is_sterile_store:
+        store_rate_plan_id:
+        allow_auto_po_generation_tmp:N
+        allow_auto_po_generation:N
+        auto_po_generation_frequency_in_days:
+        allow_auto_cancel_po_tmp:N
+        allow_auto_cancel_po:N
+        auto_cancel_po_frequency_in_days:
+        use_batch_mrp : N
+
++ Response 200 (application/json)
+
+        {
+            dept_name:Algha
+            center_id:18
+            counter_id:CNT0023
+            status:A
+            pharmacy_tin_no:
+            pharmacy_drug_license_no:
+            auto_fill_prescriptions:true
+            account_group:3
+            sales_store_vat_account_prefix:
+            purchases_store_vat_account_prefix:
+            purchases_store_cst_account_prefix:
+            store_type_id:4
+            is_super_store:Y
+            sale_unit:I
+            allowed_raise_bill:Y
+            presc_template_name:BUILTIN_HTML
+            presc_lbl_template_name:BUILTIN_HTML
+            template_name:BUILTIN_HTML
+            is_sales_store:Y
+            auto_fill_indents:true
+            is_sterile_store:
+            store_rate_plan_id:
+            allow_auto_po_generation_tmp:N
+            allow_auto_po_generation:N
+            auto_po_generation_frequency_in_days:
+            allow_auto_cancel_po_tmp:N
+            allow_auto_cancel_po:N
+            auto_cancel_po_frequency_in_days:
+            use_batch_mrp : N
+        }
+        
+##Update store [/master/store/update.json{?dept_id}]
+
+###Update a store [POST]
+
+Send whatever fields you want to be updated in the body.
+
++ Request (application/x-www-form-urlencoded)
+
+        dept_name:Alggha
+        center_id:18
+        counter_id:CNT0023
+        status:A
+        pharmacy_tin_no:
+        pharmacy_drug_license_no:
+        auto_fill_prescriptions:true
+        account_group:3
+        sales_store_vat_account_prefix:
+        purchases_store_vat_account_prefix:
+        purchases_store_cst_account_prefix:
+        store_type_id:4
+        is_super_store:Y
+        sale_unit:I
+        allowed_raise_bill:Y
+        presc_template_name:BUILTIN_HTML
+        presc_lbl_template_name:BUILTIN_HTML
+        template_name:BUILTIN_HTML
+        is_sales_store:Y
+        auto_fill_indents:true
+        is_sterile_store:
+        store_rate_plan_id:
+        allow_auto_po_generation_tmp:N
+        allow_auto_po_generation:N
+        auto_po_generation_frequency_in_days:
+        allow_auto_cancel_po_tmp:N
+        allow_auto_cancel_po:N
+        auto_cancel_po_frequency_in_days:
+        use_batch_mrp:N
+
++ Response 200 (application/json)
+        
+        {
+            dept_name:Alggha
+            center_id:18
+            counter_id:CNT0023
+            status:A
+            pharmacy_tin_no:
+            pharmacy_drug_license_no:
+            auto_fill_prescriptions:true
+            account_group:3
+            sales_store_vat_account_prefix:
+            purchases_store_vat_account_prefix:
+            purchases_store_cst_account_prefix:
+            store_type_id:4
+            is_super_store:Y
+            sale_unit:I
+            allowed_raise_bill:Y
+            presc_template_name:BUILTIN_HTML
+            presc_lbl_template_name:BUILTIN_HTML
+            template_name:BUILTIN_HTML
+            is_sales_store:Y
+            auto_fill_indents:true
+            is_sterile_store:
+            store_rate_plan_id:
+            allow_auto_po_generation_tmp:N
+            allow_auto_po_generation:N
+            auto_po_generation_frequency_in_days:
+            allow_auto_cancel_po_tmp:N
+            allow_auto_cancel_po:N
+            auto_cancel_po_frequency_in_days:
+            use_batch_mrp:N
+        }
+
+### Store Export CSV [/master/store/export.json]
+
+#### Export [GET]
+
++ Response 200 (application/csv)
+        
+        "dept_id","dept_name","counter_no","status","pharmacy_tin_no","pharmacy_drug_license_no","account_group_name","store_type_name","is_super_store","is_sterile_store","sale_unit","center_name","allowed_raise_bill","is_sales_store","auto_fill_indents","auto_fill_prescriptions","purchases_store_vat_account_prefix","purchases_store_cst_account_prefix","sales_store_vat_account_prefix","store_tariff_name","use_batch_mrp","auto_po_generation_frequency_in_days","allow_auto_po_generation","auto_cancel_po_frequency_in_days","allow_auto_cancel_po"
+        "0","Trust Pharmacy Central Store","PHARMACY COUNTER","A","29020200306","KA/BNG/111/20-21/2231","Pharmacy","PHARMACY","Y","","I","DNLSHANTI NAGAR","Y","Y","true","true","","","","","N","","N","","N"
+        "1","Dialysis-1","","I","","","Hospital","PHARMACY","Y","","I","DNLSHANTI NAGAR","N","N","false","false","","","","","N","","N","","N"
+        "2","Dialysis-2","","I","","","Hospital","PHARMACY","Y","","I","DNLSHANTI NAGAR","N","N","false","false","","","","","N","","N","","N"
+
+### Store Import CSV [/master/store/import.json]
+
+#### Import [POST]
+
++ Request (multipart/form-data; boundary=----WebKitFormBoundaryod2rPRANGnuJIIZ3)
+
+        ------WebKitFormBoundaryod2rPRANGnuJIIZ3
+        Content-Disposition: form-data;
+        
+        ------WebKitFormBoundaryod2rPRANGnuJIIZ3
+        Content-Disposition: form-data; name="uploadFile"; filename="test (28).csv"
+        Content-Type: text/csv
+
+        ------WebKitFormBoundaryod2rPRANGnuJIIZ3--
+        
+
++ Response 200 (application/json)
+
+        {
+            "infoMsg" : "Processed lines: 49<br>Existing records updated: 49<br>"
+        }
+
++ Response 400 (application/json)
+
+        {
+            "error" : "Processed lines: 49<br>Existing records updated: 0<br>Lines with errors: 49<br><hr>Line 2: No master value found for Hospital (counter_id)<br>Line 2: No master value found for N (account_group)<br>Line 2: No master value found for N (store_type_id)<br>Line 3: No master value found for Hospital (counter_id)<br>Line 3: No master value found for N (account_group)<br>Line 3: No master value found for N (store_type_id)<br>Line 4: No master value found for Hospital (counter_id)<br>Line 4: No master value found for N (account_group)<br>Line 4: No master value found for N (store_type_id)<br>Line 5: No master value found for PHARMACY COUNTER (store_rate_plan_id)<br>Line 5: No master value found for Pharmacy (counter_id)<br>Line 5: No master value found for N (account_group)<br>Line 5: No master value found for N (store_type_id)<br>Line 6: No master value found for Hospital (counter_id)<br>Line 6: No master value found for N (account_group)<br>Line 6: No master value found for N (store_type_id)<br>Line 7: No master value found for Hospital (counter_id)<br>Line 7: No master value found for N (account_group)<br>Line 7: No master value found for N (store_type_id)<br>Line 8: No master value found for Hospital (counter_id)<br>Line 8: No master value found for N (account_group)<br>Line 8: No master value found for N (store_type_id)<br>Line 9: No master value found for Hospital (counter_id)<br>Line 9: No master value found for N (account_group)<br>Line 9: No master value found for N (store_type_id)<br>Line 10: No master value found for Hospital (counter_id)<br>Line 10: No master value found for N (account_group)<br>Line 10: No master value found for N (store_type_id)<br>Line 11: No master value found for Hospital (counter_id)<br>Line 11: No master value found for N (account_group)<br>Line 11: No master value found for N (store_type_id)<br>Line 12: No master value found for Hospital (counter_id)<br>Line 12: No master value found for N (account_group)<br>Line 12: No master value found for N (store_type_id)<br>Line 13: No master value found for Hospital (counter_id)<br>Line 13: No master value found for N (account_group)<br>Line 13: No master value found for N (store_type_id)<br>Line 14: No master value found for Hospital (counter_id)<br>Line 14: No master value found for N (account_group)<br>Line 14: No master value found for N (store_type_id)<br>Line 15: No master value found for Hospital (counter_id)<br>Line 15: No master value found for N (account_group)<br>Line 15: No master value found for N (store_type_id)<br>"
+        }
+        
+        
+### Store Master AutoComplete in list pages [/master/store/lookup.json{?filterText}]
+This endpoint is to filter stores based on dept_name only. 
+It will return all the stores which contain the text in filterText
+#### Get List of filtered regions [GET]
+
++ Parameters
+    + filterText (required,string) - D (to get all regions containing D)
+    
++ Response 200 (application/json)
+
+
+        {
+          "listSize" : 4,
+          "dtoList" : [ {
+            "updated_timestamp" : 1381207160445,
+            "is_sterile_store" : null,
+            "dept_name" : "CENTRAL STORE",
+            "sales_store_vat_account_prefix" : null,
+            "account_group" : 1,
+            "counter_id" : "CNT0002",
+            "allow_auto_po_generation" : "N",
+            "template_name" : "BUILTIN_HTML",
+            "presc_lbl_template_name" : null,
+            "allowed_raise_bill" : "Y",
+            "dept_id" : 0,
+            "store_rate_plan_id" : null,
+            "purchases_store_cst_account_prefix" : null,
+            "auto_cancel_po_frequency_in_days" : null,
+            "allow_auto_cancel_po" : "N",
+            "stock_timestamp" : 0,
+            "last_auto_po_date" : null,
+            "auto_fill_prescriptions" : false,
+            "status" : "A",
+            "sale_unit" : "I",
+            "store_type_id" : 1,
+            "pharmacy_tin_no" : null,
+            "auto_po_generation_frequency_in_days" : null,
+            "auto_fill_indents" : false,
+            "purchases_store_vat_account_prefix" : null,
+            "pharmacy_drug_license_no" : null,
+            "is_sales_store" : "Y",
+            "is_super_store" : "Y",
+            "created_timestamp" : 1381207160279,
+            "presc_template_name" : null,
+            "last_auto_po_cancel_date" : null,
+            "use_batch_mrp" : "N",
+            "center_id" : 0
+          }, {
+            "updated_timestamp" : 1381207160445,
+            "is_sterile_store" : null,
+            "counter_id" : null,
+            "sales_store_vat_account_prefix" : null,
+            "account_group" : 1,
+            "allow_auto_po_generation" : "N",
+            "presc_lbl_template_name" : null,
+            "dept_id" : 1,
+            "allowed_raise_bill" : "Y",
+            "store_rate_plan_id" : null,
+            "purchases_store_cst_account_prefix" : null,
+            "auto_cancel_po_frequency_in_days" : null,
+            "allow_auto_cancel_po" : "N",
+            "store_type_id" : 2,
+            "dept_name" : "INVENTORY CENTRAL STORE",
+            "stock_timestamp" : 0,
+            "last_auto_po_date" : null,
+            "auto_fill_prescriptions" : false,
+            "status" : "A",
+            "is_sales_store" : "N",
+            "sale_unit" : "I",
+            "pharmacy_tin_no" : null,
+            "auto_po_generation_frequency_in_days" : null,
+            "auto_fill_indents" : false,
+            "purchases_store_vat_account_prefix" : null,
+            "pharmacy_drug_license_no" : null,
+            "template_name" : null,
+            "is_super_store" : "Y",
+            "created_timestamp" : 1381207160279,
+            "presc_template_name" : null,
+            "last_auto_po_cancel_date" : null,
+            "use_batch_mrp" : "N",
+            "center_id" : 0
+          }, {
+            "updated_timestamp" : 1381207160445,
+            "is_sterile_store" : null,
+            "counter_id" : null,
+            "sales_store_vat_account_prefix" : null,
+            "account_group" : 1,
+            "allow_auto_po_generation" : "N",
+            "presc_lbl_template_name" : null,
+            "allowed_raise_bill" : "Y",
+            "store_rate_plan_id" : null,
+            "dept_id" : -2,
+            "dept_name" : "Service Store",
+            "purchases_store_cst_account_prefix" : null,
+            "auto_cancel_po_frequency_in_days" : null,
+            "allow_auto_cancel_po" : "N",
+            "store_type_id" : 3,
+            "stock_timestamp" : 0,
+            "last_auto_po_date" : null,
+            "auto_fill_prescriptions" : false,
+            "status" : "A",
+            "is_sales_store" : "N",
+            "sale_unit" : "I",
+            "pharmacy_tin_no" : null,
+            "auto_po_generation_frequency_in_days" : null,
+            "auto_fill_indents" : false,
+            "purchases_store_vat_account_prefix" : null,
+            "pharmacy_drug_license_no" : null,
+            "template_name" : null,
+            "is_super_store" : "Y",
+            "created_timestamp" : 1381207160279,
+            "presc_template_name" : null,
+            "last_auto_po_cancel_date" : null,
+            "use_batch_mrp" : "N",
+            "center_id" : 0
+          }, {
+            "updated_timestamp" : 1381207160445,
+            "is_sterile_store" : null,
+            "counter_id" : null,
+            "sales_store_vat_account_prefix" : null,
+            "account_group" : 1,
+            "allow_auto_po_generation" : "N",
+            "presc_lbl_template_name" : null,
+            "dept_name" : "OT CONSUMABLE STORE",
+            "allowed_raise_bill" : "Y",
+            "store_rate_plan_id" : null,
+            "dept_id" : -3,
+            "purchases_store_cst_account_prefix" : null,
+            "auto_cancel_po_frequency_in_days" : null,
+            "allow_auto_cancel_po" : "N",
+            "store_type_id" : 3,
+            "stock_timestamp" : 0,
+            "last_auto_po_date" : null,
+            "auto_fill_prescriptions" : false,
+            "status" : "A",
+            "is_sales_store" : "N",
+            "sale_unit" : "I",
+            "pharmacy_tin_no" : null,
+            "auto_po_generation_frequency_in_days" : null,
+            "auto_fill_indents" : false,
+            "purchases_store_vat_account_prefix" : null,
+            "pharmacy_drug_license_no" : null,
+            "template_name" : null,
+            "is_super_store" : "Y",
+            "created_timestamp" : 1381207160279,
+            "presc_template_name" : null,
+            "last_auto_po_cancel_date" : null,
+            "use_batch_mrp" : "N",
+            "center_id" : 0
+          } ]
+        }
+
+        
+    
+### Services List [/master/store/list.json{?status,pageNum,pageSize,sortOrder,sortReverse}]
+
+#### List all services [GET]
+This endpoint is used for getting a list of all services and filtering services
+
+#### Filtering
+TODO
+
++ Parameters
+    + status (optional,char) - 'A' (A for active,I for inactive) 
+    + pageNum (optional,int) - 1 (which page number to fetch?)
+    + pageSize (optional,int) - 20 (number of items in a page)
+    + sortOrder (optional,string) - "dept_name" (name of the field on which to sort)
+    + sortReverse (optional, boolean) - true (sort in ascending or descending; will only work if sortOrder is specified)
+    
++ Response 200 (application/json)
+
+        {
+        
+              "userCenterId" : 0,
+              "centers" : [ {
+                "center_name" : "BRS",
+                "center_id" : 7
+              }, {
+                "center_id" : 9,
+                "center_name" : "CHALLA"
+              }, {
+                "center_id" : 17,
+                "center_name" : "DNL ADIVA"
+              }, {
+                "center_name" : "DNL BDH",
+                "center_id" : 14
+              }, {
+                "center_id" : 15,
+                "center_name" : "DNL NEPHRINE"
+              }, {
+                "center_name" : "DNL RUBY HALL WANOWARIE",
+                "center_id" : 16
+              }, {
+                "center_name" : "DNLSHANTI NAGAR",
+                "center_id" : 1
+              }, {
+                "center_id" : 11,
+                "center_name" : "EXCELCARE"
+              }, {
+                "center_name" : "HOSUR",
+                "center_id" : 5
+              }, {
+                "center_name" : "KILPAUK",
+                "center_id" : 3
+              }, {
+                "center_id" : 4,
+                "center_name" : "KUMARAN"
+              }, {
+                "center_name" : "NOBLE",
+                "center_id" : 13
+              }, {
+                "center_id" : 8,
+                "center_name" : "PMM"
+              }, {
+                "center_id" : 10,
+                "center_name" : "POULOMI"
+              }, {
+                "center_id" : 12,
+                "center_name" : "PRIMUS"
+              }, {
+                "center_id" : 18,
+                "center_name" : "abc"
+              }, {
+                "center_id" : 19,
+                "center_name" : "center_ud1"
+              } ],
+              "genPrefs" : {
+                "points_earning_points" : 1,
+                "daily_checkpoint1" : "08:00:00",
+                "validate_cost_price" : "N",
+                "force_remarks_po_item_reject" : "Y",
+                "diag_report_print_center" : "col",
+                "scheduler_generate_order" : "Y",
+                "default_prescribe_doctor" : "Y",
+                "tooth_numbering_system" : "U",
+                "after_decimal_digits" : 2,
+                "hospital_mail_id" : "customer-support@instahealthsolutions.com",
+                "currency_format" : "Lakhs",
+                "surgery_name_required" : "O",
+                "username" : null,
+                "qty_default_to_issue_unit" : "N",
+                "vat_applicable" : "Y",
+                "fixed_ot_charges" : "N",
+                "show_central_excise_duty" : "Y",
+                "sales_print_items" : "BILLONLY",
+                "domain_name" : null,
+                "allow_bill_now_insurance" : "Y",
+                "auto_close_visit" : "P",
+                "upload_limit_in_mb" : 10,
+                "hijricalendar" : "N",
+                "default_consultation_print_template" : "BUILTIN_HTML",
+                "enable_sms" : "Y",
+                "pharmacy_schedule_h_alert" : "Y",
+                "autogenerate_labno" : "Y",
+                "issue_uom" : "Numbers",
+                "google_analytics_key" : null,
+                "sms_username" : ".instahms@smscountry.net",
+                "service_name_required" : "O",
+                "enable_nestloop" : "Y",
+                "show_hosp_amts_pharmasales" : "N",
+                "obsolete_pharmacy_defalut_vat_rate" : 5,
+                "warn_expiry" : 30,
+                "decimal" : "Paise",
+                "claim_service_tax" : 10.30,
+                "sample_assertion" : "Y",
+                "independent_generation_of_sample_id" : "N",
+                "issue_to_dept_only" : "N",
+                "dental_chart" : "Y",
+                "prescription_uses_stores" : "Y",
+                "deposit_receipt_print_default" : "BUILTIN_HTML",
+                "bill_cancellation_requires_approval" : "Y",
+                "sampleflow_required" : "Y",
+                "max_collection_centers_count" : null,
+                "ip_cases_across_doctors" : "Y",
+                "hospital_tin" : "",
+                "shafafiya_user_id_obsolete" : null,
+                "default_printer_for_bill_now" : 1,
+                "whole" : "Rupees",
+                "pharmacy_patient_type" : "R",
+                "allow_cons_qty_incr" : "N",
+                "bill_now_print_default" : "CUSTOM-Detail Bill Print(Merge)",
+                "use_smart_card" : "Y",
+                "daily_checkpoint2" : "20:00:00",
+                "auto_mail_po_to_sup" : false,
+                "operation_apllicable_for" : "i",
+                "default_emr_print_template" : "BUILTIN_HTML",
+                "package_size" : 1,
+                "bill_service_charge_percent" : 0.00,
+                "returns_against_specific_supplier" : "N",
+                "po_to_be_validated" : "Y",
+                "hospital_name" : "Davita Nephrolife India Pvt. Ltd.",
+                "bill_later_print_default" : "CUSTOM-Detail Bill Print(Merge)",
+                "allow_cross_center_indents" : "Y",
+                "allow_zero_claim_amount_for_ip" : "Y",
+                "sample_no_generation" : "P",
+                "emr_url_date" : "D",
+                "op_one_presc_doc" : "N",
+                "luxary_tax_applicable_on" : "B",
+                "pharma_allow_cp_sale" : "N",
+                "allow_consumable_stock_negative" : "Y",
+                "currency_symbol" : "Rs",
+                "gen_token_for_lab" : "Y",
+                "sales_returns_print_type" : "R",
+                "pharmacy_sale_margin_in_per" : 0.00,
+                "doctors_custom_field1" : "",
+                "doctors_custom_field2" : "",
+                "max_active_hosp_users" : 9999,
+                "cfd_max_count" : 4,
+                "blood_exp" : 90,
+                "diag_images" : "T,P,G",
+                "allow_zero_claim_amount_for_op" : "Y",
+                "default_printer_for_bill_later" : 1,
+                "doctors_custom_field5" : "",
+                "pharma_return_restricted" : "N",
+                "doctors_custom_field3" : "",
+                "default_dental_cons_print_template" : "BUILTIN_HTML",
+                "doctors_custom_field4" : "",
+                "fin_year_start_month" : 4,
+                "obsolete_eclaim_xml_schema" : "",
+                "gen_token_for_rad" : "Y",
+                "fp_authentication_url" : null,
+                "menu_background_color" : null,
+                "deposit_avalibility" : "B",
+                "points_redemption_rate" : 1.20,
+                "allow_decimals_in_qty_for_issues" : "Y",
+                "allow_only_indent_based_issue" : "N",
+                "shafafiya_pbm_active_obsolete" : "N",
+                "host_name" : "mail1.insta.lan",
+                "procurement_expiry_days" : null,
+                "fin_year_end_month" : 3,
+                "slida_mailslot_path" : null,
+                "force_sub_group_selection" : "N",
+                "receive_transfer_indent" : "Y",
+                "restrict_inactive_ip_visit" : "N",
+                "indent_approval_by" : "I",
+                "improbable_color_code" : "#E18EF3",
+                "auth_required" : false,
+                "default_voucher_print" : "summary",
+                "default_po_print_template" : "PO New",
+                "stock_inc" : "M",
+                "user_name_in_bill_print" : "Y",
+                "shafafiya_preauth_active_obsolete" : "N",
+                "deposit_cheque_realization_flow" : "Y",
+                "obsolete_default_diagnosis_code_type" : "",
+                "password" : null,
+                "port_no" : 25,
+                "points_earning_amt" : 100.00,
+                "signature_device_ip" : "",
+                "pharma_auto_roundoff" : "Y",
+                "critical_color_code" : "#FFB6B9",
+                "default_bill_later_creditsales" : "N",
+                "sale_expiry" : "N",
+                "hosp_uses_dynamic_addresses" : "N",
+                "shafafiya_preauth_password_obsolete" : null,
+                "po_approval_reqd_more_than_amt" : 0,
+                "shafafiya_password_obsolete" : null,
+                "stock_entry_agnst_do" : "N",
+                "billing_bed_type_for_op" : "GENERAL",
+                "enable_force_selection_for_mrno_search" : "N",
+                "autogenerate_sampleid" : "Y",
+                "normal_color_code" : "#FFFFFF",
+                "cess_applicable" : "Y",
+                "sample_collection_print_type" : "SL",
+                "apply_rateplan_discount" : "N",
+                "go_live_date" : "2009-12-07",
+                "consultation_validity_units" : "D",
+                "dhpo_facility_user_id_obsolete" : null,
+                "hospital_pan" : "",
+                "dhpo_facility_password_obsolete" : null,
+                "receipt_refund_print_default" : "BUILTIN_HTML",
+                "expired_items_procurement" : "N",
+                "package_uom" : "Numbers",
+                "obsolete_vat_type" : "C",
+                "check_insu_card_exp_in_sales" : "N",
+                "auto_close_claims_with_difference" : 0.00,
+                "default_prescription_print_template" : "BUILTIN_HTML",
+                "protocol" : "smtp",
+                "obsolete_prescriptions_by_generics" : "N",
+                "abnormal_color_code" : "#FFF3B6",
+                "se_with_po" : "N",
+                "max_centers_inc_default" : 20,
+                "max_dial_machine_count" : null,
+                "return_validity" : 4,
+                "auto_close_nocharge_op_bills" : "N",
+                "barcode_for_item" : "N",
+                "seperate_pharmacy_credit_bill" : "Y",
+                "validate_diagnosis_codification" : "N",
+                "prescribing_doctor_required" : "N",
+                "show_tests_in_emr" : "A",
+                "allow_decimals_for_qty" : "Y",
+                "hospital_address" : "",
+                "allow_all_cons_types_in_reg" : "N",
+                "obsolete_rate_plan_for_non_insured_bill" : "ORG0029",
+                "corporate_insurance" : "N",
+                "shafafiya_preauth_user_id_obsolete" : null,
+                "pac_validity_days" : 30,
+                "calendar_start_day" : 0,
+                "op_consultation_edit_across_doctors" : "Y",
+                "stock_negative_sale" : "A",
+                "aggregate_amt_on_remittance" : "N",
+                "consultation_reopen_time_limit" : 10000,
+                "procurement_tax_label" : "V",
+                "hospital_service_regn_no" : "",
+                "auto_close_indented_casefiles" : "N"
+              },
+            "pagedList": {
+                            "dtoList": [
+                                {
+                                    "org_name": "GENERAL", 
+                                    "service_sub_group_id": 124, 
+                                    "org_id": "ORG0001", 
+                                    "service_id": "SERV0163", 
+                                    "chargecategory": "services", 
+                                    "is_override": "N", 
+                                    "item_code": , 
+                                    "status": "A", 
+                                    "dept_name": "NEPHROLOGY", 
+                                    "service_name": "CONTINEOUS RENAL REPLACEMENT THERAPY", 
+                                    "applicable": "true", 
+                                    "code_type": 
+                                },
+                                {
+                                   "org_name": "GENERAL", 
+                                    "service_sub_group_id": 7, 
+                                    "org_id": "ORG0001", 
+                                    "service_id": "SERV0182", 
+                                    "chargecategory": "services", 
+                                    "is_override": "N", 
+                                    "item_code": , 
+                                    "status": "A", 
+                                    "dept_name": "CARDIOLOGY", 
+                                    "service_name": "dai_test", 
+                                    "applicable": "true", 
+                                    "code_type":
+                                },
+                                {
+                                    "org_name": "GENERAL", 
+                                    "service_sub_group_id": 124, 
+                                    "org_id": "ORG0001", 
+                                    "service_id": "SERV0001", 
+                                    "chargecategory": "services", 
+                                    "is_override": "N", 
+                                    "item_code": , 
+                                    "status": "A", 
+                                    "dept_name": "NEPHROLOGY", 
+                                    "service_name": "FIRST HEMODIALYSIS", 
+                                    "applicable": "true", 
+                                    "code_type":
+                                },
+                                {
+                                    "org_name": "GENERAL", 
+                                    "service_sub_group_id": 124, 
+                                    "org_id": "ORG0001", 
+                                    "service_id": "SERV0002", 
+                                    "chargecategory": "services", 
+                                    "is_override": "N", 
+                                    "item_code": , 
+                                    "status": "A", 
+                                    "dept_name": "NEPHROLOGY", 
+                                    "service_name": "HEMODIALYSIS F6 (RE-USE)", 
+                                    "applicable": "true", 
+                                    "code_type":
+                                },
+                                {
+                                    "org_name": "GENERAL", 
+                                    "service_sub_group_id": 125, 
+                                    "org_id": "ORG0001", 
+                                    "service_id": "SERV0076", 
+                                    "chargecategory": "services", 
+                                    "is_override": "N", 
+                                    "item_code": , 
+                                    "status": "A", 
+                                    "dept_name": "NEPHROLOGY", 
+                                    "service_name": "EPO INJ SERVICE [EPREX 8000IU]", 
+                                    "applicable": "true", 
+                                    "code_type":
+                                },
+                                {
+                                    "org_name": "GENERAL", 
+                                    "service_sub_group_id": 125, 
+                                    "org_id": "ORG0001", 
+                                    "service_id": "SERV0080", 
+                                    "chargecategory": "services", 
+                                    "is_override": "N", 
+                                    "item_code": , 
+                                    "status": "A", 
+                                    "dept_name": "NEPHROLOGY", 
+                                    "service_name": "EPO INJ SERVICE [EPREX 3000IU]", 
+                                    "applicable": "true", 
+                                    "code_type":
+                                }
+                            ],
+                            "totalRecords": 6,
+                            "pageSize": 20,
+                            "pageNumber": 1,
+                            "countInfo": {
+                            "count": 6
+                            },
+                            "numPages": 1
+                            }
+        }
+
+
+### Recurrence Daily Master [/master/dailyrecurrences/list.json{?sortOrder,sortReverse,status}]
+#### Recurrences List [GET]
+The end point is used for getting a list of all daily recurrences
+
++ Parameters
+    + sortOrder (required,string) - display_name (To sort the daily recurrences in the list by display_name)
+    + sortReverse (required, string) - true
+    + status (required, string) - A for active
++ Response 200 (application/json)
+
+        {
+            "userCenterId": 0,
+            "genPrefs": {
+                "points_earning_points": 1,
+                "show_central_excise_duty": "N",
+                "daily_checkpoint1": "08:00:00",
+                "diag_report_print_center": "col",
+                "scheduler_generate_order": "Y",
+                "default_prescribe_doctor": "Y",
+                "tooth_numbering_system": "U",
+                "after_decimal_digits": 2,
+                "email_bill_printer": 1,
+                "hospital_mail_id": "customer-support@instahealthsolutions.com",
+                "currency_format": "Lakhs",
+                "surgery_name_required": "O",
+                "username": "",
+                "qty_default_to_issue_unit": "N",
+                "validate_cost_price": "Y",
+                "fixed_ot_charges": "N",
+                "barcode_for_item": "Y",
+                "vat_applicable": "N",
+                "whole": "Dirham",
+                "obsolete_vat_type": "MB",
+                "allow_bill_now_insurance": "Y",
+                "auto_close_visit": "P",
+                "upload_limit_in_mb": 10,
+                "hijricalendar": "N",
+                "is_return_against_grnno": false,
+                "pharmacy_schedule_h_alert": "Y",
+                "autogenerate_labno": "Y",
+                "issue_uom": "Numbers",
+                "google_analytics_key": null,
+                "default_emr_print_template": "Consultation note",
+                "sms_username": ".instahms@smscountry.net",
+                "service_name_required": "O",
+                "apply_supplier_tax_rules": false,
+                "enable_nestloop": "Y",
+                "show_hosp_amts_pharmasales": "N",
+                "warn_expiry": 30,
+                "claim_service_tax": 10.3,
+                "enable_sms": "N",
+                "issue_to_dept_only": "N",
+                "dental_chart": "Y",
+                "prescription_uses_stores": "Y",
+                "deposit_receipt_print_default": "BUILTIN_HTML",
+                "returns_against_specific_supplier": "Y",
+                "sampleflow_required": "Y",
+                "max_collection_centers_count": null,
+                "allow_cons_qty_incr": "Y",
+                "ip_cases_across_doctors": "Y",
+                "independent_generation_of_sample_id": "Y",
+                "hospital_tin": "",
+                "default_printer_for_bill_now": 1,
+                "bill_later_print_default": "CUSTOM-LifeLine_IP_Detail_Bill",
+                "daily_checkpoint2": "20:00:00",
+                "auto_mail_po_to_sup": false,
+                "points_redemption_rate": 2,
+                "package_size": 1,
+                "pharmacy_patient_type": "H",
+                "bill_service_charge_percent": 0,
+                "use_smart_card": "N",
+                "obsolete_rate_plan_for_non_insured_bill": "ORG0107",
+                "po_to_be_validated": "Y",
+                "operation_apllicable_for": "b",
+                "pharma_return_restricted": "Y",
+                "email_bill_later_template": "CUSTOM-Web Based Bill Later Print Template",
+                "no_of_credit_debit_card_digits": 0,
+                "allow_cross_center_indents": "Y",
+                "obsolete_eclaim_xml_schema": "HAAD",
+                "allow_zero_claim_amount_for_ip": "Y",
+                "sample_no_generation": "P",
+                "emr_url_date": "D",
+                "op_one_presc_doc": "N",
+                "luxary_tax_applicable_on": "B",
+                "sale_expiry": "Y",
+                "pharma_allow_cp_sale": "N",
+                "hospital_service_regn_no": "MF2222",
+                "allow_consumable_stock_negative": "Y",
+                "sales_returns_print_type": "R",
+                "pharmacy_sale_margin_in_per": 0,
+                "doctors_custom_field1": "",
+                "doctors_custom_field2": "",
+                "max_active_hosp_users": 9999,
+                "cfd_max_count": 4,
+                "blood_exp": 90,
+                "diag_images": "T,P,G",
+                "allow_zero_claim_amount_for_op": "Y",
+                "gen_token_for_lab": "N",
+                "default_printer_for_bill_later": 1,
+                "doctors_custom_field5": "",
+                "allow_only_indent_based_issue": "Y",
+                "doctors_custom_field3": "",
+                "default_dental_cons_print_template": "BUILTIN_HTML",
+                "doctors_custom_field4": "",
+                "fin_year_start_month": 4,
+                "obsolete_default_diagnosis_code_type": "ICD",
+                "fp_authentication_url": null,
+                "menu_background_color": null,
+                "deposit_avalibility": "B",
+                "allow_decimals_in_qty_for_issues": "Y",
+                "obsolete_pharmacy_defalut_vat_rate": 0,
+                "separator_type": null,
+                "shafafiya_pbm_active_obsolete": "N",
+                "receipt_refund_print_default": "Life cash Receipt",
+                "host_name": "mail1.insta.lan",
+                "procurement_expiry_days": 0,
+                "fin_year_end_month": 3,
+                "slida_mailslot_path": null,
+                "force_sub_group_selection": "N",
+                "mobile_number_validation": "N",
+                "receive_transfer_indent": "Y",
+                "default_prescription_print_template": "Prescription print with Sign",
+                "indent_approval_by": "I",
+                "improbable_color_code": "#E18EF3",
+                "auth_required": false,
+                "default_voucher_print": "summary",
+                "expired_items_procurement": "A",
+                "stock_inc": "M",
+                "user_name_in_bill_print": "Y",
+                "shafafiya_preauth_active_obsolete": "N",
+                "deposit_cheque_realization_flow": "Y",
+                "default_po_print_template": "Purchase Order Print Template",
+                "password": "",
+                "port_no": 25,
+                "points_earning_amt": 100,
+                "signature_device_ip": "",
+                "pharma_auto_roundoff": "Y",
+                "critical_color_code": "#FFB6B9",
+                "default_bill_later_creditsales": "N",
+                "hosp_uses_dynamic_addresses": "N",
+                "shafafiya_user_id_obsolete": "lifepharma",
+                "gen_token_for_rad": "N",
+                "shafafiya_preauth_password_obsolete": null,
+                "po_approval_reqd_more_than_amt": 0,
+                "stock_entry_agnst_do": "N",
+                "billing_bed_type_for_op": "GENERAL",
+                "enable_force_selection_for_mrno_search": "N",
+                "autogenerate_sampleid": "Y",
+                "prescribing_doctor_required": "Y",
+                "normal_color_code": "#FFFFFF",
+                "restrict_inactive_visits": "B",
+                "pbm_price_threshold": 0,
+                "shafafiya_password_obsolete": "pharmacy2011",
+                "email_bill_now_template": "CUSTOM-Web Based Bill Now Print Template",
+                "apply_rateplan_discount": "N",
+                "bill_cancellation_requires_approval": "N",
+                "consultation_reopen_time_limit": 1,
+                "consultation_validity_units": "D",
+                "dhpo_facility_user_id_obsolete": null,
+                "hospital_pan": "",
+                "dhpo_facility_password_obsolete": null,
+                "sample_collection_print_type": "SB",
+                "mobile_starting_pattern": "7,8,9",
+                "package_uom": "Numbers",
+                "check_insu_card_exp_in_sales": "N",
+                "auto_close_claims_with_difference": 0,
+                "cess_applicable": "N",
+                "bill_now_print_default": "CUSTOM-Bill Print Default",
+                "protocol": "smtp",
+                "domain_name": "mrpb",
+                "hospital_name": "LLH Hospital , Musaffah",
+                "validate_diagnosis_codification": "Y",
+                "obsolete_prescriptions_by_generics": "N",
+                "abnormal_color_code": "#FFF3B6",
+                "se_with_po": "N",
+                "seperate_pharmacy_credit_bill": "N",
+                "return_validity": null,
+                "max_dial_machine_count": null,
+                "show_tests_in_emr": "S",
+                "max_centers_inc_default": 1,
+                "go_live_date": "2011-04-29",
+                "default_consultation_print_template": "Consultation note",
+                "sample_assertion": "N",
+                "auto_close_nocharge_op_bills": "A",
+                "mobile_length_pattern": "10",
+                "allow_decimals_for_qty": "Y",
+                "hospital_address": "",
+                "force_remarks_po_item_reject": "N",
+                "allow_all_cons_types_in_reg": "N",
+                "corporate_insurance": "N",
+                "shafafiya_preauth_user_id_obsolete": null,
+                "pac_validity_days": 30,
+                "calendar_start_day": 0,
+                "allow_bill_reopen": "N",
+                "decimal": "Fills",
+                "op_consultation_edit_across_doctors": "Y",
+                "stock_negative_sale": "A",
+                "sales_print_items": "BILLPRESCLABEL",
+                "aggregate_amt_on_remittance": "N",
+                "currency_symbol": "AED",
+                "procurement_tax_label": "V",
+                "auto_close_indented_casefiles": "N"
+            },
+            "pagedList": {
+                "dtoList": [
+                {
+                    "recurrence_daily_id": 20,
+                    "timings": "09:00, 21:00",
+                    "username": null,
+                    "num_activities": 2,
+                    "status": "A",
+                    "mod_time": 1306968322000,
+                    "display_name": "1-0-1",
+                    "display_order": null
+                },
+                {
+                    "username": null,
+                    "num_activities": 2,
+                    "status": "A",
+                    "recurrence_daily_id": 19,
+                    "mod_time": 1306968322000,
+                    "timings": "08:00, 20:00",
+                    "display_name": "1-0-1 (early)",
+                    "display_order": null
+                },
+                {
+                    "recurrence_daily_id": 21,
+                    "timings": "10:00, 22:00",
+                    "username": null,
+                    "num_activities": 2,
+                    "status": "A",
+                    "mod_time": 1306968322000,
+                    "display_name": "1-0-1 (late)",
+                    "display_order": null
+                },
+                {
+                    "username": null,
+                    "recurrence_daily_id": 23,
+                    "num_activities": 3,
+                    "status": "A",
+                    "mod_time": 1306968322000,
+                    "timings": "09:00, 15:00, 21:00",
+                    "display_name": "1-1-1",
+                    "display_order": null
+                },
+                {
+                    "recurrence_daily_id": 22,
+                    "username": null,
+                    "num_activities": 3,
+                    "display_name": "1-1-1 (early)",
+                    "status": "A",
+                    "timings": "08:00, 14:00, 20:00",
+                    "mod_time": 1306968322000,
+                    "display_order": null
+                },
+                {
+                    "username": null,
+                    "num_activities": 3,
+                    "status": "A",
+                    "mod_time": 1306968322000,
+                    "recurrence_daily_id": 24,
+                    "timings": "10:00, 16:00, 22:00",
+                    "display_order": null,
+                    "display_name": "1-1-1 (late)"
+                },
+                {
+                    "display_name": "Every 2 hours (even)",
+                    "username": null,
+                    "status": "A",
+                    "mod_time": 1306968322000,
+                    "recurrence_daily_id": 14,
+                    "timings": "01:00, 03:00, 05:00, 07:00, 09:00, 11:00, 13:00, 15:00, 17:00, 19:00, 21:00, 23:00",
+                    "num_activities": 12,
+                    "display_order": null
+                },
+                {
+                    "username": null,
+                    "display_name": "Every 2 hours (odd)",
+                    "status": "A",
+                    "timings": "00:00, 02:00, 04:00, 06:00, 08:00, 10:00, 12:00, 14:00, 16:00, 18:00, 20:00, 22:00",
+                    "mod_time": 1306968322000,
+                    "recurrence_daily_id": 13,
+                    "num_activities": 12,
+                    "display_order": null
+                },
+                {
+                    "num_activities": 6,
+                    "username": null,
+                    "recurrence_daily_id": 17,
+                    "status": "A",
+                    "mod_time": 1306968322000,
+                    "timings": "01:00, 05:00, 09:00, 13:00, 17:00, 21:00",
+                    "display_name": "Every 4 hours (1,5,..)",
+                    "display_order": null
+                },
+                {
+                    "timings": "02:00, 06:00, 10:00, 14:00, 18:00, 22:00",
+                    "num_activities": 6,
+                    "username": null,
+                    "recurrence_daily_id": 16,
+                    "status": "A",
+                    "mod_time": 1306968322000,
+                    "display_name": "Every 4 hours (2,6,..)",
+                    "display_order": null
+                },
+                {
+                    "num_activities": 6,
+                    "username": null,
+                    "recurrence_daily_id": 18,
+                    "status": "A",
+                    "mod_time": 1306968322000,
+                    "timings": "03:00, 07:00, 11:00, 15:00, 19:00, 23:00",
+                    "display_order": null,
+                    "display_name": "Every 4 hours (3,7,..)"
+                },
+                {
+                    "timings": "00:00, 04:00, 08:00, 12:00, 16:00, 20:00, 22:00",
+                    "num_activities": 6,
+                    "username": null,
+                    "status": "A",
+                    "mod_time": 1306968322000,
+                    "display_name": "Every 4 hours (4,8,..)",
+                    "recurrence_daily_id": 15,
+                    "display_order": null
+                },
+                {
+                    "username": "",
+                    "status": "A",
+                    "timings": "",
+                    "num_activities": 1,
+                    "mod_time": 1411920781000,
+                    "recurrence_daily_id": -1,
+                    "display_order": -1,
+                    "display_name": "Once"
+                }
+                ],
+                "totalRecords": 13,
+                "pageSize": 20,
+                "pageNumber": 1,
+                "countInfo": {
+                    "count": 13
+                },
+                "numPages": 1
+            }
+        }
+        
+        
+## Group Center master
+
+### centers List [/master/centers/listcenters.json]
+
+#### List all centers [GET]
+
+List all the centers except default center incase of multi-centered schema whereas list default center in case of single centered schema
+
++ Response 200 (application/json)
+
+        {
+              "centers": [
+                {
+                  "updated_timestamp": 1457696277234,
+                  "region_id": null,
+                  "accounting_company_name": "HOSUR",
+                  "center_address": "20 / 2, Opp. CSI Church,, Shanthi Nagar, Hosur, TN 635109       \r\n      ",
+                  "dhpo_facility_user_id": null,
+                  "country_id": "CM0001",
+                  "state_id": "ST0017",
+                  "hospital_center_service_reg_no": "",
+                  "shafafiya_user_id": null,
+                  "shafafiya_preauth_test_provider_id": null,
+                  "shafafiya_preauth_active": "N",
+                  "shafafiya_preauth_test_member_id": null,
+                  "dhpo_facility_password": null,
+                  "city_id": "CT0088",
+                  "status": "A",
+                  "shafafiya_preauth_user_id": null,
+                  "center_contact_phone": "4344225442",
+                  "center_name": "HOSUR",
+                  "shafafiya_pbm_active": "N",
+                  "shafafiya_pbm_test_member_id": null,
+                  "center_id": 5,
+                  "created_timestamp": 1393434108132,
+                  "health_authority": "Default",
+                  "shafafiya_preauth_password": null,
+                  "shafafiya_password": null,
+                  "center_code": "7215",
+                  "shafafiya_pbm_test_provider_id": null
+                },
+                {
+                  "center_contact_phone": "04449087272",
+                  "region_id": null,
+                  "dhpo_facility_user_id": null,
+                  "country_id": "CM0001",
+                  "center_address": "No. 80, Kilpauk, New Avadi Rd, Chennai, TN 600010\r\n       \r\n      ",
+                  "state_id": "ST0017",
+                  "hospital_center_service_reg_no": "",
+                  "shafafiya_user_id": null,
+                  "shafafiya_preauth_test_provider_id": null,
+                  "shafafiya_preauth_active": "N",
+                  "shafafiya_preauth_test_member_id": null,
+                  "center_name": "KILPAUK",
+                  "dhpo_facility_password": null,
+                  "updated_timestamp": 1393434109155,
+                  "city_id": "CT0088",
+                  "status": "A",
+                  "shafafiya_preauth_user_id": null,
+                  "accounting_company_name": "KILPAUK",
+                  "center_id": 3,
+                  "shafafiya_pbm_active": "N",
+                  "shafafiya_pbm_test_member_id": null,
+                  "center_code": "7218",
+                  "created_timestamp": 1393434108132,
+                  "health_authority": "Default",
+                  "shafafiya_preauth_password": null,
+                  "shafafiya_password": null,
+                  "shafafiya_pbm_test_provider_id": null
+                }
+          ]
+        }
+
+## Group Area Master
+
+### Area Master AutoComplete [/master/areas/lookup.json{?filterText}]
+This endpoint is to filter areas based on area_name only. 
+It will return all the areas which contain the text in filterText
+#### Get List of filtered areas [GET]
+
++ Parameters
+    + filterText (required,string) - a (to get all areas containing a)
+    
++ Response 200 (application/json)
+
+        {
+          "listSize": 4,
+          "dtoList": [
+            {
+                "state_id" : "ST0031",
+                "area_name" : ", barathashan",
+                "city_name" : "HOSUR",
+                "area_id" : "AR1450",
+                "country_name" : "INDIA",
+                "city_id" : "CT0621",
+                "state_name" : "TAMIL NADU",
+                "country_id" : "CM0001"
+              }, {
+                "area_name" : ",Dharaga Nagar",
+                "state_id" : "ST0031",
+                "city_name" : "HOSUR",
+                "area_id" : "AR1335",
+                "country_name" : "INDIA",
+                "city_id" : "CT0621",
+                "state_name" : "TAMIL NADU",
+                "country_id" : "CM0001"
+              }, {
+                "city_id" : "CT0088",
+                "country_name" : "INDIA",
+                "area_id" : "AR0119",
+                "city_name" : "BANGALORE",
+                "state_name" : "KARNATAKA",
+                "country_id" : "CM0001",
+                "state_id" : "ST0017",
+                "area_name" : ",Kasturinagar"
+              }, {
+                "state_id" : "ST0031",
+                "area_id" : "AR1546",
+                "city_name" : "HOSUR",
+                "country_name" : "INDIA",
+                "city_id" : "CT0621",
+                "state_name" : "TAMIL NADU",
+                "country_id" : "CM0001",
+                "area_name" : ",Staff Quters MEC Camps - Hosur"
+            }
+          ]
+        }
+
+## Group City Master
+
+### City Master AutoComplete [/master/cities/lookup.json{?filterText}]
+This endpoint is to filter cities based on city_name only. 
+It will return all the cities which contain the text in filterText
+#### Get List of filtered cities [GET]
+
++ Parameters
+    + filterText (required,string) - a (to get all cities containing a)
+    
++ Response 200 (application/json)
+
+        {
+          "listSize": 4,
+          "dtoList": [
+            {
+                "city_id": "CT0037",
+                "country_name": "INDIA",
+                "state_name": "ANDHRA PRADESH",
+                "state_id": "ST0002",
+                "city_name": "ADILABAD",
+                "country_id": "CM0001"
+            },
+            {
+                "state_name": "TRIPURA",
+                "city_id": "CT0038",
+                "country_name": "INDIA",
+                "state_id": "ST0032",
+                "country_id": "CM0001",
+                "city_name": "AGARTALA"
+            },
+            {
+                "state_id": "ST0034",
+                "city_name": "AGRA",
+                "country_name": "INDIA",
+                "city_id": "CT0039",
+                "country_id": "CM0001",
+                "state_name": "UTTAR PRADESH"
+            },
+            {
+                "city_name": "AHMEDABAD",
+                "city_id": "CT0040",
+                "country_name": "INDIA",
+                "state_name": "GUJARAT",
+                "state_id": "ST0012",
+                "country_id": "CM0001"
+            }
+          ]
+        }
+        
+## Group Doctor Master
+
+### Doctor Master AutoComplete [/master/doctors/lookup.json{?filterText,center_id,dept_id}]
+This endpoint is to filter doctors based on doctor name, department id and center id. 
+It will return all the doctors which contain the text in filterText
+#### Get List of filtered doctors [GET]
+
++ Parameters
+    + filterText (required,string) - a (to get all doctors containing a)
+    + center_id (optional,string) - 1 (to get doctors of center 1)
+    + dept_id (optional,string) - DEPT001 (to get doctors of dept DEPT001)
+    
++ Response 200 (application/json)
+
+        {
+            "listSize": 4,
+            "dtoList": [
+            {
+                "dept_id": "DEP_LAB",
+                "doctor_license_number": "",
+                "doctor_id": "DOC0198",
+                "center_id": 7,
+                "doctor_name": "Cen Doc2"
+            },
+            {
+                "dept_id": "DEP_LAB",
+                "doctor_name": "Center Doc1",
+                "doctor_license_number": "",
+                "center_id": 7,
+                "doctor_id": "DOC0197"
+            },
+            {
+                "dept_id": "DEP_LAB",
+                "doctor_license_number": "",
+                "doctor_id": "DOC0199",
+                "center_id": 0,
+                "doctor_name": "Center Doc3"
+            },
+            {
+                "dept_id": "DEP_LAB",
+                "doctor_id": "DOC0188",
+                "doctor_license_number": "",
+                "center_id": 0,
+                "doctor_name": "DR.S.SATHIYAN"
+            }
+          ]
+        }
+
+## Group Referral Doctor Master
+
+### Referral Doctor Master AutoComplete [/master/referraldoctors/lookup.json{?filterText,center_id}]
+This endpoint is to filter referral doctors based on doctor name and center id. 
+It will return all the referral doctors which contain the text in filterText
+#### Get List of filtered Referral Doctors [GET]
+
++ Parameters
+    + filterText (required,string) - a (to get all doctors containing a)
+    + center_id (optional,string) - 1 (to get doctors of center 1)
+    
++ Response 200 (application/json)
+
+        {
+          "listSize": 3,
+          "dtoList": [
+            {
+              "referal_name": "ASMITHA",
+              "referal_no": "DOC0232",
+              "center_id": 14,
+              "clinician_id": "",
+              "referal_mobileno": "",
+              "ref_type": "D"
+            },
+            {
+              "referal_no": "DOC0214",
+              "center_id": 0,
+              "clinician_id": "",
+              "referal_mobileno": "145456456465",
+              "ref_type": "D",
+              "referal_name": "aaa"
+            },
+            {
+              "ref_type": "O",
+              "referal_mobileno": "23423423",
+              "referal_no": "489",
+              "center_id": 0,
+              "clinician_id": "",
+              "referal_name": "abhhh"
+            }
+          ]
+        }
+        
+## Group Order Sets Master
+
+### Order Sets List [/master/ordersets/list.json{?status,pageNum,pageSize,sortOrder,sortReverse}]
+
+#### List [GET]
+This endpoint is used for getting a list of order sets
+
+
++ Parameters
+    + status (optional,char) - 'A' (A for active,I for inactive) 
+    + pageNum (optional,int) - 1 (which page number to fetch?)
+    + pageSize (optional,int) - 20 (number of items in a page)
+    + sortOrder (optional,string) - 'package_name' (name of the field on which to sort)
+    + sortReverse (optional, boolean) - true (sort in ascending or descending; will only work if sortOrder is specified)
+    
++ Response 200 (application/json)
+
+        {
+            "paged_list": {
+                "dto_list": [
+                    {
+                        "created_by": "InstaAdmin",
+                        "package_id": 24,
+                        "status": "A",
+                        "valid_from": null,
+                        "visit_applicability": "O",
+                        "modified_at": "15-11-2017 12:09:15",
+                        "gender_applicability": "*",
+                        "created_at": "15-11-2017 12:09:15",
+                        "package_name": "HD_SHB(BSNL)",
+                        "modified_by": null,
+                        "type": "O",
+                        "package_code": "",
+                        "service_sub_group_id": 124,
+                        "valid_till": null,
+                        "description": "ONLY FOR PATIENTS AT SHANTI NAGAR, Associted with BSNL as sponsor."
+                    },
+                    {
+                        "package_code": "35",
+                        "created_by": "InstaAdmin",
+                        "status": "A",
+                        "valid_from": null,
+                        "visit_applicability": "O",
+                        "package_name": "Diag Template package abc",
+                        "modified_at": "15-11-2017 12:09:15",
+                        "package_id": 36,
+                        "gender_applicability": "*",
+                        "created_at": "15-11-2017 12:09:15",
+                        "modified_by": null,
+                        "type": "O",
+                        "description": "",
+                        "valid_till": null,
+                        "service_sub_group_id": 7
+                    },
+                    {
+                        "created_by": "InstaAdmin",
+                        "status": "A",
+                        "valid_from": null,
+                        "visit_applicability": "O",
+                        "package_name": "D1T",
+                        "modified_at": "15-11-2017 12:09:15",
+                        "gender_applicability": "*",
+                        "created_at": "15-11-2017 12:09:15",
+                        "package_id": 68,
+                        "package_code": "67",
+                        "modified_by": null,
+                        "type": "O",
+                        "description": "",
+                        "valid_till": null,
+                        "service_sub_group_id": 7
+                    }
+                ],
+                "total_records": 12,
+                "page_size": 3,
+                "page_number": 1,
+                "count_info": {
+                    "count": 12
+                },
+                "num_pages": 4
+            }
+        }
+
+
+### Lookup [/master/ordersets/lookup.json{?filterText,contains}]
+This endpoint is to filter order sets based on package_name only. 
+It will return all the regions which contain the text in filterText if contains is true.
+#### Get List of filtered order sets [GET]
+
++ Parameters
+    + filterText (required,string) - a (Listing order sets based on filter text)
+    + contains (optional,boolean) - true (Listing the order sets containing the filter text)
+    
++ Response 200 (application/json)
+
+        {
+            "listSize": 12,
+            "dtoList": [
+                {
+                    "package_id": 124,
+                    "package_name": "(Copy of) HD_SHB(BSNL)"
+                },
+                {
+                    "package_name": "D1T",
+                    "package_id": 68
+                },
+                {
+                    "package_id": 70,
+                    "package_name": "D1T(LR)"
+                },
+                {
+                    "package_name": "D1T(LR1)",
+                    "package_id": 72
+                },
+                {
+                    "package_id": 36,
+                    "package_name": "Diag Template package abc"
+                },
+                {
+                    "package_name": "HD_SHB(BSNL)",
+                    "package_id": 24
+                },
+                {
+                    "package_name": "Package DD",
+                    "package_id": 135
+                },
+                {
+                    "package_id": 136,
+                    "package_name": "Package P"
+                },
+                {
+                    "package_id": 74,
+                    "package_name": "Rad Pac T"
+                },
+                {
+                    "package_name": "ffffff",
+                    "package_id": 104
+                },
+                {
+                    "package_name": "ip templte",
+                    "package_id": 103
+                },
+                {
+                    "package_id": 102,
+                    "package_name": "op templateee"
+                }
+            ]
+        }
+
+### Show order Set [/master/ordersets/show.json{?package_id}]
+
+#### Show [GET]
+
+Show endpoint is for getting one order Set.
+
++ Parameters
+    + package_id (required,int) - 1 (id of the package)
+
++ Response 200 (application/json)
+
+        {
+            "bean": {
+                "package_name": "ffffff",
+                "created_by": "InstaAdmin",
+                "status": "A",
+                "valid_from": null,
+                "visit_applicability": "O",
+                "modified_at": "15-11-2017 12:09:15",
+                "gender_applicability": "*",
+                "created_at": "15-11-2017 12:09:15",
+                "package_code": "103",
+                "modified_by": null,
+                "type": "O",
+                "package_id": 104,
+                "description": "",
+                "service_sub_group_id": 5,
+                "valid_till": null
+            },
+            "list_package_contents": [
+                {
+                    "activity_type": "Laboratory",
+                    "activity_qty": 1,
+                    "created_by": "InstaAdmin",
+                    "doctor_id": null,
+                    "display_order": 1,
+                    "activity_remarks": "",
+                    "modified_at": "15-11-2017 11:50:12",
+                    "dept_id": null,
+                    "modified_by": null,
+                    "package_id": 104,
+                    "created_at": "15-11-2017 11:50:12",
+                    "package_content_id": 435,
+                    "activity_qty_uom": null,
+                    "activity_id": "DGC0443"
+                }
+            ],
+            "list_center_package_applicability": [],
+            "list_dept_package_applicability": [],
+            "list_tpa_package_applicability": []
+        }
+        
++ Response 404 (application/json)
+
+        {
+          "error": {
+            "status": 404,
+            "displayMessage": "Entity 'order_templates' with package_id 134 not found"
+           }
+        }
+
+
+## Create an order Set [/master/ordersets/create.json]
+
+#### Create [POST]
+
+Create endpoint.
+
++ Request (application/json)
+
+        {
+          "package_contents": [
+            {
+              "activity_qty": 2,
+              "activity_type": "Service",
+              "display_order": 1,
+              "activity_id": "DGC0804",
+              "activity_remarks": ""
+            },
+            {
+              "activity_qty": 1,
+              "consultation_type_id": null,
+              "display_order": 3,
+              "activity_type": "Radiology",
+              "activity_id": "DGC0857",
+              "activity_remarks": ""
+            },
+            {
+              "activity_qty": 2,
+              "charge_head": "RTDIA",
+              "display_order": 4,
+              "activity_type": "Equipment",
+              "activity_id": "DGC0857",
+              "activity_remarks": ""
+            }
+          ],
+          "tpa_package_applicability": [
+            {
+              "tpa_id": "TPAID0057"
+            }
+          ],
+          "dept_package_applicability": [
+            {
+              "dept_id": "DEP_PHA"
+            }
+          ],
+          "center_package_applicability": 
+          [
+            {
+                "center_id": 1
+            }
+          ],
+            "visit_applicability": "I",
+            "gender_applicability": "*",
+            "status": "A",
+            "description": "yolo desc",
+            "package_name": "chetan's Template New Pack API Test 1",
+            "package_code": "code",
+            "valid_till": "28-02-2018",
+            "valid_from": "05-09-2017",
+            "service_sub_group_id": 5
+        }
+    
++ Response 201 (application/json)
+
+
++ Response 400 (application/json)
+
+        {
+            "error": {
+                "status": 400,
+                "displayMessage": "Package Name with name / value Test 3 already exists"
+            },
+            "duplicate": {}
+        }
+    
++ Response 500 (application/json)
+
+        {
+            "error": {
+                        "status": 500,
+                        "displayMessage": "An internal server error occured"
+                     }
+        }
+
+        
+### Update an order template [/master/ordersets/update.json]
+
+#### Update[POST]
+
+Update an order Set endpoint
+
+    
++ Request (application/json)
+
+        {
+               "valid_till": "28-02-2018",
+                "status": "A",
+                "description": "yolo desc",
+                "package_name": "chetan's Template New Pack API Test 1",
+                "valid_from": "05-09-2017",
+                "gender_applicability": "*",
+                "visit_applicability": "I",
+                "type": "O",
+                "modified_by": null,
+                "created_at": "08-11-2017 16:42:58",
+                "package_id": 2,
+                "created_by": "admin",
+                "service_sub_group_id": 5,
+                "modified_at": null,
+            "package_contents": [
+                {
+                    "doctor_id": null,
+                    "activity_type": "Equipment",
+                    "activity_id": "DGC0857",
+                    "display_order": 4,
+                    "activity_qty": 2,
+                    "activity_remarks": null,
+                    "package_content_id": 4,
+                    "dept_id": null,
+                    "modified_by": null,
+                    "created_at": "08-11-2017 16:42:58",
+                    "package_id": 2,
+                    "created_by": "admin",
+                    "activity_qty_uom": null,
+                    "modified_at": null
+                },
+                {
+                    "activity_qty": 1,
+                    "doctor_id": null,
+                    "display_order": 3,
+                    "activity_id": "DGC0857",
+                    "activity_type": "Radiology",
+                    "activity_remarks": null,
+                    "package_content_id": 5,
+                    "dept_id": null,
+                    "modified_by": null,
+                    "created_at": "08-11-2017 16:42:58",
+                    "package_id": 2,
+                    "created_by": "admin",
+                    "activity_qty_uom": null,
+                    "modified_at": null
+                },
+                {
+                    "activity_type": "Service",
+                    "package_content_id": 6,
+                    "doctor_id": null,
+                    "display_order": 1,
+                    "activity_qty": 2,
+                    "activity_remarks": null,
+                    "dept_id": null,
+                    "modified_by": null,
+                    "created_at": "08-11-2017 16:42:58",
+                    "package_id": 2,
+                    "created_by": "admin",
+                    "activity_id": "DGC0804",
+                    "activity_qty_uom": null,
+                    "modified_at": null
+                }
+            ],
+            "dept_package_applicability": [
+            {
+              "dept_id": "DEP_PHA"
+            },
+            {
+              "dept_id": "DEP0001"
+            },
+            {
+              "dept_id": "DEP0002"
+            }
+          ],
+          "center_package_applicability": [
+            {
+              "center_id": 0
+            }
+          ],
+          "tpa_package_applicability": [
+            {"tpa_id": "TPAID0057"}
+          ]
+        }
+
++ Response 200 (application/json)
+
+
++ Response 400 (application/json)
+
+        {
+            "validationErrors": {
+                "template_component_details": {
+                    "3": {
+                        "charge_head": [
+                            "Charge Head cannot be null / empty"
+                        ]
+                    }
+                }
+            },
+            "error": {
+                "status": 400,
+                "display_message": "Validation has failed"
+            }
+        }
+
+
++ Response 404 (application/json)
+
+        {
+            "error": {
+                    "status": 404,
+                    "displayMessage": "Entity with the given id doesn't exist"
+                     }
+        }
+
+
+## Group Complaint Types Master
+
+### List [/master/complainttypes/list.json]
+This endpoint is used for getting a list of complaint types
+#### Get List of all complaint types [GET]
+
++ Response 200 (application/json)
+
+        {
+            "paged_list": {
+                "dto_list": [
+                    {
+                        "created_date": null,
+                        "mod_date": null,
+                        "duration": 15,
+                        "status": "A",
+                        "complaint_type_id": 1,
+                        "created_by": "User",
+                        "mod_by": "User",
+                        "complaint_type": "Feverish"
+                    },
+                    {
+                        "created_date": null,
+                        "created_by": "Dova",
+                        "mod_date": null,
+                        "duration": 15,
+                        "complaint_type_id": 3,
+                        "mod_by": "Dova",
+                        "status": "I",
+                        "complaint_type": "Feverish"
+                    },
+                    {
+                        "created_date": null,
+                        "mod_by": "Dovah",
+                        "mod_date": null,
+                        "complaint_type_id": 4,
+                        "duration": 15,
+                        "status": "A",
+                        "created_by": "Dovah",
+                        "complaint_type": "Feverish"
+                    }
+                ],
+                "total_records": 3,
+                "page_size": 20,
+                "page_number": 1,
+                "count_info": {
+                    "count": 3
+                },
+                "num_pages": 1
+            }
+        }
+
+### Lookup [/master/complainttypes/lookup.json{?filterText}]
+This endpoint is to filter complaint types based on name only. 
+It will return all the complaint types which contain the text in filterText.
+#### Get List of filtered order sets [GET]
+
++ Parameters
+    + filterText (required,string) - a (Listing complaint types based on filter text)
+
++ Response 200 (application/json)
+
+        {
+            "listSize": 3,
+            "dtoList": [
+                {
+                    "complaint_type_id": 1,
+                    "duration": 15,
+                    "complaint_type": "Feverish"
+                },
+                {
+                    "complaint_type_id": 4,
+                    "duration": 15,
+                    "complaint_type": "Feverish"
+                },
+                {
+                    "duration": 15,
+                    "complaint_type": "Feverish",
+                    "complaint_type_id": 2
+                }
+            ]
+        }
+        
+## Group Vitals Master
+
+### Show Vital Master [/master/vitals/{param_id}/show.json]
+
+#### Show [GET]
+
+Show endpoint is for getting one vital and multiple vital parameter details.
+
++ Parameters
+    + param_id (required,int) - 1 (id of the package)
+
++ Response 200 (application/json)
+
+        {  
+            vitalParameter:{  
+            param_label:"vtst2",
+            param_status:"A",
+            expr_for_calc_result:"",
+            param_container:"V",
+            mandatory_in_tx:"N",
+            param_uom:"",
+            observation_code:"",
+            visit_type:"",
+            system_vital:"N",
+            param_id:44,
+            param_order:33,
+            observation_type:""
+        },
+        vitalReferenceRange:[  
+            {  
+                patient_gender:" ",
+                priority:10,
+                range_for_all:" ",
+                reference_range_txt:"",
+                min_improbable_value:null,
+                param_id:44,
+                max_patient_age:null,
+                min_patient_age:null,
+                min_critical_value:null,
+                max_normal_value:null,
+                max_critical_value:null,
+                age_unit:" ",
+                max_improbable_value:null,
+                range_id:12,
+                min_normal_value:null
+            },
+            {  
+                patient_gender:" ",
+                priority:11,
+                range_for_all:" ",
+                reference_range_txt:"",
+                min_improbable_value:null,
+                param_id:44,
+                max_patient_age:null,
+                min_patient_age:null,
+                min_critical_value:null,
+                max_normal_value:null,
+                range_id:13,
+                max_critical_value:null,
+                age_unit:" ",
+                max_improbable_value:null,
+                min_normal_value:null
+            }
+        ]
+    }

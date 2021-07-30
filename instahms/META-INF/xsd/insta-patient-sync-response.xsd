@@ -1,0 +1,129 @@
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+elementFormDefault="qualified">
+    <xsd:element name="patient_record_response">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="sync_operation" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:documentation>Sync operation status</xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                            <xsd:enumeration value="create"/>
+                            <xsd:enumeration value="update"/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:element>
+                <xsd:element name="mr_no" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:documentation>MR No generated or updated. Max length is 15 characters.</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="old_mr_no" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:documentation>old mr number</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="status">
+                    <xsd:annotation>
+                        <xsd:documentation>success or fail</xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                            <xsd:enumeration value="success"/><!-- success post -->
+                            <xsd:enumeration value="fail"/><!-- failed with errors -->
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:element>
+                <xsd:element ref="errors" minOccurs="0" />
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="errors" >
+        <xsd:complexType>
+            <xsd:sequence>
+            	<xsd:element name="schema" type="xsd:string" minOccurs="0"  >
+                    <xsd:annotation>
+                        <xsd:documentation>invalid schema name</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="first_name" type="xsd:string" minOccurs='0'  >
+                    <xsd:annotation>
+                        <xsd:documentation>user_name is not a valid user</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="gender" type="xsd:string" minOccurs='0'  >
+                    <xsd:annotation>
+                        <xsd:documentation>user_name is not a valid user</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="date_of_birth" type="xsd:string" minOccurs='0'  >
+                    <xsd:annotation>
+                        <xsd:documentation>Date of birth can't be same day or feature date</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="government_identifier" type="xsd:string" minOccurs='0'  >
+                    <xsd:annotation>
+                        <xsd:documentation>Government identifier can't be null.</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="nationality_id" type="xsd:string" minOccurs='0'  >
+                    <xsd:annotation>
+                        <xsd:documentation>Nationality id can't be null.</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="mobile_number" type="xsd:string" minOccurs='0'  >
+                    <xsd:annotation>
+                        <xsd:documentation>mobile number with country code(+91).</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="email" type="xsd:string" minOccurs='0'  >
+                    <xsd:annotation>
+                        <xsd:documentation>Email id is not valid.</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="custom_list3_value" type="xsd:string" minOccurs='0'  >
+                    <xsd:annotation>
+                        <xsd:documentation>Marital status can't be null.</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="custom_field15" type="xsd:string" minOccurs='0'  >
+                    <xsd:annotation>
+                        <xsd:documentation>Separation date can't be feature date</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="visit_custom_list1" type="xsd:string" minOccurs="0"  >
+                    <xsd:annotation>
+                        <xsd:documentation>visit_custom_list1 tag is missing or company code is not matching with masters</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="visit_custom_list2" type="xsd:string" minOccurs="0"  >
+                    <xsd:annotation>
+                        <xsd:documentation>visit_custom_list2 tag is missing or Location code is not matching with masters</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="visit_custom_field1" type="xsd:string" minOccurs="0"  >
+                    <xsd:annotation>
+                        <xsd:documentation>visit_custom_field1 tag is missing</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="visit_custom_field2" type="xsd:string" minOccurs="0"  >
+                    <xsd:annotation>
+                        <xsd:documentation>visit_custom_field2 tag is missing</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="visit_custom_field3" type="xsd:string" minOccurs="0"  >
+                    <xsd:annotation>
+                        <xsd:documentation>visit_custom_field3 tag is missing</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="remark" type="xsd:string" minOccurs="0"  >
+                    <xsd:annotation>
+                        <xsd:documentation>General error message</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

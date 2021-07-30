@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<suite name="BillResetTotalsTest" verbose="10" allow-return-values="true">
+ 	<test name="resetbilltotals">
+ 		<classes>
+ 			<class name="testng.com.insta.hms.core.billing.resetbilltotals.ResetBillTotalsTest" />
+ 			<methods>
+ 			</methods>
+ 		</classes>
+ 	</test>
+ 
+ </suite>
+ 
+ 

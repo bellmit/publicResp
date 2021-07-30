@@ -1,0 +1,355 @@
+{
+    "title": "Case File Report",
+    "reportGroup": "MRD Reports",
+    "allowNoDate": true,
+    "dateFields": [
+        "transaction_date",
+        "issued_on",
+        "returned_on",
+        "indented_date"
+    ],
+    "description": "This report shows the current status of Case files",
+    "tableName": [
+        "rpt_case_file_view"
+    ],
+    "defaultShowFields": [
+        "mr_no",
+        "casefile_no",
+        "patient_name",
+        "age",
+        "file_status",
+        "issued_on",
+        "returned_on",
+        "indented_date",
+        "indented_dept",
+        "transaction_date"
+    ],
+    "fields": {
+        "mr_no": {
+            "displayName": "MR No.",
+            "width": "65"
+        },
+        "casefile_no": {
+            "displayName": "Case File No",
+            "width": "65"
+        },
+        "patient_name": {
+            "displayName": "Patient Name",
+            "width": "150"
+        },
+        "name_local_language": {
+            "displayName": "Name In Local Language",
+            "width": "150"
+         },
+        "age": {
+            "displayName": "Age",
+            "width": "30"
+        },
+        "visit_type": {
+            "displayName": "Visit Type",
+            "width": "50",
+            "groupable": true,
+            "filterable": true,
+            "allowedValues": [
+                "IP",
+                "OP"
+            ]
+        },
+        "op_type_name": {
+            "displayName": "Visit/OP Type",
+            "width": "80",
+            "groupable": true,
+            "filterable": true,
+            "allowedValuesQuery": "SELECT op_type_name FROM op_type_names"
+        },
+        "patient_gender": {
+            "displayName": "Gender",
+            "width": "50",
+            "groupable": true,
+            "filterable": true,
+            "allowedValues": [
+                "Male",
+                "Female",
+                "Couple",
+                "Others"
+            ]
+        },
+        "case_status": {
+            "displayName": "Case Status",
+            "width": "50",
+            "groupable": true,
+            "filterable": true,
+            "allowedValues": [
+                "Active",
+                "Inactive",
+                "Pending"
+            ]
+        },
+        "file_status": {
+            "displayName": "File Status",
+            "width": "50",
+            "groupable": true,
+            "filterable": true,
+            "allowedValues": [
+                "Available with MRD",
+                "Indented",
+                "Issued",
+                "Returned",
+                "Lost"
+            ]
+        },
+        "issued_to": {
+            "displayName": "Issued To",
+            "width": "200",
+            "groupable": true,
+            "filterable": true,
+            "allowedValuesQuery": "select file_user_name as issued_to from mrd_casefile_users order by issued_to"
+        },
+        "created_date": {
+            "displayName": "Created On",
+            "width": "60",
+            "groupable": true,
+            "filterable": true,
+            "datatype": "date"
+        },
+        "issued_on": {
+            "displayName": "Issued Date",
+            "dataType": "date",
+            "width": "60",
+            "filterable": true
+        },
+        "issued_time": {
+            "displayName": "Issued Time",
+            "width": "60"
+        },
+        "returned_on": {
+            "displayName": "Returned Date",
+            "dataType": "date",
+            "width": "60",
+            "filterable": true
+        },
+        "returned_time": {
+            "displayName": "Returned Time",
+            "width": "60"
+        },
+        "indented_date": {
+            "displayName": "Indented Date",
+            "width": "60",
+            "dataType": "date",
+            "filterable": true
+        },
+        "indented_time": {
+            "displayName": "Indented Time",
+            "width": "60"
+        },
+        "indented_dept": {
+            "displayName": "Indented By",
+            "width": "200",
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "select dept_name from department order by dept_name"
+        },
+        "transaction_date": {
+            "displayName": "Transaction Date",
+            "width": "60",
+            "dataType": "date",
+            "groupable": true,
+            "filterable": true
+        },
+        "visit_center_name": {
+            "displayName": "Visit Center",
+            "width": "60",
+            "groupable": true,
+            "filterable": true,
+            "allowedValuesQuery": "select center_name from hospital_center_master order by center_name"
+        },
+        "revisit_flag": {
+            "displayName": "First Visit / Revisit",
+            "width": "60",
+            "groupable": true,
+            "filterable": true,
+            "allowedValues": [
+                "First Visit",
+                "Revisit"
+            ]
+        },
+        "custom_field1": {
+            "displayName": "Custom Field1",
+            "width": "80",
+            "groupable": true,
+            "filterable": true
+        },
+        "custom_field2": {
+            "displayName": "Custom Field2",
+            "width": "80",
+            "groupable": true,
+            "filterable": true
+        },
+        "custom_field3": {
+            "displayName": "Custom Field3",
+            "width": "80",
+            "groupable": true,
+            "filterable": true
+        },
+        "custom_field6": {
+            "displayName": "Custom Field6",
+            "width": "80",
+            "groupable": true,
+            "filterable": true
+        },
+        "custom_field7": {
+            "displayName": "Custom Field7",
+            "width": "80",
+            "groupable": true,
+            "filterable": true
+        },
+        "custom_field8": {
+            "displayName": "Custom Field8",
+            "width": "80",
+            "groupable": true,
+            "filterable": true
+        },
+        "custom_field9": {
+            "displayName": "Custom Field9",
+            "width": "80",
+            "groupable": true,
+            "filterable": true
+        },
+        "custom_field10": {
+            "displayName": "Custom Field10",
+            "width": "80",
+            "groupable": true,
+            "filterable": true
+        },
+        "custom_field11": {
+            "displayName": "Custom Field11",
+            "width": "80",
+            "groupable": true,
+            "filterable": true
+        },
+        "custom_field12": {
+            "displayName": "Custom Field12",
+            "width": "80",
+            "groupable": true,
+            "filterable": true
+        },
+        "custom_field13": {
+            "displayName": "Custom Field13",
+            "width": "80",
+            "groupable": true,
+            "filterable": true
+        },
+        "custom_field14": {
+            "displayName": "Custom Field14",
+            "width": "80",
+            "groupable": true,
+            "filterable": true
+        },
+        "custom_field15": {
+            "displayName": "Custom Field15",
+            "width": "80",
+            "groupable": true,
+            "filterable": true
+        },
+        "custom_field16": {
+            "displayName": "Custom Field16",
+            "width": "80",
+            "groupable": true,
+            "filterable": true
+        },
+        "custom_field17": {
+            "displayName": "Custom Field17",
+            "width": "80",
+            "groupable": true,
+            "filterable": true
+        },
+        "custom_field18": {
+            "displayName": "Custom Field18",
+            "width": "80",
+            "groupable": true,
+            "filterable": true
+        },
+        "custom_field19": {
+            "displayName": "Custom Field19",
+            "width": "80",
+            "groupable": true,
+            "filterable": true
+        },
+        "custom_list1_value": {
+            "displayName": "Custom List1",
+            "width": "80",
+            "groupable": true,
+            "filterable": true
+        },
+        "custom_list2_value": {
+            "displayName": "Custom List2",
+            "width": "80",
+            "groupable": true,
+            "filterable": true
+        },
+        "custom_list3_value": {
+            "displayName": "Custom List3",
+            "width": "80",
+            "groupable": true,
+            "filterable": true
+        },
+        "custom_list4_value": {
+            "displayName": "Custom List4",
+            "width": "80",
+            "groupable": true,
+            "filterable": true
+        },
+        "custom_list5_value": {
+            "displayName": "Custom List5",
+            "width": "80",
+            "groupable": true,
+            "filterable": true
+        },
+        "custom_list6_value": {
+            "displayName": "Custom List6",
+            "width": "80",
+            "groupable": true,
+            "filterable": true
+        },
+        "custom_list7_value": {
+            "displayName": "Custom List7",
+            "width": "80",
+            "groupable": true,
+            "filterable": true
+        },
+        "custom_list8_value": {
+            "displayName": "Custom List8",
+            "width": "80",
+            "groupable": true,
+            "filterable": true
+        },
+        "custom_list9_value": {
+            "displayName": "Custom List9",
+            "width": "80",
+            "groupable": true,
+            "filterable": true
+        },
+        "family_id": {
+            "displayName": "Family Id",
+            "width": "80",
+            "groupable": true,
+            "filterable": true
+        },
+        "consulting_doctor": {
+            "displayName": "Consulting Doctor",
+            "description": "Consulting Doctor",
+            "width": "100",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT doctor_name FROM doctors ORDER BY doctor_name"
+        },
+        "patient_category_name": {
+            "displayName": "Patient Category",
+            "width": 120,
+            "allowedValuesQuery": "SELECT category_name FROM patient_category_master ORDER BY category_name",
+            "filterable": true,
+            "groupable": true
+        }
+    }
+}

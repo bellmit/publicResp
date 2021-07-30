@@ -1,0 +1,112 @@
+/*
+ * Special styles specifically for WYSIWYG editor created pages, so that both
+ * rendered and editor look similar. One major problem we faced is with respect to
+ * table not inheriting the font size, (works OK in strict mode, but there is no way
+ * to ask the editor to not render in quirks mode: it is displayed inside an iframe.)
+ */
+
+
+/*
+ * Obsolete, from ActiveEdit, but old templates have this. Retained to minimize
+ * changes on upgrade.
+ */
+table.ae_noborder {
+	border-collapse: collapse;
+}
+
+/*
+ * Quirks mode workaround: tables don't inherit the default (body) font size
+ * in quirks mode. We change this behaviour and force it to inherit even in
+ * quirks mode. (The editor can display only in quirks mode)
+ */
+table {
+	font-size: inherit;
+}
+
+/*
+ * Useful when converting to PDF
+ */
+p { margin: 0px; }
+
+/*
+ * The following are only for PDF conversion via Flying Saucer
+ * (xhtmlrenderer)
+ */
+@page {
+	@top-left {
+		/* the content of the top-left page header is derived from the token pageHeader */
+		content: element(pageHeader);
+		vertical-align: bottom;
+	}
+	@bottom-left {
+		content: element(pageFooter);
+	}
+}
+
+.draft2 {
+	background: url(../images/draft.png) repeat-y center;
+}
+
+.header {
+	position: running(pageHeader);
+	vertical-align: top;
+	border-bottom: 1px solid black;
+}
+
+.footer {
+	position: running(pageFooter);
+	vertical-align: top;
+	border-top: 1px solid black;
+}
+
+.pagebreak {
+	page-break-before: always;
+}
+
+table.noborder {
+	border-collapse: collapse;
+}
+
+table.thinborder {
+	border-collapse: collapse;
+	border: 1px solid black;
+}
+table.thinborder td, table.thinborder th {
+	border: 1px solid black;
+}
+
+table.thickborder {
+	border-collapse: collapse;
+	border: 2px solid black;
+}
+table.thickborder td, table.thickborder th {
+	border: 2px solid black;
+}
+
+table.box {
+	border-collapse: collapse;
+	border: 1px solid black;
+}
+
+td.box, th.box {
+	border: 1px solid black;
+}
+
+tr.border-above td, tr.border-above th {
+	border-top: 1px solid black;
+}
+
+tr.border-below td, tr.border-below th {
+	border-bottom: 1px solid black;
+}
+
+tr.border-above-below td, tr.border-above-below th {
+	border-top: 1px solid black;
+	border-bottom: 1px solid black;
+}
+
+td.border-above-below, th.border-above-below {
+	border-top: 1px solid black;
+	border-bottom: 1px solid black;
+}
+

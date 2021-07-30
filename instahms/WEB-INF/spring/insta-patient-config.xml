@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+		xmlns:p="http://www.springframework.org/schema/p"
+		xmlns:context="http://www.springframework.org/schema/context"
+		xmlns:mvc="http://www.springframework.org/schema/mvc" 
+		xmlns:tx="http://www.springframework.org/schema/tx"
+		xmlns:jpa="http://www.springframework.org/schema/data/jpa" xmlns:aop="http://www.springframework.org/schema/aop"
+		xsi:schemaLocation="http://www.springframework.org/schema/beans  
+		http://www.springframework.org/schema/beans/spring-beans.xsd  
+		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/mvc
+		http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/tx
+	    http://www.springframework.org/schema/tx/spring-tx.xsd">
+	    
+	<!-- OPFlow Patient List -->
+	<bean id="patientSearchController" class="com.insta.hms.core.patient.outpatientlist.PatientSearchController">
+		<property name="authMode" value="passthru"/>
+	</bean>
+	
+	<!-- IP Flow Patient List -->
+	<bean id="inPatientSearchController" class="com.insta.hms.core.patient.inpatientlist.InPatientSearchController">
+		<property name="authMode" value="passthru"/>
+	</bean>
+	
+	<!-- ==================================== -->
+	<!-- 		OP Registration			  	  -->
+	<!-- ==================================== -->
+	
+	<bean id="registrationController" class="com.insta.hms.core.patient.registration.RegistrationController">
+		<property name = "actionId" value = "new_op_registration"/>
+	</bean>
+	<bean id="patientHeaderController" class="com.insta.hms.core.patient.header.PatientHeaderController">
+		<property name = "authMode" value = "passthru"/>
+	</bean>
+	
+	<bean id="patientCommunicationController" class="com.insta.hms.core.patient.communication.PatientCommunicationController">
+		<property name = "authMode" value = "passthru"/>
+	</bean>  
+
+	<bean id="dischargeSummaryController" class="com.insta.hms.core.clinical.dischargesummary.DischargeSummaryController">
+		<property name = "actionId" value = "new_discharge_summary"/>
+	</bean>  
+
+	<bean id="dischargeSummaryPrintController" class="com.insta.hms.core.clinical.dischargesummary.DischargeSummaryPrintController">
+		<property name = "authMode" value = "passthru"/>
+	</bean>  
+	    
+	<!-- ==================================== -->
+	<!-- 		Nurse ward assignment		  -->
+	<!-- ==================================== -->
+	<bean id="userWardDashboardController" class="com.insta.hms.core.userwarddashbord.UserWardDashboardController">
+		<property name = "actionId" value = "nurse_ward_assignment"/>
+	</bean>
+	<bean id="userWardAssignmentController" class="com.insta.hms.core.wardassignment.UserWardAssignmentController">
+		<property name = "actionId" value = "addedit_ward_assignment"/>
+	</bean>
+	<!-- ==================================== -->
+	<!-- 		Quick Estimate			  	  -->
+	<!-- ==================================== -->
+	<bean id="quickEstimateController" class="com.insta.hms.core.patient.registration.QuickEstimateController">
+		<property name = "authMode" value = "passthru"/>
+	</bean>
+	
+</beans>

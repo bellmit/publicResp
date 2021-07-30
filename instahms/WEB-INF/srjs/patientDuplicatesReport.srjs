@@ -1,0 +1,193 @@
+{
+    "title": "Patient Duplicates Report",
+    "reportGroup": "Patient Stats Reports",
+    "description": "This Report gives duplicate patient list",
+    "dateFields": [
+        "orig_firstvisit_date",
+        "dup_firstvisit_date"
+    ],
+    "allowNoDate": true,
+    "defaultOrder": "dup_mrno",
+    "defaultShowFields": [
+        "orig_mrno",
+        "orig_name",
+        "orig_firstvisit_date",
+        "dup_mrno",
+        "dup_name",
+        "dup_firstvisit_date"
+    ],
+    "fields": {
+        "orig_mrno": {
+            "allowHorizGroup": true,
+            "allowNull": false,
+            "dataType": "string",
+            "displayName": "Orig Pat-MR No",
+            "filterable": true,
+            "groupable": true,
+            "expression": "pd_orig.mr_no",
+            "table": "pd_orig",
+            "width": "80"
+        },
+        "dup_mrno": {
+            "allowHorizGroup": true,
+            "allowNull": false,
+            "dataType": "string",
+            "displayName": "Dup Pat- MR No",
+            "filterable": true,
+            "groupable": true,
+            "expression": "pd.mr_no",
+            "table": "pd_orig",
+            "width": "80"
+        },
+        "orig_name": {
+            "displayName": "Orig Pat-Patient Name",
+            "width": "150",
+            "expressionLines": [
+                " smo.salutation || ' ' || pd_orig.patient_name ",
+                " || CASE WHEN coalesce(pd_orig.middle_name, '') = '' THEN '' ELSE (' ' || pd_orig.middle_name) END ",
+                " || CASE WHEN coalesce(pd_orig.last_name, '')   = '' THEN '' ELSE (' ' || pd_orig.last_name) END"
+            ],
+            "table": "smo,pd_orig",
+            "groupable": true,
+            "filterable": true
+        },
+        "dup_name": {
+            "displayName": "Dup Pat-Patient Name",
+            "width": "150",
+            "expressionLines": [
+                " smd.salutation || ' ' || pd.patient_name ",
+                " || CASE WHEN coalesce(pd.middle_name, '') = '' THEN '' ELSE (' ' || pd.middle_name) END ",
+                " || CASE WHEN coalesce(pd.last_name, '')   = '' THEN '' ELSE (' ' || pd.last_name) END"
+            ],
+            "table": "smd,pd",
+            "groupable": true,
+            "filterable": true
+        },
+        "name_local_language": {
+                    "table": "pd",
+                    "displayName": "Name In Local Language",
+                    "width": 150,
+                    "expression": "pd.name_local_language"
+          },
+        "orig_firstvisit_date": {
+            "displayName": "Orig Pat-First Visit Date",
+            "dataType": "date",
+            "width": "80",
+            "groupable": true,
+            "expression": "pd_orig.first_visit_reg_date",
+            "table": "pd_orig"
+        },
+        "dup_firstvisit_date": {
+            "displayName": "Dup Pat- First Visit Date",
+            "dataType": "date",
+            "width": "80",
+            "groupable": true,
+            "expression": "pd.first_visit_reg_date",
+            "table": "pd"
+        },
+        "orig_patient_gender": {
+            "displayName": "Orig Pat-Gender",
+            "width": 60,
+            "allowedValues": [
+                "Male",
+                "Female",
+                "Couple",
+                "Other"
+            ],
+            "filterable": true,
+            "groupable": true,
+            "expression": "CASE WHEN pd_orig.patient_gender = 'M' THEN 'Male' WHEN pd_orig.patient_gender = 'F' THEN 'Female' WHEN pd_orig.patient_gender = 'C' THEN 'Couple' ELSE 'Other' END ",
+            "table": "pd_orig"
+        },
+        "dup_patient_gender": {
+            "displayName": "Dup Pat-Gender",
+            "width": 60,
+            "allowedValues": [
+                "Male",
+                "Female",
+                "Couple",
+                "Other"
+            ],
+            "filterable": true,
+            "groupable": true,
+            "expression": "CASE WHEN pd.patient_gender = 'M' THEN 'Male' WHEN pd.patient_gender = 'F' THEN 'Female' WHEN pd.patient_gender = 'C' THEN 'Couple' ELSE 'Other' END ",
+            "table": "pd"
+        },
+        "orig_patient_age": {
+            "displayName": "Orig Pat-Age ",
+            "width": 60,
+            "dataType": "numeric",
+            "decimalType": "integer",
+            "filterable": true,
+            "groupable": true,
+            "expressionLines": [
+                "CASE WHEN current_date - COALESCE(pd_orig.dateofbirth, pd_orig.expected_dob) < 31 ",
+                " THEN (floor(current_date - COALESCE(pd_orig.dateofbirth, pd_orig.expected_dob)))::integer ",
+                "WHEN current_date - COALESCE(pd_orig.dateofbirth, pd_orig.expected_dob) < 730 ",
+                " THEN (floor((current_date - COALESCE(pd_orig.dateofbirth, pd_orig.expected_dob))/30.43))::integer ",
+                "ELSE (floor((current_date - COALESCE(pd_orig.dateofbirth, pd_orig.expected_dob))/365.25))::integer ",
+                "END "
+            ],
+            "table": "pd_orig"
+        },
+        "dup_patient_age": {
+            "displayName": "Dup Pat-Age ",
+            "width": 60,
+            "dataType": "numeric",
+            "decimalType": "integer",
+            "filterable": true,
+            "groupable": true,
+            "expressionLines": [
+                "CASE WHEN current_date - COALESCE(pd.dateofbirth, pd.expected_dob) < 31 ",
+                " THEN (floor(current_date - COALESCE(pd.dateofbirth, pd.expected_dob)))::integer ",
+                "WHEN current_date - COALESCE(pd.dateofbirth, pd.expected_dob) < 730 ",
+                " THEN (floor((current_date - COALESCE(pd.dateofbirth, pd.expected_dob))/30.43))::integer ",
+                "ELSE (floor((current_date - COALESCE(pd.dateofbirth, pd.expected_dob))/365.25))::integer ",
+                "END "
+            ],
+            "table": "pd"
+        },
+        "orig_patient_phone": {
+            "displayName": "Orig Pat-Phone No.",
+            "width": 80,
+            "expression": "pd_orig.patient_phone",
+            "table": "pd_orig"
+        },
+        "dup_patient_phone": {
+            "displayName": "Dup Pat-Phone No.",
+            "width": 80,
+            "expression": "pd.patient_phone",
+            "table": "pd"
+        }
+    },
+    "queryUnits": [
+        {
+            "mainTableAlias": "pd",
+            "mainTableName": "patient_details",
+            "groupBy": false,
+            "joinTables": [
+                {
+                    "name": "patient_details",
+                    "alias": "pd_orig",
+                    "dependsOn": "pd",
+                    "expression": "ON (pd_orig.mr_no = pd.original_mr_no)",
+                    "type": "JOIN"
+                },
+                {
+                    "name": "salutation_master",
+                    "alias": "smd",
+                    "dependsOn": "pd",
+                    "expression": "ON (smd.salutation_id = pd.salutation)",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "salutation_master",
+                    "alias": "smo",
+                    "dependsOn": "pd_orig",
+                    "expression": "ON (smo.salutation_id = pd_orig.salutation)",
+                    "type": "LEFT"
+                }
+            ]
+        }
+    ]
+}

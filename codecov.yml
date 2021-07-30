@@ -1,0 +1,49 @@
+codecov:
+  branch: develop  # override the default branch
+  notify:
+    require_ci_to_pass: yes
+  allow_coverage_offsets: true
+
+coverage:
+  precision: 2
+  round: down
+  range: 0...90 # red...green
+
+  status:
+    project: 
+      default:
+        target: auto
+        threshold: 5
+        base: auto
+        branches: null 
+        if_no_uploads: success
+        if_not_found: success
+        if_ci_failed: error
+        only_pulls: false
+        flags: null
+        paths: null
+
+    patch:
+      default:
+        target: auto
+        threshold: 1
+        base: auto
+        branches: null 
+        if_no_uploads: success
+        if_not_found: success
+        if_ci_failed: error
+        only_pulls: false
+        flags: null
+        paths: null
+
+    changes: no
+
+comment:
+  layout: header, diff, flags, files
+  require_changes: yes
+  branches: null
+  behavior: new 
+  # defualt = posts once then update, posts new if delete
+  # once = post once then updates
+  # new = delete old, post new
+  # spammy = post new

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<suite name="TpaMasterTest" verbose="10" allow-return-values="true">
+	<test name="tpamaster">
+		<classes>
+			<class name="testng.com.insta.hms.mdm.tpas.TpaRepositoryTest" />
+		</classes>
+	</test>
+
+</suite>

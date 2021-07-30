@@ -1,0 +1,68 @@
+{
+	"title": "Emr View Access Report",
+	"reportGroup": "Master Reports",
+	"description": "This report shows details of a emr access of confidential patients",
+	"dateFields": [ "access_date" ],
+	"allowNoDate": true,
+	"defaultOrder": "emp_username",
+	"defaultShowFields": [
+		"emp_username",
+		"mr_no",       
+ 		"comments",
+ 		"access_date"
+ 	 ],
+ 	 "fields": {
+ 	 	"emp_username": {
+ 	 	    "table" : "emrjustificationcomments",
+ 	 		"displayName": "User Name",
+ 	 		"allowedValuesQuery": "SELECT emp_username AS username FROM u_user JOIN u_role USING(role_id) WHERE portal_id='N' GROUP BY emp_username",
+ 	 		"width": "70",
+ 	 		"dataType": "string",
+ 	 		"filterable": true,
+            "groupable": true,
+            "allowNull": true
+ 	 	},
+ 	 	"mr_no": {
+ 	 	    "table" : "emrjustificationcomments",
+            "allowHorizGroup": true,
+            "allowNull": false,
+            "dataType": "string",
+            "displayName": "MR No.",
+            "filterable": true,
+            "groupable": true,
+            "name": "mr_no",
+            "width": 65
+        },
+        "comments" : {
+            "table" : "emrjustificationcomments",
+        	"dataType": "string",
+        	"displayName": "Comments",
+        	"width" : 200,
+        	"name" : "remarks",
+        	"filterable": true,
+            "groupable": true
+        },
+        "access_time" : {
+        	"displayName": "Access DateTime",
+        	"table" : "emrjustificationcomments",
+        	"dataType" : "timestamp",
+        	"width" : 60,
+            "filterable": true,
+            "groupable": true
+        },
+        "access_date" : {
+           "displayName": "Access Date",
+           "dataType": "date",
+           "table" : "emrjustificationcomments",
+           "expression": "date(emrjustificationcomments.access_time) ",
+           "filterable": true,
+           "groupable": true
+        }  
+    },
+    "queryUnits" : [ 
+    	{
+    		"mainTableAlias": "emrjustificationcomments", 
+    		"mainTableName": "emr_justification_comments"
+    	}
+    ]
+}

@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="DynaDisSummary" pageWidth="595" pageHeight="842" columnWidth="515" leftMargin="50" rightMargin="30" topMargin="100" bottomMargin="40">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="mrno" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["MR000001"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="patientId" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="docid" class="java.lang.Integer" isForPrompting="false"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="printerId" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[new Integer(4)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="center_id" class="java.lang.Integer" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new Integer(0)]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT dh.patient_id,FUD.FOLLOWUP_ID,TO_CHAR(FOLLOWUP_DATE,'DD-MM-YYYY') AS FOLLOWUP_DATE,FUD.FOLLOWUP_DOCTOR_ID,DOC.DOCTOR_NAME as followup_doctorname,FUD.FOLLOWUP_REMARKS,COALESCE(fh.form_title,fh.form_caption) as form_title, coalesce(doc1.doctor_name,coalesce(doc.doctor_name,'')) as discharge_doctor,coalesce(doc1.specialization,coalesce(doc.specialization,'')) as discharge_doctor_specialization
+FROM dis_header dh
+ left outer join FOLLOW_UP_DETAILS FUD  on (dh.patient_id = fud.patient_id)
+ left outer JOIN DOCTORS DOC ON DOC.doctor_id = FUD.FOLLOWUP_DOCTOR_ID
+ left outer join form_header fh on (dh.form_id = fh.form_id)
+ left outer join patient_discharge dis on (dh.patient_id = dis.patient_id)
+ left outer join doctors doc1 on (dis.DISCHARGE_DOCTOR_ID = doc1.doctor_id)
+WHERE dh.PATIENT_ID=$P{patientId} and dh.docid = $P{docid} ORDER BY FUD.FOLLOWUP_DATE ASC]]>
+	</queryString>
+	<field name="patient_id" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="followup_id" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="followup_date" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="followup_doctor_id" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="followup_doctorname" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="followup_remarks" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="form_title" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="discharge_doctor" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="discharge_doctor_specialization" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<group name="group1">
+		<groupHeader>
+			<band height="20">
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="false">
+					<reportElement key="staticText-15" isPrintRepeatedValues="false" x="0" y="0" width="475" height="20" isPrintWhenDetailOverflows="true"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="14" isBold="true" isUnderline="false"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{form_title}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="50">
+				<staticText>
+					<reportElement key="staticText-14" x="-4" y="35" width="91" height="14"/>
+					<textElement textAlignment="Right"/>
+					<text><![CDATA[Doctor's Signature]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="10" y="15" width="457" height="20"/>
+					<textElement/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{discharge_doctor}+"   "+($F{discharge_doctor_specialization}.equals("")?" " : ",  "+$F{discharge_doctor_specialization} )]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="DisCaptionGroup">
+		<groupExpression><![CDATA[]]></groupExpression>
+		<groupHeader>
+			<band height="34">
+				<subreport>
+					<reportElement x="0" y="10" width="475" height="22"/>
+					<subreportParameter name="docid">
+						<subreportParameterExpression><![CDATA[$P{docid}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="patientId">
+						<subreportParameterExpression><![CDATA[$P{patientId}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="mrno">
+						<subreportParameterExpression><![CDATA[$P{mrno}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "/DisCaptionValues.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<group name="FollowUpDetails">
+		<groupHeader>
+			<band height="23">
+				<printWhenExpression><![CDATA[new Boolean(
+    ($F{followup_date} != null && !$F{followup_date}.equals("")) ||
+    ($F{followup_doctorname} != null && !$F{followup_doctorname}.equals("")) ||
+     ($F{followup_remarks} != null && !$F{followup_remarks}.equals(""))
+)]]></printWhenExpression>
+				<staticText>
+					<reportElement x="3" y="3" width="176" height="20">
+						<printWhenExpression><![CDATA[new Boolean(
+    ($F{followup_date} != null && !$F{followup_date}.equals("")) ||
+    ($F{followup_doctorname} != null && !$F{followup_doctorname}.equals("")) ||
+     ($F{followup_remarks} != null && !$F{followup_remarks}.equals(""))
+)]]></printWhenExpression>
+					</reportElement>
+					<textElement>
+						<font isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[Follow Up Details]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band>
+				<printWhenExpression><![CDATA[]]></printWhenExpression>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band height="7"/>
+	</background>
+	<title>
+		<band/>
+	</title>
+	<pageHeader>
+		<band height="106" isSplitAllowed="false">
+			<subreport isUsingCache="true">
+				<reportElement key="subreport-1" x="-50" y="-107" width="596" height="110"/>
+				<subreportParameter name="printerId">
+					<subreportParameterExpression><![CDATA[$P{printerId}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="center_id">
+					<subreportParameterExpression><![CDATA[$P{center_id}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="type">
+					<subreportParameterExpression><![CDATA["Discharge"]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR}+"/PrintmasterHeader.jasper"]]></subreportExpression>
+			</subreport>
+			<subreport>
+				<reportElement x="1" y="6" width="514" height="91"/>
+				<subreportParameter name="patientid">
+					<subreportParameterExpression><![CDATA[$F{patient_id}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "/GeneralPatientDetails.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band/>
+	</columnHeader>
+	<detail>
+		<band height="17">
+			<printWhenExpression><![CDATA[new Boolean(
+    ($F{followup_date} != null && !$F{followup_date}.equals("")) ||
+    ($F{followup_doctorname} != null && !$F{followup_doctorname}.equals("")) ||
+     ($F{followup_remarks} != null && !$F{followup_remarks}.equals(""))
+)]]></printWhenExpression>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="208" y="2" width="327" height="15">
+					<printWhenExpression><![CDATA[new Boolean(
+    ($F{followup_date} != null && !$F{followup_date}.equals("")) ||
+    ($F{followup_doctorname} != null && !$F{followup_doctorname}.equals("")) ||
+     ($F{followup_remarks} != null && !$F{followup_remarks}.equals(""))
+)]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{followup_remarks}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="75" y="2" width="125" height="15">
+					<printWhenExpression><![CDATA[new Boolean(
+    ($F{followup_date} != null && !$F{followup_date}.equals("")) ||
+    ($F{followup_doctorname} != null && !$F{followup_doctorname}.equals("")) ||
+     ($F{followup_remarks} != null && !$F{followup_remarks}.equals(""))
+)]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{followup_doctorname}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="3" y="2" width="69" height="15">
+					<printWhenExpression><![CDATA[new Boolean(
+    ($F{followup_date} != null && !$F{followup_date}.equals("")) ||
+    ($F{followup_doctorname} != null && !$F{followup_doctorname}.equals("")) ||
+     ($F{followup_remarks} != null && !$F{followup_remarks}.equals(""))
+)]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{followup_date}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band/>
+	</columnFooter>
+	<pageFooter>
+		<band height="22">
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField" x="3" y="2" width="67" height="20"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.String"><![CDATA["Page " + $V{PAGE_NUMBER} + " of "]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" isBlankWhenNull="false">
+				<reportElement key="textField" x="72" y="2" width="68" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA["" + $V{PAGE_NUMBER} + ""]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText-16" x="435" y="1" width="60" height="20"/>
+				<textElement/>
+				<text><![CDATA[..continue]]></text>
+			</staticText>
+		</band>
+	</pageFooter>
+	<lastPageFooter>
+		<band height="20">
+			<textField evaluationTime="Report" isBlankWhenNull="false">
+				<reportElement key="textField-4" x="72" y="0" width="68" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA["" + $V{PAGE_NUMBER} + ""]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField-3" x="3" y="0" width="67" height="20"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.String"><![CDATA["Page " + $V{PAGE_NUMBER} + " of "]]></textFieldExpression>
+			</textField>
+		</band>
+	</lastPageFooter>
+	<summary>
+		<band/>
+	</summary>
+</jasperReport>

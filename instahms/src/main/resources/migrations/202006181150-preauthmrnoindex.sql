@@ -1,0 +1,14 @@
+-- liquibase formatted sql
+-- changeset shilpanr:<adding-indexes-on-preauth-prescription-activities> failOnError:false
+
+CREATE INDEX preauth_prescription_activities_mr_no_idx ON preauth_prescription_activities(mr_no);
+CREATE INDEX preauth_prescription_activities_visit_id_idx ON preauth_prescription_activities(visit_id);
+CREATE INDEX preauth_prescription_activities_preauth_presc_id_idx ON preauth_prescription_activities(preauth_presc_id);
+CREATE INDEX preauth_prescription_activities_consultation_id_idx ON preauth_prescription_activities(consultation_id);
+CREATE INDEX preauth_prescription_activities_prescribed_date_idx ON preauth_prescription_activities(prescribed_date);
+CREATE INDEX preauth_prescription_activities_preauth_act_type_idx ON preauth_prescription_activities(preauth_act_type);
+CREATE INDEX preauth_prescription_activities_status_idx ON preauth_prescription_activities(status);
+
+
+CREATE INDEX orderable_item_valid_from_date_idx ON orderable_item(valid_from_date);
+CREATE INDEX orderable_item_valid_to_date_idx ON orderable_item(valid_to_date);

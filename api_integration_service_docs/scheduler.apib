@@ -1,0 +1,1270 @@
+FORMAT: 1A
+HOST: http://localhost:8080/instahms
+
+# Insta Scheduler API
+This document defines the API endpoints for Scheduler.
+
+All Dates in DD-MM-YYYY format, Timestamps in DD-MM-YYYY HH:MM:SS
+
+# Group Resources
+
+## Get Metadata [GET /resources/metadata.json{?res_sch_category}]
+This endpoint returns all the metadata needed for scheduler views.
+
++ Parameters
+    + `res_sch_category`: DOC (string, required) - Category of resources
+
++ Response 200 (application/json)
+    
+        {
+            "appointment_status": [
+                {
+                    "status_name": "Booked",
+                    "status_description": "Booked"
+                },
+                {
+                    "status_description": "Appt Confirmed",
+                    "status_name": "Confirmed"
+                },
+                {
+                    "status_name": "Arrived",
+                    "status_description": "Arrived"
+                },
+                {
+                    "status_description": "No Show",
+                    "status_name": "Noshow"
+                },
+                {
+                    "status_name": "Cancel",
+                    "status_description": "Cancel"
+                },
+                {
+                    "status_description": "Completed",
+                    "status_name": "Completed"
+                },
+                {
+                    "status_description": "OP Regn",
+                    "status_name": "OP"
+                },
+                {
+                    "status_description": "Channel",
+                    "status_name": "Channel"
+                }
+            ],
+            "appointment_source" : [
+                {
+                    "appointment_source_id" : 1,
+                    "appointment_source_name" : "hospital"
+                }
+            ],
+            "center_defaults": {
+                "region_id": null,
+                "country_name": "India",
+                "dhpo_facility_user_id": null,
+                "center_name": "BRS",
+                "state_id": "ST0017",
+                "accounting_company_name": "BRS",
+                "hospital_center_service_reg_no": null,
+                "eclaim_active": "N",
+                "shafafiya_user_id": null,
+                "shafafiya_preauth_test_provider_id": null,
+                "shafafiya_preauth_active": "N",
+                "shafafiya_preauth_test_member_id": null,
+                "country_id": "CM0106",
+                "dhpo_facility_password": null,
+                "updated_timestamp": "26-02-2014 22:31:49",
+                "center_address": null,
+                "city_id": "CT0088",
+                "status": "A",
+                "country_code": "91",
+                "city_name": "BANGALORE",
+                "ha_password": null,
+                "shafafiya_preauth_user_id": null,
+                "shafafiya_pbm_test_member_id": null,
+                "shafafiya_pbm_active": "N",
+                "ha_username": null,
+                "created_timestamp": "26-02-2014 22:31:48",
+                "center_id": 7,
+                "health_authority": "Default",
+                "shafafiya_preauth_password": null,
+                "center_code": "7212",
+                "shafafiya_password": null,
+                "shafafiya_pbm_test_provider_id": null,
+                "center_contact_phone": "9876576543",
+                "state_name": "KARNATAKA",
+                "tin_number": null
+            },
+            "planner_visit_types": [
+                {
+                    "display_name": "Consultation",
+                    "additional_resource_types": [
+                        {
+                            "resource_description": "Equipment",
+                            "resource_type": "EQID"
+                        }
+                    ],
+                    "res_sch_category": "DOC"
+                },
+                {
+                    "display_name": "Service",
+                    "additional_resource_types": [
+                        {
+                            "resource_description": "Doctor",
+                            "resource_type": "DOC"
+                        }
+                    ],
+                    "res_sch_category": "SNP"
+                },
+                {
+                    "display_name": "Test",
+                    "additional_resource_types": [
+                        {
+                            "resource_type": "LABTECH",
+                            "resource_description": "Technician/Radiologist"
+                        }
+                    ],
+                    "res_sch_category": "DIA"
+                },
+                {
+                    "display_name": "Operation",
+                    "additional_resource_types": [
+                    {
+                        "resource_description": "Anesthetist",
+                        "resource_type": "ANEDOC"
+                    },
+                    {
+                        "resource_description": "Asst Surgeon",
+                        "resource_type": "ASUDOC"
+                    },
+                    {
+                        "resource_description": "Equipment",
+                        "resource_type": "EQID"
+                    },
+                    {
+                        "resource_type": "PAEDDOC",
+                        "resource_description": "Paediatrician"
+                    },
+                    {
+                        "resource_description": "Service Resource",
+                        "resource_type": "SRID"
+                    },
+                    {
+                        "resource_type": "SUDOC",
+                        "resource_description": "Surgeon"
+                    }
+                ],
+                "res_sch_category": "OPE"
+            }
+        ],
+            "repeats" : [
+                {
+                    "value" : "Y",
+                    "text" : "Yearly"
+                },
+                {
+                    "value" : "M",
+                    "text" : "Monthly"
+                },
+                {
+                    "value" : "W",
+                    "text" : "Weekly"
+                },
+                {
+                    "value" : "D",
+                    "text" : "Daily"
+                }
+            ],
+             "repeats_every": {
+                "D": [
+                    {
+                        "text": "1 Day",
+                        "value": "1"
+                    },
+                    {
+                        "text": "2 Day",
+                        "value": "2"
+                    },
+                    {
+                        "text": "3 Day",
+                        "value": "3"
+                    },
+                    {
+                        "text": "4 Day",
+                        "value": "4"
+                    },
+                    {
+                        "text": "5 Day",
+                        "value": "5"
+                    },
+                    {
+                        "text": "6 Day",
+                        "value": "6"
+                    },
+                    {
+                        "text": "7 Day",
+                        "value": "7"
+                    },
+                    {
+                        "text": "8 Day",
+                        "value": "8"
+                    },
+                    {
+                        "text": "9 Day",
+                        "value": "9"
+                    },
+                    {
+                        "text": "10 Day",
+                        "value": "10"
+                    },
+                    {
+                        "text": "11 Day",
+                        "value": "11"
+                    },
+                    {
+                        "text": "12 Day",
+                        "value": "12"
+                    },
+                    {
+                        "text": "13 Day",
+                        "value": "13"
+                    },
+                    {
+                        "text": "14 Day",
+                        "value": "14"
+                    },
+                    {
+                        "text": "15 Day",
+                        "value": "15"
+                    },
+                    {
+                        "text": "16 Day",
+                        "value": "16"
+                    },
+                    {
+                        "text": "17 Day",
+                        "value": "17"
+                    },
+                    {
+                        "text": "18 Day",
+                        "value": "18"
+                    },
+                    {
+                        "text": "19 Day",
+                        "value": "19"
+                    },
+                    {
+                        "text": "20 Day",
+                        "value": "20"
+                    },
+                    {
+                        "text": "21 Day",
+                        "value": "21"
+                    },
+                    {
+                        "text": "22 Day",
+                        "value": "22"
+                    },
+                    {
+                        "text": "23 Day",
+                        "value": "23"
+                    },
+                    {
+                        "text": "24 Day",
+                        "value": "24"
+                    },
+                    {
+                        "text": "25 Day",
+                        "value": "25"
+                    },
+                    {
+                        "text": "26 Day",
+                        "value": "26"
+                    },
+                    {
+                        "text": "27 Day",
+                        "value": "27"
+                    },
+                    {
+                        "text": "28 Day",
+                        "value": "28"
+                    },
+                    {
+                        "text": "29 Day",
+                        "value": "29"
+                    },
+                    {
+                        "text": "30 Day",
+                        "value": "30"
+                    },
+                    {
+                        "text": "31 Day",
+                        "value": "31"
+                    }
+                ],
+                "W": [
+                    {
+                        "text": "1 Week",
+                        "value": "1"
+                    },
+                    {
+                        "text": "2 Week",
+                        "value": "2"
+                    },
+                    {
+                        "text": "3 Week",
+                        "value": "3"
+                    },
+                    {
+                        "text": "4 Week",
+                        "value": "4"
+                    }
+                ],
+                "M": [
+                    {
+                        "text": "1 Month",
+                        "value": "1"
+                    },
+                    {
+                        "text": "2 Month",
+                        "value": "2"
+                    },
+                    {
+                        "text": "3 Month",
+                        "value": "3"
+                    },
+                    {
+                        "text": "4 Month",
+                        "value": "4"
+                    },
+                    {
+                        "text": "5 Month",
+                        "value": "5"
+                    },
+                    {
+                        "text": "6 Month",
+                        "value": "6"
+                    },
+                    {
+                        "text": "7 Month",
+                        "value": "7"
+                    },
+                    {
+                        "text": "8 Month",
+                        "value": "8"
+                    },
+                    {
+                        "text": "9 Month",
+                        "value": "9"
+                    },
+                    {
+                        "text": "10 Month",
+                        "value": "10"
+                    },
+                    {
+                        "text": "11 Month",
+                        "value": "11"
+                    },
+                    {
+                        "text": "12 Month",
+                        "value": "12"
+                    }
+                ],
+                "Y": [
+                    {
+                        "text": "1 Year",
+                        "value": "1"
+                    },
+                    {
+                        "text": "2 Year",
+                        "value": "2"
+                    },
+                    {
+                        "text": "3 Year",
+                        "value": "3"
+                    },
+                    {
+                        "text": "4 Year",
+                        "value": "4"
+                    },
+                    {
+                        "text": "5 Year",
+                        "value": "5"
+                    }
+                ]
+            }
+        }
+
+
+## Search Resources [GET /resources/list.json{?page_num,page_size,sort_order,with_count,find_string,departments,availability_days,centers,availability_start_date,availability_end_date,additional_restypes_reqd,res_sch_category}]
+
+Searches the resources according to filters
+
++ Parameters 
+    + page_num: `1` (number, optional) - Which page number to fetch
+        + Default: 1
+    + page_size: `20` (number, optional) - Number of items in each page
+        + Default: 15
+    + `sort_order`: `resource_name` (string, optional) - Name of field to sort on
+    + `with_count` : `false` (boolean, optional) - Whether count of number of records are required
+        + Default: false
+    + `find_string`: `Dr. sairam` (string, required) - Search input entered by user
+    + departments: DEP0026,DEP0027  (array, optional) - Resources should belong to either of these departments
+    + availability_days: 0,1,2,3 (array, optional) - Resources should be available in these days
+    + centers: 1,2,3 (array, optional) - Resources should be associated with these centers
+    + `availability_start_date` : `10:00` (string,optional) - Resource should be available from this time
+    + `availability_end_date` : `11:00` (string,optional) - Resource should be available till this time
+    + `additional_restypes_reqd` : `false` (boolean,optional) - Additional Resource types would be shared for this category if this parameter is true
+    + `res_sch_category` : `DOC` (string, required) - Resources must belong to this category
+    
++ Response  200 (application/json)
+
+        {
+           "resources":[
+            {
+                "resource_id":"DOC0082",
+                "resource_name":"Dr. James",
+                "contact_number":"+919987665432",
+                "resource_color":"0xFFFFFF",
+                "dept_id":"DEP1234",
+                "dept_name":"Dentist",
+                "default_duration":15,
+                "overbook_limit": 2,
+                "default_additional_resources" : [
+                    {
+                        "resource_type": "EQID",
+                        "resource_id":65
+                    }  
+                ],
+                "visit_timings":{
+                    "0":[
+                       {
+                          "from_time":"00:00:00",
+                          "to_time":"23:59:00",
+                          "availability_status": "A",
+                          "center_id": 1,
+                          "remarks": "blah blah"
+                       }
+                    ],
+                    "1":[
+                       {
+                          "from_time":"00:00:00",
+                          "to_time":"01:30:00",
+                          "availability_status": "A",
+                          "center_id": 1,
+                          "remarks": ""
+                       },
+                       {
+                          "from_time":"01:30:00",
+                          "to_time":"04:30:00",
+                          "availability_status": "N",
+                          "center_id": null,
+                          "remarks": ""
+                       },
+                       {
+                          "from_time":"04:30:00",
+                          "to_time":"13:00:00",
+                          "availability_status": "A",
+                          "center_id": 1,
+                          "remarks": ""
+                       },
+                       {
+                          "from_time":"13:00:00",
+                          "to_time":"14:00:00",
+                          "availability_status": "N",
+                          "center_id": null,
+                          "remarks": ""
+                       },
+                       {
+                          "from_time":"14:00:00",
+                          "to_time":"23:59:00",
+                          "availability_status": "A",
+                          "center_id": 1,
+                          "remarks": ""
+                       }
+                    ],
+                    "2":[
+                       {
+                          "from_time":"00:00:00",
+                          "to_time":"23:59:00",
+                          "availability_status": "A",
+                          "center_id": 1,
+                          "remarks": ""
+                       }
+                    ],
+                    "3":[
+                       {
+                          "from_time":"00:00:00",
+                          "to_time":"23:59:00",
+                          "availability_status": "A",
+                          "center_id": 1,
+                          "remarks": "blah blah"
+                       }
+                    ],
+                    "4":[
+                       {
+                          "from_time":"00:00:00",
+                          "to_time":"23:59:00",
+                          "availability_status": "A",
+                          "center_id": 1,
+                          "remarks": "blah blah"
+                       }
+                    ],
+                    "5": [
+                       {
+                          "from_time":"00:00:00",
+                          "to_time":"23:59:00",
+                          "availability_status": "A",
+                          "center_id": 1,
+                          "remarks": "blah blah"
+                       }
+                    ],
+                    "6":[
+                       {
+                          "from_time":"00:00:00",
+                          "to_time":"23:59:00",
+                          "availability_status": "A",
+                          "center_id": 1,
+                          "remarks": "blah blah"
+                       }
+                    ]
+                 }
+              }
+           ],
+           "page_size":15,
+           "page_num":1,
+           "total_records":150
+        }
+
+
+
+## Get Weekly Availability and Details of Resource [GET /resources/visittimings.json{?modified_after,resources}]
+
+Gets the Weekly Availbility and Details of Resource.
+
++ Parameters 
+    + `modified_after`: `2017-09-12 02:00:00`(string, optional) - YYYY-MM-DD HH:MM:SS
+    + `resources`: DOC122,DOC124,DOC12455 (array[string], required) - List of resources for which detals are to be fetched
+    
++ Response  200 (application/json)
+
+        {
+           "resources":[
+            {
+                "resource_id":"DOC0082",
+                "resource_name":"Dr. James",
+                "contact_number":"+919987665432",
+                "resource_color":"0xFFFFFF",
+                "dept_id":"DEP1234",
+                "dept_name":"Dentist",
+                "default_duration":15,
+                "visit_timings":{
+                    "0":[
+                       {
+                          "from_time":"00:00",
+                          "to_time":"12:12"
+                       },
+                       {
+                          "from_time":"13:00",
+                          "to_time":"23:59"
+                       }
+                    ],
+                    "1":[
+                       {
+                          "from_time":"00:00",
+                          "to_time":"12:12"
+                       },
+                       {
+                          "from_time":"13:00",
+                          "to_time":"23:59"
+                       }
+                    ],
+                    "2":[
+                       {
+                          "from_time":"00:00",
+                          "to_time":"12:12"
+                       },
+                       {
+                          "from_time":"13:00",
+                          "to_time":"23:59"
+                       }
+                    ],
+                    "3":[
+                       {
+                          "from_time":"00:00",
+                          "to_time":"12:12"
+                       },
+                       {
+                          "from_time":"13:00",
+                          "to_time":"23:59"
+                       }
+                    ],
+                    "4":[
+                       {
+                          "from_time":"00:00",
+                          "to_time":"12:12"
+                       },
+                       {
+                          "from_time":"13:00",
+                          "to_time":"23:59"
+                       }
+                    ],
+                    "5":[
+                       {
+                          "from_time":"00:00",
+                          "to_time":"12:12"
+                       },
+                       {
+                          "from_time":"13:00",
+                          "to_time":"23:59"
+                       }
+                    ],
+                    "6":[
+                       {
+                          "from_time":"00:00",
+                          "to_time":"12:12"
+                       },
+                       {
+                          "from_time":"13:00",
+                          "to_time":"23:59"
+                       }
+                    ]
+                 }
+              }
+           ]
+        }
+
+## Get Resources and their availability by resource type [GET /resources/resourceAvailabilities.json{?res_sch_category,res_types,center_id,date,slot_time,duration,appointment_id}]
+
+Get the list of resources for specified resource types along with boolean representing their availability for the specified
+slot and duration and overbook status for the same slot.
+
+
++ Parameters
+    + `res_sch_category` : `DOC` (string, required) - Secondary resource appplicable fro this category
+    + `res_types` : `DOC` (array[string], required) - List of Resource types
+    + `center_id` : 0 (number, required) - center_id of the center for which the resources are needed
+    + `date` : `17-11-2017` (string, required) - date for which the availability info is needed    
+    + `slot_time` : `04:30` (string, required) - slot time for which the availability info is needed
+    + `duration` : 15 (number, required) - slot duration for which the availability info is needed  
+    + `appointment_id` : 82316 (number, optional) - appointment_id in case of update appointment
+    
++ Response 200 (application/json)
+
+        {
+            "resources": [
+                {
+                    "overbooked": false,
+                    "resource_name": "Fresenius - 1(BRS_CHN) ",
+                    "resource_type": "EQID",
+                    "resource_id": "64",
+                    "center_id": 7,
+                    "overbook_limit": 0,
+                    "availability": true
+                },
+                {
+                    "overbooked": false,
+                    "resourcename": "Fresenius - 2(BRS_CHN) ",
+                    "resourcetype": "EQID",
+                    "center_id": 7,
+                    "resourceid": "65",
+                    "overbook_limit": null,
+                    "availability": false
+                }
+            ]
+        }
+    
+## Lookup resources by category [GET /resources/lookup.json{?res_sch_category,resource,center_id,date,filterText,page_num,page_size}]
+
+Lookp for the resources by the category and return their first available slot for a date
+
+
++ Parameters
+    + `res_sch_category` : `DOC` (string, required) - Secondary resource appplicable from this category
+    + `resource` : 'primary' (string, required) - Specifies if 'primary' or 'secondary' resource
+    + `center_id` : 0 (number, required) - center_id of the center for which the resources are needed
+    + `date` : `17-11-2017` (string, required) - date for which the availability info is needed    
+    + `filterText` : `` (string, required) - search for a string
+    + `page_num` : 1 (number, optional) - select page number for paginated result set.
+    + `page_size` : 2 (number, optional) - select results to return per size for paginated result set. Valid values between 1 and 100.
+    
++ Response 200 (application/json)
+
+        {
+            "resources": [
+                {
+                    "resource_name": "Dr. Ajit Mehta ",
+                    "resource_type": "DOC",
+                    "resource_id": "DOC0123",
+                    "center_id": 7,
+                    "overbook_limit": 0,
+                    "first_available_slot": "14:30",
+                    "duration" : 15
+                },
+                {
+                    "resourcename": "Dr. Ajay Kumar",
+                    "resourcetype": "DOC",
+                    "center_id": 7,
+                    "resourceid": "DOC)124",
+                    "overbook_limit": null,
+                    "first_available_slot": "14:30",
+                    "duration" : 15
+                }
+            ]
+        }
+
+## Get resource\s available slots for a day [GET /resources/getCommonSlots.json{?center_id,date,category,appointment_duration,resources_id_list,resources_type_list,days_counter}]
+
+Returns the available slots for a resource for the specified date. If multiple resources are provides,
+then returns the common available slots for them. 
+
++ Parameters
+    + `center_id` : 0 (number, required) - center_id of the center for which the resources are needed
+    + `date` : `17-11-2017` (string, required) - date for which the availability info is needed    
+    + `category` : DOC (string,required) - appointment category
+    + `appointment_duration` : 30 (number,optional) - duration for which you want the slot
+    + `resources_id_list` : DOC0232,DOC0088 (string,required) - comma separated resources
+    + `resources_type_list` : DOC,DOC (string,required) - comma separated resources types
+    + `days_counter` : 30 (number,required) - number of days you want to consider
+        
++ Response 200 (application/json)
+
+        {
+            "resources_first_available_date": "2018-05-05",
+            "resources_available_slots_centerwise" : [
+                {
+                    "center_id": 0,
+                    "slot_time": "2018-05-05T02:30:00Z"
+                }
+            ]
+        }
+
+## Add Overrides [POST /resources/calendarview/addoverrides.json]
+
+This endpoint is used to add overrides of resource.
+
++ Request
+
+        {
+            "timings":{
+                "override_for":"H",
+                "start_date":"21-01-2017",
+                "end_date":"21-02-2017",
+                "availability_details":[
+                    {
+                        "start_time":"20:10",
+                        "end_time":"21:00",
+                        "center_id":1,
+                        "availability_status":"A",
+                        "remarks":"xyz"
+                    }
+                ],
+                "resource_id":"DOC001",
+                "cancel_existing_appointments":"Y"
+            }
+        }
+
++ Response 200 (application/json)
+
+# Group Appointments
+
+## Resource Calendar [GET /resources/calendarview/schedule.json{?start_date,end_date,modified_after,resources,res_sch_category,skip_status}]
+This endpoint gives all the overrides and appointment details. Empty list of overrides means no overrides are present for that date.
+In that case weekly availability has to be considered
+
++ Parameters 
+    +   `start_date`: `12-09-2017` (string,required) - DD-MM-YYYY Appointment should start >= start_date
+    +   `end_date`: `12-09-2017` (strng,required) - DD-MM-YYYY Appointment should less <= end_date
+    + `modified_after`: `12-09-2017 02:00:00`(string, optional) - DD-MM-YYYY HH:MM:SS
+    + `resources`: DOC122,DOC124,DOC12455 (array[string], required) - List of resources for which 
+    + `res_sch_category`: DOC (string, required) - Category of resources
+    + `skip_status`: Noshow, Cancel (array[string], optional) - skip the appointments with these status
+
++ Response 200 (application/json)
+
+        {
+            "resources_calender" : [
+            {
+                "resource_id":"DOC0082",
+                "appointments":[
+                    {
+                       "appointment_id":34566,
+                       "mr_no":"MR008317",
+                       "patient_name":"Mr. Aakash",
+                       "appointment_status":"Booked",
+                       "appointment_visit_type":"F",
+                       "patient_contact":"+9199765465432",
+                       "appointment_time":"12-09-2017 10:15:37",
+                       "appointment_source_name": "Practo",
+                       "duration":30,
+                       "complaint":"",
+                       "remarks":"",
+                       "vip_status":"Y"
+                    },
+                    {
+                       "appointment_id":34568,
+                       "mr_no":"MR008317",
+                       "patient_name":"Mr. Aakash",
+                       "appointment_status":"Booked",
+                       "appointment_visit_type":"F",
+                       "patient_contact":"+9199765465432",
+                       "appointment_time":"12-09-2017 10:45:37",
+                       "appointment_source_name": "Practo",
+                       "duration":15,
+                       "complaint":"",
+                       "remarks":"",
+                       "vip_status":"Y"
+                    },
+                    {
+                       "appointment_id":34569,
+                       "mr_no":"MR008317",
+                       "patient_name":"Mr. Aakash",
+                       "appointment_status":"Booked",
+                       "appointment_visit_type":"F",
+                       "patient_contact":"+9199765465432",
+                       "appointment_time":"12-09-2017 10:45:37",
+                       "appointment_source_name": "Practo",
+                       "duration":15,
+                       "complaint":"",
+                       "remarks":"",
+                       "vip_status":"Y"
+                    }
+                ],
+                 "overrides":[
+                    {
+                       "from_time":"00:00:00",
+                       "to_time":"12:00:00",
+                       "availability_status":"A",
+                       "remarks":"",
+                       "center_id":1,
+                       "availability_date": "12-09-2017"
+                    },
+                    {
+                       "from_time":"12:00:00",
+                       "to_time":"23:59:00",
+                       "availability_status":"N",
+                       "remarks":"",
+                       "center_id": null,
+                       "availability_date": "12-09-2017"
+                    }
+                ]
+            }]
+        }
+
+## Get Sponsor info for patient's Main active visit [GET /resources/getSponsorInfoForLastActiveVisit.json{?mr_no}]
+This endpoint gives sponsor information associated with the last active visit of the mr_no supplied.
+
++ Parameters 
+    +   `mr_no`: `MR008315` (string,required) - patient's MRNO
+
++ Response 200 (application/json)
+
+        {
+            "insurance_plan_details": [
+            {
+                "member_id": "456789",
+                "tpa_id": "TPAID0056",
+                "plan_exclusions": null,
+                "insurance_co_id": "ICM00004",
+                "tpa_name": "ALFA LAVAL INDIA PVT LTD",
+                "plan_notes": null,
+                "insurance_co_name": "Bhargavi insurance",
+                "plan_id": 1,
+                "plan_name": "bhargavi plan",
+                "category_id": 133,
+                "category_name": "Bhargavi n/p"
+            }
+            ]
+        }
+
+
+## Create Appointment [POST /resources/availabilityview/saveappt.json]
+
+This endpoint is used to create a new Appointment.
+
++ Request
+
+        {
+            "patient": {
+              "mr_no": "MR012841",
+              "patient_name": "xyz",
+              "patient_contact": "+919876543211",
+              "vip_status":"Y",
+              "scheduler_visit_type":"M"
+            },
+            "appointment":{
+              "category":"DOC",
+              "secondary_resource_id":"DOC001",
+              "center_id":7,
+              "date":"27-07-2017",
+              "slot_time":"04:00",
+              "duration":15,
+              "complaint":"Feeling feverish",
+              "remarks":"",
+              "status":"confirmed",
+              "presc_doc_id":"DOC0083",
+              "app_source_id":1,
+              "additional_resources_insert":
+                       [{"resource_type":"EQID","resource_id":"22"},
+                        {"resource_type":"EQID","resource_id":"33"}],
+              "practo_appointment_id":"abcdef"
+             },
+            "repeats":{
+              "repeat_every":1,
+              "days_of_week":[2,4],
+              "repeat_by":"M",
+              "end_occurances":5,
+              "end_date":"31-07-2018",
+              "recurr_date":"30-08-2017",
+              "recurr_month_type":"D_W"
+            },
+            "additional_info":{
+              "dateofbirth":"21-01-2000",
+              "age":12,
+              "age_in":"Y",
+              "patient_gender":"M",
+              "patient_category_id":28,
+              "patient_address": "xyz",
+              "patient_area":"xyz",
+              "patient_city":"CT0088",
+              "patient_state":"ST0017",
+              "patient_country":"CM0001",
+              "patient_nationality":"CM0001",
+              "citizen_id":"SSN001742",
+              "email_id":"abc@xyz.com",
+              "primary_sponsor_id":"TPAID0094",
+              "primary_insurance_co":"ICM00008",
+              "plan_type_id":137,
+              "plan_id":16,
+              "member_id":"123"
+            },
+            "appointment_plan_id":1
+        }
+
+
++ Response 200 (application/json)
+
+        {
+            "patient": {
+                "mr_no": "MR012841",
+                "patient_name": "xyz",
+                "patient_contact": "+919876543211",
+                "vip_status": "Y",
+                "scheduler_visit_type": "M"
+            },
+            "repeats": {
+                "repeat_every": 1,
+                "days_of_week": [
+                2,
+                4
+                ],
+                "repeat_by": "M",
+                "end_occurances": 5,
+                "end_date": "31-07-2018",
+                "recurr_date": "30-08-2017",
+                "recurr_month_type": "D_W"
+            },
+            "additional_info": {
+                "dateofbirth": "21-01-2000",
+                "age": 12,
+                "age_in": "Y",
+                "patient_gender": "M",
+                "patient_category_id": 28,
+                "patient_address": "xyz",
+                "patient_area": "xyz",
+                "patient_city": "CT0088",
+                "patient_state": "ST0017",
+                "patient_country": "CM0001",
+                "patient_nationality": "CM0001",
+                "citizen_id": "SSN001742",
+                "email_id": "abc@xyz.com",
+                "primary_sponsor_id": "TPAID0094",
+                "primary_insurance_co": "ICM00008",
+                "plan_type_id": 137,
+                "plan_id": 16,
+                "member_id": "123"
+                },
+            "appointment_plan_id": 1,
+                "appointments": [
+                {
+                    "category": "DOC",
+                    "secondary_resource_id": "DOC001",
+                    "center_id": 7,
+                    "date": "27-07-2017",
+                    "slot_time": "04:00",
+                    "duration": 15,
+                    "complaint": "Feeling feverish",
+                    "remarks": "",
+                    "status": "confirmed",
+                    "presc_doc_id": "DOC0083",
+                    "app_source_id": 1,
+                    "additional_resources_insert": [
+                    {
+                        "resource_type": "EQID",
+                        "resource_id": "22"
+                    },
+                    {
+                        "resource_type": "EQID",
+                        "resource_id": "33"
+                    }
+                    ],
+            "practo_appointment_id": "abcdef",
+            "appointment_ids_list": [
+                83277,
+                83278,
+                83279,
+                83280,
+                83281
+            ]
+            }
+            ]
+        }
+
++ Response 404 (application/json)
+
+        {
+            "error": {
+                "status": 404,
+                "displayMessage": "Error message"
+            }
+        }
+
+## View Appointment [GET /resources/calendarview/viewappt.json{?appointment_id,res_sch_category}]
+
+This endpoint is used to view appointment details.
+
++ Parameters 
+    +   `appointment_id`: 79886 (number,required) - appointment ID
+    +   `res_sch_category`: DOC (string, required) - Category of resource
+
++ Response 200 (application/json)
+
+        {
+            "patient": {
+              "mr_no": "MR012841",
+              "patient_name": "xyz",
+              "patient_contact": "+919876543211",
+              "vip_status":"Y",
+              "scheduler_visit_type":"M"
+            },
+            "appointment":{
+              "appointment_id":79886,
+              "category":"DOC",
+              "secondary_resource_id":"DOC001",
+              "center_id":7,
+              "date":"27-07-2017",
+              "slot_time":"04:00",
+              "duration":15,
+              "complaint":"Feeling feverish",
+              "remarks":"",
+              "status":"confirmed",
+              "presc_doc_id":"DOC0083",
+              "app_source_id":1,
+              "additional_resources":[
+                    {
+                        "resource_type":"EQID",
+                        "resource_id":65
+                    },
+                    {
+                        "resource_type":"EQID",
+                        "resource_id":66
+                    }
+              ]
+             },
+            "repeats":{
+              "repeat_every":1,
+              "days_of_week":[2,4],
+              "repeat_by":"M",
+              "end_occurances":5,
+              "end_date":"31-07-2018",
+              "recurr_date":"30-08-2017",
+              "recurr_month_type":"D_W"
+            },
+            "additional_info":{
+              "dateofbirth":"01-21-2000",
+              "age":"",
+              "age_in":",
+              "patient_gender":"M",
+              "patient_category_id":28,
+              "patient_address": "",
+              "patient_area":"",
+              "patient_city":"CT0088",
+              "patient_state":"ST0017",
+              "country":"CM0001",
+              "email_id":"abc@xyz.com",
+              "primary_sponsor_id":"TPAID0094",
+              "primary_insurance_co":"ICM00008",
+              "plan_type_id":137,
+              "plan_id":16,
+              "member_id":"123"
+            }
+        }
+
++ Response 404 (application/json)
+
+        {
+            "error": {
+                "status": 404,
+                "displayMessage": "Error message"
+            }
+        }
+
+## Edit/Reschedule Appointment [POST /resources/calendarview/editappt.json]
+
+
+This endpoint is used to update an existing Appointment.
+This endpoint can also be used to reschedule an existing Appointment. For
+latter use second example of request body.
+
++ Request
+
+        {
+            "patient": {
+              "mr_no": "MR012841",
+              "patient_name": "Sanjana",
+              "patient_contact": "+919876543211",
+              "vip_status":"Y",
+              "scheduler_visit_type":"M"
+            },
+            "appointment":{
+              "appointment_id":"123",
+              "category":"DOC",
+              "secondary_resource_id":"DOC001",
+              "department_id":"DEPT123",
+              "date":"27-07-2017",
+              "slot_time":"04:00",
+              "duration":"15",
+              "complaint":"Fever",
+              "remarks":"xyz",
+              "status":"confirmed",
+              "presc_doc_id":"DOC0083",
+              "app_source_id":1,
+              "additional_resources_insert":
+                       [{"resource_type":"EQID","resource_id":"21"},
+                        {"resource_type":"EQID","resource_id":"31"}],
+              "additional_resources_delete":
+                       [{"resource_type":"EQID","resource_id":"22"}],
+              "practo_appointment_id":"abcdef"
+             },
+            "additional_info":{
+              "dateofbirth":"27-12-2000",
+              "age":12,
+              "agein":"Y",
+              "patient_gender":"M",
+              "patient_category_id":28,
+              "patient_address": "xyz",
+              "patient_area":"xyz",
+              "patient_city":"CT0088",
+              "patient_state":"ST0017",
+              "country":"CM0001",
+              "email_id":"abc@xyz.com",
+              "primary_sponsor_id":"TPAID0094",
+              "primary_insurance_co":"ICM00008",
+              "category_id":137,
+              "plan_id":16,
+              "member_id":"123"
+            }
+        }
+
+
++ Response 200 (application/json)
+
++ Response 404 (application/json)
+
+        {
+            "error": {
+                "status": 404,
+                "displayMessage": "Entity with the given id doesn't exist"
+            }
+        }
+       
+
++ Request 
+
+        {
+            "appointment_id": "1234",
+            "date": "12-09-2017",
+            "slot_time": "17:24"
+        }
+
++ Response 200 (application/json)
+
+
++ Response 404 (application/json)
+
+        {
+            "error": {
+                "status": 404,
+                "displayMessage": "Entity with the given id doesn't exist"
+            }
+        }
+
+
+## Status Update for Appointment [POST /resources/calendarview/updateapptstatus.json]
+
+This endpoint is used to change the status of an existing Appointment.
+
++ Request 
+
+        {
+            "update_app_status":[
+            {
+                "appointment_id": "82512",
+                "appointment_status":"Cancel",
+                "cancel_reason": " not available",
+                "cancel_type" :"Other",
+                "category":"DOC"
+            },
+            {
+                "appointment_id": "82513",
+                "appointment_status":"Confirm",
+                "category":"DOC"
+            },
+            {
+               "appointment_id": "82513",
+                "appointment_status":"Noshow",
+                "category":"DOC"
+            },
+            {
+               "appointment_id": "82513",
+                "appointment_status":"Completed",
+                "category":"DOC"
+            }
+            ]
+        }
+
++ Response 200 (application/json)
+
++ Response 404 (application/json)
+
+        {
+            "error": {
+                "status": 404,
+                "displayMessage": "Entity with the given id doesn't exist"
+            }
+        }
+## Previous Appointment [GET /resources/previousappt.json{?mr_no,category,appointment_id}]
+
+This endpoint is used to get previous appointment details.
+
++ Parameters 
+    +   `mr_no`: MR013578 (string,required) - MR Number
+    +   `category`: DOC (string, required) - Category of resource
+    +   `appointment_id`: 83232 (integer) - Appointment Id 
+
++ Response 200 (application/json)
+
+        {
+            "doctor_name": "Center Doc1",
+            "appointment_time": "18:15:00",
+            "appointment_date": "03-04-2018",
+            "appointment_datetime": "16-04-2018 09:45:00",
+            "appointment_id": "83232"
+        }
++ Response 404 (application/json)
+
+        {
+            "error": {
+                "status": 404,
+                "displayMessage": "Error message"
+            }
+        }

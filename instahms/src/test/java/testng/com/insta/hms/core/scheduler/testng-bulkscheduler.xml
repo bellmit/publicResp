@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suite name="SchedulerBulkAppointmentsServiceTest" verbose="1" allow-return-values="true">
+ 	<test name="appointments">
+ 		<classes>
+ 			<class
+ 				name="testng.com.insta.hms.core.scheduler.SchedulerBulkAppointmentsServiceTest" >
+ 			</class>
+ 		</classes>
+ 	</test>
+ </suite>
+ 

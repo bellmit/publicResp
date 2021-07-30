@@ -1,0 +1,219 @@
+{
+    "title": "Patient Survey Response Details Report",
+    "description": "This report shows all Patient's Survey Response Details",
+    "reportGroup": "Patient Feedback Reports",
+    "dateFields": [
+        "survey_date"
+    ],
+    "allowNoDate": true,
+    "includes": [
+        "PatientDetailFields.srjs",
+        "PatientVisitFields.srjs"
+    ],
+    "queryUnits": [
+        {
+            "mainTableName": "survey_visit_feedback",
+            "mainTableAlias": "svf",
+            "joinTables": [
+                {
+                    "name": "patient_registration",
+                    "alias": "pr",
+                    "dependsOn": "svf",
+                    "expression": "ON (pr.patient_id = svf.visit_id)"
+                },
+                {
+                    "includeName": "PatientVisitFields.srjs"
+                },
+                {
+                    "name": "patient_details",
+                    "alias": "pd",
+                    "dependsOn": "pr",
+                    "expression": "ON (pd.mr_no = pr.mr_no)"
+                },
+                {
+                    "includeName": "PatientDetailFields.srjs"
+                },
+                {
+                    "name": "survey_visit_feedback_details",
+                    "alias": "svfd",
+                    "dependsOn": "svf",
+                    "expression": "ON (svf.survey_response_id = svfd.survey_response_id)"
+                },
+                {
+                    "name": "survey_section_question",
+                    "alias": "ssq",
+                    "dependsOn": "svfd",
+                    "expression": "ON (svfd.question_id=ssq.question_id)"
+                },
+                {
+                    "name": "survey_form_section",
+                    "alias": "sfc",
+                    "dependsOn": "svf,ssq",
+                    "expression": "ON (svf.form_id = sfc.form_id) AND (ssq.section_id=sfc.section_id)"
+                },
+                {
+                    "name": "survey_rating_details_master",
+                    "alias": "srdm",
+                    "dependsOn": "svfd",
+                    "expression": "ON (srdm.rating_id = svfd.rating_id)",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "survey_question_category_master",
+                    "alias": "sqcm",
+                    "dependsOn": "ssq",
+                    "expression": "ON (sqcm.category_id = ssq.category_id)"
+                },
+                {
+                    "name": "survey_form ",
+                    "alias": "sf",
+                    "dependsOn": "svf",
+                    "expression": "ON (svf.form_id = sf.form_id)"
+                }
+            ]
+        }
+    ],
+    "fields": {
+        "survey_date": {
+            "table": "svf",
+            "displayName": "Form Filled Date",
+            "dataType": "date",
+            "width": 120,
+            "groupable": true,
+            "filterable": true,
+            "expression": "date(survey_date)"
+        },
+        "response_type": {
+            "table": "svfd",
+            "displayName": "Response Type",
+            "width": 60,
+            "groupable": true,
+            "filterable": true,
+            "expression": "CASE WHEN svfd.response_type = 'T' THEN 'Text' WHEN svfd.response_type = 'R' THEN 'Rating' WHEN svfd.response_type = 'Y' THEN 'Yes/No' END ",
+            "allowedValues": [
+                "Yes/No",
+                "Rating",
+                "Text"
+            ]
+        },
+        "question_detail": {
+            "table": "ssq",
+            "displayName": "Question",
+            "width": 200,
+            "groupable": true,
+            "filterable": true,
+            "allowedValuesQuery": "SELECT question_detail FROM survey_section_question order by question_detail"
+        },
+        "form_name": {
+            "table": "sf",
+            "displayName": "Feedback Form",
+            "width": 100,
+            "groupable": true,
+            "filterable": true,
+            "allowedValuesQuery": "SELECT form_name FROM survey_form order by form_name"
+        },
+        "section_title": {
+            "table": "sfc",
+            "displayName": "Section",
+            "width": 80,
+            "groupable": true,
+            "filterable": true,
+            "allowedValuesQuery": "SELECT section_title FROM survey_form_section  order by section_title"
+        },
+        "category": {
+            "table": "sqcm",
+            "displayName": "Question Category",
+            "width": 120,
+            "groupable": true,
+            "filterable": true,
+            "allowedValuesQuery": "SELECT category FROM survey_question_category_master  order by category"
+        },
+        "rating_text": {
+            "table": "srdm",
+            "displayName": "Response For Rating",
+            "width": 100,
+            "groupable": true,
+            "filterable": true
+        },
+        "response_text": {
+            "table": "svfd",
+            "displayName": "Response Comment",
+            "width": 120,
+            "groupable": false,
+            "filterable": false
+        },
+        "rating_value": {
+            "table": "srdm",
+            "displayName": "Rating Value",
+            "dataType": "numeric",
+            "width": "60",
+            "expression": "CASE WHEN rating_value is null THEN 0 ELSE rating_value::numeric END ",
+            "aggFunction": "avg",
+            "filterable": true,
+            "decimalType": "amount"
+        },
+        "response_value_yes_no": {
+            "table": "svfd",
+            "displayName": "Response For Yes/No",
+            "width": "60",
+            "filterable": true,
+            "groupable": true,
+            "expression": "CASE WHEN svfd.response_value = 0 THEN 'No' WHEN svfd.response_value = 1 THEN 'Yes' END ",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "response_value": {
+            "table": "svfd",
+            "displayName": "Response Value For Yes/No",
+            "width": "60",
+            "filterable": true,
+            "groupable": false,
+            "aggFunction": "sum",
+            "expression": "svfd.response_value::numeric",
+            "dataType": "numeric"
+        },
+        "rating_details": {
+            "table": "srdm",
+            "groupable": true,
+            "filterable": false,
+            "expressionLines": [
+                " (SELECT textcat_commacat(srd.rating_text||'-'||srd.rating_value) ",
+                "  FROM survey_rating_type_master  srtm ",
+                "  JOIN survey_rating_details_master srd USING(rating_type_id)",
+                "  WHERE srtm.rating_type_id = srdm.rating_type_id AND svfd.response_type = 'R') "
+            ],
+            "displayName": "Rating Details",
+            "width": "100"
+        },
+        "question_answered": {
+            "table": "svfd",
+            "displayName": "Question Answered",
+            "width": 80,
+            "groupable": true,
+            "filterable": true,
+            "dataType": "integer",
+            "expressionLines": [
+                " CASE WHEN svfd.response_type = 'Y' THEN ",
+                "(CASE WHEN response_value is null AND (response_text is null or response_text = '') THEN 0 ELSE 1 END) ",
+                " WHEN svfd.response_type ='R' THEN(CASE WHEN svfd.rating_id is null AND (response_text is null or response_text = '') THEN 0 ELSE 1 END) ",
+                " WHEN svfd.response_type = 'T' THEN(CASE WHEN response_text is null or response_text = '' THEN 0 ELSE 1 END) END"
+            ]
+        }
+    },
+    "defaultShowFields": [
+        "survey_date",
+        "response_type",
+        "question_detail",
+        "category",
+        "form_name",
+        "section_title",
+        "question_answered",
+        "rating_text",
+        "response_text",
+        "rating_value",
+        "response_value",
+        "response_value_yes_no"
+    ]
+}

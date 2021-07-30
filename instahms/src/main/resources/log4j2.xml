@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN" packages="org.apache.logging.log4j.core,io.sentry.log4j2">
+  <Appenders>
+    <Console name="console" target="SYSTEM_OUT">
+      <PatternLayout pattern="%-5p %c{1}: %enc{%m}{CRLF}%n"/>
+    </Console>
+    <Sentry name="sentry" />
+    <RollingFile name="logfile" fileName="/var/log/insta/hms.log" filePattern="/var/log/insta/hms-%i.log">
+      <ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="DENY"/>
+      <PatternLayout>
+        <Pattern>%d{yyyy-MM-dd HH:mm:ss} [%X{username}@%X{schema}] %-5p %c{1}: %enc{%m}{CRLF}%n</Pattern>
+      </PatternLayout>
+      <Policies>
+        <SizeBasedTriggeringPolicy size="20 MB"/>
+      </Policies>
+      <DefaultRolloverStrategy max="30"/>
+    </RollingFile>
+    <RollingFile name="exception" fileName="/var/log/insta/hms-exception.log" filePattern="/var/log/insta/hms-exception-%i.log">
+      <ThresholdFilter level="warn" onMatch="ACCEPT" onMismatch="DENY"/>
+      <PatternLayout>
+        <Pattern>%d{yyyy-MM-dd HH:mm:ss} [%X{username}@%X{schema}] %-5p %c{1}: %enc{%m}{CRLF}%n</Pattern>
+      </PatternLayout>
+      <Policies>
+        <SizeBasedTriggeringPolicy size="20 MB"/>
+      </Policies>
+      <DefaultRolloverStrategy max="30"/>
+    </RollingFile>
+    <RollingFile name="paymenttransactions" fileName="/var/log/insta/payment-transactions.log" filePattern="/var/log/insta/payment-transactions-%i.log">
+      <PatternLayout>
+        <Pattern>%d{yyyy-MM-dd HH:mm:ss} [%X{username}@%X{schema}] %-5p %c{1}: %enc{%m}{CRLF}%n</Pattern>
+      </PatternLayout>
+      <Policies>
+        <SizeBasedTriggeringPolicy size="10 MB"/>
+      </Policies>
+      <DefaultRolloverStrategy max="5"/>
+    </RollingFile>
+    <RollingFile name="migrationlog" fileName="/var/log/insta/hms-migration.log" filePattern="/var/log/insta/hms-migration-%i.log">
+      <PatternLayout>
+        <Pattern>%d{yyyy-MM-dd HH:mm:ss} [%X{username}@%X{schema}] %-5p %c{1}: %enc{%m}{CRLF}%n</Pattern>
+      </PatternLayout>
+      <Policies>
+        <SizeBasedTriggeringPolicy size="10 MB"/>
+      </Policies>
+      <DefaultRolloverStrategy max="5"/>
+    </RollingFile>
+    <RollingFile name="booklog" fileName="/var/log/insta/book_hms.log" filePattern="/var/log/insta/book_hms-%i.log">
+      <PatternLayout>
+        <Pattern>%d{yyyy-MM-dd HH:mm:ss} [%X{username}@%X{schema}] %-5p %c{1}: %enc{%m}{CRLF}%n</Pattern>
+      </PatternLayout>
+      <Policies>
+        <SizeBasedTriggeringPolicy size="10 MB"/>
+      </Policies>
+      <DefaultRolloverStrategy max="5"/>
+    </RollingFile>
+    <RollingFile name="loginlog" fileName="/var/log/insta/hms-login.log" filePattern="/var/log/insta/hms-login.%d{ddMMyyyy}.log.gz">
+      <PatternLayout>
+        <Pattern>%d{yyyy-MM-dd HH:mm:ss} [%X{username}@%X{schema}] %-5p %c{1}: %enc{%m}{CRLF}%n</Pattern>
+      </PatternLayout>
+      <Policies>
+        <TimeBasedTriggeringPolicy />
+      </Policies>
+    </RollingFile>
+    <RollingFile name="cronjobs" fileName="/var/log/insta/cron_hms.log" filePattern="/var/log/insta/cron_hms-%i.log">
+      <PatternLayout>
+        <Pattern>%d{yyyy-MM-dd HH:mm:ss} [%X{username}@%X{schema}] %-5p %c{1}: %enc{%m}{CRLF}%n</Pattern>
+      </PatternLayout>
+      <Policies>
+        <SizeBasedTriggeringPolicy size="20 MB"/>
+      </Policies>
+      <DefaultRolloverStrategy max="30"/>
+    </RollingFile>
+    <RollingFile name="hibernatelog" fileName="/var/log/insta/hibernate_hms.log" filePattern="/var/log/insta/hibernate_hms-%i.log">
+      <PatternLayout>
+        <Pattern>%d{yyyy-MM-dd HH:mm:ss} [%X{username}@%X{schema}] %-5p %c{1}: %m%n</Pattern>
+      </PatternLayout>
+      <Policies>
+        <SizeBasedTriggeringPolicy size="20 MB"/>
+      </Policies>
+      <DefaultRolloverStrategy max="30"/>
+    </RollingFile>
+    <RollingFile name="hl7log" fileName="/var/log/insta/hl7_hms.log" filePattern="/var/log/insta/hl7_hms-%i.log">
+      <PatternLayout>
+        <Pattern>%d{yyyy-MM-dd HH:mm:ss} [%X{username}@%X{schema}] %-5p %c{1}: %m%n</Pattern>
+      </PatternLayout>
+      <Policies>
+        <SizeBasedTriggeringPolicy size="20 MB"/>
+      </Policies>
+      <DefaultRolloverStrategy max="30"/>
+    </RollingFile>
+  </Appenders>
+  <Loggers>
+    <Logger name="org.springframework" level="warn"></Logger>
+    <Logger name="org.apache.struts.util.PropertyMessageResources" level="error"></Logger>
+    <Logger name="com.bob.hms.common.loginAction" level="info">
+      <AppenderRef ref="loginlog"/>
+    </Logger>
+    <Logger name="com.insta.hms" level="info">
+      <AppenderRef ref="logfile"/>
+    </Logger>
+    <Logger name="com.insta.hms.core.clinical" level="info">
+      <AppenderRef ref="logfile"/>
+    </Logger>
+    <Logger name="com.insta.hms" level="warn">
+      <AppenderRef ref="exception"/>
+    </Logger>
+    <Logger name="com.bob.hms" level="info" >
+      <AppenderRef ref="logfile"/>
+    </Logger>
+    <Logger name="com.bob.hms" level="warn">
+      <AppenderRef ref="exception"/>
+    </Logger>
+    <Logger name="com.hmsmigration.insta" level="info" additivity="false">
+      <AppenderRef ref="migrationlog"/>
+    </Logger>
+    <Logger name="com.insta.hms.common.Logger" level="info"></Logger>
+    <Logger name="com.insta.hms.master.rateplan" level="error"></Logger>
+    <Logger name="com.insta.hms.pbmauthorization.PBMApprovalsAction" level="error"></Logger>
+    <Logger name="com.insta.hms.pbmauthorization" level="error"></Logger>
+    <Logger name="com.insta.hms.batchjob.EmailReportJob" level="info">
+      <AppenderRef ref="cronjobs"/>
+    </Logger>
+    <Logger name="com.insta.hms.batchjob" level="info" additivity="false">
+      <AppenderRef ref="cronjobs"/>
+    </Logger>
+    <Logger name="com.insta.hms.jobs" level="info" additivity="false">
+      <AppenderRef ref="cronjobs"/>
+    </Logger>
+    <Logger name="com.insta.hms.instaforms.AbstractInstaForms" level="warn"></Logger>
+    <Logger name="com.insta.hms.common.GenericControllerAdvice" level="warn"></Logger>
+    <Logger name="com.insta.hms.billing.PaytmUtil" level="info">
+      <AppenderRef ref="paymenttransactions"/>
+    </Logger>
+    <Logger name="com.insta.hms.integration.book" level="debug">
+      <AppenderRef ref="booklog"/>
+    </Logger>
+    <Logger name="com.insta.hms.resourcescheduler.PractoBookHelper" level="debug">
+      <AppenderRef ref="booklog"/>
+    </Logger>
+    <Logger name="org.quartz" level="info" additivity="false">
+      <AppenderRef ref="cronjobs"/>
+    </Logger>
+    <Logger name="com.insta.hms.integration.configuration" level="debug" additivity="false">
+      <AppenderRef ref="hl7log"/>
+    </Logger>
+    <Logger name="com.insta.hms.integration.hl7" level="debug" additivity="false">
+      <AppenderRef ref="hl7log"/>
+    </Logger>
+    <Logger name="com.insta.hms.messaging.hl7" level="debug" additivity="false">
+      <AppenderRef ref="hl7log"/>
+    </Logger>
+    <Logger name="com.insta.hms.messagingframework.MessagingService" level="debug">
+      <AppenderRef ref="hl7log"/>
+    </Logger>
+   	<!--  
+   	<Logger name="ca.uhn.hl7v2.app" level="debug" additivity="false">
+      <AppenderRef ref="hl7log"/>
+    </Logger> 
+    -->
+    <!-- <Logger name="org.hibernate.SQL" level="DEBUG">
+      <AppenderRef ref="hibernatelog" />
+    </Logger>
+    <Logger name="org.hibernate.type" level="trace" /> -->
+    <Root level="warn">
+      <AppenderRef ref="console"/>
+      <AppenderRef ref="logfile"/>
+      <AppenderRef ref="exception"/>
+      <AppenderRef ref="sentry" level="warn" />
+    </Root>
+  </Loggers>
+</Configuration>

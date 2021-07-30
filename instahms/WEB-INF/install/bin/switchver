@@ -1,0 +1,19 @@
+#!/bin/bash
+
+#
+# To switch from one version to another. This script cannot be executed from the 
+# installed directory, since the version switching can involve deleting this script itself!
+#
+
+DIR=$1 ; shift
+BKPDIR=$1 ; shift
+NEWDIR=$1 ; shift
+
+# chain to this script, with the rest of the args passed to it
+CHAIN=$1 ; shift
+
+sudo mv $DIR $BKPDIR
+sudo mv $NEWDIR $DIR
+
+exec $DIR/$CHAIN $*
+

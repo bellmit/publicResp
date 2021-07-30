@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="92" pageHeight="226" columnWidth="92" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<parameter name="visitId" class="java.lang.String"/>
+	<parameter name="sampleNo" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select (case when sc.mr_no is null then sc.patient_id else sc.mr_no end)as mr_no,sc.patient_id,d.test_name,st.sample_type,tp.sflag,sc.sample_sno,
+			tp.prescribed_id
+			from sample_collection  sc
+			join tests_prescribed tp on tp.sample_collection_id=sc.sample_collection_id
+			join diagnostics d on d.test_id=tp.test_id
+			left join  sample_type st ON (st.sample_type_id = sc.sample_type_id)
+			where sc.patient_id= ('$P!{visitId}')  and sc.sample_sno in ($P!{sampleNo})
+			group by sc.sample_sno,sc.mr_no,sc.patient_id,d.test_name,st.sample_type,tp.sflag,tp.prescribed_id
+			order by tp.prescribed_id]]>
+	</queryString>
+	<field name="mr_no" class="java.lang.String">
+		<property name="mr_no" value=""/>
+	</field>
+	<field name="patient_id" class="java.lang.String">
+		<property name="patient_id" value=""/>
+	</field>
+	<field name="sample_type" class="java.lang.String">
+		<property name="sample_type" value=""/>
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="sample_sno" class="java.lang.String">
+		<property name="sample_sno" value=""/>
+	</field>
+	<field name="test_name" class="java.lang.String">
+		<property name="test_name" value=""/>
+	</field>
+	<group name="sample_no_goup">
+		<groupExpression><![CDATA[$F{sample_sno}]]></groupExpression>
+		<groupHeader>
+			<band height="40">
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement key="textField" x="0" y="13" width="92" height="12"/>
+					<textElement textAlignment="Left" verticalAlignment="Top">
+						<font size="10" isBold="false" isItalic="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{sample_sno}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement key="textField" x="0" y="1" width="92" height="12"/>
+					<textElement textAlignment="Left" verticalAlignment="Top">
+						<font size="10" isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{mr_no}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement key="textField" x="0" y="27" width="92" height="12"/>
+					<textElement textAlignment="Left" verticalAlignment="Top">
+						<font size="10" isBold="true" pdfFontName="Helvetica"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{sample_type}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="1">
+				<break>
+					<reportElement x="0" y="0" width="91" height="1"/>
+				</break>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band/>
+	</background>
+	<detail>
+		<band height="13">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField" x="0" y="0" width="92" height="12"/>
+				<textElement textAlignment="Left" verticalAlignment="Top">
+					<font size="10" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{test_name}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

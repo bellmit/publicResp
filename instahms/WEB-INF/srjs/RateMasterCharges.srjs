@@ -1,0 +1,165 @@
+{
+    "title": "Rate Master Report",
+    "reportGroup": "Master Reports",
+    "allowNoDate": true,
+    "description": "This report shows all the rates of various items that are billable.",
+    "tableName": [
+        "rpt_diagnostics_rates_view",
+        "rpt_services_rates_view",
+        "rpt_operations_rates_view",
+        "rpt_equipment_rates_view",
+        "rpt_package_rates_view",
+        "rpt_other_item_rates_view",
+        "rpt_consultation_rates_view"
+    ],
+    "fields": {
+        "item_name": {
+            "displayName": "Item Name",
+            "width": 200,
+            "groupable": false
+        },
+        "org_name": {
+            "displayName": "Rate Plan",
+            "width": 100,
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT org_name FROM organization_details"
+        },
+        "bed_type": {
+            "displayName": "Bed Type",
+            "width": 80,
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT bed_type_name FROM bed_types"
+        },
+        "service_group_name": {
+            "displayName": "Service Group",
+            "width": 100,
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT service_group_name FROM service_groups"
+        },
+        "service_sub_group_name": {
+            "displayName": "Service Sub Group",
+            "width": 100,
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT service_sub_group_name FROM service_sub_groups"
+        },
+        "doctor_charge": {
+            "displayName": "Doctor Charge",
+            "width": 65,
+            "dataType": "numeric",
+            "aggFunction": "sum",
+            "groupable": false,
+            "decimalType": "amount"
+        },
+        "doctor_discount": {
+            "displayName": "Doctor Discount",
+            "dataType": "numeric",
+            "width": 65,
+            "aggFunction": "sum",
+            "groupable": false,
+            "decimalType": "amount"
+        },
+        "anae_charge": {
+            "displayName": "Anaesthetist Charge",
+            "dataType": "numeric",
+            "width": 65,
+            "aggFunction": "sum",
+            "groupable": false,
+            "decimalType": "amount"
+        },
+        "anae_discount": {
+            "displayName": "Anaesthetist Discount",
+            "dataType": "numeric",
+            "width": 65,
+            "aggFunction": "sum",
+            "groupable": false,
+            "decimalType": "amount"
+        },
+        "hosp_charge": {
+            "displayName": "Hospital Charge",
+            "dataType": "numeric",
+            "width": 65,
+            "aggFunction": "sum",
+            "groupable": false,
+            "decimalType": "amount"
+        },
+        "hosp_discount": {
+            "displayName": "Hospital Discount",
+            "dataType": "numeric",
+            "width": 65,
+            "aggFunction": "sum",
+            "groupable": false,
+            "decimalType": "amount"
+        },
+        "total_charge": {
+            "displayName": "Total Charge",
+            "dataType": "numeric",
+            "width": 65,
+            "aggFunction": "sum",
+            "groupable": false,
+            "decimalType": "amount"
+        },
+        "total_discount": {
+            "displayName": "Total Discount",
+            "dataType": "numeric",
+            "width": 65,
+            "aggFunction": "sum",
+            "groupable": false,
+            "decimalType": "amount"
+        },
+        "doctor_charge_on_discount": {
+            "displayName": "Doctor Net Charge",
+            "dataType": "numeric",
+            "aggFunction": "sum",
+            "width": 65,
+            "groupable": false,
+            "decimalType": "amount"
+        },
+        "anae_charge_on_discount": {
+            "displayName": "Anaesthetist Net Charge",
+            "dataType": "numeric",
+            "aggFunction": "sum",
+            "width": 65,
+            "groupable": false,
+            "decimalType": "amount"
+        },
+        "hosp_charge_on_discount": {
+            "displayName": "Hospital Net Charge",
+            "dataType": "numeric",
+            "aggFunction": "sum",
+            "width": 65,
+            "groupable": false,
+            "decimalType": "amount"
+        },
+        "total_charge_on_discount": {
+            "displayName": "Total Net Charge",
+            "dataType": "numeric",
+            "aggFunction": "sum",
+            "width": 65,
+            "groupable": false,
+            "decimalType": "amount"
+        },
+        "code": {
+            "displayName": "Order Alias",
+            "width": 65,
+            "groupable": false
+        }
+    },
+    "defaultShowFields": [
+        "item_name",
+        "bed_type",
+        "service_group_name",
+        "service_sub_group_name",
+        "doctor_charge_on_discount",
+        "anae_charge_on_discount",
+        "hosp_charge_on_discount",
+        "total_charge_on_discount"
+    ]
+}

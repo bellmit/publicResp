@@ -1,0 +1,813 @@
+{
+    "comment": "Used",
+    "title": "Accounting Report",
+    "description": "This report describes the accounting vouchers",
+    "reportGroup": "Financial Reports",
+    "allowNoDate": true,
+    "dateFields": [
+        "voucher_date_only",
+        "bill_open_date_only",
+        "bill_finalized_date_only",
+        "mod_time_only",
+        "bill_last_finalized_date_only",
+        "created_at_only"
+    ],
+    "queryLines": [
+        [
+            " SELECT * FROM ",
+            " (SELECT * FROM ",
+            " (SELECT hms.*,hms.voucher_date::date as voucher_date_only,hms.bill_open_date::date as bill_open_date_only, ",
+            " hms.bill_finalized_date::date as bill_finalized_date_only,hms.mod_time::date as mod_time_only, ",
+            " b.total_tax as bill_tax,agm.account_group_name, ",
+            " COALESCE(ssg.account_head_name, chc.account_head_name) AS ac_head, ",
+            " hms.bill_last_finalized_date::date AS bill_last_finalized_date_only,hms.created_at::date AS created_at_only ",
+            " FROM hms_accounting_info hms  ",
+            " LEFT JOIN bill b on hms.bill_no=b.bill_no",
+            " LEFT JOIN account_group_master agm ON (agm.account_group_id= hms.account_group) ",
+            " LEFT JOIN (SELECT bahc.account_head_name,chc.chargehead_name FROM bill_account_heads bahc ",
+            " JOIN chargehead_constants chc  on bahc.account_head_id = chc.account_head_id ",
+            " GROUP BY bahc.account_head_name,chc.chargehead_name ) chc ON (chc.chargehead_name = hms.charge_head) ",
+            " LEFT JOIN ",
+            " (SELECT sbah.account_head_name,ssg.service_sub_group_name ",
+            " FROM bill_account_heads sbah JOIN service_sub_groups ssg ON ",
+            " (sbah.account_head_id = ssg.account_head_id) GROUP BY sbah.account_head_name, ssg.service_sub_group_name) ssg ",
+            " ON ssg.service_sub_group_name = hms.service_sub_group) AS foo ${prefilter}) AS final"
+        ]
+    ],
+    "defaultShowFields": [
+        "center_id",
+        "mr_no",
+        "visit_id",
+        "bill_no",
+        "voucher_no",
+        "voucher_type",
+        "debit_account",
+        "credit_account",
+        "net_amount",
+        "counter_no",
+        "item_name",
+        "issue_store",
+        "receipt_store",
+        "charge_head"
+    ],
+    "useQueryAsIs": true,
+    "filterOnlyFields": {
+        "voucher_date_only": {
+            "displayName": "Voucher Date",
+            "width": 60,
+            "dataType": "date",
+            "filterable": true
+        },
+        "bill_open_date_only": {
+            "displayName": "Bill Open Date",
+            "width": 60,
+            "dataType": "date",
+            "filterable": true
+        },
+        "bill_finalized_date_only": {
+            "displayName": "Bill Finalized Date",
+            "width": 60,
+            "dataType": "date",
+            "filterable": true
+        },
+        "mod_time_only": {
+            "displayName": "Mod Date",
+            "width": 60,
+            "dataType": "date",
+            "filterable": true
+        },
+        "bill_last_finalized_date_only": {
+            "displayName": "Bill Last Finalized Date",
+            "width": 100,
+            "dataType": "date",
+            "filterable": true
+        },
+        "created_at_only": {
+            "displayName": "Created Date",
+            "width": 60,
+            "dataType": "date",
+            "filterable": true
+        }
+    },
+    "fields": {
+        "issue_store_center": {
+            "displayName": "Issue Store Center",
+            "width": "100",
+            "groupable": true,
+            "dataType": "string",
+            "align": "left"
+        },
+        "receipt_store_center": {
+            "displayName": "Receiving Store Center",
+            "width": "100",
+            "groupable": true,
+            "dataType": "string",
+            "align": "left"
+        },
+        "po_number": {
+            "displayName": "PO No",
+            "width": "100",
+            "groupable": true,
+            "dataType": "string",
+            "align": "left"
+        },
+        "po_date": {
+            "displayName": "PO Date",
+            "width": "100",
+            "groupable": true,
+            "dataType": "date",
+            "align": "left"
+        },
+        "transaction_type": {
+            "displayName": "Transaction Type",
+            "width": "100",
+            "groupable": true,
+            "dataType": "string",
+            "align": "left"
+        },
+        "custom_1": {
+            "displayName": "Custom 1",
+            "width": "100",
+            "groupable": true,
+            "dataType": "string",
+            "align": "left"
+        },
+        "custom_2": {
+            "displayName": "Custom 2",
+            "width": "100",
+            "groupable": true,
+            "dataType": "string",
+            "align": "left"
+        },
+        "custom_3": {
+            "displayName": "Custom 3",
+            "width": "100",
+            "groupable": true,
+            "dataType": "string",
+            "align": "left"
+        },
+        "guid": {
+            "displayName": "GUID",
+            "width": "100",
+            "groupable": true,
+            "dataType": "string",
+            "align": "left"
+        },
+        "update_status": {
+            "displayName": "Update Status",
+            "width": "100",
+            "groupable": true,
+            "dataType": "integer",
+            "align": "left",
+            "filterable": true
+        },
+        "discount_amount": {
+            "displayName": "Discount Amount",
+            "width": "100",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "aggFunction": "sum"
+        },
+        "points_redeemed": {
+            "displayName": "Point Redeem",
+            "width": "100",
+            "groupable": true,
+            "dataType": "integer",
+            "align": "left"
+        },
+        "points_redeemed_rate": {
+            "displayName": "Point Redeem Rate",
+            "width": "100",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "aggFunction": "sum"
+        },
+        "item_category_id": {
+            "displayName": "Item Category Id",
+            "width": "100",
+            "groupable": true,
+            "dataType": "integer",
+            "align": "left"
+        },
+        "outhouse_name": {
+            "displayName": "Outhouse Name",
+            "width": "100",
+            "groupable": true,
+            "dataType": "string",
+            "align": "left"
+        },
+        "incoimng_hospital": {
+            "displayName": "Incoming Hospital",
+            "width": "100",
+            "groupable": true,
+            "dataType": "string",
+            "align": "left"
+        },
+        "cost_amount": {
+            "displayName": "Cost Amount",
+            "width": "100",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "aggFunction": "sum"
+        },
+        "supplier_name": {
+            "displayName": "Supplier Name",
+            "width": "100",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT supplier_name FROM supplier_master ORDER BY supplier_name"
+        },
+        "invoice_no": {
+            "displayName": "Invoice No",
+            "width": "100",
+            "groupable": true,
+            "dataType": "string",
+            "align": "left",
+            "filterable": true
+        },
+        "invoice_date": {
+            "displayName": "Invoice Date",
+            "width": "100",
+            "groupable": true,
+            "dataType": "date",
+            "align": "left"
+        },
+        "voucher_ref": {
+            "displayName": "Voucher Ref",
+            "width": "100",
+            "groupable": true,
+            "dataType": "string",
+            "align": "left",
+            "filterable": true
+        },
+        "remarks": {
+            "displayName": "Remarks",
+            "width": "100",
+            "groupable": true,
+            "dataType": "string",
+            "align": "left"
+        },
+        "is_tpa": {
+            "displayName": "Is TPA",
+            "width": "100",
+            "groupable": true,
+            "dataType": "string",
+            "align": "left"
+        },
+        "insurance_co": {
+            "displayName": "Insurance Co",
+            "width": "100",
+            "groupable": true,
+            "dataType": "string",
+            "align": "left",
+            "filterable": true
+        },
+        "gross_amount": {
+            "displayName": "Gross Amount",
+            "width": "100",
+            "filterable": true,
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "aggFunction": "sum"
+        },
+        "old_mr_no": {
+            "displayName": "Old MR No",
+            "width": "100",
+            "groupable": true,
+            "dataType": "string",
+            "align": "left",
+            "filterable": true
+        },
+        "round_off_amount": {
+            "displayName": "Round Off",
+            "width": "100",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "filterable": true,
+            "aggFunction": "sum"
+        },
+        "unit": {
+            "displayName": "Unit",
+            "width": "100",
+            "dataType": "string",
+            "filterable": true
+        },
+        "unit_rate": {
+            "displayName": "Unit Rate",
+            "width": "100",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "filterable": true,
+            "aggFunction": "sum"
+        },
+        "quantity": {
+            "displayName": "Quantity",
+            "width": "100",
+            "dataType": "numeric",
+            "decimalType": "quantity",
+            "filterable": true,
+            "aggFunction": "sum"
+        },
+        "currency_conversion_rate": {
+            "displayName": "Currency Conversion",
+            "width": "100",
+            "groupable": true,
+            "dataType": "string",
+            "align": "left",
+            "filterable": true
+        },
+        "currency": {
+            "displayName": "Currency",
+            "width": "100",
+            "groupable": true,
+            "dataType": "string",
+            "align": "left",
+            "filterable": true
+        },
+        "item_code": {
+            "displayName": "Item Code",
+            "width": "100",
+            "groupable": true,
+            "dataType": "string",
+            "align": "left",
+            "filterable": true
+        },
+        "center_id": {
+            "displayName": "Center Id",
+            "width": "100",
+            "groupable": true,
+            "dataType": "string",
+            "align": "left",
+            "filterable": true
+        },
+        "audit_control_number": {
+            "displayName": "Audit Control Master",
+            "width": "100",
+            "groupable": true,
+            "dataType": "string",
+            "align": "left",
+            "filterable": true
+        },
+        "service_sub_group": {
+            "displayName": "Service Sub Group",
+            "width": "100",
+            "groupable": true,
+            "dataType": "string",
+            "align": "left",
+            "filterable": true,
+            "allowNull": true,
+            "allowHorizGroup": true,
+            "allowedValuesQuery": "SELECT service_sub_group_name FROM service_sub_groups ORDER BY service_sub_group_name"
+        },
+        "center_name": {
+            "displayName": "Center Name",
+            "width": "100",
+            "groupable": true,
+            "dataType": "string",
+            "align": "center",
+            "filterable": true,
+            "allowHorizGroup": true,
+            "allowedValuesQuery": "SELECT center_name FROM hospital_center_master ORDER by center_name"
+        },
+        "charge_group": {
+            "displayName": "Charge Group",
+            "width": "100",
+            "groupable": true,
+            "dataType": "string",
+            "align": "left",
+            "filterable": true
+        },
+        "account_group": {
+            "displayName": "Accounting Group",
+            "width": "100",
+            "groupable": true,
+            "dataType": "string",
+            "align": "left",
+            "filterable": true
+        },
+        "service_group": {
+            "displayName": "Service Group",
+            "width": "100",
+            "groupable": true,
+            "dataType": "string",
+            "align": "left",
+            "filterable": true,
+            "allowNull": true,
+            "allowHorizGroup": true,
+            "allowedValuesQuery": "SELECT service_group_name FROM service_groups ORDER BY service_group_name"
+        },
+        "visit_type": {
+            "displayName": "Visit Type",
+            "width": "100",
+            "groupable": true,
+            "dataType": "string",
+            "align": "left",
+            "filterable": true
+        },
+        "mr_no": {
+            "displayName": "MR No",
+            "width": "100",
+            "dataType": "string",
+            "align": "left",
+            "filterable": true
+        },
+        "admitting_department": {
+            "displayName": "Admitting Department",
+            "width": "100",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT dept_name FROM department ORDER BY dept_name"
+        },
+        "conducting_department": {
+            "displayName": "Conducting Department",
+            "width": "100",
+            "dataType": "string",
+            "align": "left",
+            "filterable": true
+        },
+        "admitting_doctor": {
+            "displayName": "Admitting Doctor",
+            "width": "100",
+            "groupable": true,
+            "filterable": true,
+            "dataType": "string",
+            "allowNull": true,
+            "allowHorizGroup": true,
+            "allowedValuesQuery": "SELECT doctor_name FROM doctors ORDER BY doctor_name"
+        },
+        "prescribing_doctor": {
+            "displayName": "Precribing Doctor",
+            "width": "100",
+            "groupable": true,
+            "filterable": true,
+            "dataType": "string",
+            "allowNull": true,
+            "allowHorizGroup": true,
+            "allowedValuesQuery": "SELECT doctor_name FROM doctors ORDER BY doctor_name"
+        },
+        "conductiong_doctor": {
+            "displayName": "Conducting Doctor",
+            "width": "100",
+            "groupable": true,
+            "filterable": true,
+            "dataType": "string",
+            "allowNull": true,
+            "allowHorizGroup": true,
+            "allowedValuesQuery": "SELECT doctor_name FROM doctors ORDER BY doctor_name"
+        },
+        "referral_doctor": {
+            "displayName": "Referral Doctor",
+            "width": "100",
+            "dataType": "string",
+            "align": "left",
+            "filterable": true
+        },
+        "payee_doctor": {
+            "displayName": "Payee Doctor",
+            "width": "100",
+            "groupable": true,
+            "filterable": true,
+            "dataType": "string",
+            "allowNull": true,
+            "allowHorizGroup": true,
+            "allowedValuesQuery": "SELECT doctor_name FROM doctors ORDER BY doctor_name"
+        },
+        "bill_open_date_only": {
+            "displayName": "Bill Open Date",
+            "width": 60,
+            "dataType": "date",
+            "filterable": true,
+            "groupable": true
+        },
+        "bill_open_date": {
+            "displayName": "Bill Open Date/Time",
+            "width": 60,
+            "groupable": false,
+            "filterable": true,
+            "expression": "TO_CHAR(bill_open_date,'dd-MM-yyyy HH:MM:SS')"
+        },
+        "bill_finalized_date_only": {
+            "displayName": "Bill Finalized Date",
+            "width": 60,
+            "dataType": "date",
+            "filterable": true,
+            "groupable": true
+        },
+        "bill_finalized_date": {
+            "displayName": "Bill Finalized Date/Time",
+            "width": 60,
+            "groupable": false,
+            "filterable": true,
+            "expression": "TO_CHAR(bill_finalized_date,'dd-MM-yyyy HH:MM:SS')"
+        },
+        "mod_time_only": {
+            "displayName": "Mod Date",
+            "width": 60,
+            "dataType": "date",
+            "filterable": true,
+            "groupable": true
+        },
+        "mod_time": {
+            "displayName": "Mod Date/Time",
+            "width": 60,
+            "groupable": false,
+            "filterable": true,
+            "expression": "TO_CHAR(mod_time,'dd-MM-yyyy HH:MM:SS')"
+        },
+        "bill_no": {
+            "displayName": "Bill No",
+            "width": "100",
+            "groupable": true,
+            "dataType": "string",
+            "align": "left",
+            "filterable": true
+        },
+        "visit_id": {
+            "displayName": "Visit Id",
+            "width": "100",
+            "groupable": true,
+            "dataType": "string",
+            "align": "left",
+            "filterable": true
+        },
+        "voucher_no": {
+            "displayName": "Voucher No",
+            "width": "100",
+            "groupable": true,
+            "dataType": "string",
+            "align": "left",
+            "filterable": true
+        },
+        "voucher_type": {
+            "displayName": "Voucher Type",
+            "width": "100",
+            "groupable": true,
+            "dataType": "string",
+            "align": "left",
+            "filterable": true,
+            "allowedValuesQuery": "select distinct voucher_type from hms_accounting_info"
+        },
+        "voucher_date_only": {
+            "displayName": "Voucher Date",
+            "width": "100",
+            "filterable": true,
+            "groupable": true,
+            "dataType": "date"
+        },
+        "voucher_date": {
+            "displayName": "Voucher Date/Time",
+            "width": 60,
+            "groupable": false,
+            "filterable": true,
+            "expression": "TO_CHAR(voucher_date,'dd-MM-yyyy HH:MM:SS')"
+        },
+        "debit_account": {
+            "displayName": "Debit Account",
+            "width": "100",
+            "groupable": true,
+            "dataType": "string",
+            "align": "left",
+            "filterable": true
+        },
+        "credit_account": {
+            "displayName": "Credit Account",
+            "width": "100",
+            "groupable": true,
+            "dataType": "string",
+            "align": "left",
+            "filterable": true
+        },
+        "net_amount": {
+            "displayName": "Amount",
+            "width": "100",
+            "dataType": "numeric",
+            "decimalType": "quantity",
+            "filterable": true,
+            "aggFunction": "sum"
+        },
+        "counter_no": {
+            "displayName": "Counter",
+            "width": "100",
+            "groupable": true,
+            "dataType": "string",
+            "align": "left",
+            "filterable": true
+        },
+        "item_name": {
+            "displayName": "Item Name",
+            "width": "100",
+            "groupable": true,
+            "dataType": "string",
+            "align": "left",
+            "filterable": true
+        },
+        "issue_store": {
+            "displayName": "Issue Store",
+            "width": "100",
+            "groupable": true,
+            "dataType": "string",
+            "align": "left",
+            "filterable": true
+        },
+        "receipt_store": {
+            "displayName": "Receiving Store",
+            "width": "100",
+            "groupable": true,
+            "dataType": "string",
+            "align": "left",
+            "filterable": true
+        },
+        "charge_head": {
+            "displayName": "Charge Head",
+            "width": "100",
+            "dataType": "string",
+            "align": "left",
+            "filterable": true,
+            "allowedValuesQuery": "select distinct charge_head from hms_accounting_info"
+        },
+        "bill_tax": {
+            "displayName": "Bill Vat Amount",
+            "width": "100",
+            "dataType": "numeric",
+            "decimalType": "quantity",
+            "filterable": true,
+            "aggFunction": "sum"
+        },
+        "account_group_name": {
+            "displayName": "Account Group",
+            "width": "100",
+            "groupable": true,
+            "dataType": "string",
+            "align": "left"
+        },
+        "ac_head": {
+            "displayName": "Account Head",
+            "width": "100",
+            "groupable": true,
+            "dataType": "string",
+            "align": "left"
+        },
+        "custom_4": {
+            "displayName": "Custom 4",
+            "width": "100",
+            "groupable": true,
+            "dataType": "string",
+            "align": "left"
+        },
+        "points_redeemed_amount": {
+            "displayName": "Points Redeemed Amount",
+            "width": "100",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "filterable": true,
+            "aggFunction": "sum"
+        },
+        "purchase_vat_amount": {
+            "displayName": "Purchase Vat Amount",
+            "width": "100",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "filterable": true,
+            "aggFunction": "sum"
+        },
+        "purchase_vat_percent": {
+            "displayName": "Purchase Vat Percent",
+            "width": "100",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "filterable": true
+        },
+        "sales_vat_amount": {
+            "displayName": "Sales Vat Amount",
+            "width": "100",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "filterable": true,
+            "aggFunction": "sum"
+        },
+        "sales_vat_percent": {
+            "displayName": "Sales Vat Percent",
+            "width": "100",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "filterable": true
+        },
+        "tax_amount": {
+            "displayName": "Tax Amount",
+            "width": "100",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "filterable": true,
+            "aggFunction": "sum"
+        },
+        "cust_supplier_code": {
+            "displayName": "Cust Supplier Code",
+            "width": "100",
+            "groupable": true,
+            "dataType": "string",
+            "align": "left"
+        },
+        "grn_date": {
+            "displayName": "GRN Date/Time",
+            "width": 60,
+            "groupable": false,
+            "filterable": true,
+            "expression": "TO_CHAR(grn_date,'dd-MM-yyyy HH:MM:SS')"
+        },
+        "cust_item_code": {
+            "displayName": "Cust Item Code",
+            "width": "100",
+            "groupable": true,
+            "dataType": "string",
+            "align": "left"
+        },
+        "prescribing_doctor_dept_name": {
+            "displayName": "Prescribing Doctor Department",
+            "width": "100",
+            "groupable": true,
+            "dataType": "string",
+            "align": "left"
+        },
+        "custom_8": {
+            "displayName": "Custom 8",
+            "width": "100",
+            "groupable": true,
+            "dataType": "string",
+            "align": "left"
+        },
+        "custom_9": {
+            "displayName": "Custom 9",
+            "width": "100",
+            "groupable": true,
+            "dataType": "string",
+            "align": "left"
+        },
+        "custom_10": {
+            "displayName": "Custom 10",
+            "width": "100",
+            "groupable": true,
+            "dataType": "string",
+            "align": "left"
+        },
+        "custom_11": {
+            "displayName": "Custom 11",
+            "width": "100",
+            "groupable": true,
+            "dataType": "string",
+            "align": "left"
+        },
+        "job_transaction": {
+            "displayName": "Job Transaction",
+            "width": "100",
+            "groupable": true,
+            "dataType": "integer",
+            "align": "left"
+        },
+        "created_at_only": {
+            "displayName": "Created Date",
+            "width": 100,
+            "groupable": true,
+            "filterable": true,
+            "dataType": "date"
+        },
+        "created_at": {
+            "displayName": "Created Date/Time",
+            "width": 100,
+            "groupable": false,
+            "filterable": true,
+            "expression": "TO_CHAR(created_at,'dd-MM-yyyy HH:MM:SS')"
+        },
+        "sale_bill_no": {
+            "displayName": "Sale Bill No",
+            "width": "100",
+            "filterable": true,
+            "groupable": true,
+            "dataType": "string",
+            "align": "left"
+        },
+        "bill_last_finalized_date_only": {
+            "displayName": "Bill Last Finalized Date",
+            "width": 100,
+            "groupable": true,
+            "filterable": true,
+            "dataType": "date"
+        },
+        "bill_last_finalized_date": {
+            "displayName": "Bill Last Finalized Date/Time",
+            "width": 100,
+            "groupable": false,
+            "filterable": true,
+            "expression": "TO_CHAR(bill_last_finalized_date,'dd-MM-yyyy HH:MM:SS')"
+        },
+        "charge_reference_id": {
+            "displayName": "Charge Reference ID",
+            "width": "100",
+            "filterable": true,
+            "groupable": true,
+            "dataType": "string",
+            "align": "left"
+        }
+    }
+}

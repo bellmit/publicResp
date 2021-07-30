@@ -1,0 +1,2 @@
+customer_id,customer_name,visit_date,is_credit,phone_no,credit_limit,sponsor_name,center_id,nationality_id,government_identifier,identifier_id
+'PH027297','Retail Sale Test','2019-05-08 11:54:39.545','N','',,,'7','CM0016','77633','1'

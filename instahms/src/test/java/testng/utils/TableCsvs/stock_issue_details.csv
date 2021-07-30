@@ -1,0 +1,2 @@
+medicine_id,batch_no,qty,return_qty,item_issue_no,vat,user_issue_no,amount,indent_no,discount,pkg_size,pkg_cp,pkg_mrp,insurance_claim_amt,item_unit,issue_pkg_size,item_batch_id,cost_value,return_cost_value
+'3612','Batch100','4.00','0','79357','0.00','7108','24.64',,'3.36','10','62.33','70.00','17.25','I','10.00','13028','24.9320','0'

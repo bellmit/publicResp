@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<suite name="NotesServiceTest" verbose="1">
+	<test name="notetypes">
+		<classes>
+			<class
+				name="testng.com.insta.hms.core.clinical.notes.NotesServiceTest" />
+		</classes>
+	</test>
+</suite>

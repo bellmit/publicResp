@@ -1,0 +1,60 @@
+<!--
+  Digester rules for parsing and making classes out of screens.xml.
+  See DigestingPlugIn (struts) and Digester (commons-digester) for details.
+
+  See also struts-config.xml, where this file path is passed to the DigesterPlugIn.
+-->
+
+<digester-rules>
+  <!-- create ScreenConfig object on seeing <screen_config>, copy properties -->
+  <pattern value="screen_config">
+    <object-create-rule classname="com.bob.hms.common.ScreenConfig"/>
+    <set-properties-rule/>
+  </pattern>
+
+  <!-- create ScreenGroup object on seeing <screen_group>, copy properties, add to ScreenConfig -->
+  <pattern value="screen_config/screen_group">
+    <object-create-rule classname="com.bob.hms.common.ScreenGroup"/>
+    <set-properties-rule/>
+    <set-next-rule methodname="addScreenGroup"/>
+  </pattern>
+
+  <!-- create Screen object on seeing <screen>, copy properties, add to ScreenGroup -->
+  <pattern value="screen_config/screen_group/screen">
+    <object-create-rule classname="com.bob.hms.common.Screen"/>
+    <set-properties-rule/>
+    <set-next-rule methodname="addScreen"/>
+  </pattern>
+
+  <!-- create an ArrayList on seeing <menu_group> and children -->
+<!--  <pattern value="screen_config/home_menu/menu_group">
+    <object-create-rule classname="java.util.ArrayList"/>
+    <set-next-rule methodname="addMenuGroup"/>
+  </pattern> -->
+
+  <!--
+    Use a dynabean to hold property=val hashtable kind of object for every menu item
+    Unlike EL and struts, the digester does not know about setting/getting Map properties,
+    so we need to create an object in which set<Property> calls can be dynamically
+    created and converted to map values.
+  -->
+<!--   <pattern value="screen_config/home_menu/menu_group/link">
+    <object-create-rule classname="org.apache.commons.beanutils.LazyDynaBean"/>
+    <set-properties-rule/>
+    <set-next-rule methodname="add"/>
+  </pattern> -->
+
+<!--   <pattern value="screen_config/top_menu/menu_group">
+    <object-create-rule classname="com.bob.hms.common.MenuGroup"/>
+    <set-properties-rule/>
+    <set-next-rule methodname="addTopMenu"/>
+  </pattern> -->
+
+<!--  <pattern value="screen_config/top_menu/menu_group/menu_group">
+    <object-create-rule classname="com.bob.hms.common.MenuGroup"/>
+    <set-properties-rule/>
+    <set-next-rule methodname="addSubGroups"/>
+  </pattern> -->
+
+</digester-rules>
+

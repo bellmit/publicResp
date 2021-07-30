@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="510" pageHeight="842" columnWidth="470" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="comment" value="Used by almazouri"/>
+	<parameter name="toDate" class="java.util.Date"/>
+	<parameter name="fromDate" class="java.util.Date"/>
+	<queryString>
+		<![CDATA[select doctor_name, account_head, display_order, COALESCE (sum(op_count),0) as op_count, COALESCE (sum(op_amount),0) as op_amount,
+COALESCE (sum(ip_count),0) as ip_count, COALESCE (sum(ip_amount),0) as ip_amount
+from(
+
+select d.doctor_name, case when b.visit_type='o' then count(*) else 0 end as op_count,
+ case when b.visit_type='o'  then sum(amount) else 0 end as op_amount,
+ case when b.visit_type='i' then count(*) else 0 end as ip_count,
+ case when b.visit_type='i'  then sum(amount) else 0 end as ip_amount,
+ 'Radiology'||' ' || '('||td.dept_name||')' as account_head, 8 as display_order
+from bill_charge bc
+left join bill b using(bill_no)
+left join doctors d on (d.doctor_id= bc.prescribing_dr_id)
+left join treating_departments_view td on (td.dept_id = bc.act_department_id)
+where charge_group='DIA' and charge_head='RTDIA'
+and td.dept_name in ('X-RAY',  'MRI', 'CT SCAN', 'ULTRASONOGRAPHY', 'DOPPLER', 'NUCLEAR MEDICINE', 'RADIOLOGY', 'MAMMOGRAPHY', 'BMD')
+and b.visit_type in ('i', 'o')
+	and prescribing_dr_id is not null and prescribing_dr_id !=''
+	and date(posted_date) between $P{fromDate} AND $P{toDate}
+group by d.doctor_name, b.visit_type,  td.dept_name
+
+
+) as foo
+group by doctor_name, account_head, display_order
+order by doctor_name, display_order]]>
+	</queryString>
+	<field name="doctor_name" class="java.lang.String"/>
+	<field name="account_head" class="java.lang.String"/>
+	<field name="op_count" class="java.lang.Number"/>
+	<field name="op_amount" class="java.lang.Number"/>
+	<field name="ip_count" class="java.lang.Number"/>
+	<field name="ip_amount" class="java.lang.Number"/>
+	<variable name="tot_op_count" class="java.lang.Number" resetType="Group" resetGroup="doctor" calculation="Sum">
+		<variableExpression><![CDATA[$F{op_count}]]></variableExpression>
+	</variable>
+	<variable name="total_op_amount" class="java.lang.Number" resetType="Group" resetGroup="doctor" calculation="Sum">
+		<variableExpression><![CDATA[$F{op_amount}]]></variableExpression>
+	</variable>
+	<variable name="total_ip_count" class="java.lang.Number" resetType="Group" resetGroup="doctor" calculation="Sum">
+		<variableExpression><![CDATA[$F{ip_count}]]></variableExpression>
+	</variable>
+	<variable name="total_ip_amount" class="java.lang.Number" resetType="Group" resetGroup="doctor" calculation="Sum">
+		<variableExpression><![CDATA[$F{ip_amount}]]></variableExpression>
+	</variable>
+	<variable name="grnad_tot_op_count" class="java.lang.Number" calculation="Sum">
+		<variableExpression><![CDATA[$F{op_count}]]></variableExpression>
+	</variable>
+	<variable name="grand_tot_amount" class="java.lang.Number" calculation="Sum">
+		<variableExpression><![CDATA[$F{op_amount}]]></variableExpression>
+	</variable>
+	<variable name="grnad_tot_ip_count" class="java.lang.Number" calculation="Sum">
+		<variableExpression><![CDATA[$F{ip_count}]]></variableExpression>
+	</variable>
+	<variable name="grand_tot_ip_amount" class="java.lang.Number" calculation="Sum">
+		<variableExpression><![CDATA[$F{ip_amount}]]></variableExpression>
+	</variable>
+	<group name="grand_total">
+		<groupHeader>
+			<band/>
+		</groupHeader>
+		<groupFooter>
+			<band height="18">
+				<staticText>
+					<reportElement x="24" y="3" width="76" height="14"/>
+					<textElement>
+						<font isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[Grand Total :]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" evaluationTime="Report" isBlankWhenNull="true">
+					<reportElement x="110" y="3" width="55" height="14"/>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression class="java.lang.Number"><![CDATA[$V{grnad_tot_op_count}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" evaluationTime="Report" isBlankWhenNull="true">
+					<reportElement x="171" y="3" width="55" height="14"/>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression class="java.lang.Number"><![CDATA[$V{grand_tot_amount}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" evaluationTime="Report" isBlankWhenNull="true">
+					<reportElement x="233" y="3" width="55" height="14"/>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression class="java.lang.Number"><![CDATA[$V{grnad_tot_ip_count}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="294" y="3" width="56" height="14"/>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression class="java.lang.Number"><![CDATA[$V{grand_tot_ip_amount}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="###0.00" isBlankWhenNull="true">
+					<reportElement x="415" y="3" width="56" height="14"/>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression class="java.lang.Number"><![CDATA[new BigDecimal($V{grand_tot_ip_amount}.floatValue()).add(new BigDecimal($V{grand_tot_amount}.floatValue())).setScale(2,BigDecimal.ROUND_HALF_UP)]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" evaluationTime="Report" pattern="###0" isBlankWhenNull="true">
+					<reportElement x="354" y="3" width="55" height="14"/>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression class="java.lang.Number"><![CDATA[new BigDecimal($V{grnad_tot_ip_count}.floatValue()).add(new BigDecimal($V{grnad_tot_op_count}.floatValue())).setScale(2)]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="doctor">
+		<groupExpression><![CDATA[$F{doctor_name}]]></groupExpression>
+		<groupHeader>
+			<band height="16">
+				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="doctor" isBlankWhenNull="true">
+					<reportElement x="0" y="1" width="183" height="15"/>
+					<textElement>
+						<font size="12" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{doctor_name}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="16">
+				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="doctor" pattern="###0.00" isBlankWhenNull="true">
+					<reportElement x="233" y="2" width="55" height="13"/>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression class="java.lang.Number"><![CDATA[$V{total_ip_count}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="54" y="3" width="46" height="13"/>
+					<textElement textAlignment="Right">
+						<font isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[Total : ]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="doctor" pattern="###0.00" isBlankWhenNull="true">
+					<reportElement x="110" y="2" width="55" height="13"/>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression class="java.lang.Number"><![CDATA[$V{tot_op_count}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="doctor" pattern="###0.00" isBlankWhenNull="true">
+					<reportElement x="171" y="2" width="55" height="13"/>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression class="java.lang.Number"><![CDATA[$V{total_op_amount}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="doctor" pattern="###0.00" isBlankWhenNull="true">
+					<reportElement x="294" y="2" width="55" height="13"/>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression class="java.lang.Number"><![CDATA[$V{total_ip_amount}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="0" y="0" width="470" height="1" forecolor="#C7BFBF"/>
+				</line>
+				<line>
+					<reportElement x="0" y="15" width="470" height="1" forecolor="#C7BFBF"/>
+				</line>
+				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="doctor" pattern="###0" isBlankWhenNull="true">
+					<reportElement x="354" y="2" width="55" height="13"/>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression class="java.lang.Number"><![CDATA[new BigDecimal($V{total_ip_count}.floatValue()).add(new BigDecimal($V{tot_op_count}.floatValue())).setScale(2)]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="doctor" pattern="###0.00" isBlankWhenNull="true">
+					<reportElement x="415" y="2" width="55" height="13"/>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression class="java.lang.Number"><![CDATA[(new BigDecimal($V{total_ip_amount}.floatValue()).add(new BigDecimal($V{total_op_amount}.floatValue()))).setScale(2,BigDecimal.ROUND_HALF_UP)]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band/>
+	</background>
+	<title>
+		<band height="39">
+
+			<staticText>
+				<reportElement x="112" y="2" width="258" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="13" isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
+				</textElement>
+				<text><![CDATA[Doctor Wise Radiology Revenue Report]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="121" y="20" width="65" height="14"/>
+				<textElement/>
+				<text><![CDATA[From Date:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="266" y="20" width="46" height="14"/>
+				<textElement/>
+				<text><![CDATA[To Date:]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" pattern="dd-MM-yyyy" isBlankWhenNull="true">
+				<reportElement x="183" y="20" width="75" height="14"/>
+				<textElement/>
+				<textFieldExpression class="java.util.Date"><![CDATA[$P{fromDate}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="dd-MM-yyyy" isBlankWhenNull="true">
+				<reportElement x="314" y="20" width="100" height="14"/>
+				<textElement/>
+				<textFieldExpression class="java.util.Date"><![CDATA[$P{toDate}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band/>
+	</pageHeader>
+	<columnHeader>
+		<band height="44">
+			<staticText>
+				<reportElement x="233" y="18" width="55" height="15"/>
+				<textElement textAlignment="Right">
+					<font size="12" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Count]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="17" width="470" height="2" forecolor="#D5C9C9"/>
+			</line>
+			<line>
+				<reportElement x="0" y="42" width="470" height="1" forecolor="#D5C9C9"/>
+			</line>
+			<staticText>
+				<reportElement x="294" y="19" width="55" height="15"/>
+				<textElement textAlignment="Right">
+					<font size="12" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Amount]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="171" y="19" width="55" height="15"/>
+				<textElement textAlignment="Right">
+					<font size="12" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Amount]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="110" y="17" width="55" height="17"/>
+				<textElement textAlignment="Right">
+					<font size="12" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Count]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="233" y="3" width="116" height="15"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[IP]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="110" y="2" width="116" height="15"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[OP]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="2" width="470" height="1" forecolor="#BDB4B4"/>
+			</line>
+			<staticText>
+				<reportElement x="354" y="2" width="116" height="15"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Total]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="354" y="19" width="55" height="15"/>
+				<textElement textAlignment="Right">
+					<font size="12" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Count]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="415" y="19" width="55" height="15"/>
+				<textElement textAlignment="Right">
+					<font size="12" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Amount]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="17">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="110" y="-1" width="55" height="15"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$F{op_count}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="171" y="-1" width="55" height="15"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$F{op_amount}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="233" y="-1" width="55" height="15"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$F{ip_count}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="294" y="-1" width="55" height="15"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$F{ip_amount}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="100" height="15"/>
+				<textElement>
+					<font isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{account_head}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true">
+				<reportElement x="354" y="-1" width="55" height="15"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.Number"><![CDATA[new BigDecimal($F{ip_count}.floatValue()).add(new BigDecimal($F{op_count}.floatValue()))]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="###0.00" isBlankWhenNull="true">
+				<reportElement x="415" y="-1" width="55" height="15"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.Number"><![CDATA[new BigDecimal($F{ip_amount}.floatValue()).add(new BigDecimal($F{op_amount}.floatValue())).setScale(2,BigDecimal.ROUND_HALF_UP)]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band/>
+	</columnFooter>
+	<pageFooter>
+		<band/>
+	</pageFooter>
+	<summary>
+		<band/>
+	</summary>
+</jasperReport>
+
+

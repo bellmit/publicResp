@@ -1,0 +1,11 @@
+<xml version="1.0" encoding="UTF-8">
+
+<suite name="EditInsuranceTest" verbose="1" allow-return-values="true">
+	<test name="editinsurance">
+		<classes>
+			<class name="testng.com.insta.hms.core.insurance.EditInsuranceServiceTest" >
+			</class>
+		</classes>
+	</test>
+</suite>
+</xml>

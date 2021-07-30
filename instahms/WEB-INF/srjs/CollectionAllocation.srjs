@@ -1,0 +1,403 @@
+{
+    "title": "Collections Allocation Report",
+    "defaultOrder": "receipt_no",
+    "reportGroup": "Financial Reports",
+    "dateFields": [
+        "receipt_date",
+        "allocated_date"
+    ],
+    "description": "This report gives the allocation of all billing collections across various heads for Bill Now bills and as Advance/Settlement for Bill Later bills.",
+    "tableName": [
+        "rpt_collection_allocation_view"
+    ],
+    "defaultShowFields": [
+        "cust_id",
+        "bill_patient_full_name",
+        "receipt_no",
+        "receipt_date",
+        "payment_type",
+        "treating_dept",
+        "head",
+        "unallocated_amount",
+        "amt"
+    ],
+    "fields": {
+        "bill_patient_full_name": {
+            "displayName": "Patient Name",
+            "width": "150",
+            "description": "Patient or Retail Customer Name",
+            "filterable": true,
+            "groupable": true
+        },
+        "payment_type": {
+            "displayName": "Payment Type",
+            "width": "70",
+            "groupable": true,
+            "filterable": true,
+            "allowedValues": [
+                "Receipt",
+                "Sponsor Receipt",
+                "Refund"
+            ]
+        },
+        "receipt_no": {
+            "displayName": "Receipt No.",
+            "width": "65"
+        },
+        "bill_no": {
+            "displayName": "Bill No.",
+            "width": "65",
+            "groupable": true,
+            "filterable": true
+        },
+        "receipt_date": {
+            "displayName": "Receipt Dt.",
+            "dataType": "date",
+            "width": "80"
+        },
+        "name_local_language": {
+             "displayName": "Name In Local Language",
+             "width": "150"
+        },
+        "counter": {
+            "displayName": "Counter",
+            "width": "120",
+            "groupable": true,
+            "filterable": true,
+            "allowedValuesQuery": "SELECT counter_no AS counter FROM counters ORDER BY counter_no"
+        },
+        "counter_type": {
+            "displayName": "Counter Type",
+            "width": "80",
+            "groupable": true,
+            "filterable": true,
+            "allowedValues": [
+                "Billing",
+                "Pharmacy"
+            ]
+        },
+        "collection_counter": {
+            "displayName": "Collection Counter",
+            "width": "75",
+            "groupable": true,
+            "filterable": true,
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "payment_mode": {
+            "displayName": "Payment Mode",
+            "width": "75",
+            "groupable": true,
+            "filterable": true,
+            "allowedValuesQuery": "SELECT payment_mode FROM payment_mode_master WHERE mode_id<>-9 ORDER BY payment_mode"
+        },
+        "payment_type_with_refund": {
+            "displayName": "Payment Mode with refund",
+            "width": "75",
+            "groupable": true,
+            "filterable": true,
+            "allowedValuesQuery": "SELECT payment_mode FROM payment_mode_master WHERE mode_id<>-9 ORDER BY payment_mode"
+        },
+        "card_type": {
+            "displayName": "Card Type",
+            "width": "75",
+            "allowNull": true,
+            "groupable": true,
+            "filterable": true,
+            "allowedValuesQuery": "SELECT card_type FROM card_type_master ORDER BY card_type"
+        },
+        "bank_name": {
+            "displayName": "Bank Name",
+            "width": "80",
+            "groupable": true,
+            "filterable": true
+        },
+        "reference_no": {
+            "displayName": "Reference No.",
+            "width": "60"
+        },
+        "bank_batch_no": {
+            "displayName": "Bank Batch No.",
+            "width": "65",
+            "groupable": true,
+            "filterable": true
+        },
+        "card_auth_code": {
+            "displayName": "Card Auth Code",
+            "width": "65"
+        },
+        "card_holder_name": {
+            "displayName": "Card Holder Name",
+            "width": "65"
+        },
+        "card_expdate": {
+            "displayName": "Card Exp. Date",
+            "width": "65",
+            "filterable": true,
+            "dataType": "date"
+        },
+        "card_number": {
+            "displayName": "Card Number",
+            "width": "65"
+        },
+        "currency": {
+            "displayName": "Foreign Currency",
+            "width": "50",
+            "groupable": true,
+            "filterable": true,
+            "allowedValuesQuery": "SELECT currency FROM foreign_currency ORDER BY currency"
+        },
+        "credit_card_commission_percentage": {
+            "displayName": "Commission Percentage",
+            "width": 50,
+            "groupable": true,
+            "filterable": true,
+            "dataType": "numeric",
+            "allowedValuesQuery": "SELECT commission_percentage from card_type_master "
+        },
+        "exchange_rate": {
+            "displayName": "Exchange Rate",
+            "width": "65",
+            "dataType": "numeric",
+            "filterable": true
+        },
+        "exchange_date": {
+            "displayName": "Exchange Date",
+            "width": "65",
+            "groupable": true,
+            "filterable": true,
+            "dataType": "date"
+        },
+        "username": {
+            "displayName": "User",
+            "width": "80",
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT emp_username AS username FROM u_user JOIN u_role USING(role_id) WHERE portal_id='N'"
+        },
+        "remarks": {
+            "displayName": "Remarks",
+            "width": "110",
+            "filterable": false,
+            "groupable": false
+        },
+        "amt": {
+            "dataType": "numeric",
+            "displayName": "Amount",
+            "width": "60",
+            "decimalType": "amount",
+            "aggFunction": "sum",
+            "filterable": true
+        },
+        "unallocated_amount": {
+            "dataType": "numeric",
+            "displayName": "UnAllocated Amount",
+            "width": "60",
+            "decimalType": "amount",
+            "aggFunction": "sum",
+            "filterable": true
+        },
+        "head": {
+            "displayName": "Head",
+            "width": "100",
+            "groupable": true,
+            "filterable": true,
+            "allowedValuesQuery": "SELECT chargehead_name FROM chargehead_constants UNION ALL VALUES ('Advance'),('Settlement'),('Refund') ORDER BY chargehead_name"
+        },
+        "chargehead_name": {
+            "displayName": "Charge Head",
+            "width": "100",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT chargehead_name FROM chargehead_constants ORDER BY chargehead_name"
+        },
+        "chargegroup_name": {
+            "displayName": "Charge Group",
+            "width": "75",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT chargegroup_name FROM chargegroup_constants ORDER BY chargegroup_name"
+        },
+        "ac_head": {
+            "displayName": "Account Head",
+            "width": "75",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT account_head_name AS ac_head FROM bill_account_heads ORDER BY account_head_name"
+        },
+        "charge_account_group": {
+            "displayName": "Account Group",
+            "width": "80",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT account_group_name AS account_group_name FROM account_group_master ORDER BY account_group_name"
+        },
+        "service_group_name": {
+            "displayName": "Service Group",
+            "width": "80",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT service_group_name FROM service_groups ORDER BY service_group_name"
+        },
+        "service_sub_group_name": {
+            "displayName": "Service Sub Group",
+            "width": "90",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT service_sub_group_name FROM service_sub_groups ORDER BY service_sub_group_name"
+        },
+        "act_description": {
+            "displayName": "Item Description",
+            "width": "150",
+            "groupable": true,
+            "filterable": true
+        },
+        "act_remarks": {
+            "displayName": "Item Details",
+            "width": "150",
+            "groupable": true,
+            "filterable": true
+        },
+        "user_remarks": {
+            "displayName": "Remarks",
+            "width": "150",
+            "groupable": true,
+            "filterable": true
+        },
+        "treating_dept": {
+            "displayName": "Treating Department",
+            "width": "120",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT dept_name AS treating_dept FROM treating_departments_view ORDER BY dept_name"
+        },
+        "bill_type": {
+            "displayName": "Bill Type",
+            "width": "70",
+            "groupable": true,
+            "filterable": true,
+            "allowedValues": [
+                "Bill Now",
+                "Bill Later"
+            ]
+        },
+        "bill_open_date": {
+            "displayName": "Bill Opened Dt.",
+            "dataType": "date",
+            "width": "80"
+        },
+        "bill_finalized_date": {
+            "displayName": "Bill Finalized Dt.",
+            "dataType": "date",
+            "width": "80"
+        },
+        "allocated_date": {
+            "displayName": "Allocated Dt.",
+            "dataType": "date",
+            "width": "80"
+        },
+        "bill_closed_date": {
+            "displayName": "Bill Closed Dt.",
+            "dataType": "date",
+            "width": "80",
+            "groupable": true
+        },
+        "bill_usage_type": {
+            "displayName": "Bill Usage Type",
+            "width": "70",
+            "groupable": true,
+            "filterable": true,
+            "allowedValues": [
+                "Hospital",
+                "Pharmacy",
+                "Incoming Test"
+            ]
+        },
+        "bill_status": {
+            "displayName": "Status",
+            "width": "50",
+            "groupable": true,
+            "filterable": true,
+            "allowedValues": [
+                "Open",
+                "Finalized",
+                "Closed"
+            ]
+        },
+        "insurance_bill": {
+            "displayName": "Ins. Bill",
+            "description": "Is the bill an insurance bill (Yes/No)",
+            "width": "45",
+            "groupable": true,
+            "filterable": true,
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "primary_bill_tpa": {
+            "displayName": "Primary Bill Sponsor",
+            "description": "The Primary Sponsor associated with the bill",
+            "width": "120",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT tpa_name FROM tpa_master ORDER BY tpa_name"
+        },
+        "secondary_bill_tpa": {
+            "displayName": "Secondary Bill Sponsor",
+            "description": "The Secondary Sponsor associated with the bill",
+            "width": "120",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT tpa_name FROM tpa_master ORDER BY tpa_name"
+        },
+        "visit_id": {
+            "displayName": "Visit ID",
+            "width": "65"
+        },
+        "visit_type_name": {
+            "displayName": "Patient Type",
+            "width": "65",
+            "groupable": true,
+            "filterable": true,
+            "allowedValues": [
+                "IP",
+                "OP",
+                "Retail",
+                "Test"
+            ]
+        },
+        "cust_id": {
+            "displayName": "Cust. Id",
+            "width": "65"
+        },
+        "patient_category_name": {
+            "displayName": "Patient Category",
+            "width": "120",
+            "allowedValuesQuery": "SELECT category_name FROM patient_category_master ORDER BY category_name",
+            "filterable": true,
+            "groupable": true
+        },
+        "act_rate_plan_item_code": {
+            "allowHorizGroup": true,
+            "allowNull": false,
+            "dataType": "string",
+            "displayName": "Rate Plan Code",
+            "filterable": true,
+            "groupable": true,
+            "name": "act_rate_plan_item_code",
+            "width": 80
+        }
+    }
+}

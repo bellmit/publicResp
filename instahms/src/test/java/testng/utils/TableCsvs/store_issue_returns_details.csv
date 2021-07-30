@@ -1,0 +1,2 @@
+medicine_id,batch_no,qty,user_return_no,item_return_no,amount,discount,item_unit,rtn_pkg_size,item_batch_id,cost_value
+'3612','Batch100','2','92','140','14.00','0.00','I','10','13028','12.4660'

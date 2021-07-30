@@ -1,0 +1,14 @@
+<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog" prefer="system">
+	<system systemId="http://localhost/wsdl/PBMWebServices.wsdl"
+			uri="wsdl/PBMWebServices.wsdl"/>
+	<system systemId="http://localhost/wsdl/EAuthTestWebServices.wsdl"
+			uri="wsdl/EAuthTestWebServices.wsdl"/>
+	<system systemId="http://localhost/wsdl/eRxWebServices.wsdl"
+			uri="wsdl/eRxWebServices.wsdl"/>
+	<system systemId="http://localhost/wsdl/dhaEClaimWebServices.wsdl"
+			uri="wsdl/dhaEClaimWebServices.wsdl"/>
+	<system systemId="http://localhost/wsdl/OhsrsDoHGovPhTest.wsdl"
+			uri="wsdl/OhsrsDoHGovPhTest.wsdl"/>
+	<system systemId="http://localhost/wsdl/OhsrsDoHGovPh.wsdl"
+			uri="wsdl/OhsrsDoHGovPh.wsdl"/>
+</catalog>

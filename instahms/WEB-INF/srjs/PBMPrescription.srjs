@@ -1,0 +1,298 @@
+{
+    "title": "PBM Prescription Report",
+    "reportGroup": "PBM Reports",
+    "description": "This report shows the list of pbm prescriptions",
+    "dateFields": [
+        "reg_date"
+    ],
+    "allowNoDate": false,
+    "includes": [
+        "PatientDetailFields.srjs",
+        "PatientVisitFields.srjs"
+    ],
+    "defaultShowFields": [
+        "mr_no",
+        "full_name",
+        "reg_date",
+        "pbm_presc_id",
+        "status",
+        "approval_status",
+        "pbm_request_id",
+        "request_date"
+    ],
+    "defaultOrder": "pbm_presc_id",
+    "queryUnits": [
+        {
+            "mainTableName": "pbm_medicine_prescription_view",
+            "mainTableAlias": "grp",
+            "joinTables": [
+                {
+                    "name": "patient_registration",
+                    "alias": "pr",
+                    "dependsOn": "grp",
+                    "expression": "ON (pr.patient_id = grp.visit_id)"
+                },
+                {
+                    "name": "patient_details",
+                    "alias": "pd",
+                    "dependsOn": "pr",
+                    "expression": "ON (pr.mr_no = pd.mr_no)"
+                },
+                {
+                    "name": "pbm_prescription",
+                    "alias": "pbmp",
+                    "dependsOn": "grp",
+                    "expression": "ON (grp.pbm_presc_id = pbmp.pbm_presc_id )"
+                },
+                {
+                    "name": "doctor_consultation",
+                    "alias": "dc",
+                    "dependsOn": "grp",
+                    "expression": "ON (dc.consultation_id = grp.consultation_id)"
+                },
+                {
+                    "name": "tpa_master",
+                    "alias": "tp",
+                    "dependsOn": "pr",
+                    "expression": "ON (tp.tpa_id = pr.primary_sponsor_id)"
+                },
+                {
+                    "name": "insurance_company_master",
+                    "alias": "icm",
+                    "dependsOn": "pr",
+                    "expression": "ON (icm.insurance_co_id = pr.primary_insurance_co)"
+                },
+                {
+                    "name": "insurance_category_master",
+                    "alias": "cat",
+                    "dependsOn": "pr",
+                    "expression": "ON (cat.category_id = pr.category_id)"
+                },
+                {
+                    "name": "insurance_plan_main",
+                    "alias": "pm",
+                    "dependsOn": "pr",
+                    "expression": "ON (pm.plan_id = pr.plan_id)"
+                },
+                {
+                    "name": "pbm_request_approval_details",
+                    "alias": "prd",
+                    "dependsOn": "pbmp",
+                    "expression": "ON (prd.pbm_request_id = pbmp.pbm_request_id)"
+                },
+                {
+                    "name": "stores",
+                    "alias": "store",
+                    "dependsOn": "pbmp",
+                    "expression": "ON (store.dept_id = pbmp.pbm_store_id)"
+                }
+            ]
+        }
+    ],
+    "fields": {
+        "pbm_presc_id": {
+            "table": "pbmp",
+            "displayName": "PBM Presc ID",
+            "allowNull": true,
+            "width": "60",
+            "groupable": false,
+            "dataType": "numeric",
+            "decimalType": "integer",
+            "filterable": true
+        },
+        "status": {
+            "table": "pbmp",
+            "displayName": "PBM Presc Status",
+            "allowNull": true,
+            "width": "70",
+            "expression": "CASE WHEN pbmp.status = 'O' THEN 'Open' WHEN pbmp.status = 'S' THEN 'Sent' WHEN pbmp.status = 'D' THEN 'Denied' WHEN pbmp.status = 'R' THEN 'ForResub' WHEN pbmp.status = 'C' THEN 'Closed' ELSE '' END",
+            "groupable": false,
+            "filterable": true,
+            "allowedValues": [
+                "Open",
+                "Sent",
+                "Denied",
+                "ForResub",
+                "Closed"
+            ]
+        },
+        "pbm_finalized": {
+            "table": "pbmp",
+            "displayName": "PBM Finalized",
+            "allowNull": true,
+            "width": "50",
+            "groupable": false,
+            "filterable": true,
+            "expression": "CASE WHEN pbm_finalized = 'Y' THEN 'Yes' ELSE 'No' END",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "pbm_request_id": {
+            "table": "pbmp",
+            "displayName": "Request ID",
+            "allowNull": true,
+            "width": "100",
+            "groupable": false,
+            "filterable": true
+        },
+        "request_date": {
+            "table": "prd",
+            "displayName": "Request Date/Time",
+            "allowNull": true,
+            "dataType": "timestamp",
+            "width": "70",
+            "groupable": false,
+            "filterable": true,
+            "expression": "date_trunc('second', request_date::timestamp)"
+        },
+        "approval_recd_date": {
+            "table": "prd",
+            "displayName": "Received Date/Time",
+            "allowNull": true,
+            "dataType": "timestamp",
+            "width": "70",
+            "groupable": false,
+            "filterable": true,
+            "expression": "date_trunc('second', approval_recd_date::timestamp)"
+        },
+        "pbm_request_type": {
+            "table": "prd",
+            "displayName": "Request Type",
+            "allowNull": true,
+            "width": "70",
+            "groupable": false,
+            "filterable": true,
+            "allowedValues": [
+                "Authorization",
+                "Cancellation"
+            ]
+        },
+        "is_resubmit": {
+            "table": "prd",
+            "displayName": "Resubmission",
+            "allowNull": true,
+            "width": "80",
+            "groupable": false,
+            "filterable": true,
+            "expression": "CASE WHEN is_resubmit = 'Y' THEN 'Yes' ELSE 'No' END",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "resubmit_type": {
+            "table": "pbmp",
+            "displayName": "Resubmit Type",
+            "allowNull": true,
+            "width": "100",
+            "groupable": false,
+            "filterable": true,
+            "allowedValues": [
+                "internal complaint",
+                "correction"
+            ]
+        },
+        "drug_count": {
+            "table": "pbmp",
+            "displayName": "Drug Count",
+            "allowNull": true,
+            "width": "50",
+            "dataType": "numeric",
+            "decimalType": "integer",
+            "groupable": false,
+            "filterable": true
+        },
+        "sts": {
+            "table": "grp",
+            "displayName": "Prescription Status",
+            "allowNull": true,
+            "width": "100",
+            "expression": "CASE WHEN sts = 1 THEN 'Not Dispensed' WHEN sts = '3' THEN 'Fully Dispensed' ELSE 'Partially Dispensed' END",
+            "groupable": false,
+            "filterable": true,
+            "allowedValues": [
+                "Not Dispensed",
+                "Fully Dispensed",
+                "Partially Dispensed"
+            ]
+        },
+        "approval_status": {
+            "table": "prd",
+            "displayName": "Approval Status",
+            "allowNull": true,
+            "width": "100",
+            "expression": "CASE WHEN prd.approval_status IS NULL AND pbmp.status='S' THEN 'Pending...' ELSE  CASE WHEN prd.approval_status='F' THEN 'Fully Approved' WHEN prd.approval_status='P' THEN 'Partially Approved' WHEN prd.approval_status='R' THEN 'Fully Rejected' ELSE '' END END",
+            "groupable": false,
+            "filterable": true,
+            "allowedValues": [
+                "Fully Approved",
+                "Partially Approved",
+                "Fully Rejected"
+            ]
+        },
+        "approval_comments": {
+            "table": "prd",
+            "displayName": "Rejection Comments",
+            "allowNull": true,
+            "width": "100",
+            "groupable": false,
+            "filterable": false
+        },
+        "total_amount": {
+            "table": "grp",
+            "displayName": "Total Amount",
+            "allowNull": true,
+            "width": "100",
+            "groupable": false,
+            "filterable": true,
+            "dataType": "numeric"
+        },
+        "total_discount": {
+            "table": "grp",
+            "displayName": "Total Discount",
+            "allowNull": true,
+            "width": "100",
+            "groupable": false,
+            "filterable": true,
+            "dataType": "numeric"
+        },
+        "total_patient_amount": {
+            "table": "grp",
+            "displayName": "Total Patient Amt",
+            "allowNull": true,
+            "width": "100",
+            "groupable": false,
+            "filterable": true,
+            "dataType": "numeric"
+        },
+        "total_approved_net_amount": {
+            "table": "grp",
+            "displayName": "Total Approved Net Amt",
+            "allowNull": true,
+            "width": "100",
+            "groupable": false,
+            "filterable": true,
+            "dataType": "numeric"
+        },
+        "total_claim_net_amount": {
+            "table": "grp",
+            "displayName": "Total Claimed Amt",
+            "allowNull": true,
+            "width": "100",
+            "groupable": false,
+            "filterable": true,
+            "dataType": "numeric"
+        },
+        "dept_name": {
+            "table": "store",
+            "displayName": "Store",
+            "allowNull": true,
+            "width": "100",
+            "groupable": false,
+            "filterable": true,
+            "allowedValuesQuery": "SELECT dept_name FROM stores ORDER BY dept_name"
+        }
+    }
+}

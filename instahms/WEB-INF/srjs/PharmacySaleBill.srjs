@@ -1,0 +1,692 @@
+{
+    "title": "Sales Bills Report",
+    "defaultOrder": "sale_id",
+    "reportGroup": "Sales/Issues Reports",
+    "dateFields": [
+        "sale_date"
+    ],
+    "description": "This report shows all Sales Bills within the given date range, the value of the sale and various components (amount, tax and discount) in that sale.",
+    "queryUnits": [
+        {
+            "mainTableAlias": "ssm",
+            "mainTableName": "store_sales_main",
+            "joinTables": [
+                {
+                    "type": "JOIN",
+                    "name": "store_sales_details",
+                    "alias": "ssd",
+                    "expression": "ON (ssd.sale_id = ssm.sale_id) ",
+                    "dependsOn": "ssm"
+                },
+                {
+                    "type": "JOIN",
+                    "name": "stores",
+                    "alias": "str",
+                    "expression": "ON (str.dept_id = ssm.store_id)",
+                    "dependsOn": "ssm"
+                },
+                {
+                    "type": "JOIN",
+                    "name": "bill",
+                    "alias": "b",
+                    "expression": "ON (b.bill_no = ssm.bill_no)",
+                    "dependsOn": "ssm"
+                },
+                {
+                    "type": "JOIN",
+                    "name": "hospital_center_master",
+                    "alias": "hcm",
+                    "expression": "ON (hcm.center_id=str.center_id)",
+                    "dependsOn": "str"
+                },
+                {
+                    "type": "JOIN",
+                    "name": "bill_charge",
+                    "alias": "bc",
+                    "expression": "ON (bc.charge_id = ssm.charge_id)"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "bill_claim",
+                    "alias": "pbcl",
+                    "expression": "ON (pbcl.bill_no = bc.bill_no AND pbcl.priority = 1)"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "bill_claim",
+                    "alias": "sbcl",
+                    "expression": "ON (sbcl.bill_no = bc.bill_no AND sbcl.priority = 2)"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "bill_charge_claim",
+                    "alias": "pbccl",
+                    "expression": "ON (pbccl.charge_id = bc.charge_id AND pbccl.claim_id = pbcl.claim_id)"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "bill_charge_claim",
+                    "alias": "sbccl",
+                    "expression": "ON (sbccl.charge_id = bc.charge_id AND sbccl.claim_id = sbcl.claim_id)"
+                },
+                {
+                    "type": "JOIN",
+                    "name": "organization_details",
+                    "alias": "od",
+                    "expression": "ON (b.bill_rate_plan_id = od.org_id)",
+                    "dependsOn": "b"
+                },
+                {
+                    "type": "JOIN",
+                    "name": "visit_type_names",
+                    "alias": "vn",
+                    "expression": "ON (vn.visit_type = b.visit_type)",
+                    "dependsOn": "b"
+                },
+                {
+                    "name": "bill_receipts",
+                    "alias": "br",
+                    "expression": "ON (b.no_of_receipts+b.primary_no_of_sponsor_receipts+b.secondary_no_of_sponsor = 1 AND br.bill_no = b.bill_no)",
+                    "dependsOn": "b"
+                },
+                {
+                    "name": "receipts",
+                    "alias": "r",
+                    "expression": "ON (br.receipt_no=r.receipt_id)",
+                    "dependsOn": "br"
+                },
+                {
+                    "name": "payment_mode_master",
+                    "alias": "pmn",
+                    "expression": "ON (r.payment_mode_id = pmn.mode_id)",
+                    "dependsOn": "r"
+                },
+                {
+                    "name": "card_type_master",
+                    "alias": "ctm",
+                    "expression": "ON (r.card_type_id = ctm.card_type_id)",
+                    "dependsOn": "r"
+                },
+                {
+                    "name": "store_retail_customers",
+                    "alias": "src",
+                    "expression": "ON (src.customer_id = b.visit_id)",
+                    "dependsOn": "b"
+                },
+                {
+                    "name": "store_retail_sponsors",
+                    "alias": "srs",
+                    "expression": "ON (srs.sponsor_id = src.sponsor_name)",
+                    "dependsOn": "src"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "patient_registration",
+                    "alias": "pr",
+                    "expression": "ON (pr.patient_id = b.visit_id)",
+                    "dependsOn": "b"
+                },
+                {
+                    "name": "op_type_names",
+                    "alias": "otn",
+                    "expression": "ON (otn.op_type = pr.op_type)",
+                    "dependsOn": "pr"
+                },
+                {
+                    "name": "patient_details",
+                    "alias": "pd",
+                    "expression": "ON (pd.mr_no = pr.mr_no)",
+                    "dependsOn": "pr"
+                },
+                {
+                    "name": "salutation_master",
+                    "alias": "sm",
+                    "expression": "ON (sm.salutation_id = pd.salutation)",
+                    "dependsOn": "pd"
+                },
+                {
+                    "name": "patient_category_master",
+                    "alias": "pcm",
+                    "expression": "ON (pcm.category_id = pd.patient_category_id)",
+                    "dependsOn": "pd"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "tpa_master",
+                    "alias": "ptpa",
+                    "expression": "ON (ptpa.tpa_id = pr.primary_sponsor_id)",
+                    "dependsOn": "pr"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "tpa_master",
+                    "alias": "stpa",
+                    "expression": "ON (stpa.tpa_id = pr.secondary_sponsor_id)",
+                    "dependsOn": "pr"
+                },
+                {
+                    "name": "store_type_master",
+                    "alias": "stm",
+                    "expression": "ON (stm.store_type_id = str.store_type_id)",
+                    "dependsOn": "str"
+                },
+                {
+                    "name": "store_rate_plans",
+                    "alias": "srp",
+                    "expression": "ON (srp.store_rate_plan_id = ssm.store_rate_plan_id)",
+                    "dependsOn": "ssm"
+                },
+                {
+                    "name": "discount_authorizer",
+                    "alias": "da",
+                    "expression": "ON (da.disc_auth_id = bc.overall_discount_auth)",
+                    "dependsOn": "bc"
+                },
+                {
+                    "name": "doctors",
+                    "alias": "d",
+                    "expression": "ON (d.doctor_id=pr.doctor)",
+                    "dependsOn": "pr"
+                },
+                {
+                    "name": "city",
+                    "alias": "c",
+                    "expression": "ON (c.city_id = pd.patient_city)",
+                    "dependsOn": "pd"
+                },
+                {
+                    "name": "state_master",
+                    "alias": "statm",
+                    "expression": "ON (statm.state_id = pd.patient_state)",
+                    "dependsOn": "pd"
+                },
+                {
+                    "name": "country_master",
+                    "alias": "cms",
+                    "expression": "ON (cms.country_id = pd.country)",
+                    "dependsOn": "pd"
+                },
+                {
+                    "name": "country_master",
+                    "alias": "cmms",
+                    "expression": "ON (cmms.country_id = pd.nationality_id OR cmms.country_id = src.nationality_id)",
+                    "dependsOn": "src,pd"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "patient_insurance_plans",
+                    "alias": "ppip",
+                    "expression": "ON (ppip.patient_id = b.visit_id AND ppip.priority = 1)",
+                    "dependsOn": "b"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "patient_insurance_plans",
+                    "alias": "spip",
+                    "expression": "ON (spip.patient_id = b.visit_id AND spip.priority = 2)",
+                    "dependsOn": "b"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "insurance_company_master",
+                    "alias": "picm",
+                    "expression": "ON (picm.insurance_co_id = ppip.insurance_co AND ppip.priority = 1)",
+                    "dependsOn": "ppip"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "insurance_company_master",
+                    "alias": "sicm",
+                    "expression": "ON (sicm.insurance_co_id = spip.insurance_co AND spip.priority = 2)",
+                    "dependsOn": "spip"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "govt_identifier_master",
+                    "alias": "gim",
+                    "expression": "ON (gim.identifier_id = pd.identifier_id OR gim.identifier_id = src.identifier_id)",
+                    "dependsOn": "src,pd"
+                }
+            ]
+        }
+    ],
+    "defaultShowFields": [
+        "sale_id",
+        "sale_date",
+        "sale_type",
+        "bill_type",
+        "visit_type_name",
+        "patient_full_name",
+        "doctor_name",
+        "all_discount",
+        "total_item_tax",
+        "bill_amount"
+    ],
+    "fields": {
+        "sale_id": {
+            "table": "ssm",
+            "displayName": "Sale Bill",
+            "width": "65",
+            "filterable": true,
+            "groupable": true
+        },
+        "bill_no": {
+            "table": "ssm",
+            "displayName": "Hospital Bill No.",
+            "width": "65"
+        },
+        "name_local_language": {
+                    "table": "pd",
+                    "displayName": "Name In Local Language",
+                    "width": 150,
+                    "expression": "pd.name_local_language"
+          },
+        "is_external_pbm": {
+            "table": "ssm",
+            "displayName": "Is External Pbm",
+            "width": "65",
+            "filterable": true,
+            "groupable": true,
+            "expression": "CASE WHEN is_external_pbm = true THEN 'Yes' ELSE 'No' END",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "return_bill_no": {
+            "table": "ssm",
+            "displayName": "Original Sale Bill No.",
+            "width": "65",
+            "description": "Bill number, if any, against which the return was made"
+        },
+        "visit_id": {
+            "table": "b",
+            "displayName": "Visit ID",
+            "width": "65",
+            "groupable": true,
+            "filterable": true
+        },
+        "cust_id": {
+            "table": "pr,src",
+            "displayName": "MR No.",
+            "width": "65",
+            "groupable": true,
+            "filterable": true,
+            "expression": "COALESCE(pr.mr_no,src.customer_id)"
+        },
+        "sale_date": {
+            "table": "ssm",
+            "displayName": "Sale Date",
+            "dataType": "date",
+            "width": "60",
+            "groupable": true,
+            "filterable": true,
+            "expression": "date(sale_date)"
+        },
+        "sale_date_time": {
+            "table": "ssm",
+            "displayName": "Sale Date/Time",
+            "dataType": "timestamp",
+            "width": "100",
+            "groupable": true,
+            "filterable": true,
+            "expression": "ssm.sale_date"
+        },
+        "user_remarks": {
+            "table": "bc",
+            "displayName": "Remarks",
+            "width": "150",
+            "groupable": true,
+            "filterable": true
+        },
+        "username": {
+            "table": "ssm",
+            "displayName": "User",
+            "width": "70",
+            "groupable": true,
+            "filterable": true,
+            "allowedValuesQuery": "SELECT emp_username FROM u_user JOIN u_role USING(role_id) WHERE hosp_user='Y' and portal_id='N' and emp_status='A' ORDER BY emp_username"
+        },
+        "visit_type_name": {
+            "table": "b,vn",
+            "displayName": "Patient Type",
+            "width": "80",
+            "groupable": true,
+            "filterable": true,
+            "allowedValues": [
+                "IP",
+                "OP",
+                "Retail",
+                "Retail Credit"
+            ],
+            "expression": "CASE WHEN b.visit_type='r' AND bill_type='C' THEN 'Retail Credit' ELSE vn.visit_type_name END"
+        },
+        "op_type_name": {
+            "table": "otn",
+            "displayName": "Visit/OP Type",
+            "width": "80",
+            "groupable": true,
+            "filterable": true,
+            "allowedValuesQuery": "SELECT op_type_name FROM op_type_names"
+        },
+        "patient_category_name": {
+            "table": "pcm",
+            "displayName": "Patient Category",
+            "width": "120",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT category_name FROM patient_category_master ORDER BY category_name",
+            "expression": "pcm.category_name"
+        },
+        "patient_full_name": {
+            "table": "sm,pd,src",
+            "displayName": "Patient Name",
+            "width": "120",
+            "groupable": true,
+            "filterable": true,
+            "expression": "COALESCE (sm.salutation || ' ' || pd.patient_name || case when coalesce(pd.middle_name, '') = '' then '' else (' ' || pd.middle_name) end || case when coalesce(pd.last_name, '') = '' then '' else (' ' || pd.last_name) end, src.customer_name)"
+        },
+        "family_id": {
+            "table": "pd",
+            "displayName": "Family Id",
+            "width": "80",
+            "groupable": true,
+            "filterable": true
+        },
+        "doctor_name": {
+            "table": "ssm",
+            "displayName": "Doctor Name",
+            "width": "120",
+            "groupable": true,
+            "filterable": true,
+            "allowedValuesQuery": "SELECT * FROM (SELECT doctor_name FROM store_retail_doctor WHERE status = 'A' UNION ALL SELECT doctor_name FROM doctors WHERE status = 'A' UNION ALL SELECT referal_name FROM referral WHERE status ='A') as foo ORDER BY doctor_name"
+        },
+        "primary_sponsor_name": {
+            "table": "ptpa,srs",
+            "displayName": "Pri. Sponsor",
+            "width": "120",
+            "groupable": true,
+            "filterable": true,
+            "allowedValuesQuery": "SELECT sponsor_name FROM store_retail_sponsors WHERE status = 'A' ORDER BY sponsor_name",
+            "expression": "COALESCE(ptpa.tpa_name,srs.sponsor_name)"
+        },
+        "secondary_sponsor_name": {
+            "table": "stpa",
+            "displayName": "Sec. Sponsor",
+            "width": "120",
+            "groupable": true,
+            "filterable": true,
+            "allowedValuesQuery": "SELECT sponsor_name FROM store_retail_sponsors WHERE status = 'A' ORDER BY sponsor_name",
+            "expression": "stpa.tpa_name"
+        },
+        "rate_plan": {
+            "table": "od",
+            "displayName": "Rate Plan",
+            "width": "70",
+            "groupable": true,
+            "filterable": true,
+            "allowedValuesQuery": "SELECT org_name FROM organization_details ORDER BY org_name",
+            "expression": "od.org_name"
+        },
+        "payment_mode": {
+            "table": "pmn,b",
+            "displayName": "Payment Mode",
+            "width": "50",
+            "groupable": true,
+            "filterable": true,
+            "allowedValuesQuery": "SELECT '(None)' UNION ALL SELECT '(Add to Bill)' UNION ALL SELECT payment_mode FROM (SELECT payment_mode FROM payment_mode_master ORDER BY payment_mode) as f UNION ALL SELECT '(Multiple)'",
+            "expression": "CASE WHEN bill_type ='C' THEN '(Add to Bill)' WHEN (no_of_receipts = 0) THEN '(None)' WHEN (no_of_receipts > 1) THEN '(Multiple)' ELSE pmn.payment_mode END"
+        },
+        "card_type": {
+            "table": "ctm",
+            "displayName": "Card Type",
+            "width": "75",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT card_type FROM card_type_master ORDER BY card_type"
+        },
+        "store_name": {
+            "table": "str",
+            "displayName": "Store Name",
+            "width": "100",
+            "groupable": true,
+            "filterable": true,
+            "allowedValuesQuery": "SELECT dept_name FROM stores ORDER by dept_name",
+            "expression": "str.dept_name"
+        },
+        "center_name": {
+            "table": "hcm",
+            "displayName": "Center Name",
+            "width": "100",
+            "groupable": true,
+            "filterable": true,
+            "allowedValuesQuery": "SELECT center_name FROM hospital_center_master WHERE center_id!=0 ORDER by center_name"
+        },
+        "store_type_name": {
+            "table": "stm",
+            "displayName": "Store Type",
+            "width": "80",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT store_type_name FROM store_type_master ORDER BY store_type_name"
+        },
+        "discount": {
+            "table": "ssm",
+            "displayName": "Bill Discount",
+            "width": "60",
+            "filterable": true,
+            "groupable": false,
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "aggFunction": "sum"
+        },
+        "round_off": {
+            "table": "ssm",
+            "displayName": "Round Off",
+            "width": "60",
+            "dataType": "numeric",
+            "aggFunction": "sum"
+        },
+        "total_item_tax": {
+            "table": "ssm",
+            "displayName": "Total Tax",
+            "width": "60",
+            "filterable": true,
+            "dataType": "numeric",
+            "aggFunction": "sum",
+            "decimalType": "amount"
+        },
+        "total_item_amount": {
+            "table": "ssm",
+            "displayName": "Total Item Amt",
+            "width": "60",
+            "dataType": "numeric",
+            "aggFunction": "sum",
+            "decimalType": "amount"
+        },
+        "tax_excluded_bill_amount": {
+            "table": "ssm",
+            "displayName": "Pre-Tax Amt",
+            "width": "60",
+            "description": "Bill Amount excluding tax",
+            "dataType": "numeric",
+            "aggFunction": "sum",
+            "decimalType": "amount",
+            "expression": "(total_item_amount - ssm.discount - total_item_tax  + round_off)"
+        },
+        "total_item_discount": {
+            "table": "ssm",
+            "displayName": "Total Item Discount",
+            "width": "60",
+            "filterable": true,
+            "groupable": false,
+            "description": "Total of all item-level discounts (excludes bill discounts)",
+            "dataType": "numeric",
+            "aggFunction": "sum",
+            "decimalType": "amount"
+        },
+        "bill_amount": {
+            "table": "ssm",
+            "displayName": "Bill Amount",
+            "width": "60",
+            "dataType": "numeric",
+            "aggFunction": "sum",
+            "expression": "(total_item_amount - ssm.discount + round_off)"
+        },
+        "all_discount": {
+            "table": "ssm",
+            "displayName": "Total Discount",
+            "width": "60",
+            "filterable": true,
+            "dataType": "numeric",
+            "aggFunction": "sum",
+            "decimalType": "amount",
+            "expression": "(ssm.discount + total_item_discount)"
+        },
+        "bill_type": {
+            "table": "b",
+            "displayName": "Bill Type",
+            "width": "45",
+            "groupable": true,
+            "filterable": true,
+            "allowedValues": [
+                "Bill Now",
+                "Bill Later"
+            ],
+            "expression": "CASE WHEN bill_type ='P' then 'Bill Now' else 'Bill Later' END"
+        },
+        "sale_type": {
+            "table": "ssm",
+            "displayName": "Type",
+            "width": "45",
+            "groupable": true,
+            "filterable": true,
+            "description": "Whether Sale or Return",
+            "allowedValues": [
+                "Return",
+                "Sale"
+            ],
+            "expression": "CASE WHEN type = 'S' THEN 'Sale' ELSE 'Return' END"
+        },
+        "store_rate_plan_name": {
+            "table": "srp",
+            "displayName": "Store Tariffs",
+            "width": "65",
+            "filterable": true
+        },
+        "discount_authorizer": {
+            "table": "da",
+            "displayName": "Discount Authorizer",
+            "width": "100",
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "select disc_auth_name from discount_authorizer",
+            "expression": "da.disc_auth_name"
+        },
+        "qualification": {
+            "table": "d",
+            "displayName": "Doctor Qualification",
+            "width": "150",
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "select qualification from doctors",
+            "expression": "d.qualification"
+        },
+        "city_name": {
+            "table": "c",
+            "displayName": "City Name",
+            "width": "60",
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "select city_name from city",
+            "expression": "c.city_name"
+        },
+        "patient_address": {
+            "table": "pd",
+            "displayName": "Patient Address",
+            "width": "100",
+            "expression": "pd.patient_address"
+        },
+        "state_name": {
+            "table": "statm",
+            "displayName": "State Name",
+            "width": "60",
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "select state_name from state_master",
+            "expression": "statm.state_name"
+        },
+        "country_name": {
+            "table": "cms",
+            "displayName": "Country Name",
+            "width": "100",
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "select country_name from country_master",
+            "expression": "cms.country_name"
+        },
+        "nationality_name": {
+            "table": "cmms",
+            "displayName": "Nationality",
+            "width": "100",
+            "filterable": true,
+            "allowedValuesQuery": "select country_name from country_master",
+            "expression": "cmms.country_name"
+        },
+        "pharmacy_tin_no": {
+            "table": "str",
+            "displayName": "Store TIN No.",
+            "width": "60",
+            "filterable": true,
+            "groupable": false
+        },
+        "center_tin_number": {
+            "table": "hcm",
+            "displayName": "Center TIN No.",
+            "width": "60",
+            "expression": "hcm.tin_number"
+        },
+        "pri_tpa_tin_number": {
+            "table": "ptpa",
+            "displayName": "Pri. TPA/Sponsor TIN No.",
+            "width": "60",
+            "expression": "ptpa.tin_number"
+        },
+        "sec_tpa_tin_number": {
+            "table": "stpa",
+            "displayName": "Sec. TPA/Sponsor TIN No.",
+            "width": "60",
+            "expression": "stpa.tin_number"
+        },
+        "pri_insurance_co_tin_number": {
+            "table": "picm",
+            "displayName": "Pri.Insurance Co TIN No.",
+            "width": "60",
+            "expression": "picm.tin_number"
+        },
+        "sec_insurance_co_tin_number": {
+            "table": "sicm",
+            "displayName": "Sec.Insurance Co TIN No.",
+            "width": "60",
+            "expression": "sicm.tin_number"
+        },
+        "gov_id": {
+            "table": "src,pd",
+            "displayName": "Govt. ID",
+            "width": "60",
+            "expression": "COALESCE(pd.government_identifier, src.government_identifier)",
+            "filterable": true
+        },
+        "identifier_type": {
+            "table": "gim",
+            "displayName": "Govt. ID Type",
+            "width": "60",
+            "expression": "gim.remarks",
+            "filterable": true,
+            "allowedValuesQuery": "select remarks from govt_identifier_master"
+        }
+    }
+}

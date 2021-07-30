@@ -1,0 +1,354 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="DashboardRevenueSub" pageWidth="595" pageHeight="842" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<style name="Crosstab Data Text" isDefault="false" hAlign="Center"/>
+	<parameter name="fromdate" class="java.util.Date" isForPrompting="false"/>
+	<parameter name="todate" class="java.util.Date" isForPrompting="false"/>
+	<queryString>
+		<![CDATA[SELECT bdh.display_title as head, bdd.display_title as descr, bdd.desc_id, visit_type,    bdh.display_order as head_order, 
+bdd.display_order as desc_order,    CASE WHEN bdd.count_type = 'Q' THEN sum(qty)  WHEN bdd.count_type = 'B'  
+THEN sum(bills)         WHEN bdd.count_type = 'C'  THEN sum(charges)    END as count,    
+sum(amt) as amount  FROM ( SELECT   CASE      WHEN cg.head IN  (SELECT charge_head  from bill_dashboard_heads) THEN cg.head      ELSE 'O'    END as head,   CASE   WHEN cg.descr IN (SELECT desc_id from bill_dashboard_descs) THEN cg.descr      ELSE 'O'    END as descr,   CASE WHEN cg.visit = 'i' THEN 'i' ELSE 'o' END as visit,   qty, bills, charges, amt   FROM ( SELECT bc.charge_head as head, bc.act_description_id as descr, b.visit_type as visit,    sum(act_quantity) as qty, count(distinct bill_no) as bills, count(charge_id) as charges,    sum(amount) as amt  FROM bill_charge bc  JOIN bill b using(bill_no)  WHERE bc.status != 'X' AND b.status != 'X' AND date(bc.posted_date) BETWEEN '$P!{fromdate}' AND '$P!{todate}'  GROUP BY head, descr, visit ) AS cg ) AS cgm   RIGHT OUTER JOIN ( SELECT * FROM bill_dashboard_descs  CROSS JOIN (VALUES ('i'), ('o')) as vtypes (visit_type) ) AS bdd ON (cgm.head=bdd.charge_head AND cgm.descr=bdd.desc_id AND bdd.visit_type = cgm.visit)   JOIN bill_dashboard_heads bdh ON (bdd.charge_head = bdh.charge_head)   GROUP BY bdh.display_title, bdd.desc_id, bdd.display_title, bdd.count_type, visit_type,    head_order, desc_order   ORDER BY head_order, desc_order, visit_type]]>
+	</queryString>
+	<field name="head" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="descr" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="desc_id" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="visit_type" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="head_order" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="desc_order" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="count" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="amount" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<group name="head">
+		<groupExpression><![CDATA[$F{head}]]></groupExpression>
+	</group>
+	<group name="descr">
+		<groupExpression><![CDATA[$F{descr}]]></groupExpression>
+	</group>
+	<background>
+		<band/>
+	</background>
+	<pageHeader>
+		<band/>
+	</pageHeader>
+	<summary>
+		<band height="221">
+			<printWhenExpression><![CDATA[new Boolean(!($F{count}.equals("0") && $F{amount}.equals("0")))]]></printWhenExpression>
+			<crosstab>
+				<reportElement x="0" y="21" width="595" height="200"/>
+				<crosstabHeaderCell>
+					<cellContents>
+						<staticText>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="201" height="60"/>
+							<box>
+								<topPen lineWidth="0.5"/>
+								<leftPen lineWidth="0.5"/>
+								<bottomPen lineWidth="0.5"/>
+								<rightPen lineWidth="0.5"/>
+							</box>
+							<textElement textAlignment="Right" verticalAlignment="Middle">
+								<font size="9" pdfFontName="Helvetica"/>	
+							</textElement>
+							<text><![CDATA[Visit Type]]></text>
+						</staticText>
+						<staticText>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="201" height="60"/>
+							<textElement textAlignment="Left" verticalAlignment="Middle">
+								<font size="9" pdfFontName="Helvetica"/>	
+							</textElement>
+							<text><![CDATA[Charge Type]]></text>
+						</staticText>
+						<line>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="201" height="60"/>
+						</line>
+					</cellContents>
+				</crosstabHeaderCell>
+				<rowGroup name="head" width="91" totalPosition="End">
+					<bucket>
+						<bucketExpression class="java.lang.String"><![CDATA[$F{head}]]></bucketExpression>
+					</bucket>
+					<crosstabRowHeader>
+						<cellContents backcolor="#FFFFFF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<textField>
+								<reportElement style="Crosstab Data Text" x="0" y="0" width="91" height="50"/>
+								<textElement verticalAlignment="Middle">
+									<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+								</textElement>
+								<textFieldExpression class="java.lang.String"><![CDATA[$V{head}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabRowHeader>
+					<crosstabTotalRowHeader>
+						<cellContents backcolor="#FFFFFF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<staticText>
+								<reportElement x="0" y="0" width="201" height="25" forecolor="#000000"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+								</textElement>
+								<text><![CDATA[Total ]]></text>
+							</staticText>
+						</cellContents>
+					</crosstabTotalRowHeader>
+				</rowGroup>
+				<rowGroup name="descr" width="110" totalPosition="End">
+					<bucket>
+						<bucketExpression class="java.lang.String"><![CDATA[$F{descr}]]></bucketExpression>
+					</bucket>
+					<crosstabRowHeader>
+						<cellContents backcolor="#FFFFFF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<textField>
+								<reportElement style="Crosstab Data Text" x="0" y="0" width="110" height="25"/>
+								<textElement verticalAlignment="Middle">
+									<font size="9" isBold="false" pdfFontName="Helvetica"/>
+								</textElement>
+								<textFieldExpression class="java.lang.String"><![CDATA[$V{descr}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabRowHeader>
+					<crosstabTotalRowHeader>
+						<cellContents backcolor="#FFFFFF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<staticText>
+								<reportElement x="0" y="0" width="110" height="25"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+								</textElement>
+								<text><![CDATA[Sub Total ]]></text>
+							</staticText>
+						</cellContents>
+					</crosstabTotalRowHeader>
+				</rowGroup>
+				<columnGroup name="visit_type" height="30" totalPosition="End">
+					<bucket>
+						<bucketExpression class="java.lang.String"><![CDATA[$F{visit_type}]]></bucketExpression>
+					</bucket>
+					<crosstabColumnHeader>
+						<cellContents backcolor="#FFFFFF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+								<reportElement style="Crosstab Data Text" x="0" y="0" width="145" height="30"/>
+								<textElement verticalAlignment="Middle">
+									<font size="9" pdfFontName="Helvetica"/>	
+								</textElement>
+								<textFieldExpression class="java.lang.String"><![CDATA[$V{visit_type}.equals("i") ?"In Patient ":"Others"]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabColumnHeader>
+					<crosstabTotalColumnHeader>
+						<cellContents backcolor="#FFFFFF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<staticText>
+								<reportElement x="0" y="0" width="72" height="60" forecolor="#000000" backcolor="#FFFFFF"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="9" pdfFontName="Helvetica"/>	
+								</textElement>
+								<text><![CDATA[Total Amount]]></text>
+							</staticText>
+						</cellContents>
+					</crosstabTotalColumnHeader>
+				</columnGroup>
+				<columnGroup name="visit_type1" height="30" totalPosition="End">
+					<bucket>
+						<bucketExpression class="java.lang.String"><![CDATA[$F{visit_type}]]></bucketExpression>
+					</bucket>
+					<crosstabColumnHeader>
+						<cellContents backcolor="#FFFFFF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<textField>
+								<reportElement style="Crosstab Data Text" x="0" y="0" width="72" height="30"/>
+								<textElement verticalAlignment="Middle">
+									<font size="9" pdfFontName="Helvetica"/>	
+								</textElement>
+								<textFieldExpression class="java.lang.String"><![CDATA[$V{visit_type1}.equals("i")?"Charge Count(IP)":"Charge Count(Others)"]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabColumnHeader>
+					<crosstabTotalColumnHeader>
+						<cellContents backcolor="#FFFFFF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<textField>
+								<reportElement style="Crosstab Data Text" x="0" y="0" width="73" height="30"/>
+								<textElement verticalAlignment="Middle">
+									<font size="9" pdfFontName="Helvetica"/>	
+								</textElement>
+								<textFieldExpression class="java.lang.String"><![CDATA[$V{visit_type}.equals("i")?"Charge amount(IP)":"Charge Amount(Others)"]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabTotalColumnHeader>
+				</columnGroup>
+				<measure name="countMeasure" class="java.math.BigDecimal" calculation="Sum">
+					<measureExpression><![CDATA[$F{count}]]></measureExpression>
+				</measure>
+				<measure name="amountsum" class="java.math.BigDecimal" calculation="Sum">
+					<measureExpression><![CDATA[$F{amount}]]></measureExpression>
+				</measure>
+				<crosstabCell width="72" height="25">
+					<cellContents>
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="72" height="25"/>
+							<textElement verticalAlignment="Middle">
+								<font size="9" pdfFontName="Helvetica"/>	
+							</textElement>
+							<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{countMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell width="72" height="25" rowTotalGroup="head">
+					<cellContents backcolor="#FFFFFF" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="72" height="25" forecolor="#000000"/>
+							<textElement verticalAlignment="Middle">
+								<font size="9" pdfFontName="Helvetica"/>	
+							</textElement>
+							<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{countMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell width="72" height="25" columnTotalGroup="visit_type">
+					<cellContents backcolor="#FFFFFF" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="72" height="25" forecolor="#000000"/>
+							<textElement verticalAlignment="Middle">
+								<font size="9" pdfFontName="Helvetica"/>	
+							</textElement>
+							<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{amountsum}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell width="72" height="25" rowTotalGroup="head" columnTotalGroup="visit_type">
+					<cellContents backcolor="#FFFFFF" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="72" height="25" forecolor="#000000"/>
+							<textElement verticalAlignment="Middle">
+								<font size="9" pdfFontName="Helvetica"/>	
+							</textElement>
+							<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{amountsum}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell width="73" height="25" columnTotalGroup="visit_type1">
+					<cellContents backcolor="#FFFFFF" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="73" height="25"/>
+							<textElement verticalAlignment="Middle">
+								<font size="9" pdfFontName="Helvetica"/>	
+							</textElement>
+							<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{amountsum}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell width="73" height="25" rowTotalGroup="head" columnTotalGroup="visit_type1">
+					<cellContents backcolor="#FFFFFF" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="73" height="25" forecolor="#000000"/>
+							<textElement verticalAlignment="Middle">
+								<font size="9" pdfFontName="Helvetica"/>	
+							</textElement>
+							<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{amountsum}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell width="72" height="25" rowTotalGroup="descr">
+					<cellContents backcolor="#FFFFFF" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="72" height="25"/>
+							<textElement verticalAlignment="Middle">
+								<font size="9" pdfFontName="Helvetica"/>	
+							</textElement>
+							<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{countMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell width="72" height="25" rowTotalGroup="descr" columnTotalGroup="visit_type">
+					<cellContents backcolor="#FFFFFF" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="72" height="25" forecolor="#000000"/>
+							<textElement verticalAlignment="Middle">
+								<font size="9" pdfFontName="Helvetica"/>	
+							</textElement>
+							<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{amountsum}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell width="73" height="25" rowTotalGroup="descr" columnTotalGroup="visit_type1">
+					<cellContents backcolor="#FFFFFF" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="73" height="25"/>
+							<textElement verticalAlignment="Middle">
+								<font size="9" pdfFontName="Helvetica"/>	
+							</textElement>
+							<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{amountsum}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+			</crosstab>
+			<staticText>
+				<reportElement x="0" y="3" width="595" height="18"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Hospital Revenue]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

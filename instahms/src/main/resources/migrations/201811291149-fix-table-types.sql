@@ -1,0 +1,43 @@
+-- liquibase formatted sql
+-- changeset raj-nt:fix-table-types.sql 
+
+COMMENT ON table diagnostics_audit_log is '{ "type": "Master", "comment": "Diagnostics audit log" }';
+COMMENT ON table insurance_plan_details_audit_log is '{ "type": "Master", "comment": "Insurance Plan - Category Limits Audit log" }';
+COMMENT ON table insurance_plan_main_audit_log is '{ "type": "Master", "comment": "Insurance Plan Audit log" }';
+COMMENT ON table store_item_batch_details_audit_log is '{ "type": "Txn", "comment": "Store Items - Batch Details (Audit Logs)" }';
+COMMENT ON table system_preferences_audit_log is '{ "type": "Master", "comment": "System Preferences" }';
+COMMENT ON table visit_vitals_audit_log is '{ "type": "Txn", "comment": "Vitals caputred during visit - Audit logs" }';
+COMMENT ON table vital_reading_audit_log is '{ "type": "Txn", "comment": "Vitals caputred during visit - Values (Audit logs)" }';
+COMMENT ON table patient_insurance_plans is '{ "type": "Txn", "comment": "Insurance plans associated with visit" }';
+COMMENT ON sequence patient_insurance_plans_seq is '{ "type": "Txn", "comment": "" }';
+COMMENT ON sequence patient_doctor_instructions_seq is '{ "type": "Txn", "comment": "" }';
+COMMENT ON table store_kit_details is '{ "type": "Master", "comment": "Kit item details" }';
+COMMENT ON table store_kit_main is '{ "type": "Master", "comment": "Kit details" }';
+COMMENT ON table patient_package is '{ "type": "Txn", "comment": "Packages (New Model) - Package purchased by patient" }';
+COMMENT ON table patient_package_content_consumed is '{ "type": "Txn", "comment": "Packages (New Model) - Items utilized from package purchased by patient" }';
+COMMENT ON sequence patient_package_content_consumed_seq is '{ "type": "Txn", "comment": "" }';
+COMMENT ON table patient_package_contents is '{ "type": "Txn", "comment": "Packages (New Model) - Contents of package purchased by patient" }';
+COMMENT ON sequence patient_package_contents_seq is '{ "type": "Txn", "comment": "" }';
+COMMENT ON sequence patient_package_seq is '{ "type": "Txn", "comment": "" }';
+COMMENT ON table patient_pdf_doc_images is '{ "type": "Txn", "comment": "Patient Data - PDF Forms (Images)" }';
+COMMENT ON sequence patient_pdf_doc_images_seq is '{ "type": "Txn", "comment": "" }';
+COMMENT ON sequence patient_section_fields_seq is '{ "type": "Txn", "comment": "" }';
+COMMENT ON table patient_hvf_doc_images is '{ "type": "Txn", "comment": "Patient Data - HVF Forms (Images)" }';
+COMMENT ON sequence patient_hvf_doc_images_seq is '{ "type": "Txn", "comment": "" }';
+COMMENT ON table patient_sponsor_approval_details is '{ "type": "Txn", "comment": "approval details master for dialysis billing." }';
+COMMENT ON sequence patient_sponsor_approval_details_seq is '{ "type": "Txn", "comment": "" }';
+COMMENT ON table patient_sponsor_approvals is '{ "type": "Txn", "comment": "approval master for dialysis billing." }';
+COMMENT ON table patient_sponsor_approvals_docs is '{ "type": "Txn", "comment": "approval document master for dialysis billing." }';
+COMMENT ON sequence patient_sponsor_approvals_seq is '{ "type": "Txn", "comment": "" }';
+COMMENT ON sequence patient_standing_instructions_seq is '{ "type": "Txn", "comment": "" }';
+COMMENT ON table ip_doctor_notes is '{ "type": "Txn", "comment": "IP - Doctor Notes" }';
+COMMENT ON sequence ip_doctor_notes_seq is '{ "type": "Txn", "comment": "" }';
+COMMENT ON table ip_nurse_notes is '{ "type": "Txn", "comment": "IP - Nurse Notes" }';
+COMMENT ON table ip_prescription is '{ "type": "Txn", "comment": "IP Prescriptions" }';
+COMMENT ON sequence ip_prescription_seq is '{ "type": "Txn", "comment": "" }';
+COMMENT ON sequence medication_order_details_seq is '{ "type": "Txn", "comment": "" }';
+COMMENT ON sequence medication_order_main_seq is '{ "type": "Txn", "comment": "" }';
+COMMENT ON sequence medication_order_details_seq is '{ "type": "Txn", "comment": "" }';
+COMMENT ON sequence medication_order_main_seq is '{ "type": "Txn", "comment": "" }';
+COMMENT ON table saved_searches is '{ "type": "Master", "comment": "User specific saved search filters" }';
+COMMENT ON sequence saved_searches_seq is '{ "type": "Master", "comment": "" }';

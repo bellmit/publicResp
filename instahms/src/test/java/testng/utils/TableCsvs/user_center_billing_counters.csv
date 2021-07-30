@@ -1,0 +1,5 @@
+center_counter_id,emp_username,center_id,counter_id,default_counter,created_by,created_at,updated_by,updated_at
+1,'InstaAPI',0,'CNT0001',true,'auto_update','2016-04-15 12:23:05.723613',,
+2,'InstaAdmin',0,'CNT0001',true,'auto_update','2013-10-08 10:09:22',,
+3,'_system',0,'CNT0001',true,'auto_update','2020-05-28 14:22:54.322929',,
+4,'admin',0,'CNT0001',true,'auto_update','2013-10-08 10:09:22',,

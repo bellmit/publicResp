@@ -1,0 +1,8 @@
+-- liquibase formatted sql
+-- changeset pranays:obsolete-columns-in-generic-prefs-shifted-to-clinical-prefs
+
+ALTER TABLE generic_preferences RENAME op_consultation_edit_across_doctors TO obsolete_op_consultation_edit_across_doctors;
+ALTER TABLE generic_preferences RENAME ip_cases_across_doctors TO obsolete_ip_cases_across_doctors;
+ALTER TABLE generic_preferences RENAME nurse_staff_ward_assignments_applicable TO obsolete_nurse_staff_ward_assignments_applicable;
+ALTER TABLE generic_preferences RENAME consultation_reopen_time_limit TO obsolete_consultation_reopen_time_limit;
+ALTER TABLE generic_preferences RENAME consultation_validity_units TO obsolete_consultation_validity_units;

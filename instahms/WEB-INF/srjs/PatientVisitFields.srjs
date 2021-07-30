@@ -1,0 +1,1228 @@
+{
+    "allowNoDate": false,
+    "fields": {
+        "primary_prior_auth_mode_name": {
+            "table": "ppam",
+            "displayName": "Pri. Prior Auth Mode Name",
+            "width": 70,
+            "allowedValuesQuery": "SELECT prior_auth_mode_name FROM prior_auth_modes ORDER BY prior_auth_mode_name",
+            "allowNull": true,
+            "expression": " ppam.prior_auth_mode_name "
+        },
+        "secondary_prior_auth_mode_name": {
+            "table": "spam",
+            "displayName": "Sec. Prior Auth Mode Name",
+            "width": 70,
+            "allowedValuesQuery": "SELECT prior_auth_mode_name FROM prior_auth_modes ORDER BY prior_auth_mode_name",
+            "allowNull": true,
+            "expression": " spam.prior_auth_mode_name "
+        },
+        "primary_policy_holder_name": {
+            "table": "pppd",
+            "displayName": "Pri. Policy Holder Name",
+            "width": 100,
+            "expression": " pppd.policy_holder_name "
+        },
+        "secondary_policy_holder_name": {
+            "table": "sppd",
+            "displayName": "Sec. Policy Holder Name",
+            "width": 100,
+            "expression": " sppd.policy_holder_name "
+        },
+        "patient_care_oftext": {
+            "table": "pr",
+            "displayName": "Relation Cont. No.",
+            "width": 80
+        },
+        "primary_patient_relationship": {
+            "table": "pppd",
+            "displayName": "Pri. Policy Holder Relationship",
+            "width": 100,
+            "expression": " pppd.patient_relationship "
+        },
+        "secondary_patient_relationship": {
+            "table": "sppd",
+            "displayName": "Sec. Policy Holder Relationship",
+            "width": 100,
+            "expression": " sppd.patient_relationship "
+        },
+        "primary_policy_validity_start": {
+            "table": "pppd",
+            "displayName": "Pri. Plan Validity Start",
+            "width": 60,
+            "dataType": "date",
+            "filterable": true,
+            "groupable": true,
+            "expression": " pppd.policy_validity_start::date "
+        },
+        "secondary_policy_validity_start": {
+            "table": "sppd",
+            "displayName": "Sec. Plan Validity Start",
+            "width": 60,
+            "dataType": "date",
+            "filterable": true,
+            "groupable": true,
+            "expression": " sppd.policy_validity_start::date "
+        },
+        "primary_plan_type": {
+            "table": "picam",
+            "displayName": "Pri. Plan Type",
+            "width": 80,
+            "allowedValuesQuery": "SELECT category_name FROM insurance_category_master ORDER BY category_name",
+            "allowNull": true,
+            "expression": "picam.category_name ",
+            "filterable": true,
+            "groupable": true
+        },
+        "secondary_plan_type": {
+            "table": "sicam",
+            "displayName": "Sec. Plan Type",
+            "width": 80,
+            "allowedValuesQuery": "SELECT category_name FROM insurance_category_master ORDER BY category_name",
+            "allowNull": true,
+            "expression": "sicam.category_name ",
+            "filterable": true,
+            "groupable": true
+        },
+        "op_type_name": {
+            "table": "otn",
+            "displayName": "OP Type",
+            "width": 80,
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT op_type_name FROM op_type_names"
+        },
+        "ward_name": {
+            "table": "wn",
+            "displayName": "Ward",
+            "width": 100,
+            "allowedValuesQuery": "SELECT ward_name FROM ward_names ORDER BY ward_name",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true
+        },
+        "admitted_ward": {
+            "table": "wnr",
+            "displayName": "Admitted Ward",
+            "width": 100,
+            "allowedValuesQuery": "SELECT ward_name FROM ward_names ORDER BY ward_name",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "expression": "wnr.ward_name"
+        },
+        "relation": {
+            "table": "pr",
+            "displayName": "Kin/Relation Name",
+            "width": 85
+        },
+        "primary_tpa_name": {
+            "table": "ptpa",
+            "displayName": "Pri. Sponsor",
+            "width": 120,
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT tpa_name FROM tpa_master ORDER BY tpa_name",
+            "expression": "ptpa.tpa_name"
+        },
+        "secondary_tpa_name": {
+            "table": "stpa",
+            "displayName": "Sec. Sponsor",
+            "width": 120,
+            "allowedValuesQuery": "SELECT tpa_name FROM tpa_master ORDER BY tpa_name",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "expression": "stpa.tpa_name"
+        },
+        "primary_tpa_tin_number": {
+            "table": "ptpa",
+            "displayName": "Pri. TPA/Sponsor Tin No.",
+            "width": 120,
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT tin_number FROM tpa_master ORDER BY tpa_name",
+            "expression": "ptpa.tin_number"
+        },
+        "secondary_tpa_tin_number": {
+            "table": "stpa",
+            "displayName": "Sec. TPA/Sponsor Tin No.",
+            "width": 120,
+            "allowedValuesQuery": "SELECT tin_number FROM tpa_master ORDER BY tpa_name",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "expression": "stpa.tin_number"
+        },
+        "case_patient_relationship": {
+            "table": "icase",
+            "displayName": "Case Policy Holder Relationship",
+            "width": 100,
+            "expression": "icase.patient_relationship "
+        },
+        "ref_custom5": {
+            "table": "rdoc",
+            "displayName": "Ref Custom5",
+            "width": 60,
+            "filterable": true,
+            "groupable": true,
+            "expression": "rdoc.custom_field5_value "
+        },
+        "case_policy_validity_end": {
+            "table": "icase",
+            "displayName": "Case Policy Validity End",
+            "width": 60,
+            "dataType": "date",
+            "expression": "icase.policy_validity_end::date ",
+            "filterable": true,
+            "groupable": true
+        },
+        "pri_prior_auth_id": {
+            "table": "vsd",
+            "displayName": "Pri. Prior Auth ID",
+            "width": 50
+        },
+        "sec_prior_auth_id": {
+            "table": "vsd",
+            "displayName": "Sec. Prior Auth ID",
+            "width": 50
+        },
+        "center_name": {
+            "table": "hcm",
+            "displayName": "Center Name",
+            "width": 100,
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT center_name FROM hospital_center_master WHERE center_id!=0"
+        },
+        "center_city": {
+            "table": "hci,hcm",
+            "displayName": "Center City",
+            "width": 70,
+            "allowedValuesQuery": "SELECT distinct city_name  FROM city c JOIN hospital_center_master hcm1 ON hcm1.city_id = c.city_id ORDER BY city_name",
+            "expression": "hci.city_name",
+            "filterable": true,
+            "groupable": true
+        },
+        "center_state": {
+            "table": "hst,hcm",
+            "displayName": "Center State",
+            "width": 70,
+            "allowedValuesQuery": "SELECT distinct state_name FROM state_master st JOIN hospital_center_master hcm1 ON hcm1.state_id = st.state_id ORDER BY state_name",
+            "expression": "hst.state_name",
+            "filterable": true,
+            "groupable": true
+        },
+        "center_country": {
+            "table": "hc,hcm",
+            "displayName": "Center Country",
+            "width": 70,
+            "allowedValuesQuery": "SELECT distinct country_name  FROM country_master c JOIN hospital_center_master hcm1 ON hcm1.country_id = c.country_id ORDER BY country_name",
+            "expression": "hc.country_name",
+            "filterable": true,
+            "groupable": true
+        },
+        "center_region": {
+            "table": "hrm,hcm",
+            "displayName": "Center Region",
+            "width": 70,
+            "allowedValuesQuery": "SELECT region_name  FROM region_master rm JOIN hospital_center_master hcm1 ON hcm1.region_id = rm.region_id GROUP BY region_name ORDER BY region_name",
+            "expression": "hrm.region_name",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true
+        },
+        "collection_center": {
+            "table": "scc",
+            "displayName": "Collection Center",
+            "width": 100,
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT collection_center FROM sample_collection_centers WHERE status='A'"
+        },
+        "codification_status": {
+            "table": "pr",
+            "displayName": "Codification Status",
+            "width": 65,
+            "filterable": true,
+            "groupable": true,
+            "allowedValues": [
+                "In-progress",
+                "Completed",
+                "Completed-Needs Verification",
+                "Verified and Closed"
+            ],
+            "expression": " CASE WHEN pr.codification_status='P' THEN 'In-progress'        WHEN pr.codification_status='C' then 'Completed'        WHEN pr.codification_status='R' then 'Completed-Needs Verification'        WHEN pr.codification_status='V' THEN 'Verified and Closed' END       "
+        },
+        "primary_policy_validity_end": {
+            "table": "pppd",
+            "displayName": "Pri. Plan Validity End",
+            "width": 60,
+            "dataType": "date",
+            "filterable": true,
+            "groupable": true,
+            "expression": " pppd.policy_validity_end::date"
+        },
+        "secondary_policy_validity_end": {
+            "table": "sppd",
+            "displayName": "Sec. Plan Validity End",
+            "width": 60,
+            "dataType": "date",
+            "filterable": true,
+            "groupable": true,
+            "expression": " sppd.policy_validity_end::date"
+        },
+        "case_policy_holder_name": {
+            "table": "icase",
+            "displayName": "Case Policy Holder Name",
+            "width": 100,
+            "expression": "icase.policy_holder_name "
+        },
+        "referer": {
+            "table": "rdoc,ref",
+            "displayName": "Referral Doctor",
+            "width": 120,
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT referal_name as referer FROM referral UNION ALL SELECT doctor_name as referer FROM doctors ORDER BY referer",
+            "expression": "COALESCE(rdoc.doctor_name, ref.referal_name) "
+        },
+        "referer_area": {
+            "table": "refar",
+            "displayName": "Referral Doctor Area",
+            "width": 120,
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT area_name as referer_area FROM area_master ORDER BY referer_area",
+            "expression": "refar.area_name "
+        },
+        "referer_city": {
+            "table": "refci",
+            "displayName": "Referral Doctor City",
+            "width": 120,
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT city_name as referer_city FROM city ORDER BY referer_city",
+            "expression": "refci.city_name "
+        },
+        "referer_district": {
+            "table": "refdi",
+            "displayName": "Referral Doctor District",
+            "width": 120,
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT district_name as referer_district FROM district_master ORDER BY referer_district",
+            "expression": "refdi.district_name "
+        },
+        "referer_state": {
+            "table": "refst",
+            "displayName": "Referral Doctor State",
+            "width": 120,
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT state_name as referer_state FROM state_master ORDER BY referer_state",
+            "expression": "refst.state_name "
+        },
+        "referer_country": {
+            "table": "refc",
+            "displayName": "Referral Doctor Country",
+            "width": 120,
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT country_name as referer_country FROM country_master ORDER BY referer_country",
+            "expression": "refc.country_name "
+        },
+        "drg_description": {
+            "table": "drg",
+            "displayName": "Drg Description",
+            "width": 150,
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true
+        },
+        "ref_custom1": {
+            "table": "rdoc",
+            "displayName": "Ref Custom1",
+            "width": 60,
+            "filterable": true,
+            "groupable": true,
+            "expression": "rdoc.custom_field1_value "
+        },
+        "primary_insurance_co_name": {
+            "table": "picm",
+            "displayName": "Pri. Insurance Company",
+            "width": 100,
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT insurance_co_name FROM insurance_company_master ORDER BY insurance_co_name",
+            "expression": "picm.insurance_co_name"
+        },
+        "secondary_insurance_co_name": {
+            "table": "sicm",
+            "displayName": "Sec. Insurance Company",
+            "width": 100,
+            "expression": "sicm.insurance_co_name",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT insurance_co_name FROM insurance_company_master ORDER BY insurance_co_name"
+        },
+        "primary_insurance_co_tin_number": {
+            "table": "picm",
+            "displayName": "Pri. Insurance Company Tin No.",
+            "width": 100,
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT tin_number FROM insurance_company_master ORDER BY insurance_co_name",
+            "expression": "picm.tin_number"
+        },
+        "secondary_insurance_co_tin_number": {
+            "table": "sicm",
+            "displayName": "Sec. Insurance Company Tin No.",
+            "width": 100,
+            "expression": "sicm.tin_number",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT tin_number FROM insurance_company_master ORDER BY insurance_co_name"
+        },
+        "ref_custom2": {
+            "table": "rdoc",
+            "displayName": "Ref Custom2",
+            "width": 60,
+            "filterable": true,
+            "groupable": true,
+            "expression": "rdoc.custom_field2_value "
+        },
+        "ref_custom3": {
+            "table": "rdoc",
+            "displayName": "Ref Custom3",
+            "width": 60,
+            "filterable": true,
+            "groupable": true,
+            "expression": "rdoc.custom_field3_value "
+        },
+        "ref_custom4": {
+            "table": "rdoc",
+            "displayName": "Ref Custom4",
+            "width": 60,
+            "filterable": true,
+            "groupable": true,
+            "expression": "rdoc.custom_field4_value "
+        },
+        "primary_plan_name": {
+            "table": "pipm",
+            "displayName": "Pri. Plan Name",
+            "width": 100,
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT plan_name FROM insurance_plan_main ORDER BY plan_name",
+            "expression": "pipm.plan_name "
+        },
+        "secondary_plan_name": {
+            "table": "sipm",
+            "displayName": "Sec. Plan Name",
+            "width": 100,
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT plan_name FROM insurance_plan_main ORDER BY plan_name",
+            "expression": "sipm.plan_name "
+        },
+        "doctor_name": {
+            "table": "dr",
+            "displayName": "Admitting Doctor",
+            "width": 120,
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT doctor_name FROM doctors ORDER BY doctor_name"
+        },
+        "drg_code": {
+            "table": "pr",
+            "displayName": "Drg Code",
+            "width": 60,
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true
+        },
+        "mlc_status": {
+            "table": "pr",
+            "displayName": "MLC Status",
+            "width": 70,
+            "filterable": true,
+            "groupable": true,
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "expression": "CASE WHEN pr.mlc_status IS NOT NULL AND pr.mlc_status = 'Y' THEN 'Yes' ELSE 'No' END"
+        },
+        "discharge_date": {
+            "table": "pr",
+            "displayName": "Date Of Discharge",
+            "width": 60,
+            "dataType": "date",
+            "groupable": true
+        },
+        "discharge_datetime": {
+            "table": "pr",
+            "displayName": "Discharge Date/Time",
+            "width": 120,
+            "dataType": "timestamp",
+            "expression": "pr.discharge_date+pr.discharge_time"
+        },
+        "reg_date": {
+            "table": "pr",
+            "displayName": "Adm/Reg. Date",
+            "width": 60,
+            "dataType": "date",
+            "groupable": true
+        },
+        "admitted_dept_name": {
+            "table": "admdep",
+            "displayName": "Admitting Department",
+            "width": 120,
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT dept_name FROM department ORDER BY dept_name",
+            "expression": "admdep.dept_name "
+        },
+        "rate_plan": {
+            "table": "od",
+            "displayName": "Rate Plan",
+            "width": 70,
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT org_name FROM organization_details ORDER BY org_name",
+            "expression": "od.org_name "
+        },
+        "use_drg": {
+            "table": "pr",
+            "displayName": "Use DRG",
+            "width": 70,
+            "filterable": true,
+            "groupable": true,
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "expression": "CASE WHEN pr.use_drg IS NOT NULL AND pr.use_drg = 'Y' THEN 'Yes' ELSE 'No' END "
+        },
+        "complaint": {
+            "table": "pr",
+            "displayName": "Complaint",
+            "width": 100,
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true
+        },
+        "case_policy_no": {
+            "table": "icase",
+            "displayName": "Case Policy No.",
+            "width": 65,
+            "expression": "icase.policy_no "
+        },
+        "bed_type": {
+            "table": "pr",
+            "displayName": "Billing Bed Type",
+            "width": 100,
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT bed_type_name FROM bed_types ORDER BY bed_type_name",
+            "expression": "pr.bed_type "
+        },
+        "alloc_bed_type": {
+            "table": "bn",
+            "displayName": "Bed Type",
+            "width": 100,
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT bed_type_name FROM bed_types ORDER BY bed_type_name",
+            "expression": "bn.bed_type "
+        },
+        "visit_status": {
+            "table": "pr",
+            "displayName": "Visit Status",
+            "width": 70,
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValues": [
+                "Active",
+                "Inactive"
+            ],
+            "expression": "CASE WHEN pr.status='A' THEN 'Active' WHEN pr.status='I' THEN 'Inactive' ELSE null END "
+        },
+        "dept_name": {
+            "table": "dep",
+            "displayName": "Department",
+            "width": 120,
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT dept_name FROM department ORDER BY dept_name"
+        },
+        "bed_name": {
+            "table": "bn",
+            "displayName": "Bed Name",
+            "width": 100,
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT * FROM (SELECT bed_name FROM bed_names ORDER BY bed_name) AS foo"
+        },
+        "dr_custom4": {
+            "table": "dr",
+            "displayName": "Dr Custom4",
+            "width": 60,
+            "allowNull": true,
+            "filterable": true,
+            "groupable": true,
+            "expression": "dr.custom_field4_value"
+        },
+        "dr_custom5": {
+            "table": "dr",
+            "displayName": "Dr Custom5",
+            "width": 60,
+            "allowNull": true,
+            "filterable": true,
+            "groupable": true,
+            "expression": "dr.custom_field5_value"
+        },
+        "dr_custom2": {
+            "table": "dr",
+            "displayName": "Dr Custom2",
+            "width": 60,
+            "allowNull": true,
+            "filterable": true,
+            "groupable": true,
+            "expression": "dr.custom_field2_value"
+        },
+        "dr_custom3": {
+            "table": "dr",
+            "displayName": "Dr Custom3",
+            "width": 60,
+            "allowNull": true,
+            "filterable": true,
+            "groupable": true,
+            "expression": "dr.custom_field3_value"
+        },
+        "dr_custom1": {
+            "table": "dr",
+            "displayName": "Dr Custom1",
+            "width": 60,
+            "filterable": true,
+            "allowNull": true,
+            "groupable": true,
+            "expression": "dr.custom_field1_value"
+        },
+        "primary_member_id": {
+            "table": "pppd",
+            "displayName": "Pri. Member ID",
+            "width": 65,
+            "allowNull": true,
+            "filterable": true,
+            "expression": "pppd.member_id"
+        },
+        "secondary_member_id": {
+            "table": "sppd",
+            "displayName": "Sec. Member ID",
+            "width": 65,
+            "allowNull": true,
+            "filterable": true,
+            "expression": "sppd.member_id"
+        },
+        "primary_policy_number": {
+            "table": "pppd",
+            "displayName": "Pri. Policy Number",
+            "width": 65,
+            "filterable": true,
+            "allowNull": true,
+            "expression": "pppd.policy_number"
+        },
+        "secondary_policy_number": {
+            "table": "sppd",
+            "displayName": "Sec. Policy Number",
+            "width": 65,
+            "filterable": true,
+            "expression": "sppd.policy_number"
+        },
+        "codified_by": {
+            "table": "pr",
+            "displayName": "Codified By",
+            "width": 100
+        },
+        "case_policy_validity_start": {
+            "table": "icase",
+            "displayName": "Case Policy Validity Start",
+            "width": 60,
+            "dataType": "date",
+            "filterable": true,
+            "groupable": true,
+            "expression": "icase.policy_validity_start::date "
+        },
+        "patient_type_name": {
+            "table": "vn",
+            "displayName": "Patient Type",
+            "width": 40,
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValues": [
+                "IP",
+                "OP"
+            ],
+            "expression": "vn.visit_type_name "
+        },
+        "patient_id": {
+            "table": "pr",
+            "displayName": "Patient Id",
+            "width": 100,
+            "filterable": true,
+            "groupable": true
+        },
+        "unit_name": {
+            "table": "dum",
+            "displayName": "Unit",
+            "width": 60,
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT unit_name from dept_unit_master WHERE status = 'A'"
+        },
+        "transfer_source": {
+            "table": "trs",
+            "displayName": "Transfer from Hospital",
+            "width": 100,
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT transfer_hospital_name from transfer_hospitals WHERE status = 'A'",
+            "expression": "trs.transfer_hospital_name"
+        },
+        "transfer_destination": {
+            "table": "trd",
+            "displayName": "Transfer To Hospital",
+            "width": 100,
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT transfer_hospital_name from transfer_hospitals WHERE status = 'A'",
+            "expression": "trd.transfer_hospital_name"
+        },
+        "visit_custom_field1": {
+            "table": "pr",
+            "displayName": "Visit Custom Field1",
+            "allowNull": true,
+            "width": 60,
+            "filterable": true,
+            "groupable": true
+        },
+        "visit_custom_field2": {
+            "table": "pr",
+            "displayName": "Visit Custom Field2",
+            "allowNull": true,
+            "width": 60,
+            "filterable": true,
+            "groupable": true
+        },
+        "visit_custom_field3": {
+            "table": "pr",
+            "displayName": "Visit Custom Field3",
+            "allowNull": true,
+            "width": 60,
+            "filterable": true,
+            "groupable": true
+        },
+        "visit_custom_field4": {
+            "table": "pr",
+            "displayName": "Visit Custom Field4",
+            "allowNull": true,
+            "width": 60,
+            "filterable": true,
+            "groupable": true,
+            "dataType": "date"
+        },
+        "visit_custom_field5": {
+            "table": "pr",
+            "displayName": "Visit Custom Field5",
+            "allowNull": true,
+            "width": 60,
+            "filterable": true,
+            "groupable": true,
+            "dataType": "date"
+        },
+        "visit_custom_field6": {
+            "table": "pr",
+            "displayName": "Visit Custom Field6",
+            "allowNull": true,
+            "width": 60,
+            "filterable": true,
+            "groupable": true,
+            "dataType": "date"
+        },
+        "visit_custom_field7": {
+            "table": "pr",
+            "displayName": "Visit Custom Field7",
+            "allowNull": true,
+            "width": 60,
+            "filterable": true,
+            "groupable": true,
+            "dataType": "numeric"
+        },
+        "visit_custom_field8": {
+            "table": "pr",
+            "displayName": "Visit Custom Field8",
+            "allowNull": true,
+            "width": 60,
+            "filterable": true,
+            "groupable": true,
+            "dataType": "numeric"
+        },
+        "visit_custom_field9": {
+            "table": "pr",
+            "displayName": "Visit Custom Field9",
+            "allowNull": true,
+            "width": 60,
+            "filterable": true,
+            "groupable": true,
+            "dataType": "numeric"
+        },
+        "visit_custom_list1": {
+            "table": "pr",
+            "displayName": "Visit Custom List1",
+            "allowNull": true,
+            "width": 60,
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT custom_value from custom_visit_list1_master order by custom_value"
+        },
+        "visit_custom_list2": {
+            "table": "pr",
+            "displayName": "Visit Custom List2",
+            "allowNull": true,
+            "width": 60,
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT custom_value from custom_visit_list2_master order by custom_value"
+        },
+        "pri_employee_id": {
+            "table": "pcdpri",
+            "displayName": "Pri. Employee Id",
+            "allowNull": true,
+            "width": 60,
+            "filterable": true,
+            "groupable": true,
+            "expression": "pcdpri.employee_id",
+            "allowedValuesQuery": "SELECT employee_id FROM patient_corporate_details ORDER BY employee_id"
+        },
+        "pri_employee_name": {
+            "table": "pcdpri",
+            "displayName": "Pri. Employee Name",
+            "allowNull": true,
+            "width": 60,
+            "filterable": true,
+            "groupable": true,
+            "expression": "pcdpri.employee_name",
+            "allowedValuesQuery": "SELECT employee_name FROM patient_corporate_details where employee_name is not null ORDER BY employee_name"
+        },
+        "pri_patient_relationship": {
+            "table": "pcdpri",
+            "expression": "pcdpri.patient_relationship",
+            "displayName": "Pri. Employee Relationship",
+            "allowNull": true,
+            "width": 60,
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT patient_relationship FROM patient_corporate_details where patient_relationship is not null ORDER BY patient_relationship"
+        },
+        "primary_insurance_approval": {
+            "table": "pr",
+            "displayName": "Pri. Sponsor Approval Amt",
+            "allowNull": true,
+            "width": 60,
+            "filterable": true
+        },
+        "sec_employee_id": {
+            "table": "pcdsec",
+            "displayName": "Sec. Employee Id",
+            "allowNull": true,
+            "width": 60,
+            "filterable": true,
+            "groupable": true,
+            "expression": "pcdsec.employee_id",
+            "allowedValuesQuery": "SELECT employee_id FROM patient_corporate_details ORDER BY employee_id"
+        },
+        "sec_employee_name": {
+            "table": "pcdsec",
+            "displayName": "Sec. Employee Name",
+            "allowNull": true,
+            "width": 60,
+            "filterable": true,
+            "groupable": true,
+            "expression": "pcdsec.employee_name",
+            "allowedValuesQuery": "SELECT employee_name FROM patient_corporate_details where employee_name is not null ORDER BY employee_name"
+        },
+        "sec_patient_relationship": {
+            "table": "pcdsec",
+            "displayName": "Sec. Employee Relationship",
+            "allowNull": true,
+            "width": 60,
+            "filterable": true,
+            "groupable": true,
+            "expression": "pcdsec.patient_relationship",
+            "allowedValuesQuery": "SELECT patient_relationship FROM patient_corporate_details where patient_relationship is not null ORDER BY patient_relationship"
+        },
+        "secondary_insurance_approval": {
+            "table": "pr",
+            "displayName": "Sec. Sponsor Approval Amt",
+            "allowNull": true,
+            "width": 60,
+            "filterable": true
+        },
+        "op_ip_visit": {
+            "table": "pr",
+            "displayName": "OP-IP Visit",
+            "width": 50,
+            "groupable": false,
+            "filterable": true,
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "expression": "CASE WHEN pr.original_visit_id != ' ' THEN 'Yes' ELSE 'No' END"
+        },
+        "patient_category_name": {
+            "table": "prcm",
+            "displayName": "Patient Category",
+            "width": 120,
+            "allowedValuesQuery": "SELECT category_name FROM patient_category_master ORDER BY category_name",
+            "filterable": true,
+            "groupable": true,
+            "expression": "prcm.category_name "
+        },
+        "is_er_visit": {
+            "table": "pr",
+            "displayName": "Emergency Visit",
+            "width": 70,
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "filterable": true,
+            "groupable": true,
+            "expression": "CASE WHEN pr.is_er_visit = true THEN 'Yes' ELSE 'No' END"
+        },
+        "classification": {
+            "table": "pr",
+            "displayName": "Visit Classification",
+            "width": 150,
+            "allowedValues": [
+                "Medical tourist",
+                "Self-pay patient",
+                "Other non-insurance patient"
+            ],
+            "filterable": true,
+            "groupable": true,
+            "expression": "CASE WHEN pr.classification = 'M' THEN 'Medical tourist' WHEN pr.classification = 'S' THEN 'Self-pay patient' WHEN pr.classification = 'O' THEN 'Other non-insurance patient' END"
+        }
+    },
+    "queryUnits": [
+        {
+            "joinTables": [
+                {
+                    "name": "visit_sponsor_details",
+                    "alias": "vsd",
+                    "dependsOn": "pr",
+                    "expression": "ON (vsd.patient_id = pr.patient_id)"
+                },
+                {
+                    "name": "op_type_names",
+                    "alias": "otn",
+                    "dependsOn": "pr",
+                    "expression": "ON (otn.op_type = pr.op_type)"
+                },
+                {
+                    "name": "visit_type_names",
+                    "alias": "vn",
+                    "dependsOn": "pr",
+                    "expression": "ON (vn.visit_type = pr.visit_type)"
+                },
+                {
+                    "name": "ward_names",
+                    "alias": "wnr",
+                    "dependsOn": "pr",
+                    "expression": "ON wnr.ward_no = pr.ward_id"
+                },
+                {
+                    "name": "department",
+                    "alias": "dep",
+                    "dependsOn": "pr",
+                    "expression": "ON pr.dept_name = dep.dept_id"
+                },
+                {
+                    "name": "department",
+                    "alias": "admdep",
+                    "dependsOn": "pr",
+                    "expression": "ON pr.admitted_dept = admdep.dept_id"
+                },
+                {
+                    "name": "dept_unit_master",
+                    "alias": "dum",
+                    "dependsOn": "pr",
+                    "expression": "ON dum.unit_id = pr.unit_id"
+                },
+                {
+                    "name": "transfer_hospitals",
+                    "alias": "trs",
+                    "dependsOn": "pr",
+                    "expression": "ON trs.transfer_hospital_id = pr.transfer_source"
+                },
+                {
+                    "name": "transfer_hospitals",
+                    "alias": "trd",
+                    "dependsOn": "pr",
+                    "expression": "ON trd.transfer_hospital_id = pr.transfer_destination"
+                },
+                {
+                    "name": "doctors",
+                    "alias": "dr",
+                    "dependsOn": "pr",
+                    "expression": "ON dr.doctor_id = pr.doctor"
+                },
+                {
+                    "name": "admission",
+                    "alias": "ad",
+                    "dependsOn": "pr",
+                    "expression": "ON ad.patient_id = pr.patient_id"
+                },
+                {
+                    "name": "bed_names",
+                    "alias": "bn",
+                    "dependsOn": "ad",
+                    "expression": "ON bn.bed_id = ad.bed_id"
+                },
+                {
+                    "name": "ward_names",
+                    "alias": "wn",
+                    "dependsOn": "bn",
+                    "expression": "ON wn.ward_no = bn.ward_no"
+                },
+                {
+                    "name": "organization_details",
+                    "alias": "od",
+                    "dependsOn": "pr",
+                    "expression": "ON pr.org_id = od.org_id"
+                },
+                {
+                    "name": "doctors",
+                    "alias": "rdoc",
+                    "dependsOn": "pr",
+                    "expression": "ON pr.reference_docto_id = rdoc.doctor_id"
+                },
+                {
+                    "name": "referral",
+                    "alias": "ref",
+                    "dependsOn": "pr",
+                    "expression": "ON pr.reference_docto_id = ref.referal_no"
+                },
+                {
+                    "name": "patient_category_master",
+                    "alias": "prcm",
+                    "dependsOn": "pr",
+                    "expression": "on prcm.category_id = pr.patient_category_id"
+                },
+                {
+                    "name": "tpa_master",
+                    "alias": "ptpa",
+                    "dependsOn": "pr",
+                    "expression": "ON ptpa.tpa_id = pr.primary_sponsor_id"
+                },
+                {
+                    "name": "sponsor_type",
+                    "alias": "pst",
+                    "dependsOn": "ptpa",
+                    "expression": "ON ptpa.sponsor_type_id = pst.sponsor_type_id"
+                },
+                {
+                    "name": "tpa_master",
+                    "alias": "stpa",
+                    "dependsOn": "pr",
+                    "expression": "ON stpa.tpa_id = pr.secondary_sponsor_id"
+                },
+                {
+                    "name": "sponsor_type",
+                    "alias": "sst",
+                    "dependsOn": "stpa",
+                    "expression": "ON stpa.sponsor_type_id = sst.sponsor_type_id"
+                },
+                {
+                    "name": "insurance_case",
+                    "alias": "icase",
+                    "dependsOn": "pr",
+                    "expression": "ON pr.insurance_id = icase.insurance_id"
+                },
+                {
+                    "name": "insurance_company_master",
+                    "alias": "picm",
+                    "dependsOn": "vsd",
+                    "expression": "ON picm.insurance_co_id = vsd.primary_insurance_co"
+                },
+                {
+                    "name": "insurance_company_master",
+                    "alias": "sicm",
+                    "dependsOn": "vsd",
+                    "expression": "ON sicm.insurance_co_id = vsd.secondary_insurance_co"
+                },
+                {
+                    "name": "insurance_plan_main",
+                    "alias": "pipm",
+                    "dependsOn": "vsd",
+                    "expression": "ON (vsd.pri_plan_id = pipm.plan_id)"
+                },
+                {
+                    "name": "insurance_plan_main",
+                    "alias": "sipm",
+                    "dependsOn": "vsd",
+                    "expression": "ON (vsd.sec_plan_id = sipm.plan_id)"
+                },
+                {
+                    "name": "insurance_category_master",
+                    "alias": "picam",
+                    "dependsOn": "pipm",
+                    "expression": "ON picam.category_id=pipm.category_id"
+                },
+                {
+                    "name": "insurance_category_master",
+                    "alias": "sicam",
+                    "dependsOn": "sipm",
+                    "expression": "ON sicam.category_id=sipm.category_id"
+                },
+                {
+                    "name": "patient_policy_details",
+                    "alias": "pppd",
+                    "dependsOn": "vsd",
+                    "expression": "ON (pppd.patient_policy_id = vsd.pri_patient_policy_id)"
+                },
+                {
+                    "name": "patient_policy_details",
+                    "alias": "sppd",
+                    "dependsOn": "vsd",
+                    "expression": "ON (sppd.patient_policy_id = vsd.sec_patient_policy_id)"
+                },
+                {
+                    "name": "prior_auth_modes",
+                    "alias": "ppam",
+                    "dependsOn": "vsd",
+                    "expression": "ON ( vsd.pri_prior_auth_mode_id = ppam.prior_auth_mode_id)"
+                },
+                {
+                    "name": "prior_auth_modes",
+                    "alias": "spam",
+                    "dependsOn": "vsd",
+                    "expression": "ON ( vsd.sec_prior_auth_mode_id = spam.prior_auth_mode_id)"
+                },
+                {
+                    "name": "drg_codes_master",
+                    "alias": "drg",
+                    "dependsOn": "pr",
+                    "expression": "ON ( pr.drg_code = drg.drg_code)"
+                },
+                {
+                    "name": "hospital_center_master",
+                    "alias": "hcm",
+                    "dependsOn": "pr",
+                    "expression": "ON (hcm.center_id = pr.center_id)"
+                },
+                {
+                    "name": "city",
+                    "alias": "hci",
+                    "dependsOn": "hcm",
+                    "expression": " ON hcm.city_id = hci.city_id"
+                },
+                {
+                    "name": "state_master",
+                    "alias": "hst",
+                    "dependsOn": "hcm",
+                    "expression": " ON hcm.state_id = hst.state_id"
+                },
+                {
+                    "name": "country_master",
+                    "alias": "hc",
+                    "dependsOn": "hcm",
+                    "expression": " ON hcm.country_id = hc.country_id"
+                },
+                {
+                    "name": "area_master",
+                    "alias": "refar",
+                    "dependsOn": "ref",
+                    "expression": " ON refar.area_id = ref.referal_doctor_area_id"
+                },
+                {
+                    "name": "city",
+                    "alias": "refci",
+                    "dependsOn": "ref",
+                    "expression": " ON refci.city_id = ref.referal_doctor_city_id"
+                },
+                {
+                    "name": "state_master",
+                    "alias": "refst",
+                    "dependsOn": "refci",
+                    "expression": " ON refst.state_id = refci.state_id"
+                },
+                {
+                    "name": "district_master",
+                    "alias": "refdi",
+                    "dependsOn": "refci,refst",
+                    "expression": " ON refdi.district_id = refci.district_id AND refdi.state_id = refst.state_id"
+                },
+                {
+                    "name": "country_master",
+                    "alias": "refc",
+                    "dependsOn": "refst",
+                    "expression": " ON refc.country_id = refst.country_id"
+                },
+                {
+                    "name": "region_master",
+                    "alias": "hrm",
+                    "dependsOn": "hcm",
+                    "expression": " ON hcm.region_id = hrm.region_id"
+                },
+                {
+                    "name": "patient_corporate_details",
+                    "alias": "pcdpri",
+                    "dependsOn": "pr",
+                    "expression": " ON (pcdpri.sponsor_id = pr.primary_sponsor_id AND pcdpri.mr_no = pr.mr_no AND pr.patient_corporate_id = pcdpri.patient_corporate_id)"
+                },
+                {
+                    "name": "patient_corporate_details",
+                    "alias": "pcdsec",
+                    "dependsOn": "pr",
+                    "expression": " ON (pcdsec.sponsor_id = pr.secondary_sponsor_id AND pcdsec.mr_no = pr.mr_no AND pr.secondary_patient_corporate_id = pcdsec.patient_corporate_id)"
+                },
+                {
+                    "name": "sample_collection_centers",
+                    "alias": "scc",
+                    "dependsOn": "pr",
+                    "expression": "ON (scc.collection_center_id = pr.collection_center_id)"
+                }
+            ]
+        }
+    ]
+}

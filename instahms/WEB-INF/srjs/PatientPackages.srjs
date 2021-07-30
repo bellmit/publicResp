@@ -1,0 +1,122 @@
+{
+	"title": "Patient Packages Report",
+	"reportGroup": "Patient Packages",
+	"tableName": [
+        "rpt_patient_package_view"
+    ],
+  	"description":"This report gives the details of Patient Packages",
+
+  	"dateFields": [
+		"pres_date",
+		"completion_date",
+		"handover_date"
+	],
+	"allowNoDate": true,
+	"defaultOrder": "pres_date",
+	"defaultShowFields": [
+		"mr_no",
+		"patient_name",
+    	"package_name",
+    	"package_visit_type",
+    	"pres_date"
+  	],
+  	"fields": {
+		"package_name" : {
+  			"displayName": "Package Name",
+  			"filterable": true, "groupable": true,"width":"60"
+  		},
+  		"package_category" : {
+  			"displayName": "Package Category",
+  			"filterable": true, "groupable": true,
+  			"width": "60"
+  		},
+  		"package_visit_type" : {
+  			"displayName": "Package Visit Type",
+  			"filterable": true, "groupable": true,
+  			"width": "60"
+  		},
+  		"package_handover_to" : {
+  			"displayName": "Package Handover",
+  			"filterable": true, "groupable": true,
+  			"width": "60"
+  		},
+  		"presc_date" : {
+  			"displayName": "Ordered Time",
+  			"filterable": true, "groupable":true,
+  			"dataType": "timestamp",
+  			"width": "100"
+  		},
+  		"pres_date" : {
+  			"displayName": "Ordered Date",
+  			"filterable": true, "groupable":true,
+  			"dataType": "date",
+  			"width": "100"
+  		},
+  		"patient_name" : {
+  			"displayName": "Patient Name",
+  			"filterable": true,
+  			"width": "120"
+  		},
+  		"name_local_language": {
+          "displayName": "Name In Local Language",
+          "width": "150"
+       },
+  		"mr_no": {
+  			"displayName": "Mr No.",
+  			"filterable": true,
+  			"width": "60"
+  		},
+  		"center_name" : {
+  			"displayName": "Center",
+  			"filterable": true,
+  			"width": "80"
+  		},
+  		"completion_status" : {
+  			"displayName": "Completion Status",
+  			"filterable": true,
+  			"width": "60"
+  		},
+  		"completion_time": {
+  			"displayName": "Completion time",
+  			"dataType": "timestamp",
+  			"filterable": true,
+  			"width": "100"
+  		},
+		"completion_date": {
+  			"displayName": "Completion date",
+  			"dataType": "date",
+  			"filterable": true,
+  			"width": "100"
+  		},
+  		"handover_to": {
+  			"displayName": "Handed over to",
+  			"width": "100"
+  		},
+  		"handover_time": {
+  			"displayName": "Handed over time",
+  			"width": "100"
+  		},
+  		"handover_date": {
+  			"displayName": "Handed over date",
+  			"dataType": "date",
+  			"width": "100"
+  		},
+  		"handedover_by": {
+  			"displayName": "Handed over by",
+  			"width": "100"
+  		},
+  		"completion_by": {
+  			"displayName": "Completion by",
+  			"width": "100"
+  		},
+  		"visit_type" : {
+  			"displayName" : "Patient Visit Type (OP/IP)",
+  			"width": "60"
+  		},
+  		"tpa_name" : {
+  			"displayName" : "Package Sponsor",
+  			"filterable": true, "groupable":true,
+  			"width": "120"
+  		}
+   	}
+ }

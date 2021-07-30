@@ -1,0 +1,18 @@
+malaffi_code,malaffi_description,hms_name,is_default
+A,Separated,Separated,
+A,Separated,Legally Separated,
+D,Divorced,Divorced,
+M,Married,Married,
+P,Domestic Partner,Domestic Partner,
+P,Domestic Partner,Registered Domestic Partner,
+S,Single,Single,
+S,Single,Unmarried,
+U,Unknown,Unknown,true
+U,Unknown,Unreported,
+W,Widowed,Widowed,
+NA,Not Available,Living Together,
+NA,Not Available,Annuled,
+NA,Not Available,Common Law,
+NA,Not Available,Interlocutory,
+NA,Not Available,Other,
+NA,Not Available,Others,

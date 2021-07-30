@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="800" pageHeight="842" whenNoDataType="NoDataSection" columnWidth="760" leftMargin="20" rightMargin="20" topMargin="40" bottomMargin="40">
+	<parameter name="fromDate" class="java.util.Date"/>
+	<parameter name="toDate" class="java.util.Date"/>
+	<queryString>
+		<![CDATA[select IP.mrno as Mr_no, IP.patient_id,get_patient_name(pd.salutation, pd.patient_name, pd.middle_name, pd.last_name) as Patient_name,
+IP.start_date as Admit_Date, IP.end_date as Discharge_Date,
+wd.ward_name as Admit_ward, bn.bed_type as Admit_BedType ,
+phd.bed_type as Registered_BedType
+from ip_bed_details ip
+inner join patient_registration phd on (phd.patient_id= ip.patient_id)
+inner join  patient_details pd on (phd.mr_no = pd.mr_no)
+inner join bed_names bn on (bn.bed_id = IP.bed_id)
+inner join ward_names wd on (bn.ward_no = wd.ward_no)
+where bn.bed_type != (select bed_type from patient_registration p2 where p2.patient_id = ip.patient_id)  and
+IP.start_date  between $P{fromDate} and $P{toDate}
+;]]>
+	</queryString>
+	<field name="mr_no" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="patient_id" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="patient_name" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="admit_date" class="java.sql.Date">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="discharge_date" class="java.sql.Date">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="admit_ward" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="admit_bedtype" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="registered_bedtype" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<variable name="v1" class="java.lang.Integer" calculation="Count">
+		<variableExpression><![CDATA[$F{mr_no}]]></variableExpression>
+		<initialValueExpression><![CDATA[]]></initialValueExpression>
+	</variable>
+	<background>
+		<band/>
+	</background>
+	<title>
+		<band height="28">
+			<staticText>
+				<reportElement x="261" y="0" width="160" height="20"/>
+				<textElement>
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[Bed Type Dismatch]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="32">
+			<staticText>
+				<reportElement x="94" y="0" width="62" height="20"/>
+				<textElement/>
+				<text><![CDATA[From Date :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="408" y="5" width="62" height="20"/>
+				<textElement/>
+				<text><![CDATA[To Date :]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="176" y="0" width="96" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.util.Date"><![CDATA[$P{fromDate}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="470" y="5" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.util.Date"><![CDATA[$P{toDate}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="32">
+			<staticText>
+				<reportElement x="1" y="7" width="36" height="18"/>
+				<textElement/>
+				<text><![CDATA[Sl.No]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="109" y="7" width="57" height="18"/>
+				<textElement/>
+				<text><![CDATA[Patient Id]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="186" y="7" width="86" height="18"/>
+				<textElement/>
+				<text><![CDATA[Patient Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="372" y="7" width="80" height="20"/>
+				<textElement/>
+				<text><![CDATA[Discharge Date]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="470" y="7" width="71" height="20"/>
+				<textElement/>
+				<text><![CDATA[Admit Ward]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="541" y="7" width="86" height="20"/>
+				<textElement/>
+				<text><![CDATA[Admit Bed Type]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="628" y="7" width="100" height="20"/>
+				<textElement/>
+				<text><![CDATA[Registered Bed Type]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="286" y="7" width="65" height="20"/>
+				<textElement/>
+				<text><![CDATA[Admit Date]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="47" y="7" width="36" height="20"/>
+				<textElement/>
+				<text><![CDATA[MR No]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="39">
+			<textField>
+				<reportElement x="47" y="11" width="57" height="20"/>
+				<textElement>
+					<font size="8" pdfFontName="Helvetica"/>	
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{mr_no}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="109" y="11" width="67" height="20"/>
+				<textElement>
+					<font size="8" pdfFontName="Helvetica"/>	
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{patient_id}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="186" y="11" width="100" height="20"/>
+				<textElement>
+					<font size="8" pdfFontName="Helvetica"/>	
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{patient_name}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="286" y="11" width="76" height="20"/>
+				<textElement>
+					<font size="8" pdfFontName="Helvetica"/>	
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[$F{admit_date}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="372" y="11" width="80" height="20"/>
+				<textElement>
+					<font size="8" pdfFontName="Helvetica"/>	
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[$F{discharge_date}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="470" y="11" width="71" height="20"/>
+				<textElement>
+					<font size="8" pdfFontName="Helvetica"/>	
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{admit_ward}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="560" y="11" width="50" height="20"/>
+				<textElement>
+					<font size="8" pdfFontName="Helvetica"/>	
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{admit_bedtype}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="642" y="11" width="69" height="20"/>
+				<textElement>
+					<font size="8" pdfFontName="Helvetica"/>	
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{registered_bedtype}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="4" y="11" width="33" height="20"/>
+				<textElement>
+					<font size="8" pdfFontName="Helvetica"/>	
+				</textElement>
+				<textFieldExpression class="java.lang.Integer"><![CDATA[$V{v1}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="47"/>
+	</pageFooter>
+	<summary>
+		<band height="56"/>
+	</summary>
+	<noData>
+		<band height="50">
+			<staticText>
+				<reportElement x="0" y="12" width="760" height="20"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[No data found for given search criteria]]></text>
+			</staticText>
+		</band>
+	</noData>
+</jasperReport>

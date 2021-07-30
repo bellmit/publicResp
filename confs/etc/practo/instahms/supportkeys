@@ -1,0 +1,3 @@
+# Settings for making signed request to *.instahms.com (Allspark Proxy Services)
+signing_key= #signing key of server as configured in allspark
+signing_host= #Host name of server as configured in allspark

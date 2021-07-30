@@ -1,0 +1,368 @@
+{
+    "title": "Purchase Order Items",
+    "description": "This report shows the list of items in all POs based on PO Date.",
+    "reportGroup": "Procurement Reports",
+    "dateFields": [
+        "po_date"
+    ],
+    "includes": [
+        "StoreItemFields.srjs",
+        "StoreItemCodeFields.srjs"
+    ],
+    "queryUnits": [
+        {
+            "mainTableName": "store_po",
+            "mainTableAlias": "po",
+            "joinTables": [
+                {
+                    "name": "store_po_main",
+                    "alias": "pom",
+                    "dependsOn": "po",
+                    "expression": "ON (pom.po_no = po.po_no)"
+                },
+                {
+                    "name": "store_item_details",
+                    "alias": "sid",
+                    "dependsOn": "po",
+                    "expression": "ON (sid.medicine_id=po.medicine_id)"
+                },
+                {
+                    "includeName": "StoreItemFields.srjs"
+                },
+                {
+                    "name": "supplier_master",
+                    "alias": "sm",
+                    "dependsOn": "pom",
+                    "expression": "ON (pom.supplier_id = sm.supplier_code)"
+                },
+                {
+                    "name": "stores",
+                    "alias": "s",
+                    "dependsOn": "pom",
+                    "expression": "ON (s.dept_id = pom.store_id)"
+                },
+                {
+                    "name": "hospital_center_master",
+                    "alias": "hcm",
+                    "dependsOn": "s",
+                    "expression": "ON(s.center_id=hcm.center_id)"
+                },
+                {
+                    "includeName": "StoreItemCodeFields.srjs"
+                }
+            ]
+        }
+    ],
+    "fields": {
+        "po_no": {
+            "table": "po",
+            "displayName": "PO No",
+            "width": 60,
+            "filterable": true,
+            "groupable": true
+        },
+        "mrp": {
+            "table": "po",
+            "displayName": "MRP",
+            "width": 60
+        },
+        "adj_mrp": {
+            "table": "po",
+            "displayName": "Adj MRP",
+            "width": 60
+        },
+        "cost_price": {
+            "table": "po",
+            "displayName": "Cost Price",
+            "width": 60
+        },
+        "vat": {
+            "table": "po",
+            "displayName": "Tax",
+            "width": 60
+        },
+        "discount": {
+            "table": "po",
+            "displayName": "Discount",
+            "width": 60,
+            "decimalType": "amount"
+        },
+        "amended_reason": {
+            "table": "pom",
+            "displayName": "Amended Reason",
+            "datatype": "string",
+            "width": 60
+        },
+        "amendment_time": {
+            "table": "pom",
+            "displayName": "Amendment Date",
+            "datatype": "date",
+            "width": 60
+        },
+        "amendment_validated_time": {
+            "table": "pom",
+            "displayName": "Amendment Validated Date",
+            "datatype": "date",
+            "width": 60
+        },
+        "amendment_approved_time": {
+            "table": "pom",
+            "displayName": "Amendment Approved Date",
+            "datatype": "date",
+            "width": 60
+        },
+        "amended_by": {
+            "table": "pom",
+            "displayName": "Amended By",
+            "datatype": "string",
+            "width": 60,
+            "filterable": true
+        },
+        "amendment_validated_by": {
+            "table": "pom",
+            "displayName": "Amendment Validated By",
+            "datatype": "string",
+            "width": 60,
+            "filterable": true
+        },
+        "amendment_approved_by": {
+            "table": "pom",
+            "displayName": "Amendment Approved By",
+            "datatype": "string",
+            "width": 60,
+            "filterable": true
+        },
+        "amendment_validator_remarks": {
+            "table": "pom",
+            "displayName": "Amendment Validate Remarks",
+            "datatype": "string",
+            "width": 60
+        },
+        "amendment_approver_remarks": {
+            "table": "pom",
+            "displayName": "Amendment Approve Remarks",
+            "datatype": "string",
+            "width": 60
+        },
+        "po_date": {
+            "table": "pom",
+            "displayName": "PO Date",
+            "datatype": "date",
+            "width": 60
+        },
+        "po_item_status": {
+            "table": "po",
+            "displayName": "PO Item Status",
+            "width": 70,
+            "filterable": true,
+            "groupable": true,
+            "allowedValues": [
+                "Open",
+                "Approved",
+                "Rejected",
+                "Partially Fullfilled",
+                "Finalized"
+            ],
+            "expressionLines": [
+                " CASE WHEN po.status='O' THEN 'Open' ",
+                " WHEN po.status='A' THEN 'Approved' ",
+                " WHEN po.status='AO' THEN 'Amended Open' ",
+                " WHEN po.status='AA' THEN 'Amended Approved' ",
+                " WHEN po.status='R' THEN 'Rejected' ",
+                " WHEN po.status='P' THEN 'Partially Fullfilled' ",
+                " WHEN po.status='F' THEN 'Finalized' END"
+            ]
+        },
+        "po_status": {
+            "table": "pom",
+            "displayName": "PO Status",
+            "width": 70,
+            "filterable": true,
+            "groupable": true,
+            "allowedValues": [
+                "Open",
+                "Approved",
+                "Closed",
+                "Cancelled",
+                "Force Closed"
+            ],
+            "expressionLines": [
+                " CASE WHEN pom.status='O' THEN 'Open' ",
+                " WHEN pom.status='V' THEN 'Validated' ",
+                " WHEN pom.status='A' THEN 'Approved' ",
+                " WHEN pom.status='AO' THEN 'Amended Open' ",
+                " WHEN pom.status='AV' THEN 'Amended Validated' ",
+                " WHEN pom.status='AA' THEN 'Amended Approved' ",
+                " WHEN pom.status='C' THEN 'Closed' ",
+                " WHEN pom.status='X' THEN 'Cancelled' ",
+                " WHEN pom.status='FC' THEN 'Force Closed' END "
+            ]
+        },
+        "supplier_name": {
+            "table": "sm",
+            "displayName": "Supplier Name",
+            "width": 100,
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT supplier_name FROM supplier_master ORDER BY supplier_name"
+        },
+        "cust_supplier_code": {
+            "table": "sm",
+            "displayName": "Supplier Code",
+            "width": 100,
+            "filterable": true,
+            "groupable": true
+        },
+        "drug_license_no": {
+            "table": "sm",
+            "displayName": "Drug License No.",
+            "width": 100,
+            "filterable": false,
+            "groupable": false
+        },
+        "pan_no": {
+            "table": "sm",
+            "displayName": "PAN No.",
+            "width": 100,
+            "filterable": false,
+            "groupable": false
+        },
+        "cin_no": {
+            "table": "sm",
+            "displayName": "CIN No.",
+            "width": 100,
+            "filterable": false,
+            "groupable": false
+        },
+        "dept_name": {
+            "table": "s",
+            "displayName": "Store Name",
+            "width": 100,
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT dept_name from stores ORDER BY dept_name"
+        },
+        "center_name": {
+            "table": "hcm",
+            "displayName": "Center Name",
+            "width": 100,
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT center_name FROM hospital_center_master WHERE center_id!=0 order by center_name"
+        },
+        "item_ced": {
+            "table": "po",
+            "displayName": "CED",
+            "width": 60,
+            "decimalType": "amount"
+        },
+        "pkg_qty_recieved": {
+            "table": "po",
+            "displayName": "Pkg Qty Received",
+            "width": 60,
+            "decimalType": "quantity",
+            "expression": "ROUND(qty_received/po.po_pkg_size, 2)"
+        },
+        "pkg_qty_req": {
+            "table": "po",
+            "displayName": "Pkg Qty Required",
+            "width": 60,
+            "decimalType": "quantity",
+            "expression": "ROUND(qty_req/po.po_pkg_size, 2)"
+        },
+        "qty_received": {
+            "table": "po",
+            "displayName": "Quantity Received",
+            "width": 60,
+            "decimalType": "quantity",
+            "expression": "ROUND(qty_received,2)"
+        },
+        "qty_req": {
+            "table": "po",
+            "displayName": "Quantity Required",
+            "width": 60,
+            "decimalType": "quantity",
+            "expression": "ROUND(qty_req,2)"
+        },
+        "bonus_qty_received": {
+            "table": "po",
+            "displayName": "Bonus Qty Received",
+            "width": 60,
+            "decimalType": "quantity",
+            "expression": "ROUND(bonus_qty_received,2)"
+        },
+        "bonus_qty_req": {
+            "table": "po",
+            "displayName": "Bonus Qty Required",
+            "width": 60,
+            "decimalType": "quantity",
+            "expression": "ROUND(bonus_qty_req,2)"
+        },
+        "vat_type": {
+            "table": "po",
+            "displayName": "PO Tax Type",
+            "width": 100,
+            "expressionLines": [
+                " CASE WHEN pom.vat_type = 'CST' THEN '' ",
+                " WHEN po.vat_type = 'MB' THEN 'MRP Based(with bonus)' ",
+                " WHEN po.vat_type = 'M' THEN 'MRP Based(without bonus)' ",
+                " WHEN po.vat_type = 'C' THEN 'CP Based(without bonus)' ",
+                " ELSE 'CP Based(with bonus)' END "
+            ]
+        },
+        "vat_rate": {
+            "table": "po",
+            "displayName": "Tax %",
+            "width": 60
+        },
+        "vat_cst": {
+            "table": "pom",
+            "displayName": "Tax Type",
+            "width": 60,
+            "expression": "pom.vat_type"
+        },
+        "user_id": {
+            "table": "pom",
+            "displayName": "Raised By",
+            "width": 60,
+            "dataType": "string",
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT emp_username FROM u_user ORDER BY emp_username "
+        },
+        "form_8h": {
+            "table": "pom",
+            "allowHorizGroup": true,
+            "allowNull": false,
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "dataType": "string",
+            "displayName": "Form 8H",
+            "expression": "CASE WHEN pom.form_8h THEN 'Yes' ELSE 'No' END ",
+            "filterable": true,
+            "width": 100
+        },
+        "transportation_charges": {
+            "table": "pom",
+            "allowHorizGroup": false,
+            "allowNull": true,
+            "dataType": "numeric",
+            "displayName": "Transportation Charges",
+            "filterable": false,
+            "width": 80
+        },
+        "tax_rate": {}
+    },
+    "defaultShowFields": [
+        "po_no",
+        "item_name",
+        "supplier_name",
+        "mrp",
+        "cost_price",
+        "discount",
+        "qty_req",
+        "qty_received"
+    ]
+}

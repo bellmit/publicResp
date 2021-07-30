@@ -1,0 +1,1034 @@
+{
+    "dateFields": [
+        "values_as_of_date",
+        "next_due_date"
+    ],
+    "defaultShowFields": [
+        "mrno",
+        "full_name",
+        "values_as_of_date",
+        "next_due_date"
+    ],
+    "description": "This report shows detailed description of various clinical lab results",
+    "fields": {
+        "mr_no": {},
+        "mrno": {
+            "displayName": "Mr No.",
+            "allowHorizGroup": false,
+            "filterable": true,
+            "groupable": true,
+            "table": "clr",
+            "width": 60
+        },
+        "values_as_of_date": {
+            "allowHorizGroup": true,
+            "allowNull": false,
+            "dataType": "date",
+            "displayName": "Clinical Test Start Date",
+            "filterable": true,
+            "groupable": true,
+            "table": "clr",
+            "width": 80
+        },
+        "next_due_date": {
+            "allowHorizGroup": true,
+            "allowNull": false,
+            "dataType": "date",
+            "displayName": "Next Due Date",
+            "filterable": true,
+            "groupable": true,
+            "table": "clr",
+            "expressionLines": [
+                "clr.next_due_date::date"
+            ],
+            "width": 80
+        },
+        "hemoglobin": {
+            "allowNull": true,
+            "dataType": "numeric",
+            "displayName": "Hemoglobin (Hb)",
+            "expression": "split_part(clv.hemoglobin, '$_|_$', 1)",
+            "filterable": true,
+            "table": "clv",
+            "description": "HB"
+        },
+        "hemoglobin_value_as_of_date": {
+            "allowNull": false,
+            "dataType": "date",
+            "displayName": "Value As Of Date(HB)",
+            "expression": "split_part(clv.hemoglobin, '$_|_$', 2)::date",
+            "filterable": true,
+            "table": "clv",
+            "description": "Value As Of Date(HB)"
+        },
+        "tlc": {
+            "allowNull": true,
+            "dataType": "numeric",
+            "displayName": "Total Leucocyte Count (TLC)",
+            "expression": "split_part(clv.tlc, '$_|_$', 1)",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "TLC"
+        },
+        "tlc_value_as_of_date": {
+            "allowNull": false,
+            "dataType": "date",
+            "displayName": "Value As Of Date (TLC)",
+            "expression": "split_part(clv.tlc, '$_|_$', 2)::date",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "Value As Of Date (TLC)"
+        },
+        "dlc": {
+            "allowNull": true,
+            "dataType": "numeric",
+            "displayName": "Differential Leucocyte Count (DLC)",
+            "expression": "split_part(clv.dlc, '$_|_$', 1)",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "DLC"
+        },
+        "dlc_value_as_of_date": {
+            "allowNull": false,
+            "dataType": "date",
+            "displayName": "Value As Of Date (DLC)",
+            "expression": "split_part(clv.dlc, '$_|_$', 2)::date",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "Value As Of Date (DLC)"
+        },
+        "plt": {
+            "allowNull": true,
+            "dataType": "numeric",
+            "displayName": "Platelet Count (PLT)",
+            "expression": "split_part(clv.plt, '$_|_$', 1)",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "PLT"
+        },
+        "plt_value_as_of_date": {
+            "allowNull": false,
+            "dataType": "date",
+            "displayName": "Value As Of Date (PLT)",
+            "expression": "split_part(clv.plt, '$_|_$', 2)::date",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "Value As Of Date (PLT)"
+        },
+        "rbs": {
+            "allowNull": true,
+            "dataType": "numeric",
+            "displayName": "Random Blood Sugar (RBS)",
+            "expression": "split_part(clv.rbs, '$_|_$', 1)",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "RBS"
+        },
+        "rbs_value_as_of_date": {
+            "allowNull": false,
+            "dataType": "date",
+            "displayName": "Value As Of Date (RBS)",
+            "expression": "split_part(clv.rbs, '$_|_$', 2)::date",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "Value As Of Date (RBS)"
+        },
+        "mcv": {
+            "allowNull": true,
+            "dataType": "numeric",
+            "displayName": "Mean Corpuscular Volume (MCV)",
+            "expression": "split_part(clv.mcv, '$_|_$', 1)",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "MCV"
+        },
+        "mcv_value_as_of_date": {
+            "allowNull": false,
+            "dataType": "date",
+            "displayName": "Value As Of Date (MCV)",
+            "expression": "split_part(clv.mcv, '$_|_$', 2)::date",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "Value As Of Date (MCV)"
+        },
+        "prebun": {
+            "allowNull": true,
+            "dataType": "numeric",
+            "displayName": "Pre BUN",
+            "expression": "split_part(clv.prebun, '$_|_$', 1)",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "PRB"
+        },
+        "prebun_value_as_of_date": {
+            "allowNull": false,
+            "dataType": "date",
+            "displayName": "Value As Of Date (PRB)",
+            "expression": "split_part(clv.prebun, '$_|_$', 2)::date",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "Value As Of Date (PRB)"
+        },
+        "postbun": {
+            "allowNull": true,
+            "dataType": "numeric",
+            "displayName": "Post BUN",
+            "expression": "split_part(clv.postbun, '$_|_$', 1)",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "POB"
+        },
+        "postbun_value_as_of_date": {
+            "allowNull": false,
+            "dataType": "date",
+            "displayName": "Value As Of Date (POB)",
+            "expression": "split_part(clv.postbun, '$_|_$', 2)::date",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "Value As Of Date (POB)"
+        },
+        "creatinine": {
+            "allowNull": true,
+            "dataType": "numeric",
+            "displayName": "Creatinine (creat.)",
+            "expression": "split_part(clv.creatinine, '$_|_$', 1)",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "CREAT."
+        },
+        "creatinine_value_as_of_date": {
+            "allowNull": false,
+            "dataType": "date",
+            "displayName": "Value As Of Date (CREAT.)",
+            "expression": "split_part(clv.creatinine, '$_|_$', 2)::date",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "Value As Of Date (CREAT.)"
+        },
+        "sodium": {
+            "allowNull": true,
+            "dataType": "numeric",
+            "displayName": "Sodium (Na)",
+            "expression": "split_part(clv.sodium, '$_|_$', 1)",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "Na"
+        },
+        "sodium_value_as_of_date": {
+            "allowNull": false,
+            "dataType": "date",
+            "displayName": "Value As Of Date (Na)",
+            "expression": "split_part(clv.sodium, '$_|_$', 2)::date",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "Value As Of Date (Na)"
+        },
+        "potassium": {
+            "allowNull": true,
+            "dataType": "numeric",
+            "displayName": "Potassium (K)",
+            "expression": "split_part(clv.potassium, '$_|_$', 1)",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "K"
+        },
+        "potassium_value_as_of_date": {
+            "allowNull": false,
+            "dataType": "date",
+            "displayName": "Value As Of Date (K)",
+            "expression": "split_part(clv.potassium, '$_|_$', 2)::date",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "Value As Of Date (K)"
+        },
+        "bicarbonate": {
+            "allowNull": true,
+            "dataType": "numeric",
+            "displayName": "Bicarbonate",
+            "expression": "split_part(clv.bicarbonate, '$_|_$', 1)",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "Bicarb."
+        },
+        "bicarbonate_value_as_of_date": {
+            "allowNull": false,
+            "dataType": "date",
+            "displayName": "Value AS Of Date (Bicarb.)",
+            "expression": "split_part(clv.bicarbonate, '$_|_$', 2)::date",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "Value AS Of Date (Bicarb.)"
+        },
+        "ua": {
+            "allowNull": true,
+            "dataType": "numeric",
+            "displayName": "Uric Acid (UA)",
+            "expression": "split_part(clv.ua, '$_|_$', 1)",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "UA"
+        },
+        "ua_value_as_of_date": {
+            "allowNull": false,
+            "dataType": "date",
+            "displayName": "Value As Of Date (UA)",
+            "expression": "split_part(clv.ua, '$_|_$', 2)::date",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "Value As Of Date (UA)"
+        },
+        "ca": {
+            "allowNull": true,
+            "dataType": "numeric",
+            "displayName": "Calcium (Ca)",
+            "expression": "split_part(clv.ca, '$_|_$', 1)",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "Ca"
+        },
+        "ca_value_as_of_date": {
+            "allowNull": false,
+            "dataType": "date",
+            "displayName": "Value As Of Date (Ca)",
+            "expression": "split_part(clv.ca, '$_|_$', 2)::date",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "Value As Of Date (Ca)"
+        },
+        "phos": {
+            "allowNull": true,
+            "dataType": "numeric",
+            "displayName": "Phosphorus(Phos)",
+            "expression": "split_part(clv.phos, '$_|_$', 1)",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "Phos"
+        },
+        "phos_value_as_of_date": {
+            "allowNull": false,
+            "dataType": "date",
+            "displayName": "Value As Of Date(Phos)",
+            "expression": "split_part(clv.phos, '$_|_$', 2)::date",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "Value As Of Date(Phos)"
+        },
+        "bilirubin": {
+            "allowNull": true,
+            "dataType": "numeric",
+            "displayName": "Total Bilirubin",
+            "expression": "split_part(clv.bilirubin, '$_|_$', 1)",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "T.Bilirubin"
+        },
+        "bilirubin_value_as_of_date": {
+            "allowNull": false,
+            "dataType": "date",
+            "displayName": "Value As Of Date(T.Bilirubin)",
+            "expression": "split_part(clv.bilirubin, '$_|_$', 2)::date",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "Value As Of Date (T.Bilirubin)"
+        },
+        "total_protein": {
+            "allowNull": true,
+            "dataType": "numeric",
+            "displayName": "Total Protein",
+            "expression": "split_part(clv.total_protein, '$_|_$', 1)",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "T.Prot"
+        },
+        "total_protein_value_as_of_date": {
+            "allowNull": false,
+            "dataType": "date",
+            "displayName": "Value As Of Date (T.Prot)",
+            "expression": "split_part(clv.total_protein, '$_|_$', 2)::date",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "T.Prot"
+        },
+        "albumin": {
+            "allowNull": true,
+            "dataType": "numeric",
+            "displayName": "Albumin",
+            "expression": "split_part(clv.albumin, '$_|_$', 1)",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "albumin"
+        },
+        "albumin_value_as_of_date": {
+            "allowNull": false,
+            "dataType": "date",
+            "displayName": "Value As Of Date (Albumin)",
+            "expression": "split_part(clv.albumin, '$_|_$', 2)::date",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "Value As Of Date (Albumin)"
+        },
+        "alt": {
+            "allowNull": true,
+            "dataType": "numeric",
+            "displayName": "Alanine Aminotransferase",
+            "expression": "split_part(clv.alt, '$_|_$', 1)",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "ALT"
+        },
+        "alt_value_as_of_date": {
+            "allowNull": false,
+            "dataType": "date",
+            "displayName": "Value As Of Date (ALT)",
+            "expression": "split_part(clv.alt, '$_|_$', 2)::date",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "Value As Of Date (ALT)"
+        },
+        "ast": {
+            "allowNull": true,
+            "dataType": "numeric",
+            "displayName": "Aspartate Aminotransferase",
+            "expression": "split_part(clv.ast, '$_|_$', 1)",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "AST"
+        },
+        "ast_value_as_of_date": {
+            "allowNull": false,
+            "dataType": "date",
+            "displayName": "Value As Of Date (ASt)",
+            "expression": "split_part(clv.ast, '$_|_$', 2)::date",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "Value As Of Date (ASt)"
+        },
+        "alk_phos": {
+            "allowNull": true,
+            "dataType": "numeric",
+            "displayName": "Alkaline Phosphatase",
+            "expression": "split_part(clv.alk_phos, '$_|_$', 1)",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "Alk Phos"
+        },
+        "alk_phos_value_as_of_date": {
+            "allowNull": false,
+            "dataType": "date",
+            "displayName": "Value As Of Date (Alk Phos)",
+            "expression": "split_part(clv.alk_phos, '$_|_$', 2)::date",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "Value As Of Date (Alk Phos)"
+        },
+        "hiv": {
+            "allowNull": true,
+            "dataType": "numeric",
+            "displayName": "Human Immuno Deficiency Virus",
+            "expression": "split_part(clv.hiv, '$_|_$', 1)",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "HIV"
+        },
+        "hiv_value_as_of_date": {
+            "allowNull": false,
+            "dataType": "date",
+            "displayName": "Value As Of Date (HIV)",
+            "expression": "split_part(clv.hiv, '$_|_$', 2)::date",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "Value As Of Date (HIV)"
+        },
+        "hbsg": {
+            "allowNull": true,
+            "dataType": "numeric",
+            "displayName": "Hepatitis B Surface Antigen",
+            "expression": "split_part(clv.hbsg, '$_|_$', 1)",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "HBsAg"
+        },
+        "hbsg_value_as_of_date": {
+            "allowNull": false,
+            "dataType": "date",
+            "displayName": "Value As Of Date (HBsAg)",
+            "expression": "split_part(clv.hbsg, '$_|_$', 2)::date",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "Value As Of Date (HBsAg)"
+        },
+        "hcv": {
+            "allowNull": true,
+            "dataType": "numeric",
+            "displayName": "Hepatitis C Virus",
+            "expression": "split_part(clv.hcv, '$_|_$', 1)",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "HCV"
+        },
+        "hcv_value_as_of_date": {
+            "allowNull": false,
+            "dataType": "date",
+            "displayName": "Value As Of Date (HCV)",
+            "expression": "split_part(clv.hcv, '$_|_$', 2)::date",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "Value As Of Date (HCV)"
+        },
+        "anti_hbs": {
+            "allowNull": true,
+            "dataType": "numeric",
+            "displayName": "Anti-Hepatitis B Surface Antigen Titres",
+            "expression": "split_part(clv.anti_hbs, '$_|_$', 1)",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "Anti-HBS titres"
+        },
+        "anti_hbs_value_as_of_date": {
+            "allowNull": false,
+            "dataType": "date",
+            "displayName": "Value As Of Date (Anti-HBS titres)",
+            "expression": "split_part(clv.anti_hbs, '$_|_$', 2)::date",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "Value As Of Date (Anti-HBS titres)"
+        },
+        "pth": {
+            "allowNull": true,
+            "dataType": "numeric",
+            "displayName": "ParaThyroid Hormone",
+            "expression": "split_part(clv.pth, '$_|_$', 1)",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "PTH"
+        },
+        "pth_value_as_of_date": {
+            "allowNull": false,
+            "dataType": "date",
+            "displayName": "Value As Of Date (PTH)",
+            "expression": "split_part(clv.pth, '$_|_$', 2)::date",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "Value As Of Date (PTH)"
+        },
+        "iron": {
+            "allowNull": true,
+            "dataType": "numeric",
+            "displayName": "Iron",
+            "expression": "split_part(clv.iron, '$_|_$', 1)",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "iron"
+        },
+        "iron_value_as_of_date": {
+            "allowNull": false,
+            "dataType": "date",
+            "displayName": "Value As Of Date (Iron)",
+            "expression": "split_part(clv.iron, '$_|_$', 2)::date",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "Value As Of Date (Iron)"
+        },
+        "tibc": {
+            "allowNull": true,
+            "dataType": "numeric",
+            "displayName": "Total Iron Binding Capacity",
+            "expression": "split_part(clv.tibc, '$_|_$', 1)",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "TIBC"
+        },
+        "tibc_value_as_of_date": {
+            "allowNull": false,
+            "dataType": "date",
+            "displayName": "Value As Of Date (TIBC)",
+            "expression": "split_part(clv.tibc, '$_|_$', 2)::date",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "Value As Of Date (TIBC)"
+        },
+        "ferritin": {
+            "allowNull": true,
+            "dataType": "numeric",
+            "displayName": "Ferritin",
+            "expression": "split_part(clv.ferritin, '$_|_$', 1)",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "Ferritin"
+        },
+        "ferritin_value_as_of_date": {
+            "allowNull": false,
+            "dataType": "date",
+            "displayName": "Value As Of Date (Ferritin)",
+            "expression": "split_part(clv.ferritin, '$_|_$', 2)::date",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "Value As Of Date (Ferritin)"
+        },
+        "t_sat": {
+            "allowNull": true,
+            "dataType": "numeric",
+            "displayName": "Total Saturation",
+            "expression": "split_part(clv.t_sat, '$_|_$', 1)",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "Tsat"
+        },
+        "t_sat_value_as_of_date": {
+            "allowNull": false,
+            "dataType": "date",
+            "displayName": "Value As Of Date (Tsat)",
+            "expression": "split_part(clv.t_sat, '$_|_$', 2)::date",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "Value As Of Date (Tsat)"
+        },
+        "t_chol": {
+            "allowNull": true,
+            "dataType": "numeric",
+            "displayName": "Total Cholesterol",
+            "expression": "split_part(clv.t_chol, '$_|_$', 1)",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "T.chol"
+        },
+        "t_chol_value_as_of_date": {
+            "allowNull": false,
+            "dataType": "date",
+            "displayName": "Value As Of Date (T.chol)",
+            "expression": "split_part(clv.t_chol, '$_|_$', 2)::date",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "Value As Of Date (T.chol)"
+        },
+        "tg": {
+            "allowNull": true,
+            "dataType": "numeric",
+            "displayName": "Triacylglycerol",
+            "expression": "split_part(clv.tg, '$_|_$', 1)",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "TG"
+        },
+        "tg_value_as_of_date": {
+            "allowNull": false,
+            "dataType": "date",
+            "displayName": "Value As Of Date (TG)",
+            "expression": "split_part(clv.tg, '$_|_$', 2)::date",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "Value As Of Date (TG)"
+        },
+        "ldl": {
+            "allowNull": true,
+            "dataType": "numeric",
+            "displayName": "Low-Density Lipoprotein",
+            "expression": "split_part(clv.ldl, '$_|_$', 1)",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "LDL"
+        },
+        "ldl_value_as_of_date": {
+            "allowNull": false,
+            "dataType": "date",
+            "displayName": "Value As Of Date (LDL)",
+            "expression": "split_part(clv.ldl, '$_|_$', 2)::date",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "Value As Of Date (LDL)"
+        },
+        "hdl": {
+            "allowNull": true,
+            "dataType": "numeric",
+            "displayName": "High-Density Lipoprotein",
+            "expression": "split_part(clv.hdl, '$_|_$', 1)",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "HDL"
+        },
+        "hdl_value_as_of_date": {
+            "allowNull": false,
+            "dataType": "date",
+            "displayName": "Value As Of Date (HDL)",
+            "expression": "split_part(clv.hdl, '$_|_$', 2)::date",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "Value As Of Date (HDL)"
+        },
+        "ktv": {
+            "allowNull": true,
+            "dataType": "numeric",
+            "displayName": "KT/V",
+            "expression": "split_part(clv.ktv, '$_|_$', 1)",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "KT/V"
+        },
+        "ktv_value_as_of_date": {
+            "allowNull": false,
+            "dataType": "date",
+            "displayName": "Value As Of Date (KT/V)",
+            "expression": "split_part(clv.ktv, '$_|_$', 2)::date",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "Value As Of Date (KT/V)"
+        },
+        "urr": {
+            "allowNull": true,
+            "dataType": "numeric",
+            "displayName": "URR",
+            "expression": "split_part(clv.urr, '$_|_$', 1)",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "URR"
+        },
+        "urr_value_as_of_date": {
+            "allowNull": false,
+            "dataType": "date",
+            "displayName": "Value As Of Date (URR)",
+            "expression": "split_part(clv.urr, '$_|_$', 2)::date",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "Value As Of Date (URR)"
+        },
+        "capo": {
+            "allowNull": true,
+            "dataType": "numeric",
+            "displayName": "Ca PO4",
+            "expression": "split_part(clv.capo, '$_|_$', 1)",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "Ca PO4"
+        },
+        "capo_value_as_of_date": {
+            "allowNull": false,
+            "dataType": "date",
+            "displayName": "Value As Of Date (Ca PO4)",
+            "expression": "split_part(clv.capo, '$_|_$', 2)::date",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "Value As Of Date (Ca PO4)"
+        },
+        "asite": {
+            "allowNull": true,
+            "displayName": "Access Site",
+            "expression": "split_part(clv.asite, '$_|_$', 1)",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "Access Site"
+        },
+        "asite_value_as_of_date": {
+            "allowNull": false,
+            "dataType": "date",
+            "displayName": "Value As Of Date (Access Site)",
+            "expression": "split_part(clv.asite, '$_|_$', 2)::date",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "Value As Of Date (Access Site)"
+        },
+        "asiteinf": {
+            "allowNull": true,
+            "displayName": "Access Site Infection",
+            "expression": "split_part(clv.asiteinf, '$_|_$', 1)",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "Access Site Infection"
+        },
+        "asiteinf_value_as_of_date": {
+            "allowNull": false,
+            "displayName": "Value As Of Date (ASI)",
+            "expression": "split_part(clv.asiteinf, '$_|_$', 2)::date",
+            "dataType": "date",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "Value As Of Date (ASI)"
+        },
+        "atypeprim": {
+            "allowNull": true,
+            "displayName": "Access Type (Primary)",
+            "expression": "split_part(clv.atypeprim, '$_|_$', 1)",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "Access Type (Primary)"
+        },
+        "atypeprim_value_as_of_date": {
+            "allowNull": false,
+            "displayName": "Value As Of Date (ATP)",
+            "expression": "split_part(clv.atypeprim, '$_|_$', 2)::date",
+            "dataType": "date",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "Value As Of Date (ATP)"
+        },
+        "atypesec": {
+            "allowNull": true,
+            "displayName": "Access type (Secondary)",
+            "expression": "split_part(clv.atypesec, '$_|_$', 1)",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "Access type (Secondary)"
+        },
+        "atypesec_value_as_of_date": {
+            "allowNull": false,
+            "displayName": "Value As Of Date (ATS)",
+            "expression": "split_part(clv.atypesec, '$_|_$', 2)::date",
+            "dataType": "date",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "Value As Of Date (ATS)"
+        },
+        "inf": {
+            "allowNull": true,
+            "displayName": "Infection",
+            "expression": "split_part(clv.inf, '$_|_$', 1)",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "Infection"
+        },
+        "inf_value_as_of_date": {
+            "allowNull": false,
+            "displayName": "Value As Of Date (Infection)",
+            "expression": "split_part(clv.inf, '$_|_$', 2)::date",
+            "dataType": "date",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "Value As Of Date (Infection)"
+        },
+        "org": {
+            "allowNull": true,
+            "displayName": "Organism",
+            "expression": "split_part(clv.org, '$_|_$', 1)",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "Organism"
+        },
+        "org_value_as_of_date": {
+            "allowNull": false,
+            "displayName": "Value As Of Date (Organism)",
+            "expression": "split_part(clv.org, '$_|_$', 2)::date",
+            "dataType": "date",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "Value As Of Date (Organism)"
+        },
+        "locsite": {
+            "allowNull": true,
+            "displayName": "Location/Site",
+            "expression": "split_part(clv.locsite, '$_|_$', 1)",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "Location/Site"
+        },
+        "locsite_value_as_of_date": {
+            "allowNull": false,
+            "displayName": "Value As Of Date (Location/Site)",
+            "expression": "split_part(clv.locsite, '$_|_$', 2)::date",
+            "dataType": "date",
+            "filterable": true,
+            "table": "clv",
+            "width": 100,
+            "description": "Value As Of Date (Location/Site)"
+        },
+        "center_name": {
+            "table": "hcm",
+            "displayName": "Center Name",
+            "width": 100,
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT center_name FROM hospital_center_master WHERE center_id!=0"
+        },
+        "center_state_name": {
+            "table": "hst",
+            "displayName": "Center State",
+            "width": 70,
+            "allowNull": true,
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT state_name FROM state_master  ORDER BY state_name",
+            "expression": "hst.state_name "
+        },
+        "center_country_name": {
+            "table": "hc",
+            "displayName": "Center Country",
+            "width": 70,
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT country_name  FROM country_master ORDER BY country_name",
+            "expression": "hc.country_name "
+        },
+        "center_city_name": {
+            "table": "hci",
+            "displayName": "Center City",
+            "width": 70,
+            "allowedValuesQuery": "SELECT city_name  FROM city ORDER BY city_name",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "expression": "hci.city_name "
+        },
+        "center_region_name": {
+            "table": "hrm",
+            "displayName": "Center Region",
+            "width": 70,
+            "allowedValuesQuery": "SELECT region_name  FROM region_master ORDER BY region_name",
+            "expression": "hrm.region_name",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true
+        }
+    },
+    "queryUnits": [
+        {
+            "mainTableName": "clinical_lab_recorded",
+            "mainTableAlias": "clr",
+            "groupBy": false,
+            "joinTables": [
+                {
+                    "alias": "clv",
+                    "name": "clinical_lab_values_ext_view_crosstab",
+                    "type": "LEFT",
+                    "expression": "ON (clv.clinical_lab_recorded_id = clr.clinical_lab_recorded_id)"
+                },
+                {
+                    "alias": "pd",
+                    "dependsOn": "clr",
+                    "name": "patient_details",
+                    "type": "LEFT",
+                    "expression": "ON pd.mr_no = clr.mrno"
+                },
+                {
+                    "alias": "pr",
+                    "dependsOn": "pd",
+                    "name": "patient_registration",
+                    "type": "Left",
+                    "expression": "ON pr.patient_id = coalesce(pd.visit_id,pd.previous_visit_id)"
+                },
+                {
+                    "name": "hospital_center_master",
+                    "alias": "hcm",
+                    "dependsOn": "pr",
+                    "expression": "ON (hcm.center_id = pr.center_id)"
+                },
+                {
+                    "name": "country_master",
+                    "alias": "hc",
+                    "dependsOn": "hcm",
+                    "expression": " ON hcm.country_id = hc.country_id"
+                },
+                {
+                    "name": "city",
+                    "alias": "hci",
+                    "dependsOn": "hcm",
+                    "expression": " ON hcm.city_id= hci.city_id"
+                },
+                {
+                    "name": "state_master",
+                    "alias": "hst",
+                    "dependsOn": "hcm",
+                    "expression": " ON  hcm.state_id= hst.state_id"
+                },
+                {
+                    "name": "region_master",
+                    "alias": "hrm",
+                    "dependsOn": "hcm",
+                    "expression": " ON hcm.region_id = hrm.region_id"
+                },
+                {
+                    "isInclude": true,
+                    "includeName": "PatientDetailFields.srjs"
+                }
+            ]
+        }
+    ],
+    "includes": [
+        "PatientDetailFields.srjs"
+    ],
+    "reportGroup": "Clinical Data",
+    "title": "Clinical Lab Report"
+}

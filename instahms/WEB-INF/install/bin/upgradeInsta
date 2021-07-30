@@ -1,0 +1,74 @@
+# !/bin/bash
+#
+# UpgradeInsta: this is called from the current version that is installed,
+# to upgrade HMS to the new version that has been downloaded to 
+# /root/builds/<version>
+# This will also upgrade the api to newer version if property insta.api.version is set in application.properties
+#
+
+# this function tells the people how to run this script
+function usage() {
+	echo "Usage: upgradeInsta <hms_version>"
+	echo " <hms_version> : This is the version to which HMS needs to be upgraded"
+}
+
+
+# this function gets major.minor part of version for example: `get_string_maj_min 1.2.0-4726` returns 1.2
+function get_string_maj_min() {
+        local ver=$1
+        ver=${ver%-*}
+        local parts=(${ver//./ })
+        echo "${parts[0]}.${parts[1]}"
+}
+
+
+# load functions script in the current directory
+source `dirname $0`/functions
+
+# load /etc/hms/options
+source /etc/hms/options
+[ ! $? -eq 0 ] && echo "$HOST $(date +"%a %m-%d-%Y %H:%M:%S") : Cannot load /etc/hms/options exiting.." && exit 1
+
+
+if [ -z "$APPHOME" ] ; then
+	APPHOME="/root/webapps"
+fi
+
+# get version of instahms to upgrade
+VERSION=$1
+[ -z $VERSION ] && usage && echo "$HOST $(date +"%a %m-%d-%Y %H:%M:%S") : Cannot upgrade HMS, version missing." && exit 1
+
+# get hmsdb
+
+# check if upgrade script exists and execute upgrade
+if [ -f `dirname $0`/upgrade ]; then
+	echo "$HOST $(date +"%a %m-%d-%Y %H:%M:%S") : trying to upgrade HMS to $VERSION ..."
+	`dirname $0`/upgrade $VERSION
+	[ ! $? -eq 0 ] && echo "$HOST $(date +"%a %m-%d-%Y %H:%M:%S") : Problem while executing HMS upgrade script" && exit 1 
+	echo "$HOST $(date +"%a %m-%d-%Y %H:%M:%S") : HMS upgraded to $VERSION"
+else
+	echo "$HOST $(date +"%a %m-%d-%Y %H:%M:%S") : HMS upgrade file doesn't exist" && echo "$HOST $(date +"%a %m-%d-%Y %H:%M:%S") : HMS upgrade to $VERSION failed" && exit 1
+fi
+
+# Waiting for 3 minutes for api upgrade
+do_log "$HOST $(date +"%a %m-%d-%Y %H:%M:%S") : Attempting to upgrade API if deployed"
+sleep 10
+
+# find upgrade apps location
+UPGRADE_APPS_NAME=insta${DB/hms/apps}
+UPGRADE_APPS_PATH="$APPHOME/$UPGRADE_APPS_NAME/WEB-INF/install/bin/upgrade"
+
+# find upgrade app host
+
+# check if apihost is set in /etc/hms/options
+if [ ! -z $APIHOST ]; then
+	echo "$HOST $(date +"%a %m-%d-%Y %H:%M:%S") : Variable APIHOST exists and APPS upgrade will run on $APIHOST ..."
+	ssh root@$APIHOST "sudo bash $UPGRADE_APPS_PATH $VERSION $DB"
+	[ ! $? -eq 0 ] && echo "$HOST $(date +"%a %m-%d-%Y %H:%M:%S") : Problem while executing APPS upgrade script $UPGRADE_APPS_PATH on $APIHOST" && exit 1
+	echo "$HOST $(date +"%a %m-%d-%Y %H:%M:%S") : APPS upgraded to $VERSION on $APIHOST"
+else
+	echo "$HOST $(date +"%a %m-%d-%Y %H:%M:%S") : Variable APIHOST doesn't exist and APPS upgrade will run on local system only..."
+	$UPGRADE_APPS_PATH $VERSION $DB
+	[ ! $? -eq 0 ] && echo "$HOST $(date +"%a %m-%d-%Y %H:%M:%S") : Problem while executing APPS upgrade script $UPGRADE_APPS_PATH on local system" && exit 1
+	echo "$HOST $(date +"%a %m-%d-%Y %H:%M:%S") : APPS upgraded to $VERSION on local system"
+fi

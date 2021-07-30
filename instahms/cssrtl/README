@@ -1,0 +1,3 @@
+This folder is used as a destination for all the css files converted to RTL. Will be used by the application build.
+Will be used by the arabic version of the application at runtime for all css files.
+ 

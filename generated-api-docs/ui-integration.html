@@ -1,0 +1,2132 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Insta Integration API</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.4/semantic.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/themes/prism-okaidia.min.css" />
+    <style>
+      blockquote {
+        border-left: solid 4px #eee;
+        padding-left: 8px;
+        font-style: italic;
+        margin-left: 0;
+        padding: 8px;
+      }
+
+      .ui.micro.label {
+        font-size: .25rem;
+      }
+
+      .ui.transaction.accordion .title {
+        text-align: center;
+      }
+
+      .ui.transaction.accordion .content {
+        border-top: solid 1px #ddd !important;
+        border-bottom: solid 1px #ddd !important;
+        background-color: rgba(0,0,0,.03);
+        padding: 0.5em 1em !important;
+      }
+
+      .ui.transaction.accordion .content.active {
+        margin-top: 0.5em;
+      }
+
+      .ui.basic.label {
+        text-align: left;
+        overflow: auto;
+      }
+      
+      .ui.basic.label.request-url {
+        user-select: text;
+      }
+
+      .resource .ui.sub.header {
+        text-transform: none;
+      }
+
+      .sidenav .ui.fluid.accordion .title {
+        padding-left: 0.5rem;
+      }
+      .sidenav .ui.fluid.accordion .title:not(:first-child) {
+        border-top: 1px solid #e0e0ec;        
+      }
+
+      .sidenav .ui.fluid.accordion .content {
+        padding: 0 0 0 2rem !important;
+        margin: 0;
+      }
+
+      .sidenav .ui.fluid.accordion .content .ui.secondary.menu {
+        margin: 0;
+      }
+
+      .sidenav .ui.fluid.accordion .content .ui.secondary.menu a.item{
+        margin: 0 0.75rem 0.5rem 0;
+      }
+      .sidenav .ui.fluid.accordion .content a.item > .label{
+        margin-top: 0.1rem;
+      }
+
+      @media only screen and (min-width: 768px) {
+        .sidewrap {
+          margin-right: 2rem;
+          border-right: 1px solid #b4b4be;
+          background-color: #f7f7fa;
+        }
+
+        .sidenav {
+          left: 0;
+          top: 0;
+          width: inherit;
+          position: fixed !important;
+          height: 100% !important;
+          overflow-y: auto !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="ui padded grid">
+      <div class="sidewrap four wide computer five wide tablet sixteen wide mobile column">
+        <div class="sidenav">
+          
+<a href="#introduction">
+  <h3 class="ui header centered" style="margin: 0;padding: 1rem 0;border-bottom: solid 1px #b4b4be;">
+    <img class="ui tiny image" src="data:image/png;base64,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"/>
+    <div class="content" style="padding:0;">
+      &nbsp;
+      <div class="sub header">Hospital Management System</div>
+    </div>
+  </h3>
+</a>
+
+
+<div class="ui horizontal divider">
+  <a href="#practo-book-integration">Practo Book Integration</a>
+</div>
+
+<div class="ui accordion fluid">
+  
+    
+    <div class="title active">
+      <i class="dropdown icon"></i>
+      
+        <strong>Validate the Integration key</strong>
+      
+    </div>
+    <div class="content active">
+      <div class="ui fluid secondary vertical menu">
+      
+        <a class="item blue" href="#practo-book-integration-validate-the-integration-key-validate-the-integration-key">
+          <i class="ui blue empty circular label"></i>
+          
+            <span>Validate the Integration key</span>
+          
+        </a>
+      
+      </div>
+    </div>
+    
+  
+    
+    <div class="title ">
+      <i class="dropdown icon"></i>
+      
+        <strong>Register Doctors on Practo</strong>
+      
+    </div>
+    <div class="content ">
+      <div class="ui fluid secondary vertical menu">
+      
+        <a class="item blue" href="#practo-book-integration-register-doctors-on-practo-register-doctors">
+          <i class="ui blue empty circular label"></i>
+          
+            <span>Register Doctors</span>
+          
+        </a>
+      
+      </div>
+    </div>
+    
+  
+    
+    <div class="title ">
+      <i class="dropdown icon"></i>
+      
+        <strong>Doctor details department wise</strong>
+      
+    </div>
+    <div class="content ">
+      <div class="ui fluid secondary vertical menu">
+      
+        <a class="item green" href="#practo-book-integration-doctor-details-department-wise-get-the-doctor-details-department-wise">
+          <i class="ui green empty circular label"></i>
+          
+            <span>Get the doctor details department wise</span>
+          
+        </a>
+      
+      </div>
+    </div>
+    
+  
+    
+    <div class="title ">
+      <i class="dropdown icon"></i>
+      
+        <strong>Center Preferences</strong>
+      
+    </div>
+    <div class="content ">
+      <div class="ui fluid secondary vertical menu">
+      
+        <a class="item green" href="#practo-book-integration-center-preferences-get-the-preferences-for-center">
+          <i class="ui green empty circular label"></i>
+          
+            <span>Get the preferences for center</span>
+          
+        </a>
+      
+      </div>
+    </div>
+    
+  
+    
+    <div class="title ">
+      <i class="dropdown icon"></i>
+      
+        <strong>Update center Preferences</strong>
+      
+    </div>
+    <div class="content ">
+      <div class="ui fluid secondary vertical menu">
+      
+        <a class="item blue" href="#practo-book-integration-update-center-preferences-update-the-preferences-for-center">
+          <i class="ui blue empty circular label"></i>
+          
+            <span>Update the preferences for center</span>
+          
+        </a>
+      
+      </div>
+    </div>
+    
+  
+</div>
+
+
+<div class="ui horizontal divider">
+  <a href="#op-registration">OP Registration</a>
+</div>
+
+<div class="ui accordion fluid">
+  
+    
+    <div class="title active">
+      <i class="dropdown icon"></i>
+      
+        <strong>OP Registration on v11.6.4 or earlier</strong>
+      
+    </div>
+    <div class="content active">
+      <div class="ui fluid secondary vertical menu">
+      
+        <a class="item green" href="#op-registration-op-registration-on-v11-6-4-or-earlier-op-registration-on-v11-6-4-or-earlier">
+          <i class="ui green empty circular label"></i>
+          
+            <span>OP Registration on v11.6.4 or earlier</span>
+          
+        </a>
+      
+      </div>
+    </div>
+    
+  
+    
+    <div class="title ">
+      <i class="dropdown icon"></i>
+      
+        <strong>OP Registration on v11.6.5 to v11.7</strong>
+      
+    </div>
+    <div class="content ">
+      <div class="ui fluid secondary vertical menu">
+      
+        <a class="item green" href="#op-registration-op-registration-on-v11-6-5-to-v11-7-op-registration-on-v11-6-5-to-v11-7">
+          <i class="ui green empty circular label"></i>
+          
+            <span>OP Registration on v11.6.5 to v11.7</span>
+          
+        </a>
+      
+      </div>
+    </div>
+    
+  
+    
+    <div class="title ">
+      <i class="dropdown icon"></i>
+      
+        <strong>OP Registration on v11.7 or later</strong>
+      
+    </div>
+    <div class="content ">
+      <div class="ui fluid secondary vertical menu">
+      
+        <a class="item green" href="#op-registration-op-registration-on-v11-7-or-later-op-registration-on-v11-7-or-later">
+          <i class="ui green empty circular label"></i>
+          
+            <span>OP Registration on v11.7 or later</span>
+          
+        </a>
+      
+      </div>
+    </div>
+    
+  
+    
+    <div class="title ">
+      <i class="dropdown icon"></i>
+      
+        <strong>Insta Version Endpoint</strong>
+      
+    </div>
+    <div class="content ">
+      <div class="ui fluid secondary vertical menu">
+      
+        <a class="item green" href="#op-registration-insta-version-endpoint-insta-hms-version">
+          <i class="ui green empty circular label"></i>
+          
+            <span>Insta HMS version</span>
+          
+        </a>
+      
+      </div>
+    </div>
+    
+  
+</div>
+
+
+        </div>
+      </div>
+      <div class="eleven wide computer ten wide tablet sixteen wide mobile column">
+        
+<div class="ui hidden divider header"></div>
+<h1 class="ui huge header" id="introduction">Insta Integration API</h1>
+<hr class="ui divider">
+<div class="description">
+  <p>Contains APIs in integration package for UI</p>
+
+</div>
+
+        <div class="ui hidden divider"></div>
+        
+
+  <div class="ui horizontal divider" id="practo-book-integration">
+    Practo Book Integration
+  </div>
+  <div class="ui header center aligned">
+    <div class="ui header">
+      <div class="sub header">
+        
+      </div>
+    </div>
+  </div>
+  
+    
+      <div class="ui segments">
+        <div class="ui basic segment resource">
+          <div class="ui black huge ribbon label">
+            Validate the Integration key
+          </div>
+          
+        </div>
+
+        
+          
+<div class="ui grey horizontal small divider header" style="margin-top:0">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui orange micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block inverted center aligned header" id="practo-book-integration-validate-the-integration-key-validate-the-integration-key">
+              Validate the Integration key
+            </h3>
+            <div class="description"><p>Validates The integration key</p>
+</div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui blue large button">
+                  <h3>POST</h3>
+                </div>
+                <a class="ui basic fluid request-url blue label">
+                  <code>http://localhost:8080/instahms/integrations/book/validate.json</code>
+                </a>
+              </div>
+              
+              
+                
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>application/x-www-form-urlencoded</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              
+              
+                <div class="ui stacked segment">
+                  <div class="ui fluid transaction">
+                    <div class="title">
+                      <code>application/x-www-form-urlencoded</code>
+                    </div>
+                    <div class="content tabbed">
+                      <div class="ui top attached tabular menu">
+                        <a data-tab="body" class="active item">BODY</a>
+                        <a data-tab="schema" class="item">SCHEMA</a>
+                      </div>
+                      <div class="ui bottom attached active tab segment" data-tab="body">
+                        <pre style="white-space: inherit">
+                          <code class="language-">establishment_key:d9fc5b73a8d78fad3d6dffe419384e70
+center_id:9
+</code>
+                        </pre>
+                      </div>
+                      <div class="ui bottom attached tab segment" data-tab="schema">
+                        <pre style="white-space: inherit">
+                          <code class="language-json"></code>
+                        </pre>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>application/json</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui blue segment">
+                  <div class="title" style="margin-bottom: 1rem;">
+                    <a class="ui blue circular label">
+                      200
+                    </a>
+                    <code></code>
+                  </div>
+                  <div class="content tabbed active">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-"></code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+              </div>
+            
+          </div>
+        
+        </div>
+      <div class="ui hidden divider"></div>
+    
+  
+    
+      <div class="ui segments">
+        <div class="ui basic segment resource">
+          <div class="ui black huge ribbon label">
+            Register Doctors on Practo
+          </div>
+          
+        </div>
+
+        
+          
+<div class="ui grey horizontal small divider header" style="margin-top:0">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui orange micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block inverted center aligned header" id="practo-book-integration-register-doctors-on-practo-register-doctors">
+              Register Doctors
+            </h3>
+            <div class="description"><p>Register the list of selected doctors for the given center</p>
+</div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui blue large button">
+                  <h3>POST</h3>
+                </div>
+                <a class="ui basic fluid request-url blue label">
+                  <code>http://localhost:8080/instahms/integrations/book/doctors.json</code>
+                </a>
+              </div>
+              
+              
+                
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>application/x-www-form-urlencoded</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              
+              
+                <div class="ui stacked segment">
+                  <div class="ui fluid transaction">
+                    <div class="title">
+                      <code>application/x-www-form-urlencoded</code>
+                    </div>
+                    <div class="content tabbed">
+                      <div class="ui top attached tabular menu">
+                        <a data-tab="body" class="active item">BODY</a>
+                        <a data-tab="schema" class="item">SCHEMA</a>
+                      </div>
+                      <div class="ui bottom attached active tab segment" data-tab="body">
+                        <pre style="white-space: inherit">
+                          <code class="language-">doctor_ids: DOC0237,DOC0234,DOC123
+center_id: 9
+</code>
+                        </pre>
+                      </div>
+                      <div class="ui bottom attached tab segment" data-tab="schema">
+                        <pre style="white-space: inherit">
+                          <code class="language-json"></code>
+                        </pre>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>application/json</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui blue segment">
+                  <div class="title" style="margin-bottom: 1rem;">
+                    <a class="ui blue circular label">
+                      200
+                    </a>
+                    <code>application/json</code>
+                  </div>
+                  <div class="content tabbed active">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-json">{
+    &#34;result&#34; : {
+        &#34;registered&#34; : 1,
+        &#34;failed&#34; : 2,
+        &#34;total_processed&#34; : 3
+
+    },
+
+    &#34;errors&#34; : {
+        &#34;DOC0234&#34; : &#34;Weekly availability is not found for doctor davis for selected center. Please add it and re-try &#34;,
+        &#34;DOC123&#34; :  &#34;Weekly availability is not found for doctor davis for selected center. Please add it and re-try&#34;
+    }
+
+}
+</code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+              </div>
+            
+          </div>
+        
+        </div>
+      <div class="ui hidden divider"></div>
+    
+  
+    
+      <div class="ui segments">
+        <div class="ui basic segment resource">
+          <div class="ui black huge ribbon label">
+            Doctor details department wise
+          </div>
+          
+        </div>
+
+        
+          
+<div class="ui grey horizontal small divider header" style="margin-top:0">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui orange micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block inverted center aligned header" id="practo-book-integration-doctor-details-department-wise-get-the-doctor-details-department-wise">
+              Get the doctor details department wise
+            </h3>
+            <div class="description"><p>Get the doctors list with information of doctor&rsquo;s center and department details.
+The list is sorted by department. Only the Active doctors are listed</p>
+</div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui green large button">
+                  <h3>GET</h3>
+                </div>
+                <a class="ui basic fluid request-url green label">
+                  <code>http://localhost:8080/instahms/integrations/book/doctors/{centerId}.json</code>
+                </a>
+              </div>
+              
+                <table class="ui celled definition table">
+                  <thead>
+                    <tr>
+                      <th colspan="4">Parameters</th>
+                    </tr>
+                  <thead>
+                  <tbody>
+                    
+                      
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label black" data-content="required" data-position="top center"></i>
+      </td>
+      <td><code>centerId</code></td>
+      <td class="center aligned">
+        <code>number</code>
+        
+        
+      </td>
+      <td class="eight wide">
+        <p>The center for which doctors are to be fetched. Ex: 9</p>
+
+        
+      </td>
+    </tr>
+  
+
+                    
+                    
+                  </tbody>
+                </table>
+              
+              
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>application/json</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui blue segment">
+                  <div class="title" style="margin-bottom: 1rem;">
+                    <a class="ui blue circular label">
+                      200
+                    </a>
+                    <code>application/json</code>
+                  </div>
+                  <div class="content tabbed active">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-json">{
+
+  &#34;ABC0001&#34;: [
+    {
+      &#34;allowed_revisit_count&#34;: null,
+      &#34;doctor_mail_id&#34;: &#34;&#34;,
+      &#34;chanelling&#34;: &#34;N&#34;,
+      &#34;doctor_id&#34;: &#34;DOC0215&#34;,
+      &#34;doctor_license_number&#34;: &#34;&#34;,
+      &#34;payment_eligible&#34;: &#34;N&#34;,
+      &#34;practition_type&#34;: &#34; &#34;,
+      &#34;obsolete_overbook&#34;: true,
+      &#34;allow_sig_usage_by_others&#34;: &#34;N&#34;,
+      &#34;custom_field4_value&#34;: null,
+      &#34;doctor_mobile_country_code&#34;: null,
+      &#34;qualification&#34;: &#34;&#34;,
+      &#34;dhpo_clinician_user_id&#34;: null,
+      &#34;ip_discharge_consultation_validity&#34;: null,
+      &#34;created_timestamp&#34;: 1442040134877,
+      &#34;custom_field3_value&#34;: null,
+      &#34;ot_doctor_flag&#34;: &#34;N&#34;,
+      &#34;schedule&#34;: true,
+      &#34;prescribe_by_favourites&#34;: &#34;N&#34;,
+      &#34;custom_field1_value&#34;: null,
+      &#34;doctor_type&#34;: &#34;HOSPITAL&#34;,
+      &#34;ip_template_id&#34;: 0,
+      &#34;consulting_doctor_flag&#34;: &#34;N&#34;,
+      &#34;speciality_id&#34;: &#34;&#34;,
+      &#34;specialization&#34;: &#34;&#34;,
+      &#34;payment_category&#34;: 1,
+      &#34;dept_name&#34;: &#34;WebAPI1&#34;,
+      &#34;doctor_name&#34;: &#34;sampledoctor1&#34;,
+      &#34;ip_discharge_consultation_count&#34;: null,
+      &#34;dhpo_clinician_password&#34;: null,
+      &#34;center_id_obsolete&#34;: null,
+      &#34;status&#34;: &#34;A&#34;,
+      &#34;custom_field2_value&#34;: null,
+      &#34;res_phone&#34;: &#34;&#34;,
+      &#34;op_template_id&#34;: 0,
+      &#34;overbook_limit&#34;: null,
+      &#34;doctor_mobile&#34;: &#34;&#34;,
+      &#34;registration_no&#34;: &#34;&#34;,
+      &#34;updated_timestamp&#34;: 1442040135072,
+      &#34;doctor_address&#34;: &#34;&#34;,
+      &#34;op_consultation_validity&#34;: null,
+      &#34;service_sub_group_id&#34;: -1,
+      &#34;clinic_phone&#34;: &#34;&#34;,
+      &#34;custom_field5_value&#34;: null,
+      &#34;status_on_practo&#34;: null,
+      &#34;dept_id&#34;: &#34;ABC0001&#34;
+    }
+]
+}
+</code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+              </div>
+            
+          </div>
+        
+        </div>
+      <div class="ui hidden divider"></div>
+    
+  
+    
+      <div class="ui segments">
+        <div class="ui basic segment resource">
+          <div class="ui black huge ribbon label">
+            Center Preferences
+          </div>
+          
+        </div>
+
+        
+          
+<div class="ui grey horizontal small divider header" style="margin-top:0">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui orange micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block inverted center aligned header" id="practo-book-integration-center-preferences-get-the-preferences-for-center">
+              Get the preferences for center
+            </h3>
+            <div class="description"></div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui green large button">
+                  <h3>GET</h3>
+                </div>
+                <a class="ui basic fluid request-url green label">
+                  <code>http://localhost:8080/instahms/integrations/book/centerprefs/{centerId}.json</code>
+                </a>
+              </div>
+              
+              
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>application/json</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui blue segment">
+                  <div class="title" style="margin-bottom: 1rem;">
+                    <a class="ui blue circular label">
+                      200
+                    </a>
+                    <code>application/json</code>
+                  </div>
+                  <div class="content tabbed active">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-json">{
+  &#34;integration_preferences&#34;: [
+    {
+      &#34;establishment_key&#34;: &#34;d9fc5b73a8d78fad3d6dffe419384e70&#34;,
+      &#34;integration_id&#34;: 36,
+      &#34;center_integration_id&#34;: 5,
+      &#34;center_id&#34;: 9
+    }
+  ],
+  &#34;center_preferences&#34;: [
+    {
+      &#34;pref_smart_card_enabled&#34;: &#34;N&#34;,
+      &#34;pref_default_ip_bill_type&#34;: &#34;C&#34;,
+      &#34;share_pat_details_to_practo&#34;: true,
+      &#34;pref_op_default_category&#34;: null,
+      &#34;pref_osp_default_category&#34;: 22,
+      &#34;pacs_mrno_url&#34;: null,
+      &#34;pref_pre_reg_default_category&#34;: 12,
+      &#34;smart_card_id_pattern&#34;: null,
+      &#34;pacs_order_url&#34;: null,
+      &#34;government_id_provider_url&#34;: null,
+      &#34;government_id_provider&#34;: null,
+      &#34;pref_rate_plan_for_non_insured_bill&#34;: &#34;ORG0029&#34;,
+      &#34;center_id&#34;: 9,
+      &#34;pref_default_op_bill_type&#34;: &#34;P&#34;,
+      &#34;pref_ip_default_category&#34;: 20
+    }
+  ]
+}
+</code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+              </div>
+            
+          </div>
+        
+        </div>
+      <div class="ui hidden divider"></div>
+    
+  
+    
+      <div class="ui segments">
+        <div class="ui basic segment resource">
+          <div class="ui black huge ribbon label">
+            Update center Preferences
+          </div>
+          
+        </div>
+
+        
+          
+<div class="ui grey horizontal small divider header" style="margin-top:0">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui orange micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block inverted center aligned header" id="practo-book-integration-update-center-preferences-update-the-preferences-for-center">
+              Update the preferences for center
+            </h3>
+            <div class="description"></div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui blue large button">
+                  <h3>POST</h3>
+                </div>
+                <a class="ui basic fluid request-url blue label">
+                  <code>http://localhost:8080/instahms/integrations/book/centerprefs.json</code>
+                </a>
+              </div>
+              
+              
+                
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>application/x-www-form-urlencoded</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              
+              
+                <div class="ui stacked segment">
+                  <div class="ui fluid transaction">
+                    <div class="title">
+                      <code>application/x-www-form-urlencoded</code>
+                    </div>
+                    <div class="content tabbed">
+                      <div class="ui top attached tabular menu">
+                        <a data-tab="body" class="active item">BODY</a>
+                        <a data-tab="schema" class="item">SCHEMA</a>
+                      </div>
+                      <div class="ui bottom attached active tab segment" data-tab="body">
+                        <pre style="white-space: inherit">
+                          <code class="language-">share_pat_details_to_practo: false
+center_id: 9
+</code>
+                        </pre>
+                      </div>
+                      <div class="ui bottom attached tab segment" data-tab="schema">
+                        <pre style="white-space: inherit">
+                          <code class="language-json"></code>
+                        </pre>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>application/json</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui blue segment">
+                  <div class="title" style="margin-bottom: 1rem;">
+                    <a class="ui blue circular label">
+                      200
+                    </a>
+                    <code></code>
+                  </div>
+                  <div class="content tabbed active">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-"></code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+              </div>
+            
+          </div>
+        
+        </div>
+      <div class="ui hidden divider"></div>
+    
+  
+
+  <div class="ui horizontal divider" id="op-registration">
+    OP Registration
+  </div>
+  <div class="ui header center aligned">
+    <div class="ui header">
+      <div class="sub header">
+        <p>Open OP Registration page of Insta. Use Insta Version Endpoint to determine Version of Insta HMS</p>
+
+      </div>
+    </div>
+  </div>
+  
+    
+      <div class="ui segments">
+        <div class="ui basic segment resource">
+          <div class="ui black huge ribbon label">
+            OP Registration on v11.6.4 or earlier
+          </div>
+          
+        </div>
+
+        
+          
+<div class="ui grey horizontal small divider header" style="margin-top:0">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui orange micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block inverted center aligned header" id="op-registration-op-registration-on-v11-6-4-or-earlier-op-registration-on-v11-6-4-or-earlier">
+              OP Registration on v11.6.4 or earlier
+            </h3>
+            <div class="description"></div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui green large button">
+                  <h3>GET</h3>
+                </div>
+                <a class="ui basic fluid request-url green label">
+                  <code>http://localhost:8080/instahms/pages/registration/quickregistration.do{?_method,patient_name,mobile_no,mr_no,doctor_id,cons_date_time}</code>
+                </a>
+              </div>
+              
+                <table class="ui celled definition table">
+                  <thead>
+                    <tr>
+                      <th colspan="4">Parameters</th>
+                    </tr>
+                  <thead>
+                  <tbody>
+                    
+                      
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label black" data-content="required" data-position="top center"></i>
+      </td>
+      <td><code>_method</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">getdetails</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>View to open in registration action</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label grey" data-content="optional" data-position="top center"></i>
+      </td>
+      <td><code>patient_name</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">Cersei</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>Patient First Name</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label grey" data-content="optional" data-position="top center"></i>
+      </td>
+      <td><code>mobile_no</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">&#43;911234567890</code>
+        
+      </td>
+      <td class="eight wide">
+        -
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label grey" data-content="optional" data-position="top center"></i>
+      </td>
+      <td><code>mr_no</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">MR1234</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>Patient id in insta. This fetches patient details corresponding to mr_no. It has highest priority</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label grey" data-content="optional" data-position="top center"></i>
+      </td>
+      <td><code>doctor_id</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">DOC1234</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>Insta doctorId</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label grey" data-content="optional" data-position="top center"></i>
+      </td>
+      <td><code>cons_date_time</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">2017-01-01T12:00:00&#43;05:30</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>Doctor consultation time (ISO8601 format) (YYYY-MM-DD&rsquo;T&rsquo;HH:MM:SSTZD)</p>
+
+        
+      </td>
+    </tr>
+  
+
+                    
+                    
+                  </tbody>
+                </table>
+              
+              
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+  </tbody>
+</table>
+
+              <div class="ui  segment">
+                  <div class="title" style="margin-bottom: 1rem;">
+                    <a class="ui  circular label">
+                      302
+                    </a>
+                    <code></code>
+                  </div>
+                  <div class="content tabbed active">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-"></code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+              </div>
+            
+          </div>
+        
+        </div>
+      <div class="ui hidden divider"></div>
+    
+  
+    
+      <div class="ui segments">
+        <div class="ui basic segment resource">
+          <div class="ui black huge ribbon label">
+            OP Registration on v11.6.5 to v11.7
+          </div>
+          
+        </div>
+
+        
+          
+<div class="ui grey horizontal small divider header" style="margin-top:0">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui orange micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block inverted center aligned header" id="op-registration-op-registration-on-v11-6-5-to-v11-7-op-registration-on-v11-6-5-to-v11-7">
+              OP Registration on v11.6.5 to v11.7
+            </h3>
+            <div class="description"></div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui green large button">
+                  <h3>GET</h3>
+                </div>
+                <a class="ui basic fluid request-url green label">
+                  <code>http://localhost:8080/instahms/pages/registration/quickregistration.do{?_method,patient_salutation,pat_gender,patient_name,patient_middle_name,patient_last_name,mobile_no,patient_dob,patient_age,next_of_kin_name,pat_city,pat_address,patient_email,mr_no,doctor_id,cons_date_time,oldmrno}</code>
+                </a>
+              </div>
+              
+                <table class="ui celled definition table">
+                  <thead>
+                    <tr>
+                      <th colspan="4">Parameters</th>
+                    </tr>
+                  <thead>
+                  <tbody>
+                    
+                      
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label black" data-content="required" data-position="top center"></i>
+      </td>
+      <td><code>_method</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">getdetails</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>View to open in registration action</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label grey" data-content="optional" data-position="top center"></i>
+      </td>
+      <td><code>patient_salutation</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">SALU0002</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>Id of salutation, This gives salutation name and assocaited gender. SALU0002 (Mr. M) SALU0003 (Mrs F) SALU0004 (Ms. F) SALU0005(Master M) SALU0006 (Miss F) SALU0007 (Dr.) SALU0008 (Baby)</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label grey" data-content="optional" data-position="top center"></i>
+      </td>
+      <td><code>pat_gender</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">F</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>&lsquo;F&rsquo;-Female, &rsquo;M&rsquo;-Male, &lsquo;C&rsquo;-couple, &lsquo;O&rsquo;-other. (Gender of salutation_id will be given more priority)</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label grey" data-content="optional" data-position="top center"></i>
+      </td>
+      <td><code>patient_name</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">Cersei</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>Patient First Name</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label grey" data-content="optional" data-position="top center"></i>
+      </td>
+      <td><code>patient_last_name</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">Lannister</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>Patient Last name</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label grey" data-content="optional" data-position="top center"></i>
+      </td>
+      <td><code>patient_middle_name</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">indra</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>Patient middle name</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label grey" data-content="optional" data-position="top center"></i>
+      </td>
+      <td><code>patient_age</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">22Y</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>Patient age. we can pass age value &amp; it&rsquo;s unit allowed units are D-days M-months Y-year,if user didn&rsquo;t pass unit by default it&rsquo;ll be Y (year)</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label grey" data-content="optional" data-position="top center"></i>
+      </td>
+      <td><code>patient_dob</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">2000-01-01</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>Date of Birth of patient - yyyy-mm-dd or yy-mm-dd, This will automatically calculate <code>patient_age</code>. This has highest priority than <code>patient_age</code></p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label grey" data-content="optional" data-position="top center"></i>
+      </td>
+      <td><code>pat_address</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">Cersie, H.No:123, Kings Landing, Westeros</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>Address of Patient</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label grey" data-content="optional" data-position="top center"></i>
+      </td>
+      <td><code>next_of_kin_name</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">Jaime Lannister</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>Kins name</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label grey" data-content="optional" data-position="top center"></i>
+      </td>
+      <td><code>patient_email</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">cersie@got.com</code>
+        
+      </td>
+      <td class="eight wide">
+        -
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label grey" data-content="optional" data-position="top center"></i>
+      </td>
+      <td><code>mobile_no</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">&#43;911234567890</code>
+        
+      </td>
+      <td class="eight wide">
+        -
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label grey" data-content="optional" data-position="top center"></i>
+      </td>
+      <td><code>mr_no</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">MR1234</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>Patient id in insta. This fetches patient details corresponding to mr_no. It has highest priority</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label grey" data-content="optional" data-position="top center"></i>
+      </td>
+      <td><code>doctor_id</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">DOC1234</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>Insta doctorId</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label grey" data-content="optional" data-position="top center"></i>
+      </td>
+      <td><code>cons_date_time</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">2017-01-01T12:00:00&#43;05:30</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>Doctor consultation time (ISO8601 format) (YYYY-MM-DD&rsquo;T&rsquo;HH:MM:SSTZD)</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label grey" data-content="optional" data-position="top center"></i>
+      </td>
+      <td><code>oldmrno</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">APOLLO123</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>Extra reference ID of patient which needs to be captured</p>
+
+        
+      </td>
+    </tr>
+  
+
+                    
+                    
+                  </tbody>
+                </table>
+              
+              
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+  </tbody>
+</table>
+
+              <div class="ui  segment">
+                  <div class="title" style="margin-bottom: 1rem;">
+                    <a class="ui  circular label">
+                      302
+                    </a>
+                    <code></code>
+                  </div>
+                  <div class="content tabbed active">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-"></code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+              </div>
+            
+          </div>
+        
+        </div>
+      <div class="ui hidden divider"></div>
+    
+  
+    
+      <div class="ui segments">
+        <div class="ui basic segment resource">
+          <div class="ui black huge ribbon label">
+            OP Registration on v11.7 or later
+          </div>
+          
+        </div>
+
+        
+          
+<div class="ui grey horizontal small divider header" style="margin-top:0">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui orange micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block inverted center aligned header" id="op-registration-op-registration-on-v11-7-or-later-op-registration-on-v11-7-or-later">
+              OP Registration on v11.7 or later
+            </h3>
+            <div class="description"></div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui green large button">
+                  <h3>GET</h3>
+                </div>
+                <a class="ui basic fluid request-url green label">
+                  <code>http://localhost:8080/instahms/integrations/redirect/patient/registration.htm{?patient_salutation,pat_gender,patient_name,patient_middle_name,patient_last_name,mobile_no,patient_dob,patient_age,next_of_kin_name,pat_city,pat_address,patient_email,mr_no,doctor_id,cons_date_time,oldmrno}</code>
+                </a>
+              </div>
+              
+                <table class="ui celled definition table">
+                  <thead>
+                    <tr>
+                      <th colspan="4">Parameters</th>
+                    </tr>
+                  <thead>
+                  <tbody>
+                    
+                      
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label grey" data-content="optional" data-position="top center"></i>
+      </td>
+      <td><code>patient_salutation</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">SALU0002</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>Id of salutation, This gives salutation name and assocaited gender. SALU0002 (Mr. M) SALU0003 (Mrs F) SALU0004 (Ms. F) SALU0005(Master M) SALU0006 (Miss F) SALU0007 (Dr.) SALU0008 (Baby)</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label grey" data-content="optional" data-position="top center"></i>
+      </td>
+      <td><code>pat_gender</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">F</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>&lsquo;F&rsquo;-Female, &rsquo;M&rsquo;-Male, &lsquo;C&rsquo;-couple, &lsquo;O&rsquo;-other. (Gender of salutation_id will be given more priority)</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label grey" data-content="optional" data-position="top center"></i>
+      </td>
+      <td><code>patient_name</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">&#39;Cersei`</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>Patient First Name</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label grey" data-content="optional" data-position="top center"></i>
+      </td>
+      <td><code>patient_last_name</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">Lannister</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>Patient Last name</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label grey" data-content="optional" data-position="top center"></i>
+      </td>
+      <td><code>patient_middle_name</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">indra</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>Patient middle name</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label grey" data-content="optional" data-position="top center"></i>
+      </td>
+      <td><code>patient_age</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">22Y</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>Patient age. we can pass age value &amp; it&rsquo;s unit allowed units are D-days M-months Y-year,if user didn&rsquo;t pass unit by default it&rsquo;ll be Y (year)</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label grey" data-content="optional" data-position="top center"></i>
+      </td>
+      <td><code>patient_dob</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">2000-01-01</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>Date of Birth of patient - yyyy-mm-dd or yy-mm-dd, This will automatically calculate <code>patient_age</code>. This has highest priority than <code>patient_age</code></p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label grey" data-content="optional" data-position="top center"></i>
+      </td>
+      <td><code>pat_address</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">Cersie, H.No:123, Kings Landing, Westeros</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>Address of Patient</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label grey" data-content="optional" data-position="top center"></i>
+      </td>
+      <td><code>next_of_kin_name</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">Jaime Lannister</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>Kins name</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label grey" data-content="optional" data-position="top center"></i>
+      </td>
+      <td><code>patient_email</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">cersie@got.com</code>
+        
+      </td>
+      <td class="eight wide">
+        -
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label grey" data-content="optional" data-position="top center"></i>
+      </td>
+      <td><code>mobile_no</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">&#43;911234567890</code>
+        
+      </td>
+      <td class="eight wide">
+        -
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label grey" data-content="optional" data-position="top center"></i>
+      </td>
+      <td><code>mr_no</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">MR1234</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>Patient id in insta. This fetches patient details corresponding to mr_no. It has highest priority</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label grey" data-content="optional" data-position="top center"></i>
+      </td>
+      <td><code>doctor_id</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">DOC1234</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>Insta doctorId</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label grey" data-content="optional" data-position="top center"></i>
+      </td>
+      <td><code>cons_date_time</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">2017-01-01T12:00:00&#43;05:30</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>Doctor consultation time (ISO8601 format) (YYYY-MM-DD&rsquo;T&rsquo;HH:MM:SSTZD)</p>
+
+        
+      </td>
+    </tr>
+  
+    <tr>
+      <td class="center aligned one wide">
+        <i class="ui empty circular label grey" data-content="optional" data-position="top center"></i>
+      </td>
+      <td><code>oldmrno</code></td>
+      <td class="center aligned">
+        <code>string</code>
+        <code class="ui label">APOLLO123</code>
+        
+      </td>
+      <td class="eight wide">
+        <p>Extra reference ID of patient which needs to be captured</p>
+
+        
+      </td>
+    </tr>
+  
+
+                    
+                    
+                  </tbody>
+                </table>
+              
+              
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+  </tbody>
+</table>
+
+              <div class="ui  segment">
+                  <div class="title" style="margin-bottom: 1rem;">
+                    <a class="ui  circular label">
+                      302
+                    </a>
+                    <code></code>
+                  </div>
+                  <div class="content tabbed active">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-"></code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+              </div>
+            
+          </div>
+        
+        </div>
+      <div class="ui hidden divider"></div>
+    
+  
+    
+      <div class="ui segments">
+        <div class="ui basic segment resource">
+          <div class="ui black huge ribbon label">
+            Insta Version Endpoint
+          </div>
+          
+          <div class="description" style="margin: 1.3rem 0 0.3rem 0;">
+              <p>Get the version of Insta HMS</p>
+
+          </div>
+          
+        </div>
+
+        
+          
+<div class="ui grey horizontal small divider header" style="margin-top:0">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui orange micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block inverted center aligned header" id="op-registration-insta-version-endpoint-insta-hms-version">
+              Insta HMS version
+            </h3>
+            <div class="description"></div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui green large button">
+                  <h3>GET</h3>
+                </div>
+                <a class="ui basic fluid request-url green label">
+                  <code>http://localhost:8080/instaapps/getAPIVersion.do?_method=getAPIVersion</code>
+                </a>
+              </div>
+              
+              
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>application/json</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui blue segment">
+                  <div class="title" style="margin-bottom: 1rem;">
+                    <a class="ui blue circular label">
+                      200
+                    </a>
+                    <code>application/json</code>
+                  </div>
+                  <div class="content tabbed active">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-json">{
+    &#34;return_message&#34;: &#34;Success&#34;,
+    &#34;return_code&#34;: &#34;2001&#34;,
+    &#34;version&#34;: &#34;11.7.1-7599&#34;
+}</code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+              </div>
+            
+          </div>
+        
+        </div>
+      <div class="ui hidden divider"></div>
+    
+  
+
+
+      </div>
+    </div>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.1/components/accordion.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.1/components/tab.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.1/components/transition.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.1/components/popup.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.13.0/prism.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.13.0/components/prism-json.min.js"></script>
+    <script type="text/javascript">
+      $(function() {
+        $('.ui.accordion').accordion({ animateChildren: false, duration: 0 });
+        $('.content.tabbed').each(function(index) {
+          $('.ui.tabular .item', $(this)).tab({ context: $(this) });
+        });
+        $('.ui.vertical.menu').on('click', '.item', function() {
+          $('.ui.vertical.menu .item').removeClass('active');
+          $(this).addClass('active');
+        });
+        $('.ui.empty.circular.label').popup();
+      });
+    </script>
+  </body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

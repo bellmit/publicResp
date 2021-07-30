@@ -1,0 +1,131 @@
+{
+    "title": "Scheduled Tests Report",
+    "description": "This report shows all the Test appointments.",
+    "reportGroup": "Scheduler Reports",
+    "dateFields": [
+        "appointment_date",
+        "booked_date",
+        "orig_appt_date",
+        "arrival_date"
+    ],
+    "includes": [
+        "CommonScheduledAppointmentFields.srjs"
+    ],
+    "queryUnits": [
+        {
+            "mainTableName": "scheduler_appointments",
+            "mainTableAlias": "sa",
+            "joinTables": [
+                {
+                    "includeName": "CommonScheduledAppointmentFields.srjs"
+                },
+                {
+                    "name": "diagnostics",
+                    "alias": "dia",
+                    "dependsOn": "sa",
+                    "expression": "ON(dia.test_id = sa.res_sch_name)"
+                },
+                {
+                    "name": "diagnostics_departments",
+                    "alias": "dd",
+                    "dependsOn": "dia",
+                    "expression": "ON (dd.ddept_id = dia.ddept_id)"
+                },
+                {
+                    "name": "scheduler_appointment_items",
+                    "alias": "sai",
+                    "dependsOn": "sa",
+                    "expression": "ON (sai.appointment_id = sa.appointment_id AND resource_type = 'EQID')"
+                },
+                {
+                    "name": "test_equipment_master",
+                    "alias": "tem",
+                    "dependsOn": "sai",
+                    "expression": "ON (tem.eq_id::text=sai.resource_id)"
+                }
+            ],
+            "whereExpression": "sm.res_sch_category = 'DIA'",
+            "whereTable": "sm"
+        }
+    ],
+    "fields": {
+        "test_name": {
+            "table": "dia",
+            "displayName": "Test Name",
+            "width": 120,
+            "groupable": true,
+            "filterable": true
+        },
+        "equipment_name": {
+            "table": "tem",
+            "displayName": "Equipment",
+            "width": 120,
+            "groupable": true,
+            "filterable": true
+        },
+        "test_dept_name": {
+            "table": "dd",
+            "displayName": "Test Department",
+            "width": 100,
+            "groupable": true,
+            "filterable": true,
+            "allowedValuesQuery": "select ddept_name from diagnostics_departments order by ddept_name",
+            "expression": "dd.ddept_name"
+        },
+        "technician_name": {
+            "table": "sa",
+            "displayName": "Technician/Radiologist",
+            "width": 70,
+            "groupable": true,
+            "filterable": true,
+            "expressionLines": [
+                " (SELECT textcat_commacat(doctor_name) ",
+                "  FROM scheduler_appointment_items  sai ",
+                "   JOIN doctors doc ON(doc.doctor_id = sai.resource_id) ",
+                "  WHERE sa.appointment_id = sai.appointment_id AND sai.resource_type = 'LABTECH') "
+            ]
+        },
+        "prescribing_doctor_name": {
+            "table": "sa",
+            "displayName": "Prescribing doctor",
+            "width": 100,
+            "groupable": true,
+            "filterable": true,
+            "expressionLines": [
+                " (SELECT d.doctor_name ",
+                " FROM doctors d WHERE(d.doctor_id=sa.presc_doc_id)) "
+            ]
+        },
+        "other_resources": {
+            "table": "sa,sai",
+            "displayName": "Other Resources",
+            "width": 70,
+            "groupable": true,
+            "filterable": true,
+            "expressionLines": [
+                " (SELECT textcat_commacat(resourcename) ",
+                "  FROM (SELECT ",
+                " CASE WHEN sai1.resource_type = 'LABTECH' THEN (select doctor_name from doctors where doctor_id = sai1.resource_id) ",
+                "ELSE ",
+                "(SELECT generic_resource_name FROM generic_resource_type grt ",
+                "JOIN generic_resource_master grm ON(grm.generic_resource_type_id = grt.generic_resource_type_id) ",
+                "AND grm.generic_resource_id::text = sai1.resource_id ",
+                "WHERE sa.appointment_id = sai1.appointment_id AND grt.scheduler_resource_type = sai1.resource_type) ",
+                "END AS resourcename ",
+                "FROM scheduler_appointment_items sai1 WHERE sa.appointment_id = sai1.appointment_id) ",
+                " as foo)"
+            ]
+        }
+    },
+    "defaultShowFields": [
+        "appointment_time",
+        "equipment_name",
+        "mr_no",
+        "patient_name",
+        "test_name",
+        "appointment_status",
+        "technician_name",
+        "duration",
+        "other_resources"
+    ]
+}

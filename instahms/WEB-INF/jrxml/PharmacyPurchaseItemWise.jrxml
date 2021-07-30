@@ -1,0 +1,517 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="595" pageHeight="842" whenNoDataType="NoDataSection" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="40" bottomMargin="40">
+	<parameter name="groupBy" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["supplier_name"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="filterBy" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["supplier_name"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="fromDate" class="java.sql.Date" isForPrompting="false">
+		<defaultValueExpression><![CDATA[java.sql.Date.valueOf("2000-01-01")]]></defaultValueExpression>
+	</parameter>
+	<parameter name="toDate" class="java.sql.Date" isForPrompting="false">
+		<defaultValueExpression><![CDATA[java.sql.Date.valueOf("2050-12-31")]]></defaultValueExpression>
+	</parameter>
+	<parameter name="filterValue" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["*"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="groupByName" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["Store"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="dueFromDate" class="java.sql.Date" isForPrompting="false">
+		<defaultValueExpression><![CDATA[java.sql.Date.valueOf("2000-01-01")]]></defaultValueExpression>
+	</parameter>
+	<parameter name="dueToDate" class="java.sql.Date" isForPrompting="false">
+		<defaultValueExpression><![CDATA[java.sql.Date.valueOf("2050-12-31")]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT u.*, $P!{groupBy} as group_name,
+round((billed_qty*rate-item_discount+item_tax),2) as item_amt
+FROM
+(SELECT 'Purchase'::text AS purchase_type, sm.supplier_name, i.invoice_no, i.invoice_date,
+  CASE WHEN i.status='O' THEN 'Open' WHEN i.status='F' THEN 'Finalized' ELSE 'Closed' END AS invoice_status,
+  i.due_date, i.paid_date, i.tax_name, i.discount, i.round_off, i.other_charges, i.cess_tax_amt as cess,
+  g.cost_price as rate, g.discount AS item_discount, g.tax_rate as item_tax_rate, g.tax as item_tax,
+  m.medicine_name, g.batch_no, g.bonus_qty, g.billed_qty
+FROM store_invoice i
+  JOIN store_grn_main gm USING (supplier_invoice_id)
+  JOIN store_grn_details g USING (grn_no)
+  JOIN supplier_master sm ON (sm.supplier_code = i.supplier_id)
+	JOIN store_item_details m USING (medicine_id)
+UNION ALL
+SELECT 'Debit Note'::text AS purchase_type, sm.supplier_name, d.debit_note_no, d.debit_note_date,
+  CASE WHEN d.status = 'O' THEN 'Open' ELSE 'Closed' END AS invoice_status,
+  date('1970-01-01') AS due_date, null AS paid_date, 'VAT' AS tax_name, (0-d.discount) AS discount,
+  (0-d.round_off) AS round_off, (0-d.other_charges) as other_charges, 0 AS cess,
+  g.cost_price, g.discount AS item_discount, g.tax_rate as item_tax_rate, g.tax as item_tax,
+  m.medicine_name, g.batch_no, g.bonus_qty, g.billed_qty
+FROM store_debit_note d
+  JOIN store_grn_main gm USING (debit_note_no)
+  JOIN store_grn_details g USING (grn_no)
+	JOIN supplier_master sm ON (sm.supplier_code = d.supplier_id)
+	JOIN store_item_details m USING (medicine_id)
+) as u
+WHERE date(invoice_date) BETWEEN $P{fromDate} AND $P{toDate}
+ AND date(due_date) BETWEEN $P{dueFromDate} AND $P{dueToDate} AND
+ ( ($P{filterValue} = '*') OR ($P!{filterBy}=$P{filterValue} )
+   OR ($P{filterValue} = '' AND $P!{filterBy} IS NULL) )
+ORDER BY group_name,invoice_date,invoice_no]]>
+	</queryString>
+	<field name="group_name" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="supplier_name" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="purchase_type" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="invoice_no" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="invoice_date" class="java.sql.Date">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="paid_date" class="java.sql.Date">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="due_date" class="java.sql.Date">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="invoice_status" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="tax_name" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="cess" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="round_off" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="other_charges" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="discount" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="medicine_name" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="batch_no" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="bonus_qty" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="billed_qty" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="rate" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="item_discount" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="item_tax" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="item_amt" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="item_tax_rate" class="java.math.BigDecimal"/>
+	<variable name="item_total" class="java.math.BigDecimal" resetType="Group" resetGroup="invoice" calculation="Sum">
+		<variableExpression><![CDATA[$F{item_amt}]]></variableExpression>
+	</variable>
+	<variable name="item_discount" class="java.math.BigDecimal" resetType="Group" resetGroup="invoice" calculation="Sum">
+		<variableExpression><![CDATA[$F{item_discount}]]></variableExpression>
+	</variable>
+	<variable name="item_tax" class="java.math.BigDecimal" resetType="Group" resetGroup="invoice" calculation="Sum">
+		<variableExpression><![CDATA[$F{item_tax}]]></variableExpression>
+	</variable>
+	<group name="main">
+		<groupExpression><![CDATA[$F{group_name}]]></groupExpression>
+		<groupHeader>
+			<band height="22">
+				<textField>
+					<reportElement mode="Opaque" x="0" y="8" width="555" height="13"/>
+					<textElement verticalAlignment="Middle">
+						<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{groupByName} + ": " + $F{group_name}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<group name="invoice">
+		<groupExpression><![CDATA[$F{invoice_no}]]></groupExpression>
+		<groupHeader>
+			<band height="54" isSplitAllowed="false">
+				<textField pattern="" isBlankWhenNull="true">
+					<reportElement x="51" y="5" width="198" height="14"/>
+					<textElement/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{supplier_name}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="301" y="5" width="93" height="14"/>
+					<textElement/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{purchase_type}]]></textFieldExpression>
+				</textField>
+				<textField pattern="dd-MM-yyyy" isBlankWhenNull="true">
+					<reportElement x="51" y="19" width="64" height="14"/>
+					<textElement/>
+					<textFieldExpression class="java.util.Date"><![CDATA[$F{invoice_date}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="301" y="19" width="93" height="14"/>
+					<textElement/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{invoice_status}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="19" width="49" height="14"/>
+					<textElement/>
+					<text><![CDATA[Date:]]></text>
+				</staticText>
+				<line>
+					<reportElement x="0" y="1" width="555" height="1" forecolor="#000000"/>
+				</line>
+				<line>
+					<reportElement x="0" y="38" width="555" height="1" forecolor="#A6A6A6"/>
+				</line>
+				<line>
+					<reportElement x="0" y="52" width="555" height="1" forecolor="#A6A6A6"/>
+				</line>
+				<staticText>
+					<reportElement x="0" y="39" width="140" height="14"/>
+					<textElement verticalAlignment="Middle">
+						<font isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<text><![CDATA[Item]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="146" y="39" width="54" height="14"/>
+					<textElement verticalAlignment="Middle">
+						<font isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<text><![CDATA[Batch No]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="244" y="39" width="54" height="14"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<text><![CDATA[Bonus]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="200" y="39" width="44" height="14"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<text><![CDATA[Qty]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="298" y="39" width="60" height="14"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<text><![CDATA[Rate]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="405" y="39" width="50" height="14"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<text><![CDATA[Discount]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="455" y="39" width="40" height="14"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<text><![CDATA[Tax]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="496" y="39" width="59" height="14"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<text><![CDATA[Net Amt]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="358" y="39" width="47" height="14"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<text><![CDATA[Tax %]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="0" y="5" width="49" height="14"/>
+					<textElement/>
+					<text><![CDATA[Supplier:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="252" y="5" width="49" height="14"/>
+					<textElement/>
+					<text><![CDATA[Type:]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="480" y="5" width="75" height="14"/>
+					<textElement/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{invoice_no}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="394" y="5" width="86" height="14"/>
+					<textElement/>
+					<textFieldExpression class="java.lang.String"><![CDATA[($F{purchase_type}.equals("Purchase") ? "Invoice No: " :
+  "Debit Note No: ")]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="115" y="19" width="61" height="14"/>
+					<textElement/>
+					<text><![CDATA[Due Date:]]></text>
+				</staticText>
+				<textField pattern="dd-MM-yyyy" isBlankWhenNull="true">
+					<reportElement x="176" y="19" width="73" height="14"/>
+					<textElement/>
+					<textFieldExpression class="java.lang.String"><![CDATA[((($F{due_date}).toString()).equals("1970-01-01") )? "" : ($F{due_date}).toString()]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="252" y="19" width="49" height="14"/>
+					<textElement/>
+					<text><![CDATA[Status:]]></text>
+				</staticText>
+				<textField pattern="dd-MM-yyyy" isBlankWhenNull="true">
+					<reportElement x="480" y="19" width="75" height="14"/>
+					<textElement/>
+					<textFieldExpression class="java.util.Date"><![CDATA[$F{paid_date}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="394" y="19" width="86" height="14">
+						<printWhenExpression><![CDATA[new Boolean($F{paid_date}!=null)]]></printWhenExpression>
+					</reportElement>
+					<textElement/>
+					<text><![CDATA[Paid Date:]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="41" isSplitAllowed="false">
+				<staticText>
+					<reportElement x="358" y="0" width="47" height="14"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<text><![CDATA[Total:]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="496" y="-1" width="59" height="14"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{item_total}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="2" y="27" width="87" height="14"/>
+					<textElement textAlignment="Right">
+						<font isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<text><![CDATA[Cess:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="2" y="14" width="87" height="14"/>
+					<textElement textAlignment="Right">
+						<font isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<text><![CDATA[Invoice Discount:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="140" y="14" width="101" height="14"/>
+					<textElement textAlignment="Right">
+						<font isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<text><![CDATA[Other Charges:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="140" y="27" width="101" height="14"/>
+					<textElement textAlignment="Right">
+						<font isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<text><![CDATA[Round Off:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="392" y="27" width="101" height="14"/>
+					<textElement textAlignment="Right">
+						<font isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[Invoice Total:]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="90" y="27" width="50" height="14"/>
+					<textElement textAlignment="Right">
+						<font isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{cess}]]></textFieldExpression>
+				</textField>
+				<textField pattern="0.00" isBlankWhenNull="true">
+					<reportElement x="89" y="14" width="51" height="14"/>
+					<textElement textAlignment="Right">
+						<font isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{discount}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="241" y="14" width="49" height="14"/>
+					<textElement textAlignment="Right">
+						<font isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{other_charges}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="241" y="27" width="49" height="14"/>
+					<textElement textAlignment="Right">
+						<font isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{round_off}]]></textFieldExpression>
+				</textField>
+				<textField pattern="0.00" isBlankWhenNull="true">
+					<reportElement x="495" y="27" width="60" height="14"/>
+					<textElement textAlignment="Right">
+						<font isBold="true" isStrikeThrough="false" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{item_total}.add($F{other_charges}).subtract($F{discount})
+ .add($F{cess}).add($F{round_off})]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="361" y="0" width="194" height="1" forecolor="#A6A6A6"/>
+				</line>
+				<line>
+					<reportElement x="360" y="13" width="195" height="1" forecolor="#A6A6A6"/>
+				</line>
+				<textField>
+					<reportElement x="405" y="1" width="50" height="14"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{item_discount}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="455" y="1" width="40" height="14"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{item_tax}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band/>
+	</background>
+	<title>
+		<band height="53">
+			<textField>
+				<reportElement x="0" y="9" width="555" height="31"/>
+				<textElement textAlignment="Center">
+					<font size="20" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Purchase Item Wise Report: By " + $P{groupByName}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd-MM-yyyy">
+				<reportElement x="155" y="40" width="75" height="13"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom"/>
+				<textFieldExpression class="java.util.Date"><![CDATA[$P{fromDate}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="299" y="40" width="120" height="13"/>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font size="8" pdfFontName="Helvetica"/>	
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["(as of " + new SimpleDateFormat("dd-MM-yyyy HH:mm").format(new Date()) + ")"]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd-MM-yyyy">
+				<reportElement x="233" y="40" width="66" height="13"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom"/>
+				<textFieldExpression class="java.util.Date"><![CDATA[$P{toDate}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band/>
+	</pageHeader>
+	<columnHeader>
+		<band height="21"/>
+	</columnHeader>
+	<detail>
+		<band height="15" isSplitAllowed="false">
+			<textField>
+				<reportElement x="0" y="0" width="140" height="14"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{medicine_name}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="146" y="0" width="54" height="14"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{batch_no}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="244" y="0" width="54" height="14"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{bonus_qty}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="200" y="0" width="44" height="14"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{billed_qty}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="298" y="0" width="60" height="14"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{rate}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="405" y="0" width="50" height="14"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{item_discount}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="455" y="0" width="40" height="14"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{item_tax}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="496" y="0" width="59" height="14"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{item_amt}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="358" y="0" width="47" height="14"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{item_tax_rate}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band/>
+	</columnFooter>
+	<pageFooter>
+		<band/>
+	</pageFooter>
+	<summary>
+		<band/>
+	</summary>
+	<noData>
+		<band height="50">
+			<staticText>
+				<reportElement x="2" y="10" width="553" height="28"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="20" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[No Data was found for the given criteria.]]></text>
+			</staticText>
+		</band>
+	</noData>
+</jasperReport>

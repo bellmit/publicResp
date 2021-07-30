@@ -1,0 +1,197 @@
+{
+    "title": "Doctor Wise Revenue Details Report",
+    "dateFields": [
+        "posted_date"
+    ],
+    "description": " Doctor Wise Revenue Report.\\\n    <br/><br/><font color='red'> NOTE: We would recommend that you use the Bill Charge Adjustment Report Builder and migrate all Favorite Reports as revenue recognition is not dependent on Bill Finalization as was the case in previous releases and instead based on Accrual. This report is now not being maintained and would be removed soon. Do contact us at insta-support@practo.com if you need support or any more details.</font> ",
+    "defaultShowFields": [
+        "posted_date",
+        "mr_no",
+        "patient_name",
+        "chargehead_name",
+        "dept_name",
+        "act_description",
+        "amount"
+    ],
+    "fields": {
+        "posted_date": {
+            "table": "bc",
+            "displayName": "Posted Date",
+            "dataType": "date",
+            "width": "60",
+            "groupable": true,
+            "filterable": true,
+            "expression": "date(posted_date)"
+        },
+        "mr_no": {
+            "table": "pr",
+            "displayName": "Mr No",
+            "width": "60",
+            "groupable": true,
+            "filterable": false
+        },
+        "patient_name": {
+            "table": "pd",
+            "displayName": "Patient Name",
+            "width": "120",
+            "groupable": true,
+            "filterable": false
+        },
+        "name_local_language": {
+                    "table": "pd",
+                    "displayName": "Name In Local Language",
+                    "width": 150,
+                    "expression": "pd.name_local_language"
+        },
+        "chargehead_name": {
+            "table": "cc",
+            "displayName": "Charge Head Name",
+            "width": "120",
+            "groupable": true,
+            "filterable": false
+        },
+        "dept_name": {
+            "table": "td",
+            "displayName": "Treating Department",
+            "width": "90",
+            "groupable": true,
+            "filterable": false
+        },
+        "act_description": {
+            "table": "bc",
+            "displayName": "Item Description",
+            "width": "160",
+            "groupable": true,
+            "filterable": false
+        },
+        "doctor_name": {
+            "table": "d",
+            "displayName": "Doctor Name",
+            "width": "60",
+            "groupable": true,
+            "filterable": true,
+            "allowedValuesQuery": "SELECT doctor_name FROM doctors ORDER BY doctor_name"
+        },
+        "bill_no": {
+            "table": "bc",
+            "displayName": "Bill No",
+            "width": "60",
+            "groupable": true,
+            "filterable": false
+        },
+        "account_head": {
+            "table": "bc,cc,td",
+            "displayName": "Account Head",
+            "width": "60",
+            "groupable": true,
+            "filterable": false,
+            "expressionLines": [
+                "CASE WHEN charge_group='DOC' THEN 'Consultation'::text",
+                " WHEN charge_head='LTDIA' THEN 'LAB'::text",
+                " WHEN charge_group='SNP' THEN 'Service'::text",
+                " WHEN charge_group='OPE' and charge_head='TCOPE' THEN 'OT'::text",
+                " WHEN charge_group='OPE' and charge_head='SACOPE' THEN 'Surgery'::text",
+                " WHEN charge_group='OPE' and charge_head='ANATOPE' THEN 'Anaesthesia'::text",
+                " WHEN charge_group='DIA' THEN 'Radiology'||' ' || '('||td.dept_name||')' ",
+                " ELSE 'Others'::text ",
+                " END "
+            ]
+        },
+        "patient_type": {
+            "table": "pr,b",
+            "displayName": "Patient Type",
+            "width": "30",
+            "expression": "CASE WHEN pr.visit_type ='o' THEN 'OP' when pr.visit_type='i' then 'IP' END",
+            "groupable": true,
+            "filterable": true,
+            "allowedValues": [
+                "IP",
+                "OP"
+            ]
+        },
+        "amount": {
+            "table": "bc,b",
+            "displayName": "Amount",
+            "dataType": "numeric",
+            "decimalType": "integer",
+            "width": "60",
+            "expression": "COALESCE(bc.amount, 0)",
+            "groupable": false,
+            "aggFunction": "sum",
+            "filterable": false
+        },
+        "center_name": {
+            "table": "hcm",
+            "displayName": "Patient Visit Center",
+            "width": "60",
+            "groupable": true,
+            "filterable": true,
+            "allowedValuesQuery": "SELECT center_name FROM hospital_center_master WHERE center_id!=0"
+        }
+    },
+    "queryUnits": [
+        {
+            "mainTableName": "bill_charge",
+            "mainTableAlias": "bc",
+            "joinTables": [
+                {
+                    "name": "bill",
+                    "alias": "b",
+                    "dependsOn": "bc",
+                    "type": "LEFT",
+                    "expression": "ON (bc.bill_no=b.bill_no)"
+                },
+                {
+                    "name": "doctors",
+                    "alias": "d",
+                    "dependsOn": "bc",
+                    "type": "LEFT",
+                    "expression": "ON (CASE WHEN charge_group='DOC' THEN d.doctor_id= bc.act_description_id ELSE d.doctor_id= bc.prescribing_dr_id END)"
+                },
+                {
+                    "name": "patient_registration",
+                    "alias": "pr",
+                    "dependsOn": "b",
+                    "type": "LEFT",
+                    "expression": "ON (pr.patient_id = b.visit_id)"
+                },
+                {
+                    "name": "patient_details",
+                    "alias": "pd",
+                    "dependsOn": "pr",
+                    "type": "LEFT",
+                    "expression": "ON (pd.mr_no = pr.mr_no)"
+                },
+                {
+                    "name": "chargehead_constants",
+                    "alias": "cc",
+                    "dependsOn": "bc,d",
+                    "type": "LEFT",
+                    "expression": "ON (cc.chargehead_id = bc.charge_head)"
+                },
+                {
+                    "name": "treating_departments_view",
+                    "alias": "td",
+                    "dependsOn": "bc",
+                    "type": "LEFT",
+                    "expression": "ON (td.dept_id = bc.act_department_id)"
+                },
+                {
+                    "name": "u_user",
+                    "alias": "u",
+                    "dependsOn": "b",
+                    "type": "LEFT",
+                    "expression": "ON (u.emp_username = b.username)"
+                },
+                {
+                    "name": "hospital_center_master",
+                    "alias": "hcm",
+                    "dependsOn": "pr",
+                    "type": "LEFT",
+                    "expression": "ON (hcm.center_id = pr.center_id)"
+                }
+            ],
+            "whereExpression": "b.visit_type IN ('i','o')"
+        }
+    ]
+}

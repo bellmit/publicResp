@@ -1,0 +1,293 @@
+{
+    "title": "Patient Activities Report",
+    "reportGroup": "Ward Activities Reports",
+    "description": "This report shows all activities within the given date range.",
+    "dateFields": [
+        "due_date"
+    ],
+    "allowNoDate": true,
+    "defaultOrder": "mr_no",
+    "defaultShowFields": [
+        "mr_no",
+        "patient_id",
+        "full_name",
+        "due_date",
+        "due_time",
+        "activity_type",
+        "item_name",
+        "activity_status"
+    ],
+    "includes": [
+        "PatientVisitFields.srjs",
+        "PatientDetailFields.srjs"
+    ],
+    "fields": {
+        "due_date": {
+            "displayName": "Due Date",
+            "expression": "date(due_date)",
+            "dataType": "date",
+            "width": "60",
+            "filterable": true,
+            "groupable": true,
+            "table": "a"
+        },
+        "due_time": {
+            "displayName": "Due Time",
+            "expression": "to_char(due_date, 'HH24:mi')",
+            "width": "50",
+            "table": "a"
+        },
+        "activity_type": {
+            "displayName": "Activity Type",
+            "width": "70",
+            "filterable": true,
+            "values": [
+                "General Activity",
+                "Prescription Activity"
+            ],
+            "expression": "CASE WHEN a.activity_type = 'G' THEN 'General Activity' ELSE 'Prescription Activity' END",
+            "table": "a"
+        },
+        "prescription_type": {
+            "displayName": "Prescription Type",
+            "width": "70",
+            "filterable": true,
+            "values": [
+                "Medicine",
+                "Investigation",
+                "Service",
+                "Consultation",
+                "Others"
+            ],
+            "expressionLines": [
+                "CASE WHEN a.prescription_type='M' THEN ",
+                " (CASE WHEN pmp.medication_type='M' THEN 'Medicine' ",
+                     "  WHEN pmp.medication_type='IV' THEN 'IV Fluid' ",
+                     "  WHEN pmp.medication_type='A' THEN 'Additive' END) ",
+                " WHEN a.prescription_type='I' THEN 'Investigation' ",
+                " WHEN a.prescription_type='S' THEN 'Service' ",
+                " WHEN a.prescription_type='C' THEN 'Consultation' ",
+                " WHEN a.prescription_type='O' THEN 'Others' END"
+            ]
+        },
+        "item_name": {
+            "displayName": "Item Name",
+            "width": "180",
+            "expressionLines": [
+                "CASE WHEN a.activity_type = 'G' THEN a.gen_activity_details WHEN presc_type = 'NonBillable' THEN potp.item_name ",
+                "  WHEN pp.presc_type = 'Medicine' THEN sid.medicine_name WHEN presc_type = 'Inv.' THEN atp.test_name  ",
+                "  WHEN pp.presc_type = 'Doctor' THEN cdoc.doctor_name WHEN presc_type = 'Service' THEN s.service_name END  "
+            ],
+            "table": "sid,cdoc,atp,a,pp,s,potp"
+        },
+        "prescribed_by": {
+            "displayName": "Prescribed By",
+            "width": "80",
+            "expression": "doc.doctor_name",
+            "table": "doc"
+        },
+        "med_batch": {
+            "displayName": "Med. Batch",
+            "width": "40"
+        },
+        "med_expiry_date": {
+            "displayName": "Med. Expiry Date",
+            "expression": "a.med_exp_date",
+            "width": "40",
+            "table": "a"
+        },
+        "activity_status": {
+            "displayName": "Activity Status",
+            "width": "50",
+            "filterable": true,
+            "groupable": true
+        },
+        "order_no": {
+            "displayName": "Order No.",
+            "width": "70",
+            "expressionLines": [
+                " COALESCE((CASE WHEN tp.new_test_prescribed_id IS NULL THEN tp.common_order_id ELSE (SELECT common_order_id FROM tests_prescribed WHERE prescribed_id=tp.new_test_prescribed_id) end), sp.common_order_id) "
+            ],
+            "table": "tp,sp"
+        },
+        "completed_date": {
+            "displayName": "Compl. Date",
+            "width": "60",
+            "expression": "date(completed_date)",
+            "dataType": "date",
+            "filterable": true,
+            "groupable": true
+        },
+        "completed_time": {
+            "displayName": "Compl. Time",
+            "width": "50",
+            "expression": "to_char(completed_date, 'HH24:mi')"
+        },
+        "ordered_date": {
+            "displayName": "Ordered Date",
+            "width": "60",
+            "expression": "date(coalesce(tp.pres_date, sp.presc_date))",
+            "table": "tp,sp",
+            "filterable": true,
+            "groupable": true
+        },
+        "ordered_time": {
+            "displayName": "Ordered Time",
+            "width": "50",
+            "expression": "to_char(coalesce(tp.pres_date, sp.presc_date), 'HH24:mi')",
+            "table": "tp,sp"
+        },
+        "pres_added_by": {
+            "displayName": "Presc. Added By",
+            "expression": "pp.username",
+            "width": "60",
+            "filterable": true,
+            "groupable": true,
+            "table": "pp"
+        },
+        "activity_added_by": {
+            "displayName": "Activity Added By",
+            "expression": "a.added_by",
+            "width": "60",
+            "filterable": true,
+            "groupable": true,
+            "table": "a"
+        },
+        "reg_date": {
+            "table": "pr",
+            "displayName": "Adm/Reg. Date",
+            "width": 60,
+            "dataType": "date",
+            "groupable": true,
+            "filterable": true
+        }
+    },
+    "queryUnits": [
+        {
+            "mainTableAlias": "a",
+            "mainTableName": "patient_activities",
+            "groupBy": false,
+            "joinTables": [
+                {
+                    "name": "patient_prescription",
+                    "alias": "pp",
+                    "expression": "ON (pp.patient_presc_id=a.prescription_id)",
+                    "dependsOn": "a",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "patient_medicine_prescriptions",
+                    "alias": "pmp",
+                    "expression": "ON (pp.presc_type='Medicine' and pmp.op_medicine_pres_id=pp.patient_presc_id)",
+                    "dependsOn": "pp",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "patient_test_prescriptions",
+                    "alias": "ptp",
+                    "expression": "ON (pp.presc_type='Inv.' and ptp.op_test_pres_id=pp.patient_presc_id)",
+                    "dependsOn": "pp",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "patient_consultation_prescriptions",
+                    "alias": "pcp",
+                    "expression": "ON (pp.presc_type='Doctor' and pcp.prescription_id=pp.patient_presc_id)",
+                    "dependsOn": "pp",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "patient_service_prescriptions",
+                    "alias": "psp",
+                    "expression": "ON (pp.presc_type='Service' and pp.patient_presc_id=psp.op_service_pres_id)",
+                    "dependsOn": "pp",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "patient_other_prescriptions",
+                    "alias": "potp",
+                    "expression": "ON (pp.presc_type='NonBillable' and pp.patient_presc_id=potp.prescription_id)",
+                    "dependsOn": "pp",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "patient_registration",
+                    "alias": "pr",
+                    "expression": "ON (a.patient_id=pr.patient_id)",
+                    "dependsOn": "a",
+                    "type": "JOIN"
+                },
+                {
+                    "name": "patient_details",
+                    "alias": "pd",
+                    "expression": "ON (pr.mr_no=pd.mr_no)",
+                    "dependsOn": "pr",
+                    "type": "JOIN"
+                },
+                {
+                    "name": "services_prescribed",
+                    "alias": "sp",
+                    "dependsOn": "a,pp",
+                    "expression": "ON (pp.presc_type='Service' AND a.order_no=sp.prescription_id)",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "tests_prescribed",
+                    "alias": "tp",
+                    "dependsOn": "a,pp",
+                    "expression": "ON (pp.presc_type='Inv.' AND a.order_no=tp.prescribed_id)",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "diagnostics",
+                    "alias": "test",
+                    "dependsOn": "pp,ptp",
+                    "expression": "ON (pp.presc_type='Inv.' AND test.test_id=ptp.test_id)",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "doctors",
+                    "alias": "cdoc",
+                    "dependsOn": "pp,pcp",
+                    "expression": "ON (pp.presc_type = 'Doctor' AND pcp.doctor_id=cdoc.doctor_id)",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "doctors",
+                    "alias": "doc",
+                    "dependsOn": "pp",
+                    "expression": "ON (pp.doctor_id=doc.doctor_id)",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "store_item_details",
+                    "alias": "sid",
+                    "dependsOn": "pp,pmp",
+                    "expression": "ON (pp.presc_type = 'Medicine' AND pmp.medicine_id=sid.medicine_id)",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "generic_name",
+                    "alias": "gn",
+                    "dependsOn": "pp,pmp",
+                    "expression": "ON (pp.presc_type='Medicine' AND pmp.generic_code=gn.generic_code)",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "all_tests_pkgs_view",
+                    "alias": "atp",
+                    "dependsOn": "pp,ptp",
+                    "expression": "ON (pp.presc_type = 'Inv.' AND ptp.test_id=atp.test_id)",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "services",
+                    "alias": "s",
+                    "dependsOn": "pp,psp",
+                    "expression": "ON (pp.presc_type = 'Service' AND psp.service_id=s.service_id)",
+                    "type": "LEFT"
+                }
+            ]
+        }
+    ]
+}

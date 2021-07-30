@@ -1,0 +1,789 @@
+/******************
+  General stuff
+******************/
+img
+{
+    border: 0px;
+}
+
+/*
+  Since strict (what we use) mode defines img as inline, we need to override
+  this. In most table cells, we don't want this behaviour
+ */
+/*
+td img
+{
+    display: block;
+} */
+
+/* avoid having to do cellspacing=0 etc for any table */
+/*
+  Note: this does not work consistently across Mozilla and IE. IE requires
+  border-collapse to be given, due to which, Mozilla's alignment gets mucked up.
+  The safest and most consistent behaviour is when cellspacing=0 and cellpadding=0
+  are specified for the table itself.
+*/
+table
+{
+    /* border-collapse: collapse; */
+    border-spacing: 0px;
+}
+td
+{
+    padding: 0px;
+}
+
+
+/*************************
+  Block Tab styles
+**************************/
+.tabBlockMain
+{
+    width: 100%;
+    /* Collapsing makes one pixel gap in the side borders go away in IE, but causes
+       firefox to misalign the left tab-buttons and side border by one pixel.
+       The most compatible behaviour is seen when cellspacing=0 and cellpadding=0
+       are given in the table spec itself.
+       */
+    /* border-collapse: collapse */
+}
+
+table.tabBlockButtons
+{
+    width: 100%;
+    border-collapse: collapse;
+}
+
+/* buttons inactive, common to first middle last */
+div.tabBlockButton-first, div.tabBlockButton-mid, div.tabBlockButton-last
+{
+    vertical-align: top;
+    text-align: center;
+    white-space: nowrap;
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+    color: #17397D;
+
+    background-color: #DFEDFF;
+
+    border-color: #C4D6E7;
+    border-width: 1px;
+    border-top-style: solid;
+    border-bottom-style: solid;
+
+    padding-top: 4px;
+    padding-bottom: 4px;
+    padding-left: 7px;       /* include the image border */
+    padding-right: 5px;      /* compensate: total of 12px padding */
+
+    position: relative;
+    cursor: pointer;
+}
+
+/* active buttons: common */
+div.tabBlockButton-first-active, div.tabBlockButton-mid-active, div.tabBlockButton-last-active
+{
+    vertical-align: top;
+    text-align: center;
+    white-space: nowrap;
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+    background-color: white;
+
+    border-color: #C4D6E7;
+    border-width: 1px;
+    border-style: solid;
+    border-bottom-style: none;
+
+    margin-top: -1px;      /* shift up by N */
+    padding-top: 5px;     /* must be +N of normal */
+    padding-bottom: 5px;  /* must be +1 of normal */
+
+    padding-left: 6px;    /* -1 of normal, compensate for border */
+    padding-right: 6px;
+
+    margin-right: -2px;   /* covers the image of the cell on the right */
+    z-index: 101;
+    position: relative;
+    color: black;
+}
+
+/* buttons inactive: specializations */
+div.tabBlockButton-first
+{
+    /* special left border, no left image */
+    border-left-style: solid;
+    padding-left: 6px;       /* revert to normal padding, since no image on left */
+}
+
+div.tabBlockButton-mid
+{
+    /* usual left image */
+    background-image: url(../icons/pipe.png);
+    background-position: left center;
+    background-repeat: no-repeat;
+}
+
+div.tabBlockButton-last
+{
+    /* special right border, usual left image */
+    border-right-style: solid;
+    background-image: url(../icons/pipe.png);
+    background-position: left center;
+    background-repeat: no-repeat;
+    padding-right: 4px;    /* normal padding, compensate for border on right */
+}
+
+div.tabBlockButton-last-active
+{
+    margin-right: 0px;
+    padding-left: 6px;
+    padding-right: 4px;
+}
+
+td.tabBlockContents
+{
+    border-color: #C4D6E7;
+    border-width: 1px;
+    border-style: solid;
+    border-top-style: none;
+}
+
+.tabBlockPage
+{
+    min-height: 10em;
+    padding: 1em;
+}
+
+
+/**************************
+    Twiddle styles
+**************************/
+.twMain
+{
+    background: rgb(216, 216, 216) none repeat scroll 0%;
+    border: 1px solid #D0D0D0;
+    margin-top: 4px;
+}
+
+.twDecTop, .twDecBottom
+{
+    height: 2px;
+}
+
+.twDecTopLeft
+{
+    background: transparent url(../icons/corner_tl.gif) repeat scroll left top;
+}
+
+.twDecTopRight
+{
+    background: transparent url(../icons/corner_tr.gif) repeat scroll right top;
+}
+
+.twDecBottomLeft
+{
+    background: transparent url(../icons/corner_bl.gif) repeat scroll left bottom;
+}
+
+.twDecBottomRight
+{
+    background: transparent url(../icons/corner_br.gif) repeat scroll right bottom;
+}
+
+.twDecTopLeft, .twDecTopRight, .twDecBottomRight, .twDecBottomLeft
+{
+    background-repeat: no-repeat;
+    padding-left: 0pt;
+    width: 4px;
+}
+
+td.twTitle, td.twTitle-open, td.twTitle-off, td.twTitle-off-open
+{
+    padding: 1pt 0pt 1px 16px;
+    cursor: pointer;
+    font-weight: bold;
+    text-decoration: none;
+    background: transparent url(../icons/twdn.gif) no-repeat scroll left center;
+}
+
+td.twTitle-open, td.twTitle-off-open
+{
+    background: transparent url(../icons/twup.gif) no-repeat scroll left center;
+}
+
+td.twTitle-off, td.twTitle-off-open
+{
+    color: #666666;
+}
+
+.twPage
+{
+    padding: 0.2em;
+    background: #D9EABB none repeat scroll 0%;
+    background-image: url(../icons/tw_accent.png);
+    background-repeat: repeat-x;
+    background-position: top left;
+}
+
+a.twTitle:hover
+{
+    text-decoration: underline;
+}
+
+/***********
+ *  Simple twiddle (no rounder corners, no tables) styles
+ *********/
+.stwMain
+{
+	background-color: rgb(234, 242, 248);
+    border:1px #e6e6e6 solid;
+    margin: 5px 2px 3px 2px;
+}
+
+.stwHeader
+{
+    cursor: pointer;
+    background-color: #333;
+    background-image:url(../images/clmn_hd_bg.jpg);
+    border-bottom:none;
+    height:26px;
+}
+
+.stwContent
+{
+	background-color:#f8fbfe;
+    padding: 3px;
+}
+
+.stwContent .boxTable
+{
+    margin-bottom: 0px;
+}
+
+.stwHeader label
+{
+    background: transparent url(../icons/twup.gif) no-repeat left;
+    font-weight: bold;
+    font:bold 12px Arial;
+    color:#333;
+    padding:5px 5px 5px 20px;
+}
+
+.stwClosed label
+{
+    /* must appear after the plain one */
+    background: transparent url(../icons/twdn.gif) no-repeat left;
+}
+
+.stwInactive label
+{
+    /* must appear after the plain one */
+    color: #706870;
+    font-style: italic;
+}
+
+.stwHidden
+{
+    display: none;
+}
+
+/*************************
+  Tree styles
+*************************/
+/*
+  Windows Internet Explorer version 5.0, 5.5 and 6.0 see only the last class name in any
+  CSS rule that uses multiple class selectors. For example, the selector p.blue.green
+  is interpreted exactly as if it read p.green. See
+   http://www.thunderguy.com/semicolon/2005/05/16/multiple-class-selectors-in-internet-explorer/
+  Therefore, we use multiple classes with a - separator. We keep the run-time variant
+  part (like -open) always at the end.
+
+*/
+td.treeNode, td.treeNode-open, td.treeLastNode, td.treeLastNode-open,
+td.treeLeaf, td.treeLastLeaf, td.treeLink, td.treeBlank
+{
+    width:  16px;
+}
+
+td.treeNode, td.treeNode-open
+{
+    background: transparent url(../icons/tree_node_plus.gif) no-repeat scroll left top;
+}
+
+td.treeNode-open
+{
+    background: transparent url(../icons/tree_node_minus.gif) no-repeat scroll left top ;
+}
+
+td.treeLastNode
+{
+    background: transparent url(../icons/tree_lastnode_plus.gif) no-repeat scroll left top;
+}
+
+td.treeLastNode-open
+{
+    background: transparent url(../icons/tree_lastnode_minus.gif) no-repeat scroll left top ;
+}
+
+td.treeLeaf
+{
+    background: transparent url(../icons/tree_leaf.gif) no-repeat scroll left top;
+}
+
+td.treeLastLeaf
+{
+    background: transparent url(../icons/tree_lastleaf.gif) no-repeat scroll left top ;
+}
+
+td.treeLink
+{
+    background: url(../icons/tree_vline.gif);
+}
+
+td.treeIcon
+{
+    width: 22px;
+}
+
+/**************************
+  Tab styles: normal tab
+**************************/
+
+div.tabButtons
+{
+    padding: 0px 0px 3px 2px;
+    margin-top: 6px;
+}
+
+.tabButton
+{
+    border-style: solid;
+    border-color: rgb(232, 232, 242) rgb(131, 131, 147) rgb(0, 0, 0) rgb(232, 232, 242);
+    border-width: 2px 2px 0px;
+    padding: 5px 0.5em;
+/*    background-image: url(icons/gre.gif); */
+    background: #e0e6e6;
+/*    font-family: Arial,sans-serif; */
+    font-size: 85%;
+    position: relative;
+    text-decoration: none;
+    top: 3px;
+    z-index: 100;
+    display: inline;
+    cursor: pointer;
+}
+
+.tabButton, .tabButton:visited
+{
+    color: rgb(48, 48, 48);
+}
+
+a.tabButton:hover
+{
+/*    background-image: url(icons/gre_hover.gif); */
+    background: #ffffff;
+    background-image: url(../icons/tab_active.png);
+    background-repeat: repeat-x;
+}
+
+.tabButton.active
+{
+    padding-bottom: 8px;
+    top: 1px;
+    z-index: 102;
+/*    background-image: url(icons/gre_hover.gif); */
+    background: #ffffff;
+    background-image: url(../icons/tab_active.png);
+    background-repeat: repeat-x;
+}
+
+div.tabMain
+{
+    position: relative;
+    z-index: 101;
+}
+
+div.tabDecBar
+{
+    border-top: 3px solid #e0e0e0;
+    position: relative;
+    top: 3px;
+    margin-bottom: 3px;
+    z-index: 101;
+/*    background-image: url(icons/tab_bar.gif);
+    background-repeat: repeat-x; */
+}
+
+div.tabPage
+{
+    background-color: white;
+    border-style: solid;
+    border-width: 0px 2px 2px 2px;
+    border-color: #e0e0e0;
+    padding: 6px 2px 2px 4px;
+    margin-top: 0px;
+}
+
+div.tab2Main {}
+
+/**************************
+  Tab2 styles
+**************************/
+.tab2Buttons
+{
+    background-image: url(../icons/tab_o2_gre.gif);
+    border-style: solid;
+    border-width: 0px 0px 2px 0px;
+}
+
+.tab2Button
+{
+    border-style: solid;
+    border-width: 0px 2px 2px 0px;
+    padding: 2px 1em;
+    font-family: Arial,sans-serif;
+    display: inline;
+    cursor: pointer;
+    background-image: url(../icons/tab_o2_gre.gif);
+    font-size: 10px;
+    color: rgb(51, 51, 51);
+    font-weight: bolder;
+    background-repeat: repeat-x;
+}
+
+.tab2Button a
+{
+    text-decoration: none;
+}
+
+.tab2Button.active
+{
+    background-color: rgb(255, 255, 255);
+    color: rgb(0, 0, 0);
+    background-image: none;
+    border-width: 2px 1px 0px 1px;
+    top: 2px;
+}
+
+.tab2Button.active a:visited,
+.tab2Button a:visited
+{
+    background-image: none;
+    color: rgb(0, 0, 0);
+}
+
+.tab2ButtonsTable {}
+
+div.tab2DecBar
+{
+    padding: 0pt;
+    background-color: rgb(255, 255, 255);
+    z-index: 101;
+    height: 1px;
+    font-size: 1px;
+}
+
+div.tab2Page
+{
+    background-color: white;
+}
+
+/*************************
+    Extrow styles
+*************************/
+table.exTable
+{
+    background: rgb(238, 238, 238) none repeat scroll 0%;
+    width: 100%;
+    border-collapse: collapse;
+}
+table.exTable th
+{
+    font-weight: bold;
+    background-color: rgb(208, 216, 224);
+    border-right: 2px solid rgb(255,255,255);
+    border-left: 2px solid rgb(255,255,255);
+}
+
+.exrMain
+{
+    background: rgb(238, 238, 238) none repeat scroll 0%;
+    width: 99%;
+    border-collapse: collapse;
+}
+
+.exrTitleRow
+{
+    border-color: rgb(51, 0, 51);
+    border-width: 1px;
+}
+
+.exrTitleRow td
+{
+    border-right: 2px solid rgb(255,255,255);
+    border-left: 2px solid rgb(255,255,255);
+}
+
+.exrTitle
+{
+    background: transparent url(../icons/twdn.gif) no-repeat scroll left center;
+    padding-left: 18px;
+    cursor: pointer;
+}
+
+.exrTitle.exr-open
+{
+    background: transparent url(../icons/twup.gif) no-repeat scroll left center;
+    padding-left: 18px;
+}
+
+.exrTitleText
+{
+    font-weight: bold;
+    display: inline;
+}
+
+/*div.exrTitleDesc
+{
+    display:inline;
+    background: rgb(255,255,255);
+}*/
+
+.exrPage
+{
+    margin: 0px 0px 0px 0px;
+}
+
+.exrPageRow, .exrPage
+{
+    /*background-color: rgb(208, 216, 224);*/
+    background: rgb(255, 255, 255) none repeat scroll 0%;
+}
+
+.exrTitleImages
+{
+    padding-right: 10px;
+    text-align: right;
+}
+
+.exrPolicyIcons
+{
+    padding-right: 5px;
+    cursor: pointer;
+}
+
+td.exrTitle
+{
+    padding-left: 18px;
+}
+/***************************
+   Fingertab styles
+***************************/
+.fingerTabMain
+{
+    border-collapse: collapse;
+    border-width: 4px;
+}
+
+.ftButton
+{
+    border-style: solid;
+    background: rgb(216, 216, 216) none repeat scroll 0%;
+    border-color:  rgb(216, 216, 216);
+    border-width: 4px 4px 4px 4px;
+    padding: 1px 4px 1px 4px;
+    cursor: pointer;
+}
+
+.ftButton.active
+{
+    border-style: solid;
+    background: rgb(255, 255, 255) none repeat scroll 0%;
+}
+
+.ftPageArea
+{
+    background: rgb(255, 255, 255) none repeat scroll 0%;
+    border-style: solid;
+    border-color:  rgb(216, 216, 216);
+    border-width: 4px 4px 4px 4px;
+    border-left: hidden;
+    padding: 2px 4px 2px 2px;
+    vertical-align: top;
+    width: 80%;
+}
+
+.ftEmptyButton
+{
+    border-style: none;
+    height:0px;
+}
+
+/********************
+  Menu styles
+*********************/
+table.menuStart
+{
+    background: #a0a0a0;
+    font-size: 14pt;
+    font-weight: bold;
+    color: #ffffff;
+    margin-top: 2px;
+}
+
+td.menuStart
+{
+    padding-right: .5em;
+    padding-left: .5em;
+    width:12em;
+}
+
+a.menuStartIcon
+{
+/*    border: 1px solid #808074; */
+    padding: 0px 6px 0px 6px;
+}
+
+td.menuStartIcon
+{
+    text-align: right;
+    margin: 2px;
+    height: 20px;
+}
+
+td.menuStartObjectIcon
+{
+    padding: 0px 4px 0px 4px;
+}
+
+a.menuStartIcon:hover
+{
+    border-color: #ffffff #808080 #808080 #ffffff;
+}
+
+a.menuStartIcon.menu-open
+{
+    border-color: #808080 #ffffff #ffffff #808080;
+}
+
+
+table.menu
+{
+    border: .5px solid #606060;
+    border-collapse: collapse;
+}
+
+td.menu
+{
+    padding-right: 4px;
+    height: 0px;
+}
+
+tr.menuItem
+{
+}
+
+td.menuIcon, td.menuLink, td.menuButton, td.menu
+{
+    white-space: nowrap;
+    background: #f0ece4;
+    border: 0px;
+}
+
+td.menuLink
+{
+    padding: 2px 0px 2px 8px;
+}
+
+td.menuButton
+{
+    padding: 2px 4px 2px 8px;
+}
+
+td.menuIcon
+{
+    padding: 0px 0px 0px 4px;
+}
+
+a.menuButton
+{
+    text-decoration: none;
+}
+
+/******************************
+  Pinnable Tree styles
+******************************/
+td.plusIcon
+{
+    border: 0px;
+    vertical-align: top;
+    padding: 2px 1px 0px 1px;
+    background: url(../icons/vline.png);
+}
+
+td.plusIconLast
+{
+    border: 0px;
+    vertical-align: top;
+    padding: 2px 0px 0px 0px;
+}
+
+td.treeNodeLink
+{
+	font-size : 9pt;
+	font-family : Arial, Helvetica, sans-serif;
+    vertical-align: top;
+    padding: 1px;
+    white-space: nowrap;
+}
+
+img.objectIcon
+{
+    border: 0px;
+    margin-bottom: -2px;
+    padding: 0px 2px 0px 2px;
+}
+
+img.plusIcon
+{
+    border: 0px;
+}
+
+table.pin
+{
+    padding: 0px 0px 0px 0px;
+    width:100%;
+    background: #cccccc;
+    margin-bottom: 2px;
+}
+
+td.pinTitle
+{
+    border: 2px solid #000000;
+}
+
+td.pinIcon
+{
+    empty-cells: show;  /* to make the borders visible */
+    height: 16px;
+    width: 16px;
+    background: #cccccc url(../icons/pin.png) scroll no-repeat 50% 50%;
+    border: 1px solid #cccccc;
+    padding: 2px 2px 2px 2px;
+    margin: 2px 2px 2px 2px;;
+}
+
+td.pinIcon:hover
+{
+    border-color: #e8e8e8 #808080 #000000 #e8e8e8;
+}
+
+td.pinIcon.s-open
+{
+    background: #cccccc url(../icons/close.png) scroll no-repeat 50% 50%;
+}
+
+.ftue_Table.td {
+	verticle-aligin: middle;
+}

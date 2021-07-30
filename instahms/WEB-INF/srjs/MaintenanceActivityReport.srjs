@@ -1,0 +1,91 @@
+{
+	"title": "Maintenance Activity Report",
+	"reportGroup": "Misc. Report",
+	"tableName": [
+        "rpt_maint_activity_view"
+    ],
+  	"description":"This report shows Maintenance Activity on the Asset.",
+
+	"dateFields": [ "scheduled_date", "completed_date" ],
+	"allowNoDate": true,
+	"defaultOrder": "activity_id",
+	"defaultShowFields": [
+    	"activity_id",
+    	"asset_name",
+    	"serial_no",
+    	"scheduled_date",
+    	"completed_date",
+    	"maint_by",
+    	"total_cost"
+  	],
+  	"fields": {
+  		"activity_id" : {
+  			"displayName": "Activity ID", "groupable": true,
+  			"filterable": true, "expression": "ama.maint_activity_id",
+  			"dataType": "numeric", "width":"60"
+  		},
+  		"asset_name" : {
+  			"displayName": "Asset Name",
+  			"filterable": true, "groupable": true,
+  			"width": "120"
+  		},
+  		"serial_no" : {
+  			"displayName": "Serial #",
+  			"filterable": true, "groupable": true,
+  			"width": "60"
+  		},
+  		"scheduled_date" : {
+  			"displayName": "Scheduled Date",
+  			"dataType": "date",
+  			"filterable": true, "groupable": true,
+  			"width": "60"
+  		},
+  		"completed_date" : {
+  			"displayName": "Completed Date",
+  			"dataType": "date",
+  			"filterable": true, "groupable": true,
+  			"width": "60"
+  		},
+  		"maint_by" : {
+  			"displayName": "Maintenance By ",
+  			"filterable": true, "groupable": true,
+  			"width": "80"
+  		},
+  		"total_cost" : {
+  			"displayName": "Total Component Cost",
+  			"filterable": true, "dataType": "numeric",
+  			"aggFunction": "sum",
+  			"decimalType": "amount","width": "80"
+  		},
+  		"labor_cost" : {
+  			"displayName": "Labour Cost",
+  			"filterable": true, "dataType": "numeric",
+  			"aggFunction": "sum",
+  			"decimalType": "amount","width": "60"
+  		},
+  		"part_cost" : {
+  			"displayName": "Material Cost",
+  			"filterable": true, "dataType": "numeric",
+  			"aggFunction": "sum",
+  			"decimalType": "amount","width": "60"
+  		},
+  		"component" : {
+  			"displayName": "Component Name",
+  			"filterable": true,
+  			"width": "80"
+  		},
+  		"dept_name" : {
+  			"displayName" : "Store",
+  			"filterable": true, "groupable": true,
+  			"allowedValuesQuery": "SELECT dept_name FROM stores ORDER BY dept_name",
+  			"width": "120"
+  		},
+  		"center_name" : {
+  			"displayName" : "Center",
+  			"filterable": true, "groupable": true,
+  			"allowedValuesQuery": "SELECT center_name FROM hospital_center_master ORDER BY center_name",
+  			 "width": "100"
+  		}
+
+  	}
+}

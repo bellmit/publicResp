@@ -1,0 +1,92 @@
+/*
+ * Customization of YUI sam skin menu
+*/
+
+.yui-skin-sam .yuimenubaritem {
+	background:url(../images/activetabl_bg.jpg) repeat-x 0 0;
+}
+
+.yui-skin-sam .yuimenubar {
+	background: none;
+	border: none;
+	font-size: normal;
+}
+
+.yui-skin-sam .yuimenubarnav .yuimenubaritem {
+	border: none;
+}
+
+.yui-skin-sam .yuimenubaritem-selected {
+	background: #a5bbcc;
+	border: none;
+}
+
+.yui-skin-sam .yuimenubarnav .yuimenubaritemlabel-selected {
+	margin-left: 0px;
+	border-left-width: 0px;
+}
+
+.yui-skin-sam .yuimenubar {
+	font-size:100%;
+	line-height:23px;
+}
+
+.yui-skin-sam .yuimenubaritemlabel {
+	padding:0 10px;
+	color:#fff;
+	text-decoration:none;
+	font-weight:bold;
+	cursor:default;
+	margin:-1px 0;
+}
+
+.yui-skin-sam .yuimenubaritemlabel:visited{color:#fff;}
+
+.yui-skin-sam .yuimenubarnav .yuimenubaritemlabel {
+	padding-right:26px;
+	border-top:1px solid #e3efff;
+	border-right:1px solid #637181;
+	border-left:1px solid #e3efff;
+	border-bottom:1px solid #637181;
+}
+
+.yui-skin-sam .yuimenubarnav .yuimenubaritemlabel-hassubmenu {
+	color:#fff;
+	background:url(../images/menubaritem_submenuindicator.png) right center no-repeat;
+}
+
+.yui-skin-sam .yuimenubar .yuimenu {
+	padding-left: 2px;
+}
+
+.yui-skin-sam .yuimenuitem-selected{
+	background-color:#b4c4d3;
+}
+
+.yui-skin-sam .yuimenu{font-size:93%;line-height:1.5;*line-height:1.45;}
+.yui-skin-sam .yuimenu ul{padding:0 0;border-width:1px 0 0 0;border-color:#ccc;border-style:solid;}
+
+.yui-skin-sam .yuimenu h6 {
+	font-weight:bold;
+	border-style:solid;
+	border-color:#ccc;
+	border-width:1px 0 0 0;
+	color:#a4a4a4;
+	padding:3px 10px 0 10px;
+}
+
+.yui-skin-sam .yuimenuitem {
+	font-size:12px;
+	padding:2px 0 1px 0;
+}
+
+.yui-skin-sam .yuimenuitemlabel {
+	padding:0 20px 0 10px;
+	color:#000;
+	text-decoration:none;
+	cursor:default;
+}
+
+.yui-skin-sam .yuimenuitemlabel:visited {
+	color:#000;
+}

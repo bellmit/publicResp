@@ -1,0 +1,4 @@
+section_item_id,item_type,mr_no,patient_id,section_detail_id,section_id,section_status,mod_time,user_name,generic_form_id,finalized
+1,'CONS','MR01','OP01',11,-2,'A','2018-08-07 18:10:07.278','InstaAdmin',0,'N'
+2,'CONS','MR02','OP02',12,-2,'I','2018-08-08 15:41:25.027','InstaAdmin',0,'N'
+13778,'CONS','MR013806','OP121782',142587,-5,'A','2018-08-24 13:54:29.068','InstaAdmin',0,'N'

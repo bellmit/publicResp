@@ -1,0 +1,1284 @@
+<!--
+Rules for adding screens
+========================
+
+1. struts-config.xml
+....................
+(a) action_id: Every action in struts-config.xml must have an action_id property.
+For example:
+  <set-property key="action_id" value="reg_registration"/>
+This identifies the URL (eg, /pages/registration/quickregistration.do) with a simple
+ID that can be referenced elsewhere.
+
+Every action is a unique page/request in the application. action_id must be unique
+throughout struts-config.xml, ie, two actions cannot have the same action_id.
+
+(b) screen_id: A screen is made up of one or more actions. An action can belong to
+only one screen. By default, action - screen is a one-to-one mapping. For screens that
+have multiple actions, an additional screen_id is required in the action mapping.
+For example:
+            <set-property key="action_id" value="discharge_summary_print"/>
+            <set-property key="screen_id" value="discharge_summary_screen"/>
+
+This means that the action discharge_summary_print belongs to discharge_summary_screen.
+Note that this requires ALL actions belonging to the same screen_id to define both
+action_id and screen_id explicitly, even if action_id is same as screen_id.
+
+(c) auth_mode: An action can have special authorization specifications.
+
+If an action does not require any permissions check (e.g., pages/ServerTime) its auth_mode should
+set to "passthru".
+
+    <action path="/pages/ServerTime"  type="com.bob.hms.common.UtilAction"
+        scope="request" parameter="method">
+
+        <set-property key="auth_mode" value="passthru"/>
+
+    </action>
+
+If an action is available only to "insta admin" role (e.g., Pharmacy Print Template), its
+auth_mode should be set to "instaonly".
+
+    <action path="/master/PharmacyPrintTemplate"
+        type="com.insta.hms.master.PharmacyPrintTemplate.PharmacyPrintTemplateAction"
+        parameter="method">
+
+        <set-property key="auth_mode" value="instaonly"/>
+        .....
+    </action>
+
+
+2. screens.xml (this file)
+.........................
+This config file contains how to group screens for the purpose of giving rights in
+Users/Roles screens, and to specify the module that a screen belongs to. For example:
+
+    <screen_group id="grp_registration" name="Registration" defaultModule="mod_registration">
+        <screen id="reg_registration" name="Registration" />
+    </screen_group>
+
+This hierarchy closely follows the menu hierarchy, but it is not essential
+that the menu hierarchy and the grouping have to match. They can be different.
+
+This configuration also specifies which module a particular screen belongs to.
+Every screen MUST be present in this file as part of some group unless it corresponds to
+(or consists of all) "passthru" or "instaonly" actions. Otherwise it will become inaccessible.
+
+3. menu.xml
+...........
+This is a hierearchical representation of the menu structure, with menu groups
+and menu items. Every menu item must refer to an action and can have additional
+parameters. For example:
+
+    <menu_group id="grp_registration" defaultModule="mod_registration" name="Registration">
+        <menu_item actionId="reg_registration" name="Registration" urlParams="method=getdetails" />
+    </menu_group>
+
+Note that there can be two or more menus for the same action. This allows us to place
+the same screen in two different menu groups (eg, Day Book appears under Billing as well
+as under Reports). It also allows us to give different initial parameters as two different
+menus (eg, Open Bills and Search Bills).
+
+The defaultModule is optional and specifies the module that MUST be active for this menu
+group to be available. If this attribute is not specified, the menu group will be available
+if any of the menu items under it are available. This is to be rarely used, only for hiding
+menu groups which contain menu items which are available elsewhere (eg, In Patient -> Order
+is available based on mod_prescribe. But if mod_ipservices is not available, then we don't
+want In Patient menu at all).
+
+The menu_item cannot have a module specification. The availability of a menu depends solely
+on the user / module rights.
+
+-->
+
+
+<screen_config>
+   
+    <screen_group id="grp_hms_new_modules" name="Op Flow">
+        <screen id="new_op_appointment" name="Appointments" module="mod_scheduler"/>
+		<screen id="new_op_registration" name="Registration" module="mod_registration"/>
+        <screen id="new_op_bill" name="Billing" module="mod_billing"/>
+		<screen id="new_triage" name="Triage" module="mod_newcons"/>
+		<screen id="new_cons" name="Consultation" module="mod_newcons"/>
+		<screen id="new_initial_assessment" name="Initial Assessment" module="mod_newcons"/>
+        <screen id="new_op_order" name="Order" module="mod_billing"/>
+	</screen_group>
+
+	<screen_group id="grp_hms_new_ip_modules" name="Ip Flow">
+        <screen id="new_ip_bill" name="Billing" module="mod_billing"/>
+        <screen id="new_ipemr" name="IP EMR" module="mod_ipemr"/>
+		<screen id ="pres_ip_audit_log" name="Physician Order Audit Log" module="mod_ipemr"/>
+		<screen id="new_ip_order" name="Order" module="mod_billing"/>
+		<screen id="new_discharge_summary" name="Discharge Summary" module="mod_discharge"/>
+	</screen_group>
+    
+    <screen_group id="grp_dashboard" name="Dashboard"> 
+    	<screen id="patient_pending_prescription" name="Pending Prescriptions" 
+    	module="mod_pat_pending_prescription" />
+	</screen_group>
+	
+    <screen_group id="grp_patient_search" name="Patient Search" defaultModule="mod_basic">
+        <screen id="patient_details_search" name="Patient Search"/>
+        <screen id="visit_details_search" name="Visit Search"/>
+        <screen id="patient_diag_status_search" name="Patient Test Status"/>
+    </screen_group>
+ 
+    <screen_group id="grp_registration" name="Registration" defaultModule="mod_registration"> 
+        <screen id="ip_registration" name="IP Registration" />
+        <screen id="out_pat_reg" name="Outside Patient Registration" />
+        <screen id="reg_general" name="Pre-Registration" />
+        <screen id="reg_upload" name="Bulk Registration" module="mod_bulk_upload"/>
+        <screen id="reg_re_admit" name="Re-admit" />
+        <screen id="reg_admission_request" name="Admission Request" />
+        <screen id="adt" name="ADT" module="mod_adt" />
+        <screen id="pat_discharge" name="Discharge" module="mod_discharge"/>
+        <screen id="folowup_details" name="Follow Up details" />
+        <screen id="reg_quick_estimate" name="Quick Estimate"/>
+        <screen id="patient_category_change" name="Patient Category Change" />
+        <screen id="op_ip_conversion" name="OP IP Conversion" />
+        <screen id="edit_visit_details" name="Edit Visit Details" />
+        <screen id="registration_audit_log" name="Registration Audit Log" />
+        <screen id="reg_export_data" name="Export Encounter Details" />
+        <screen id="UHID_search" name="UHID Search" module="mod_uhid"/>
+    </screen_group>
+    
+    <screen_group id="grp_billing" name="Billing" defaultModule="mod_billing">
+        <screen id="search_bills" name="Search Bills" />
+        <screen id="credit_bill_collection" name="View/Edit Bill" />
+        <screen id="patient_writeoff" name="Request Write Off" />
+        <screen id="patient_writeoff_approval" name="Approve Patient WriteOff" />
+        <screen id="sponsor_writeoff_approval" name="Approve Sponsor WriteOff" />
+        <screen id="bill_remittance" name="Edit Bill Remittance" module="mod_adv_ins"/>
+        <screen id="edit_pharmacy_item_amount" name="Edit Pharmacy Item Amount"/>
+        <screen id="connect_disconnect_tpa" name="Change Bill Insurance"/>
+        <screen id="change_visit_tpa" name="Add/Edit Insurance" />
+        <screen id="change_visit_org" name="Change Rate Plan/Bed Type" />
+        <screen id="edit_member_id" name="Edit Member Id" />
+        <!-- to remove this after order is removed from menu.xml -->
+        <screen id="order" name="Order" module="mod_develop"/>
+        <screen id="new_prepaid_bills" name="New Bill" />
+        <screen id="receipts" name="Receipts List" />
+        <screen id="deposit_receipts" name="Deposit Receipts" module="mod_billing_ext"/>
+        <screen id="edit_receipt" name="Edit Receipt" />
+        <screen id="ph_receipts" name="Pharmacy Receipts List" />
+        <screen id="patient_deposits" name="Deposits" module="mod_billing_ext"/>
+        <screen id="patient_deposits_collection" name="Deposits Collection" module="mod_billing_ext" />
+        <screen id="patient_expensive_statement" name="Patient Statement" module="mod_billing_ext" />
+        <screen id="deposits_realization" name="Deposits Realization" module="mod_billing_ext"/>
+        <screen id="bill_sponsor" name="Consolidated Sponsor Bills" module="mod_billing_ext"/>
+        <screen id="raise_sponsor_bill" name="New Cons. Sponsor Bill" module="mod_billing_ext"/>
+        <screen id="edit_sponsor_bill" name="View/Edit Cons. Sponsor Bill" module="mod_billing_ext"/>
+        <screen id="allocate_sponsor_bill" name="Receive/Allocate Cons. Sponsor Bill" module="mod_billing_ext"/>
+        <screen id="sponsor_receipts" name="Cons. Sponsor Receipts" module="mod_billing_ext"/>
+        <screen id="transaction_approval" name="Transaction Approval" module="mod_transactions"/>
+        <screen id="change_billtype" name="Change Bill Type"/>
+        <screen id="change_billprimary" name="Change Bill Primary Status"/>
+        <screen id="bill_audit_log" name="Audit Log"/>
+        <screen id="all_receipts_audit_log" name="All Receipts Audit Log"/>
+        <screen id="bills_backup" name="Bills Backup"/>
+        <screen id="bill_print" name="Bill Print"/>
+        <screen id="bill_email" name="Bill Email"/>
+        <screen id="receipt_print" name="Receipt Print"/>
+        <screen id="reward_points" name="Reward Points" module="mod_reward_points"/>
+        <screen id="create_patient_credit_note" name="Patient Credit Note" />
+        <screen id="create_sponsor_credit_note" name="Sponsor Credit Note" />
+    </screen_group>
+
+	<screen_group id="grp_accounting" name="Accounting" defaultModule="mod_tally">
+        <screen id="billing_tally_export" name="Export to Tally" module="mod_tally"/>
+        <screen id="billing_zoho_export" name="Export to Zoho" module="mod_zoho"/>
+        <screen id="account_xml_import_export_log" name="Scheduled Export Log" module="mod_tally"/>
+	</screen_group>
+    <screen_group id="grp_ins_ext" name="Dialysis Billing" defaultModule="mod_ins_ext">
+        <screen id="dialysis_order" name="Dialysis Order" module="mod_ins_ext"/>
+        <screen id="patient_sponsors_approval" name="Patient Approvals" module="mod_ins_ext"/>
+        <screen id="approve_sponsors_approval" name="Approve Patient Approvals" module="mod_ins_ext"/>
+        <screen id="consolidated_sponsor_receipts" name="Sponsor Receipts" module="mod_ins_ext"/>
+        <screen id="collection_approval_receipts" name="Collection Approval" module="mod_ins_ext"/>
+        <screen id="consolidated_bill" name="Consolidated Bill List" module="mod_ins_ext"/>
+        <screen id="dialysis_receipts" name="Receipts List" module="mod_ins_ext"/>
+        <screen id="dialysis_bill_audit_log" name="Audit Log" module="mod_ins_ext"/>
+    </screen_group>
+        
+    <screen_group id="grp_payments" name="Payments" defaultModule="mod_payments">
+        <screen id="pay_dashboard" name="Payments Due" />
+        <screen id="pay_paymentscreen" name="Paid Payments" />
+        <screen id="pay_doctor" name="Conducting Doctor Payments" />
+        <screen id="pay_prescribe_doctor" name="Prescribing Doctor Payments" />
+        <screen id="pay_ref_doctor" name="Referral Doctor Payments" />
+        <screen id="outhouse_payment" name="OutHouse Payments" />
+        <screen id="pay_miscellaneous" name="Miscellaneous Payments" />
+        <screen id="pay_reversal" name="Payment Reversal" />
+        <screen id="pay_supplier" name="Supplier Payments" />
+        <screen id="autopost_payments" name="Auto Post Payments" />
+        <screen id="payment_audit_log" name="View Payments Audit Log" />
+        <screen id="pay_paymentscreen_combined" name="Payment Voucher (Combined)" />
+        <screen id="pay_paymentscreen_ip" name="Payment Voucher (IP only)" />
+        <screen id="pay_paymentscreen_op" name="Payment Voucher (OP only)" />
+        <screen id="pay_paymentscreen_others" name="Payment Voucher" />
+    </screen_group>
+
+    <screen_group id="grp_services" name="Services" defaultModule="mod_services">
+        <screen id="pending_services" name="Services List" />
+        <screen id="service_order" name="Order Services" />
+        <screen id="conducted_services" name="Conducted Services List"/>
+        <screen id="pending_service_prescriptions" name="Pending Service Prescriptions" module="mod_op"/>
+        <screen id="serv_audit_log" name="Service Audit Log"/>
+    </screen_group>
+
+    <screen_group id="grp_ot_services" name="OT Services" defaultModule="mod_ipservices">
+        <screen id="operations_pending_list" name="Pending Operations" module="mod_basic_ot"/>
+        <screen id="conduct_operation" name="Conduct Operations" module="mod_basic_ot"/>
+        <screen id="conduct_or_add_operation_doc" name="Conduct and/or Add Document"/>
+        <screen id="operations_conducted_list" name="Conducted Operations" module="mod_basic_ot"/>
+        <screen id="ot_service_report" name="Duplicate OT Service Report" />
+        <screen id="pending_operation_prescriptions" name="Pending Operation Prescriptions" module="mod_op"/>
+    </screen_group>
+
+    <screen_group id="grp_common" defaultModule="mod_basic" name="Common">
+    	<screen id="ot_consumables" name="OT Consumables"/>
+    	<screen id="vital_measurements" name="Vital Measurements" />
+    </screen_group>
+
+    <screen_group id="grp_adv_ot_services" name="OT Management" defaultModule="mod_advanced_ot">
+        <screen id="ot_bookings" name="OT Bookings"/>
+        <screen id="get_planned_operations_list" name="Planned Surgeries / Procedures" />
+        <screen id="get_ot_management_screen" name="Surgery / Procedure Management Screen"/>
+        <screen id="ot_record" name="OT Record" />
+        <screen id="operation_detailed_screen" name="Surgery/Procedure Details Screen"/>
+        <screen id="equipment_order" name="Equipment Order Screen"/>
+        <screen id="ot_audit_log" name="OT Records Audit Log"/>
+        <screen id ="complaints_surgery_audit_log" name="OT Records Complaints Audit Log"/>
+        <screen id ="otrecord_diagnosis_audit_log" name="OT Records Diagnosis Audit Log"/>
+    </screen_group>
+
+
+    <screen_group id="grp_diagnostics" name="Laboratory" defaultModule="mod_diagnostics">
+        <screen id="lab_schedules_list" name="Laboratory Reports" />
+        <screen id="lab_schedules_search" name="Laboratory Reports Search" />
+        <screen id="lab_manage_reports" name="Lab Manage Reports"/>
+        <screen id="lab_select_outhouse" name="Select Outhouse"/>
+        <screen id="lab_edit_results" name="Edit Test Results"/>
+        <screen id="lab_unfinished_tests" name="Laboratory Pending Tests"/>
+        <screen id="lab_unfinished_tests_search" name="Laboratory Pending Tests Search"/>
+        <screen id="lab_pending_samples" name="Laboratory Pending Samples"/>
+        <screen id="lab_pending_samples_search" name="Laboratory Pending Samples Search"/>
+        <screen id="lab_pending_sample_assertions" name="Laboratory Pending Sample Assertion"/>
+        <screen id="lab_transfer_sample_barcode" name="Laboratory Transfer Samples Bar Code" module="mod_central_lab"/>
+        <screen id="lab_transfer_sample_manual" name="Laboratory Transfer Samples Manual" module="mod_central_lab"/>
+        <screen id="lab_receive_split_sample" name="Laboratory Receive/Split Samples" module="mod_central_lab"/>
+        <screen id="cancel_pescription" name="Cancel Laboratory Tests" />
+        <screen id="lab_signedoff_report_list" name="Signed-off Reports List" />
+        <screen id="diag_incoming_sample_reg" name="Incoming Samples" />
+        <screen id="lab_prescribe_test" name="Order Laboratory Tests" />
+        <screen id="lab_incoming_bill_list" name="Incoming Sample Pending Bills" />
+        <screen id="lab_test_audit_list" name="Test Audit Log" />
+        <screen id="lab_test_reconduction" name="Reconduct Laboratory Tests" />
+        <screen id="lab_incoming_test_reconduction" name="Reconduct Incoming Laboratory Tests" />
+        <screen id="laboratory_audit_log" name="Search Tests Audit Log" />
+        <screen id="lab_equipment_qa" name="Equipment Quality Test" />
+        <screen id="lab_test_documents" name="Add/Edit Lab Test Documents"/>
+        <screen id="pending_lab_prescriptions" name="Pending Lab Prescriptions" module="mod_op"/>
+    </screen_group>
+
+    <screen_group id="grp_radiology" name="Radiology" defaultModule="mod_diagnostics">
+        <screen id="rad_schedules_list" name="Radiology Reports" />
+        <screen id="rad_schedules_search" name="Radiology Reports Search" />
+        <screen id="rad_manage_reports" name="Lab Manage Reports"/>
+        <screen id="rad_select_outhouse" name="Select Outhouse"/>
+        <screen id="rad_edit_results" name="Edit Test Results"/>
+        <screen id="rad_unfinished_tests" name="Radiology Pending Tests"/>
+        <screen id="cancel_radiology" name="Cancel Radiology Tests" />
+        <screen id="rad_signedoff_report_list" name="Signed-off Reports List" />
+        <screen id="radio_prescribe_test" name="Order Radiology Tests"  />
+        <screen id="rad_incoming_sample_reg" name="Incoming Radiology Tests" />
+        <screen id="rad_incoming_bill_list" name="Incoming Pending Bills" />
+        <screen id="rad_test_audit_list" name="Test Audit List" />
+        <screen id="radiology_test_reconduction" name="Reconduct Radiology Tests" />
+        <screen id="radiology_incoming_test_reconduction" name="Reconduct Incoming Radiology Tests" />
+        <screen id="radiology_audit_log" name="View Tests Audit Log" />
+        <screen id="rad_equipment_qa" name="Equipment Quality Test" />
+        <screen id="rad_test_documents" name="Add/Edit Radiology Test Documents"/>
+        <screen id="pending_radiology_prescriptions" name="Pending Radiology Prescriptions" module="mod_op"/>
+        <screen id="radiology_arrivals" name="Radiology Arrivals"/>
+    </screen_group>
+
+    <screen_group id="grp_scheduler" name="Scheduler" defaultModule="mod_scheduler">
+        <screen id="doc_scheduler_available_slots" name="Doctor Scheduler Availability View" />
+        <screen id="doc_scheduler_calender_view" name="Doctor Scheduler Calendar View" />
+        <screen id="doc_appointments" name="Doctor Appointments" module="mod_channeling"/>
+        <screen id="addchannel_appointment" name="Add Channeling Appointments" module="mod_channeling"/>
+        <screen id="cancel_appointments" name="Cancel Channeling Appointments" module="mod_channeling"/>
+        <screen id="ope_scheduler" name="Surgery / Procedure Scheduler" />
+        <screen id="ope_week_scheduler" name="Surgery / Procedure Scheduler Week View" />
+        <screen id="snp_scheduler" name="Services Scheduler" />
+        <screen id="dia_scheduler" name="Tests Scheduler" />
+        <screen id="today_resource_scheduler" name="Today's Pending Appointments" />
+        <screen id="search_resource_scheduler" name="Search Pending Appointments" />
+        <screen id="cat_resource_scheduler" name="Resource Default Availability'" />
+        <screen id="res_availability" name="Resource Availability Overrides" />
+
+        <!--<screen id="downtime_resource_scheduler" name="Resource Downtime" />
+        <screen id="resource_scheduler" name="Doctor Timing Dashboard" /> -->
+        <screen id="message_send" name="Send Messages" module="mod_messaging"/>
+        <screen id="scheduler_audit_log" name="View Scheduler Appointment Audit Log" />
+
+    </screen_group>
+    <screen_group id="grp_ipservices" name="In Patient" defaultModule="mod_ipservices">
+        <screen id="ip_ipservices" name="In Patient List" />
+        <screen id="nurse_ward_assignment" name="Nurse/Staff Ward Assignment" />
+        <screen id="addedit_ward_assignment" name="Edit User Ward Assignment" />
+        <screen id="bed_view" name="Bed View" module="mod_ipservices"/>
+        <screen id="discharge_medication" name="Discharge Medication" module="mod_discharge"/>
+        <screen id="ip_beddetails" name="Bed Details" module="mod_adt"></screen>
+        <screen id="ip_bedalloc" name="Bed Allocation (Patient / Bystander)" module="mod_adt"/>
+        <screen id="ip_bedshift" name="Bed Shift" module="mod_adt"/>
+
+        <screen id="activities_list" name="Patient Ward Activities" module="mod_wardactivities"/>
+        <screen id="ward_activities" name="IP Clinical Management" module="mod_wardactivities"/>
+        <screen id="ip_prescriptions" name="Doctor Order" module="mod_wardactivities"/>
+        <screen id="define_care_team" name="Add Care Team" module="mod_wardactivities"/>
+        <screen id="patient_summary" name="IP Case Sheet" module="mod_wardactivities"/>
+        <screen id="doctors_note" name="Doctors Notes" module="mod_wardactivities"/>
+        <screen id="nurse_note" name="Nurse Notes" module="mod_wardactivities"/>
+        <screen id="intake_output" name="Intake Output" module="mod_wardactivities" />
+        <screen id="visit_summary" name="Visit Summary Record" module="mod_wardactivities" />
+        <screen id="medication_chart" name="Medication Chart" module="mod_wardactivities"/>
+        <screen id="patient_activities_audit_log" name="Patient Activities Audit Log" module="mod_wardactivities"/>
+        <screen id="doctor_order_audit_log" name="Doctor Order Audit Log" module="mod_wardactivities"/>
+        <screen id="patient_notes_audit_log" name="Patient Notes Audit Log"></screen>
+        <screen id="doctor_notes_audit_log" name="Doctor Notes Audit Log" module="mod_wardactivities"/>
+        <screen id="nurse_notes_audit_log" name="Nurse Notes Audit Log" module="mod_wardactivities"/>
+        <screen id="vital_form_audit_log" name="Vital Form Audit Log" module="mod_wardactivities"/>
+        <screen id="intake_output_audit_log" name="Intake Output Audit Log" module="mod_wardactivities"/>
+        <screen id="ip_audit_log" name="IP Records Audit Log"/>
+        <screen id ="ipf_allergy_audit_log" name="IP Records Allergy Audit Log"/>
+        <screen id ="complaints_ip_audit_log" name="IP Records Complaints Audit Log"/>
+        <screen id ="ipf_diagnosis_audit_log" name="IP Records Diagnosis Audit Log"/>
+        <screen id ="ipemr_audit_log" name="IP EMR Audit Log"/>
+        <screen id ="ip_discharge_medication_audit_log" name="Discharge Medication Audit Log"/>
+    </screen_group>
+
+    <screen_group id="grp_ward_activities" name="Activities" defaultModule="mod_wardactivities">
+    </screen_group>
+
+    <screen_group id="grp_dialysis" name="Dialysis" defaultModule="mod_dialysis">
+        <screen id="dialysis_prescriptions" name="Dialysis Prescriptions"/>
+        <screen id="dialysis_current_sessions" name="Current Dialysis Sessions"/>
+        <screen id="dialysis_pre_sessions" name="Pre Dialysis Sessions"/>
+        <screen id="dialysis_intra_sessions" name="Intra Dialysis Sessions"/>
+        <screen id="dialysis_post_sessions" name="Post Dialysis Sessions"/>
+        <screen id="dialysis_sessions_summary" name="Dialysis Sessions Summary"/>
+        <screen id="dialysis_sessions_report" name="Dialysis Sessions Report"/>
+        <screen id="dialysis_machine_status" name="Dialysis Machine Status"/>
+        <screen id="dialysis_machine_shift" name="Dialysis Machine Shift"/>
+        <screen id="dial_prescriptions_audit_log" name="Dialysis Prescriptions Audit Log" />
+        <screen id="dialysis_medications" name="Patient Prescription" />
+    </screen_group>
+    <screen_group id="grp_ivf" name="IVF" defaultModule="mod_ivf">
+        <screen id="ivf_sessions" name="IVF Sessions" />
+        <screen id="ivf_pre_cycle" name="IVF Pre Cycle"/>
+        <screen id="ivf_daily_treatment" name="IVF Daily Treatment"/>
+        <screen id="ivf_cycle_completion" name="IVF Cycle Completion"/>
+        <screen id="ivf_history" name="IVF History"/>
+        <screen id="donor_registry" name="Donor Registry"/>
+        <screen id="donation_details" name="Donation Details"/>
+    </screen_group>
+    <screen_group id="grp_clinical_data" name="Clinical Data" defaultModule="mod_clinical_data">
+        <screen id="clinical_data_lab_results" name="Clinical Analysis Data"/>
+        <screen id="clinical_hospitalization_information" name="Hospitalization Information"/>
+        <screen id="vaccinations" name="Vaccinations"/>
+        <screen id="dialysis_adequacy" name="Dialysis Adequacy"/>
+        <screen id="infections_data" name="Infections Data"/>
+        <screen id="blood_transfusions" name="Blood Transfusion"/>
+        <screen id="score_card" name="Create Score Card" module="mod_scorecard"/>
+        <screen id="score_card_list" name="View Score Card" module="mod_scorecard"/>
+    </screen_group>
+
+    <screen_group id="grp_opthalmology" name="Ophthalmology" defaultModule="mod_opthalmology">
+        <screen id="optometrist_screen" name="Ophthalmology Dashboard" />
+        <screen id="doctor_eye_exam" name="Doctor Eye Exam" />
+    </screen_group>
+
+    <screen_group id="grp_doctor_consultation" name="Doctor Consultation" defaultModule="mod_op">
+        <screen id="op_prescribe" name="Doctor Consultation" />
+    </screen_group>
+
+    <screen_group id="grp_new_followup_consultation_select" name="New FollowUp Consultation" defaultModule="mod_newcons">
+        <screen id="new_followup_cons" name="New FollowUp Consultation" />
+    </screen_group>
+
+    <screen_group id="grp_out_patient_select" name="Out Patient" defaultModule="mod_op">
+        <screen id="op_out_patient" name="Out Patient List" />
+        <screen id="op_case_form" name="OP Case Form" module="mod_op_forms" />
+        <screen id="growth_chart" name="Growth Charts" />
+        <screen id="triage_form" name="Triage/Nurse Assessment" />
+        <screen id="initial_assessment" name="Initial Assessment" />
+        <screen id="consult_token_display_prefs" name="Launch Consultation Display" module="mod_tokendisplay"/>
+        <screen id="consult_token_display_system" name="Consultation Display" module="mod_tokendisplay"/>
+        <screen id="change_consult_doctor" name="Change Consulting Doctor" module="mod_op"/>
+        <screen id="patient_progress" name="Patient Progress Notes" module="mod_basic"/>
+        <screen id="dental_consultations" name="Dental Consultation" module="mod_dental_chart"/>
+        <screen id="patient_dental_supplies" name="Patient Dental Supplies" module="mod_dental_chart"/>
+        <screen id="vaccination_info" name="Vaccinations" module="mod_vaccination" />
+        <screen id="slida_action" name="SIDEXIS X-Ray" module="mod_slida"/>
+        <screen id="patient_pending_prescriptions" name="Patient Pending Prescriptions" module="mod_op"/>
+        <screen id="pending_consultation_prescriptions" name="Pending Consultation Prescriptions" module="mod_op"/>
+        <screen id="vital_ia_form_audit_log" name="Initial Assessment Vital Audit Log"/>
+		<screen id="vital_tri_form_audit_log" name="Triage Vitals Audit Log"/>
+		<screen id="vital_cons_form_audit_log" name="Consultation Vital Audit Log"/>
+		<screen id="cons_audit_log" name="Consultation Audit Log"/>
+		<screen id="triage_audit_log" name="Triage Insta Sections Audit Log"/>
+		<screen id="ia_audit_log" name="Initial Assessment Insta Sections Audit Log"/>
+		<screen id ="cons_allergy_audit_log" name="Consultation Allergy Audit Log"/>
+		<screen id ="triage_allergy_audit_log" name="Triage Allergy Audit Log"/>
+		<screen id ="complaints_cons_audit_log" name="Consultation Complaints Audit Log"/>
+		<screen id ="complaints_tri_audit_log" name="Triage Complaints Audit Log"/>
+		<screen id ="cons_diagnosis_audit_log" name="Consultation Diagnosis Audit Log"/>
+		<screen id ="pres_audit_log" name="Prescriptions Audit Log"/>
+		<screen id ="cons_summary_audit_log" name="Consultation Summary Audit Log"/>
+		<screen id ="triage_summary_audit_log" name="Triage Summary Audit Log"/>
+		<screen id ="ia_summary_audit_log" name="Initial Assessment Audit Log"/>
+		<screen id ="cons_discharge_medication_audit_log" name="Discharge Medication Audit Log"/>
+		<screen id="mas_break_the_glass" name="Break The Glass"/>
+		<screen id="mas_fileUploadDownload" name="Data Upload Download"/>
+    </screen_group>
+
+    <screen_group id="grp_medical_records" name="Medical Records" defaultModule="mod_basic">
+        <screen id="emr_screen" name="Patient EMR Search" />
+        <screen id="visit_emr_screen" name="Visit EMR Search" />
+        <screen id="emr_screen_without_mrno_search" name="Patient EMR" />
+        <screen id="patient_docket" name="Docket"/>
+        <screen id="emr_screen_trendreport" name="Test Trend Report" module="mod_trend"/>
+        <screen id="update_mrd" name="Codification" module="mod_mrd_icd"/>
+        <screen id="mrd_codification" name="MRD Codification" module="mod_mrd_icd"/>
+        <screen id="icd_report" name="ICD Report Dashboard" module="mod_mrd_icd"/>
+        <screen id="coder_claim_reviews" name="Coder Claim Reviews" module="mod_coder_claim_review"/>
+        <screen id="mrd_file_search" name="Case File Search" module="mod_mrd_casefile"/>
+        <screen id="mrd_file_issue" name="Issue MRD Case File" module="mod_mrd_casefile"/>
+        <screen id="mrd_file_return" name="Return MRD Case file" module="mod_mrd_casefile"/>
+        <screen id="mrd_file_indent" name="Raise Casefile Indent" module="mod_mrd_casefile"/>
+        <screen id="mrd_indent_close" name="Close Casefile Indent" module="mod_mrd_casefile"/>
+        <screen id="generic_documents_list" name="Generic Documents" module="mod_mrd"/>
+        <screen id="patient_generic_form_list" name="Patient Generic Forms" />
+        <screen id="patient_docs_audit_log" name="Generic Doc. Audit Log"/>
+        <screen id ="vital_gen_form_audit_log" name="Generic Form Vitals Audit Log"/>
+        <screen id="gen_audit_log" name="Generic Form Audit Log"/>
+        <screen id="generic_form_audit_log" name="Generic Form Audit Log"/>
+        <screen id ="genf_allergy_audit_log" name="Generic Form Allergy Audit Log"/>
+        <screen id ="complaints_gen_audit_log" name="Generic Form Complaints Audit Log"/>
+        <screen id ="genf_diagnosis_audit_log" name="Generic Form Diagnosis Audit Log"/>
+    </screen_group>
+
+	<screen_group id="grp_dashboard_statistics_reports" name="Dashboard Statistics" defaultModule="mod_basic">
+		<screen id="statistics" name="Statistics" />
+		<screen id="report_job_status" name="Reporting Job Status" />
+	</screen_group>
+	
+    <screen_group id="grp_stores_sales_issues" name="Sales / Issues" defaultModule="mod_pharmacy">
+        <screen id="pharma_sales" name="Sales"  />
+        <screen id="pharma_returns" name="Sales Return" />
+        <screen id="stock_inventory_issue" name="Issue to User/Department/Ward" module="mod_stores" />
+        <screen id="user_inventory_return" name="Returns from User/Department/Ward" module="mod_stores" />
+        <screen id="patient_inventory_issue" name="Issue to Patient" module="mod_stores" />
+        <screen id="patient_inventory_return" name="Returns from Patient" module="mod_stores" />
+        <screen id="pharma_estimate" name="Estimate" />
+        <screen id="pharma_estimate_list" name="Estimates List" />
+        <screen id="pharma_presc_list" name="Prescription List" />
+        <screen id="pharma_sale_pending_bills" name="Pending Bill Now Bills" />
+        <screen id="pharma_item_credit_bill" name="Pending Bill Later Bills" />
+        <screen id="pharma_retail_sale_pending_bills" name="Retail Credit Sales Bills" />
+        <screen id="pharma_sale_duplicate_bill" name="Duplicate Sales Bills" />
+        <screen id="pharma_sale_edit_bill" name="Edit Sale Bills" />
+        <screen id="stores_view_stock_issues" name="View Stock User/Department/Ward Issue" module="mod_stores" />
+        <screen id="stores_view_user_returns" name="View Stock User/Department/Ward Returns" module="mod_stores" />
+        <screen id="stores_view_patient_issues" name="View Stock Patient Issue" module="mod_stores" />
+        <screen id="stores_view_patient_returns" name="View Stock Patient Returns" module="mod_stores" />
+        <screen id="pharma_sales_print" name="Sales Print" />
+        <screen id="stores_patient_indent_list" name="Patient Indents List" />
+        <screen id="stores_patient_indent_add" name="Add Patient Indent" />
+        <screen id="stores_patient_indent_edit" name="Edit Patient Indent" />
+        <screen id="stores_patient_indent_view" name="View Patient Indent" />
+        <screen id="stores_patient_indent_add_return" name="Add Patient Return Indent" />
+        <screen id="stores_patient_indent_edit_return" name="Edit Patient Return Indent" />
+        <screen id="stores_patient_indent_view_return" name="View Patient Return Indent" />
+    </screen_group>
+
+    <screen_group id="grp_stores_procurement" name="Procurement" defaultModule="mod_pharmacy">
+        <screen id="pharma_direct_stock_entry" name="Stock Entry" />
+        <screen id="reopen_grn" name="Reopen GRN/Debit Note" />
+        <screen id="stores_reorder" name="Stock Reorder" module="mod_stores" />
+        <!--  <screen id="stores_batch_po" name="Create Batch PO" module="mod_stores"/>-->
+        <screen id="stores_po" name="Purchase Order" module="mod_stores" />
+        <screen id="stores_validate_po" name="Validate PO" module="mod_stores" />
+        <screen id="stores_amend_po" name="Amend PO" module="mod_stores" />
+        <screen id="stores_view_po" name="View PO" module="mod_stores" />
+        <screen id="stores_po_approval" name="Approve PO" module="mod_stores" />
+        <screen id="pharma_view_grns" name="View GRN" />
+        <screen id="pharma_view_supp_returns" name="Supplier Returns/Replacements" />
+        <screen id="pharma_view_supp_returns" name="Supplier Returns (With Debit Notes)" />
+        <screen id="stores_view_pur_det" name="Purchase Details" />
+        <screen id="po_audit_log" name="PO Audit Log"/>
+        <screen id="stores_po_print" name="PO Print" module="mod_stores" />
+    </screen_group>
+
+    <screen_group id="grp_stores_management" name="Store Mgmt" defaultModule="mod_pharmacy">
+        <screen id="stores_indent" name="View Indents" module="mod_stores"/>
+        <screen id="stores_user_indent" name="Raise/Edit User Indent " module="mod_stores"/>
+        <screen id="stores_transfer_indent" name="Raise/Edit Transfer Indent " module="mod_stores"/>
+        <screen id="stores_indent_approval" name="Approve Transfer Indent" module="mod_stores"/>
+        <screen id="stores_user_indent_approval" name="Approve User Indent" module="mod_stores"/>
+        <screen id="stores_process_indent" name="Process Indent" module="mod_stores"/>
+        <screen id="stores_indent_receive" name="Receive Indent" module="mod_stores"/>
+        <screen id="stores_indent_reject" name="Rejected Transfer Indent" module="mod_stores"/>
+        <screen id="stores_stock_adjust" name="Stock Qty Adjustment"  />
+        <screen id="pharma_stock_transfer" name="Stock Transfer"  />
+        <screen id="store_stock_take_list" name="Stock Take List" module="mod_stores"/>
+        <screen id="store_stock_take_create" name="Initiate New Stock Take" module="mod_stores"/>
+        <screen id="store_stock_take_count" name="Update Stock Take" module="mod_stores"/>
+        <screen id="store_stock_take_reconcile" name="Reconcile Stock Take " module="mod_stores"/>
+        <screen id="store_stock_take_approve" name="Approve Stock Take" module="mod_stores"/>
+        <screen id="store_stock_take_cancel" name="Cancel Stock Take" module="mod_stores"/>
+        <screen id="stores_asset_approval" name="Asset Approval" module="mod_stores"/>
+        <screen id="pharma_view_stock_trans" name="View Stock Transfer"  />
+        <screen id="pharma_view_stock_adj" name="View Stock Adjustments" />
+        <screen id="store_stock_consumption_list" name="Stock Consumption List" />
+        <screen id="store_stock_consumption_new" name="Add New Stock Consumptions" />
+        <screen id="pharmacy_stock_point" name="Stock Checkpoint"  />
+        <screen id="stores_stock_ledger" name="Stock Ledger" />
+        <screen id="pharma_view_store_item_batch_list" name="Store Item Batches List" />
+        <screen id="pharma_view_store_item_batch_details" name="Store Item Batch Details" />
+        <screen id="pharma_view_items_stock_level_list" name="Items Stock Level List" />
+        <screen id="stores_audit_log" name="Audit Log"  />
+    </screen_group>
+
+    <screen_group id="grp_insurance" name="Insurance" defaultModule="mod_insurance">
+        <screen id="ins_dashboard" name="Case List" />
+        <screen id="ins_newcase" name="Add New Case" />
+        <screen id="ins_connectcase" name="Patients Pending Case Connection" />
+        <screen id="insurance_claim" name="Claim" />
+        <screen id="ins_generic_docs" name="Documents" />
+        <screen id="insurance_history" name="History" />
+        <screen id="send_to_tpa" name="Send To TPA" />
+        <screen id="ins_upload_docs" name="Upload Documents" />
+        <screen id="ins_estimate" name="New Estimate" />
+        <screen id="pre_auth_forms" name="PreAuthorization Forms"/>
+        <screen id="insurance_claim_submission" name="Claim Submissions List" module="mod_adv_ins"/>
+        <screen id="insurance_haad_claim" name="Generate HAAD Claim" module="mod_adv_ins"/>
+        <screen id="insurance_accumed_claim" name="Generate Accumed Claim" module="mod_adv_ins"/>
+        <screen id="raise_claim_batch_submission" name="Raise New Claim Submission" module="mod_adv_ins"/>
+        <screen id="insurance_claim_reconciliation" name="Claim Reconciliation" module="mod_adv_ins"/>
+        <screen id="remittance_reconciliation" name="Remittance Reconciliation" module="mod_remittance_reconciliation"/>
+        <screen id="insurance_claim_receipts" name="Claim Receipts" module="mod_adv_ins"/>
+        <screen id="edit_claim" name="Edit Claim" module="mod_adv_ins"/>
+        <screen id="ins_remittance" name="Remittance Advice Download" module="mod_adv_ins"/>
+        <screen id="ins_selfpay" name="Self Pay Claim Submissions" module="mod_adv_ins"/>
+        <screen id="ins_remittance_xl" name="Remittance Advice XL Upload" module="mod_adv_ins"/>
+    </screen_group>
+
+    <screen_group id="grp_eclaim_erx" name="ERx Authorization" defaultModule="mod_eclaim_erx">
+        <screen id="erx_request" name="Send ERx Request" />
+        <screen id="erx_cancel" name="Cancel ERx Request" />
+        <screen id="erx_approval" name="Receive ERx Approval" />
+        <screen id="erx_presc_list" name="ERx Prescriptions List" />
+    </screen_group>
+
+    <screen_group id="grp_eclaim_pbm" name="PBM Authorization" defaultModule="mod_eclaim_pbm">
+        <screen id="pbm_presc_list" name="PBM Prescriptions List" />
+        <screen id="pbm_presc" name="PBM Prescription" />
+        <screen id="pbm_requests" name="PBM Requests" />
+        <screen id="pbm_approvals" name="PBM Approvals" />
+    </screen_group>
+
+    <screen_group id="grp_eclaim_preauth" name="Prior Authorization" defaultModule="mod_eclaim_preauth">
+        <screen id="preauth_presc_list" name="Prior Auth Prescriptions List" />
+        <screen id="preauth_presc" name="Prior Auth Prescription" />
+        <screen id="preauth_requests" name="Prior Auth Request" />
+        <screen id="preauth_approvals" name="Prior Auth Approvals" />
+        <screen id="preauth_presc_attach_file" name="Prior Auth Attachment"/>
+    </screen_group>
+
+    <screen_group id="grp_fixed_asset_mgmt" name="Maint. &amp; Contracts" defaultModule="mod_fixed_asset_mgmt">
+        <screen id="mas_fixed_assets" name="Fixed Assets" />
+        <screen id="maintenance_schedule" name="Maintenance Schedule Master" />
+        <screen id="show_maint_activity" name="Maintenance Activity" />
+        <screen id="asset_complaints" name="Complaints" />
+        <screen id="contracts" name="Contracts" />
+        <screen id="license" name="Licenses" />
+        <screen id="work_order" name="Work Order" />
+        <screen id="view_work_order" name="View Work Order" />
+    </screen_group>
+
+    <screen_group id="grp_patient_demography_reports" name="Patient Reports" defaultModule="mod_basic">
+        <screen id="pat_fav_rpt_dashbd" name="Patient Favourite Reports Dashboard"/>
+        <screen id="patient_details_builder" name="Patient Details Builder" />
+        <screen id="rep_visit_details_builder" name="Visit Details Report Builder" />
+        <screen id="rep_vital_measurement_builder" name="Patient Vitals Report Builder"/>
+        <screen id="rep_patientstats_table_builder" name="Patient Stats Tabular Report Builder" />
+        <screen id="rep_patientstats_trend_builder" name="Patient Stats Trend Report Builder" />
+        <screen id="rep_patientvisitstats_trend_builder" name="Patient Visit Stats Trend Report Builder" />
+        <screen id="rep_patient_admitdischarge_trend_builder" name="Patient Admit Discharge Trend Report Builder" />
+        <screen id="rep_ip_list" name="IP Patient List" />
+        <screen id="rep_ip_list_print" name="In Patient Report Builder" module="mod_ipservices"/>
+        <screen id="rep_ipstats" name="IP Stats Report" module="mod_ipservices" />
+        <screen id="rep_ipopstats" name="IP/OP Stats Report" module="mod_ipservices" />
+        <screen id="birth_details" name="Birth Details" module="mod_ipservices" />
+        <screen id="out_patient_report" name="Out Patient Report" />
+        <screen id="bed_dur_occu_rep_builder" name="IP Stats/Bed Occupancy Report Builder" module="mod_ipservices"/>
+        <screen id="patient_duplicate_report" name="Patient Duplicates Report Builder" />
+        <screen id="followup_details" name="Patient Follow Up Report Builder" />
+        <screen id="break_the_glass_report" name="Break the glass Report" />
+        <screen id="emr_view_access_report" name="EMR View Access Report" />
+    </screen_group>
+
+    <screen_group id="grp_patientfeedback_reports" name="Patient Feedback Reports" defaultModule="mod_patient_feedback">
+        <screen id="patientfeedback_rep" name="Patient Survey Response Details Report Builder" />
+    </screen_group>
+
+    <screen_group id="grp_cssd" name="CSSD" defaultModule="mod_cssd">
+        <screen id="cssd_surgery_kit_avbl" name="Surgery Kit Availability" />
+        <screen id="cssd_ot_stock_consumption" name="OT Stock Consumption" />
+        <screen id="cssd_sterile_stock_transfer" name="Sterile Stock Transfer" />
+    </screen_group>
+
+    <screen_group id="grp_adv_packages" name="Advanced Packages" defaultModule="mod_adv_packages">
+        <screen id="adv_pkg_patient_packages_list" name="Patient Packages" />
+        <screen id="adv_pkg_handedover_patient_packages_list" name="Conducted Packages" />
+    </screen_group>
+
+        <screen_group id="grp_resource_mgmt_reports" name="Maint. &amp; Contracts Reports" defaultModule="mod_fixed_asset_mgmt">
+        <screen name="Maintenance Schedule Report Builder" id="maint_schedule_rep_builder"/>
+        <screen name="Maintenance Activity Report Builder" id="maint_activity_rep_builder"/>
+        <screen name="Complaints Report Builder" id="complaints_rep_builder"/>
+        <screen name="Contract Report Builder" id="contract_report_builder" />
+        <screen name="License Report BUilder" id="license_report_builder" />
+    </screen_group>
+
+    <screen_group id="grp_financial_reports" name="Financial Reports" defaultModule="mod_billing">
+        <screen name="Financial Favourite Reports Dashboard" id="fin_fav_rpt_dashbd" />
+        <screen name="Consolidated Financial Dashboard" id="rep_rev_dashboard" />
+       <!--   <screen name="Hospital Revenue Accrual Report" id="rep_revenueaccrual" />
+        <screen name="Revenue Report Builder" id="rep_revenue_builder" />
+        <screen name="Revenue Accrual Report Builder" id="revenue_accrual_report_builder" />  -->
+        <screen name="Collections Report Builder" id="rep_collection_detailed_builder" />
+        <screen name="Collection Allocation Builder" id="rep_collection_allocation_builder" />
+        <screen name="Payment Details Report Builder" id="payment_details_builder" />
+        <screen name="Payments Paid Report Builder" id="payments_paid_builder" />
+        <screen name="Payments Consolidated Report Builder" id="rep_payment_consolidated_builder" />
+       	<screen id="ip_outstand_report" name="IP Outstanding Detailed Report" />
+        <screen id="ip_outstand_csv_report" name="IP Outstanding Detailed Report" />
+        <screen name="Doctor wise Revenue Report Builder" id="rep_revenue_doctor" />
+        <screen name="Accounting Report" id="rep_accounting" />
+    </screen_group>
+
+        <screen_group id="grp_billing_reports" name="Billing Reports" defaultModule="mod_billing">
+        <screen name="Billing Favourite Reports Dashboard" id="bill_fav_rpt_dashbd" />
+        <screen id="rep_bill_builder" name="Bills Report Builder" />
+   <!-- <screen id="rep_bill_adj_builder" name="Bills Adjustment Report Builder" />  -->
+        <screen id="rep_bill_charge_builder" name="Bill Charge Report Builder" />
+        <screen id="rep_bill_charge_tax_builder" name="Tax Report Builder" />
+        <screen id="rep_bill_charge_adj_builder" name="Bill Charge Adjustment Report Builder" />
+        <screen id="rep_patient_dues_builder" name="Patient Dues Report Builder" />
+        <screen id="billing_daybook" name="Day Book" />
+        <screen id="daybook_builder" name="Day Book Builder" />
+  <!--  <screen id="rep_payment_insurance" name="Payment for Insurance" module="mod_insurance" />  -->
+        <screen id="outstanding_deposits" name="Outstanding Deposits Report" />
+        <screen id="deposit_builder" name="Deposits Builder" module="mod_billing_ext" />
+        <screen id="deposit_receipts_builder" name="Deposit Receipts Builder" module="mod_billing_ext" />
+        <screen id="rep_reopened_bills" name="Reopened Bills" />
+        <screen id="rep_trans_rev" name="Internal Transfer Revenue Report" />
+<!--    <screen id="rep_rate_variation" name="Rate Variation Report" />  -->
+        <screen id="rep_bill_status_change" name="Bill Status Change Report" />
+        <screen id="rep_reward_points" name="Reward Points Builder" module="mod_reward_points" />
+    </screen_group>
+
+    <screen_group id="grp_store_sales_reports" name="Sales/Issues Reports" defaultModule="mod_pharmacy">
+        <screen name="Sales/Issues Favourite Reports Dashboard" id="sale_fav_rpt_dashbd" />
+        <screen id="ph_sale_bill_reports" name="Sales Bills Builder"/>
+        <screen id="ph_sale_item_rep_builder" name="Sale Items Builder"/>
+        <screen id="rep_pharmacy_pharmacy_dues_report" name="Dues Report" />
+        <screen id="st_hdrug_sales" name="Controlled Drug Sales Report" />
+        <screen id="stock_consumption_rep_builder" name="Stock Consumption Report Builder" />
+        <screen id="ph_stockissue_rep_builder" name="Stock Issues Builder" />
+        <screen id="rep_store_sales_vat_report" name="Sale Items Tax Report" />
+        <screen id="pharmacy_doc_wise_sales_report" name="Doctor Wise Prescribed vs Sold Report" />
+        <screen id="pres_lead_time_builder" name="Prescription Lead Time Builder" module="mod_stores"/>
+        <screen id="rep_markup_rates_report" name="Markup Rates Report" module="mod_stores"/>
+        <screen id="st_in_out_reg_blder" name="Stock Issues Builder" />
+        <screen id="sales_abc_blder" name="Sales/Issues ABC Analysis Report Builder" />
+        <screen id="patient_indent_item_rep_builder" name="Patient Indent Items Builder" />
+        <screen id="rep_karnataka_sales_tax" name="Karnataka Sales Tax Report" />
+    </screen_group>
+
+    <screen_group id="grp_store_procure_reports" name="Procurement Reports" defaultModule="mod_pharmacy">
+        <screen name="Procurement Favourite Reports Dashboard" id="proc_fav_rpt_dashbd" />
+        <screen id="ph_invoice_rep_builder" name="Purchase Invoices Builder" />
+        <screen id="ph_purchase_rep_builder" name="Purchase Items Builder" />
+        <screen id="rep_pharmacy_purchase_vat_report" name="Purchase Invoice Tax Report" />
+        <screen id="rep_pharmacy_purchase_items_vat_report" name="Purchase Items Tax Report" />
+        <screen id="rep_pharmacy_purchase_vat_abated_report" name="Purchase Tax Report-Abated MRP" />
+        <screen id="stores_supp_ret_builder" name="Supplier Returns Builder" />
+        <screen id="ph_pend_rep_report" name="Pending Replacement" />
+        <screen id="ph_supplier_payments" name="Supplier Payments Report" />
+        <screen id="rep_pharmacy_bonus_items" name="Bonus Items Report" />
+        <screen id="po_items_builder" name="PO - Items Builder" module="mod_stores"/>
+        <screen id="po_pending_item_builder" name="PO-Pending Items Builder" module="mod_stores"/>
+        <screen id="po_builder" name="Purchase Order Builder" module="mod_stores"/>
+        <screen id="rep_store_purchasesummary" name="Purchase Summary Report" />
+        <screen id="rep_store_purchase_details" name="Purchase Details Report" />
+    </screen_group>
+
+    <screen_group id="grp_store_mgmt_reports" name="Store Mgmt Reports" defaultModule="mod_pharmacy">
+        <screen name="Store Mgmt Favourite Reports Dashboard" id="store_mg_fav_rpt_dashbd" />
+        <screen id="ph_indvl_stock_builder" name="Detailed Stock Builder" />
+        <screen id="store_item_master_builder" name="Item Master Builder" />
+        <screen id="ph_itemwise_stock_builder" name="Item-Wise Stock Builder" />
+        <screen id="indent_flow_builder" name="Indent Flow Builder" module="mod_stores"/>
+        <screen id="indent_item_builder" name="Indent Items Detail Builder" module="mod_stores"/>
+        <screen id="ph_stocktransfer_rep_builder" name="Stock Transfers Builder" />
+        <screen id="ph_stock_adj_rep_builder" name="Stock Adjustment Builder" />
+        <screen id="stock_take_report_builder" name="Stock Take Builder" />
+        <screen id="ph_stock_movement" name="Stock Movement Report" />
+        <screen id="rep_pharmacy_stock_chk_point" name="Item wise Stock Quantity Checkpoint" />
+        <screen id="rep_pharmacy_stock_catg_chk_point" name="Item Category wise Stock Value Checkpoint" />
+        <screen id="rep_pharmacy_surplus_stock" name="Surplus Stock Report" />
+        <screen id="rep_stock_ledger" name="Stock Ledger" />
+        <screen id="rep_pharmacy_chkpoint_difference" name="Checkpoint Difference" />
+        <screen id="rep_pharmacy_tax" name="TN Tax Report" />
+        <screen id="reagent_consumables_builder" name="Reagent/Consumable Report Builder" module="mod_consumables_flow" />
+    </screen_group>
+
+    <screen_group id="grp_laboratory_reports" name="Diagnostics Reports" defaultModule="mod_basic">
+        <screen id="diag_fav_rpt_dashbd" name="Diagnostics Favourite Reports Dashboard" module="mod_diagnostics"/>
+        <screen id="diag_builder" name="Diagnostics Report Builder" module="mod_diagnostics" />
+        <screen id="diag_rev_builder" name="Diagnostics Revenue Report Builder" module="mod_diagnostics" />
+        <screen id="rep_incoming_test_details" name="In Coming Test Details-Hospital wise" module="mod_diagnostics" />
+        <screen id="rep_outgoing_test_details" name="Out Going Test Details-Hospital wise" module="mod_diagnostics" />
+        <screen id="rep_progressive_test_details" name="Diagnostic Progressive Report" module="mod_diagnostics" />
+        <screen id="tests_presc_ordered_report" name="Tests Prescription Ordered Report" module="mod_diagnostics" />
+        <screen id="rep_test_equipment_details_builder" name="Equipment Test Report Builder" module="mod_diagnostics" />
+        <screen id="sample_rejections_builder" name="Sample Rejections Report Builder" module="mod_diagnostics" />
+        <screen id="diag_internal_lab_builder" name="Diag Internal Lab Report Builder" module="mod_central_lab" />
+    </screen_group>
+
+    <screen_group id="grp_patient_package_reports" name="Patient Package Reports" defaultModule="mod_adv_packages">
+        <screen id="rep_patient_packages_builder" name="Patient Packages" defaultModule="mod_adv_packages" />
+    </screen_group>
+
+    <screen_group id="grp_dialysis_reports" name="Dialysis Reports" defaultModule="mod_basic">
+        <screen id="dial_fav_rpt_dashbd" name="Dialysis Favourite Reports Dashboard" module="mod_dialysis"/>
+        <screen id="dialysis_builder" name="Dialysis Session Report Builder" module="mod_dialysis" />
+        <screen id="rep_dialysis_frequency" name="Dialysis Frequency Report Builder" module="mod_dialysis" />
+        <screen name="Clinical Outcomes Report" id="rep_clinical_outcome" module="mod_dialysis" />
+        <screen id="intra_dialysis_builder" name="Intra Dialysis Parameters Report Builder" module="mod_dialysis" />
+    </screen_group>
+
+    <screen_group id="grp_clinical_reports" name="Clinical Data Reports" defaultModule="mod_basic">
+        <screen id="clini_fav_rpt_dashbd" name="Clinical Favourite Reports Dashboard" module="mod_clinical_reports"/>
+        <screen id="lab_test_result_builder" name="Lab Test Results Report Builder" module="mod_clinical_reports" />
+        <screen id="rep_clinical_lab" name="Clinical Lab Test Results Report Builder" module="mod_clinical_data" />
+        <screen id="rep_icd_codification" name="Diagnosis Codes Report Builder" module="mod_mrd_icd" />
+        <screen id="rep_codes" name="Procedure Codes Report Builder" module="mod_mrd_icd" />
+        <screen id="rep_coder_claim_reveiws" name="Coder Claim Review Report Builder" module="mod_coder_claim_review" />
+    </screen_group>
+
+    <screen_group id="grp_ivf_reports" name="IVF Reports" defaultModule="mod_basic">
+        <screen name="Donor Details Report" id="donor_details_builder" module="mod_ivf" />
+        <screen name="IVF Treatment Cycle Report" id="ivf_treatment_cycle_builder" module="mod_ivf" />
+    </screen_group>
+
+    <screen_group id="grp_service_reports" name="Service Reports" defaultModule="mod_basic">
+        <screen id="serv_fav_rpt_dashbd" name="Services Favourite Reports Dashboard" />
+        <screen id="service_builder" name="Services Report Builder" />
+        <screen id="services_presc_ordered_report" name="Services Prescription Ordered Report" />
+    </screen_group>
+
+    <screen_group id="grp_consultation_reports" name="Consultation Reports" defaultModule="mod_basic">
+        <screen id="consul_fav_rpt_dashbd" name="Doctor Consultation Favourites Dashboard" />
+        <screen id="rep_doc_consul_builder" name="Doctor Consultation Report Builder" />
+        <screen id="rep_presc_det_builder" name="Prescription Ordering Details Builder" />
+        <screen id="pending_prescription_report" name="OP Pending Prescriptions Report Builder" module="mod_pat_pending_prescription"/>
+    </screen_group>
+
+    <screen_group id="grp_scheduler_reports" name="Scheduler Reports" defaultModule="mod_basic">
+        <screen id="sch_fav_rpt_dashbd" name="Scheduler Favourites Dashboard" />
+        <screen id="Scheduler_Doctors_Appointment" name="Doctor Appointments Report Builder " />
+        <screen id="Scheduler_Tests_Appointment" name="Tests Scheduled Report Builder" />
+        <screen id="Scheduler_Services_Appointment" name="Services Scheduled Report Builder " />
+        <screen id="Scheduler_Surgery_Appointment" name="Surgery/Procedure Appointments Report Builder" />
+        <screen id="Doctor_Appointment" name="Consolidated Appointments Report" />
+        <screen id="SMS_Response" name="SMS Response Report Builder" />
+    </screen_group>
+
+    <screen_group id="grp_ot_reports" name="OT Reports" defaultModule="mod_basic">
+        <screen id="ot_fav_rpt_dashbd" name="OT Favourite Reports Dashboard" module="mod_ipservices"/>
+        <screen id="ot_schedule_rep_builder" name="Surgery / Procedure Schedule Report Builder" module="mod_ipservices" />
+    </screen_group>
+
+    <screen_group id="grp_bed_reports" name="Bed Util Reports" defaultModule="mod_basic">
+        <screen id="bedu_fav_rpt_dashbd" name="Bed Util Favourite Reports Dashboard" module="mod_ipservices"/>
+        <screen id="bed_occu_rep_builder" name="Current Bed Occupancy Report Builder" module="mod_ipservices"/>
+        <screen id="bed_ward_wise_occu_rep_builder" name="Detailed Bed Occupancy Report Builder" module="mod_ipservices"/>
+        <screen id="patient_bed_occ_builder" name="Patient Bed Occupancy Report Builder" module="mod_ipservices"/>
+        <screen id="ip_bed_utilization" name="Bed Utilization Report" module="mod_ipservices" />
+        <screen id="luxury_tax_rep_builder" name="Luxury Tax Report Builder" module="mod_ipservices" />
+    </screen_group>
+
+    <screen_group id="grp_dental_reports" name="Dental Reports" defaultModule="mod_dental_chart">
+        <screen id="dental_trtment_report_builder" name="Dental Treatment Details Report Builder" />
+        <screen id="dental_supplies_report_builder" name="Dental Supplies Report Builder" />
+        <screen id="service_subtask_builder" name="Services Sub Tasks Report Builder" />
+    </screen_group>
+
+    <screen_group id="grp_ward_activities_reports" name="Ward Activities Reports" defaultModule="mod_wardactivities">
+        <screen id="patient_activities_report_builder" name="Patient Activities Report Builder"/>
+        <screen id="doctor_order_report_builder" name="Doctor Order Report Builder"/>
+    </screen_group>
+
+    <screen_group id="grp_insurance_reports" name="Insurance Reports" defaultModule="mod_adv_ins">
+        <screen id="ins_fav_rpt_dashbd" name="Insurance Favourite Reports Dashboard"/>
+        <screen id="rep_insurance_claim_batch_builder" name="Insurance Claim Batch Report Builder" />
+        <screen id="rep_insurance_claim_builder" name="Insurance Claims Report Builder" />
+        <screen id="rep_insurance_claim_det_builder" name="Insurance Claim Details Report Builder" />
+        <screen id="rep_claim_history_builder" name="Claim History Report Builder"/>
+    </screen_group>
+
+	<screen_group id="grp_pbm_reports" name="PBM Prescription Reports" defaultModule="mod_eclaim_pbm">
+        <screen id="pbm_prescription_builder" name="PBM Prescription Report Builder"/>
+        <screen id="pbm_prescription_item_builder" name="PBM Prescription Item Report Builder"/>
+    </screen_group>
+
+    <screen_group id="grp_dietary_reports" name="Dietary Reports" defaultModule="mod_dietary">
+        <screen id="diet_fav_rpt_dashbd" name="Dietary Favourite Reports Dashboard" module="mod_dietary"/>
+        <screen id="dietary_daily_meals_report" name="To Be Delivered Meals Report"/>
+    </screen_group>
+
+    <screen_group id="grp_mrd_reports" name="MRD Reports" defaultModule="mod_mrd_casefile">
+        <screen id="mrd_fav_rpt_dashbd" name="MRD Favourite Reports Dashboard" module="mod_mrd_casefile"/>
+        <screen id="case_file_details_builder" name="Case File Report Builder" module="mod_mrd_casefile" />
+    </screen_group>
+
+    <screen_group id="grp_master_reports" name="Master Reports" defaultModule="mod_basic">
+        <screen id="mas_fav_rpt_dashbd" name="Master Favourite Reports Dashboard" />
+        <screen id="rep_rate_master_print" name="Rate Master Report Builder"/>
+    </screen_group>
+
+    <screen_group id="grp_custom_reports" name="Custom Reports" defaultModule="mod_basic">
+        <screen id="custom_rpt_list" name="Report List" />
+        <screen id="custom_rpt_add" name="Add Report" />
+    </screen_group>
+
+    <screen_group id="grp_fav_reports" name="Favourite Reports" defaultModule="mod_basic">
+        <screen id="fav_rpt_dashbd" name="Favourite Reports" />
+    </screen_group>
+    
+    <screen_group id="grp_regulatory_reports" name="Regulatory and Statutory Reports" defaultModule="mod_basic">
+        <screen id="rep_gstr3_report" name="India GSTR3 Report" module="mod_basic"  />
+        <screen id="rep_ph_mmhr_report" name="Philhealth Monthly Mandatory Hospital Report" module="mod_basic"  />
+        <screen id="rep_ph_ohsrs_report" name="Philippines Online Health Facility Statistical Report" module="mod_basic"  />
+    </screen_group>
+
+    <screen_group id="grp_hospital_prefs" name="Preferences" defaultModule="mod_basic">
+        <screen id="mas_gen_pref" name="Generic Preferences" />
+        <screen id="mas_health_authority_pref" name="Health Authority Preferences" />
+        <screen id="mas_reg_prefs" name="Registration Preferences" />
+        <screen id="mas_center_prefs" name="Center Preferences" />
+        <screen id="mas_pass_prefs" name="Password Preferences"/>
+        <screen id="mas_pat_header_prefs" name="Patient Header Preferences"/>
+        <screen id="ip_preferences" name="IP Preferences" module="mod_adt" />
+        <screen id="mas_printer_definition" name="Printer Settings Master" />
+        <screen id="hl7_configuration" name="Hl7 Configuration" module="mod_basic" />
+        <screen id="mas_print" name="Print Configurations" />
+        <screen id="mas_clinical_preferences" name="Clinical Preferences" />
+        <screen id="clinical_prefs_audit_log" name="Clinical Preferences Audit Log"/>
+    </screen_group>
+
+    <screen_group id="grp_billing_prefs" name="Billing Admin Masters" defaultModule="mod_billing">
+        <screen id="charge_head" name="Charge Heads" />
+        <screen id="acc_voucher_types" name="Voucher Types" module="mod_tally" />
+        <screen id="sales_purchases_acc_prefixes" name="Sales/Purchases A/C Prefixes" module="mod_tally" />
+        <screen id="account_head" name="Accounting Heads" module="mod_tally" />
+        <screen id="accounting_group_master" name="Accounting Group Master" module="mod_basic" />
+        <screen id="mas_scheduled_export_prefs" name="Scheduled Export Preferences" module="mod_tally"/>
+        <screen id="mas_bill_ac_vc_templates" name="Accounting Voucher Templates" />
+        <screen id="service_group" name="Service Groups" />
+        <screen id="service_sub_group" name="Service Sub Groups" />
+        <screen id="master_tax_groups" name="Tax Groups" />
+        <screen id="master_tax_sub_groups" name="Tax Sub Groups" />
+        <screen id="master_tax_upload_download" name="Item Tax Upload/Download" />
+        <screen id="mas_insurance_item_cat" name="Insurance Item Categories" module="mod_adv_ins"/>
+        <screen id="mas_payment_category" name="Payment Category" />
+        <screen id="mas_payment_mode" name="Payment Modes" />
+        <screen id="mas_bank" name="Bank Master" />
+        <screen id="mas_card_type" name="Card Types" />
+        <screen id="mas_bill_label" name="Bill Labels Master" />
+        <screen id="mas_edc_machine" name="Edc Machine Master" />
+         <screen id="mas_billing_group" name="Billing Group" />
+    </screen_group>
+    <screen_group id="grp_clinical_master" name="Clinical Master" defaultModule="mod_basic">
+    	<screen id="mas_note_types" name="Note Types" ></screen>
+    </screen_group>
+    <screen_group id="grp_interface_master" name="Interface Master" defaultModule="mod_basic">
+    	<screen id="mas_data_backload" name="Data Backload" ></screen>
+    </screen_group>
+
+    <screen_group id="grp_integrations_configurations" name="Integration Masters" defaultModule="mod_salucro">
+        <screen id="mas_salucro_role" name="Salucro Roles" />    
+        <screen id="mas_salucro_location" name="Salucro Locations" />
+        <screen id="salucro_location_audit_log" name="Salucro Location Audit Log" />
+        <screen id="salucro_role_audit_log" name="Salucro Role Audit Log" />
+    </screen_group>
+
+    <screen_group id="grp_salucro" name="Salucro" defaultModule="mod_salucro">
+        <screen id="salucro_transactions" name="Salucro Transactions" />
+        <screen id="salucro_reports" name="Salucro Reports" />
+    </screen_group>
+
+    <screen_group id="grp_print_templates" name="Print Templates" defaultModule="mod_basic">
+        <screen id="mas_print_templates" name="Print Template List"/>
+        <screen id="mas_bill_template" name="Bill Print Templates"/>
+        <screen id="mas_ph_template" name="Pharmacy Print Templates"/>
+        <screen id="mas_ph_po_template" name="PO Print Templates"/>
+         <screen id="mas_grn_template" name="GRN Print Templates"/>
+        <screen id="mas_diag_template" name="Diagnostic Print Templates"/>
+        <screen id="mas_barcode_template" name="Bar Code Print Templates"/>
+        <screen id="mas_hvf_template" name="HVF Print Templates"/>
+        <screen id="mas_sample_barcode_template" name="Samples Bar Code Print Templates"/>
+        <screen id="mas_prescription_template" name="Consultation Print Templates"/>
+        <screen id="mas_prescription_label_template" name="Prescription Label Print Templates"/>
+        <screen id="mas_pat_visit_bills_template" name="Patient Visit Bills Print Templates"/>
+        <screen id="mas_common_print_templates" name="Template List(html/text)"/>
+    </screen_group>
+
+    <screen_group id="grp_hospital_templates" name="Document Templates" defaultModule="mod_basic">
+        <screen id="mas_patient_header_templates" name="Patient Header"/>
+        <screen id="mas_generic_doc_template" name="Patient Documents" module="mod_mrd"/>
+        <screen id="mas_doctempl_cen_app" name="Documents Templates Center Applicability"/>
+        <screen id="mas_generic_images" name="Generic Images" />
+        <screen id="mas_emailTemplates" name="Email Templates" />
+        <screen id="mas_diag_templates" name="Diagnostic Reports" module="mod_diagnostics" />
+        <screen id="mas_service_templates" name="Service Reports" module="mod_services" />
+        <screen id="mas_ot_templates" name="Templates - OT Reports" module="mod_ipservices"/>
+        <screen id="dis_metadata" name="Discharge Summary" />
+        <screen id="op_case_form_template" name="OP Case Forms" module="mod_op_forms" />
+        <screen id="mas_reg_templates" name="Registration Documents" />
+        <screen id="mas_reg_cards" name="Registration Cards" />
+        <screen id="mas_mlc_templates" name="MLC Forms" />
+        <screen id="mas_claim_template" name="Insurance Claims" module="mod_insurance" />
+        <screen id="ins_templates" name="Insurance Documents" module="mod_insurance" />
+        <screen id="tpapreauth_templates" name="TPA Preauth Forms" module="mod_insurance" />
+    </screen_group>
+
+    <screen_group id="grp_general_masters" name="General Masters" defaultModule="mod_basic">
+        <screen id="mas_region" name="Region"/>
+        <screen id="mas_areas" name="Area" />
+        <screen id="mas_cities" name="Cities" />
+        <screen id="mas_states" name="States" />
+        <screen id="mas_districts" name="Districts" />
+        <screen id="mas_countries" name="Countries" />
+        <screen id="mas_salutation" name="Salutations" />
+
+    <!--<screen id="mas_religions" name="Religions" />
+        <screen id="mas_occupations" name="Occupations" /> -->
+
+        <screen id="mas_custom_list1" name="Patient Custom List 1 Master" />
+        <screen id="mas_custom_list2" name="Patient Custom List 2 Master" />
+        <screen id="mas_custom_list3" name="Patient Custom List 3 Master" />
+        <screen id="mas_custom_list4" name="Patient Custom List 4 Master" />
+        <screen id="mas_custom_list5" name="Patient Custom List 5 Master" />
+        <screen id="mas_custom_list6" name="Patient Custom List 6 Master" />
+        <screen id="mas_custom_list7" name="Patient Custom List 7 Master" />
+        <screen id="mas_custom_list8" name="Patient Custom List 8 Master" />
+        <screen id="mas_custom_list9" name="Patient Custom List 9 Master" />
+        <screen id="mas_visit_custom_list1" name="Visit Custom List 9 Master" />
+        <screen id="mas_visit_custom_list2" name="Visit Custom List 9 Master" />
+        <screen id="mas_govt_type_id" name="Govt ID Master" />
+        <screen id="mas_other_type_id" name="Other ID Master" />
+        <screen id="mas_encounter_type" name="Encounter Type Master" />
+        <screen id="mas_transfer_hospitals" name="Transfer Hospitals" module="mod_adv_ins" />
+        <screen id="mas_scan_doc_types" name="Document Types" />
+        <screen id="mas_recurrence_daily_master" name="Recurrence Daily Master" />
+        <screen id="medicine_route" name="Route of Administration"/>
+        <screen id="mas_strength_unit" name="Strength Unit" />
+        <screen id="diag_sample_type_master" name="Sample Type" module="mod_diagnostics" />
+        <screen id="label_master" name="Label Master"></screen>
+        <screen id="reg_expression" name="Regular Expression"></screen>
+        <screen id="contracts_list" name="Contract Types" module="mod_fixed_asset_mgmt" />
+        <screen id="channeling_source" name="Appointment Channeling Source" />
+        <screen id="license_type" name="License Types" module="mod_fixed_asset_mgmt" />
+        <screen id="mas_supported_codes" name="ICD Supported Codes" />
+        <screen id="mas_icd_codes" name="ICD Code Master"/>
+        <screen id="mas_icd_codes_cm" name="ICD Codes - Diagnosis" module="mod_mrd_icd"/>
+        <screen id="mas_drg_codes" name="DRG Codes Master"/>
+        <screen id="per_diem_codes" name="Per Diem Codes" />
+        <screen id="per_diem_codes_charges_audit_log" name="Per Diem Codes Charges Audit Log" />
+        <screen id="mas_pbm_observations" name="PBM Observations" module="mod_eclaim_pbm" />
+        <screen id="mas_dialyzer_types" name="Dialyzer Types" module="mod_dialysis"/>
+        <screen id="mas_dial_access_types" name="Dialysis Access Types" module="mod_dialysis"/>
+        <screen id="mas_dial_access_sites" name="Dialysis Access Sites" module="mod_dialysis"/>
+        <screen id="mas_dial_ratings" name="Dialyzer Ratings" module="mod_dialysis"/>
+        <screen id="mas_dial_machine" name="Dialysis Machine Master" module="mod_dialysis"/>
+        <screen id="mas_dialysate_type" name="Dialysate Type" module="mod_dialysis"/>
+        <screen id="mas_dialysis_prep" name="Dialysis Prep Master" module="mod_dialysis"/>
+        <screen id="emr_access_right" name="EMR Access Right" module="mod_basic" />
+        <screen id="mas_out_houses_list" name="Outsource Master" module="mod_diagnostics" />
+        <screen id="mas_center_outhouses" name="Outsource Center Master" />
+        <screen id="mas_confidentiality_groups" name="Confidentiality Groups" />
+        <screen id="mas_code_sets" name="Code Sets" />
+    </screen_group>
+
+    <screen_group id="grp_hospital_admin_masters" name="Admin Masters" defaultModule="mod_basic">
+        <screen id="mas_hosp_roles" name="Hospital Roles Master" />
+        <screen id="mas_indication_for_caesarean_section" name="Indication for caesarean section" />
+        <screen id="mas_reason_for_referral" name="Reason for referral" />
+        <screen id="mas_dept" name="Departments" />
+        <screen id="insurance_aggregator" name="Insurance Aggregators" module="mod_develop"/>
+        <screen id="mas_discharge_type" name="Discharge Types" />
+        <screen id="mas_dept_units" name="Department Units" />
+        <screen id="mas_diag_depts" name="Diagnostic Departments" />
+        <screen id="mas_serv_dept" name="Services Departments" />
+        <screen id="test_equipment_master" name="Test Equipments" />
+        <screen id="serv_res_master" name="Service Resources" />
+        <screen id="scheduler_generic_resource_type_master" name="Generic Resource Type" />
+        <screen id="scheduler_generic_resource_master" name="Generic Resource Master" />
+        <screen id="mas_location" name="Location Master"/>
+        <screen id="mas_patient_cat" name="Patient Category Master"/>
+        <screen id="mas_wards_beds" name="Ward &amp; Bed Details" />
+        <screen id="mas_counters" name="Counters" />
+        <screen id="mas_discount_authorizer" name="Discount Authorizers" />
+        <screen id="mas_pending_presc_declined_reasons" name="Pending Prescription Declined Reasons" module="mod_pat_pending_prescription" />
+        <!--
+        <screen id="mas_discount_category" name="Discount Categories" />
+         -->
+        <screen id="mas_discount_plan" name="Discount Plans" />
+        <screen id="mas_op_visit_type_rules" name="Op Visit Type Rules" />
+        <screen id="mas_op_visit_type_applicability" name="Op Visit Type Rule Applicability" />
+        <screen id="mas_discount_plan_center_ass" name="Discount Plan Center Association" />
+        <screen id="mas_mrd_casefile_users" name="MRD Case File Users" module="mod_mrd_casefile"/>
+        <screen id="mas_diagnosis_status" name="Diagnosis Status Master" />
+        <screen id="mas_ref_doctors" name="Referral Doctors" />
+        <screen id="mas_ref_doctors_app" name="Referal Doctors Applicability" />
+        <screen id="mas_ph_ret_doc" name="Retail Doctors"/>
+        <screen id="mas_ph_ret_spon" name="Retail Sponsors"/>
+        <screen id="mas_medicine_dosage" name="OP Medicine Frequency" />
+        <screen id="mas_medicines_prescribed" name="Prescribed Medicines" />
+        <screen id="mas_ins_sponsor" name="Sponsor Type Master" />
+        <screen id="mas_ins_tpas" name="TPA / Sponsor Master" />
+        <screen id="mas_insurance_comp" name="Insurance Company Master"/>
+        <screen id="mas_insurance_cat" name="Insurance Plan Types" module="mod_adv_ins"/>
+        <screen id="mas_insurance_cat_center" name="Insurance NetWork/Plan Type Center Applicability" />
+        <screen id="mas_plan" name="Insurance Plans" module="mod_adv_ins"/>
+        <screen id="mas_denial_codes" name="Insurance Denial Codes" module="mod_adv_ins"/>
+        <screen id="mas_insurance_company_tpa" name="Insurance Company TPA Master" module="mod_adv_ins"/>
+        <screen id="mas_rejection_reason" name="Rejection Reason" module="mod_adv_ins"/>
+        <screen id="mas_incoming_samples" name="In Coming Hospitals" module="mod_diagnostics" />
+        <screen id="diag_reagent_master" name="Diagnostics Reagents" module="mod_consumables_flow" />
+        <screen id="mas_sam_collection" name="Sample Colection Center" />
+        <screen id="mas_sam_sources" name="Sample Sources" />
+        <screen id="serv_cons_master" name="Service Consumables" module="mod_consumables_flow" />
+        <screen id="ot_cons_master" name="OT Consumables" module="mod_consumables_flow"/>
+        <screen id="mas_phrase_suggestions_category_master" name="Phrase Suggestions Category" />
+        <screen id="mas_phrase_suggestions_master" name="Phrase Suggestions Master" />
+        <screen id="mas_prescription_instructions_master" name="Prescription Instructions Master" />
+        <screen id="mas_system_gen_sections" name="System Sections" module="mod_op"/>
+        <screen id="mas_image_markers" name="Image Markers" module="mod_op"/>
+        <screen id="mas_sections" name="Section" module="mod_op"/>
+        <screen id="mas_section_fields" name="Section Fields" module="mod_op"/>
+        <screen id="mas_section_role_rights" name="Section Role Rights" module="mod_op"/>
+        <screen id="mas_form_components" name="Hospital Form Components" module="mod_op"/>
+        <screen id="mas_form_components_center_applicability" name="Hospital Form Components Center Applicability" module="mod_op"/>
+        <screen id="clinical_data_lab_results_master" name="Clinical Data Lab Results Master" module="mod_clinical_data"/>
+        <screen id="hospitalization_reasons" name="Hospitalization Reason Master" module="mod_clinical_data"/>
+        <screen id="clinical_vaccinations" name="Vaccination Type" module="mod_clinical_data"/>
+        <screen id="clinical_vaccination_no_reason" name="Vaccination No Reasons" module="mod_clinical_data"/>
+        <screen id="clinical_infection_master" name="Infection Type" module="mod_clinical_data"/>
+        <screen id="infection_site_master" name="Infection Site" module="mod_clinical_data"/>
+        <screen id="dietary_templates" name="Diet Charts" module="mod_dietary" />
+        <screen id="mas_vitalparameters" name="Vital(I/O) parameter Fields" />
+        <screen id="new_mas_vitalparameters" name="Vital Parameter (New)" />
+        <screen id="mas_vitalparameter_resultranges" name="Reference Ranges Master" />
+        <screen id="mas_centers" name="Centers" />
+	    <screen id="mas_center_group" name="Center Groups"/>
+        <screen id="mas_reports_cen_app" name="Edit Default Center Reports Delivery Time" />
+        <screen id="mas_reports_overrides" name="Edit Center Delivery Times Overrides" />
+        <screen id="mas_death_reason" name="Death Reasons" module="mod_basic"/>
+        <screen id="mas_allergy" name="Allergy Master" module="mod_ivf"/>
+        <screen id="tooth_surface_material_master" name="Tooth Surface Material" module="mod_dental_chart"/>
+        <screen id="crown_status_master" name="Crown Status" module="mod_dental_chart"/>
+        <screen id="root_status_master" name="Root Status" module="mod_dental_chart"/>
+        <screen id="tooth_surface_option_master" name="Tooth Surface Option" module="mod_dental_chart"/>
+        <screen id="tooth_surface_status_master" name="Tooth Surface Status" module="mod_dental_chart"/>
+        <screen id="master_vaccine" name="Vaccine Master" module="mod_vaccination" />
+        <screen id="insurance_plan_main_audit_log" name="Insurance Main Plan audit log" />
+        <screen id="insurance_plan_details_audit_log" name="Plan Item Category Details audit log" />
+        <screen id="mas_ins_aggregator_centers" name="Insurance Aggregator Centers" module="mod_develop"/>
+        <screen id="mas_ins_aggregator_doctors" name="Insurance Aggregator Doctors" module="mod_develop"/>
+        <screen id="mas_ins_aggregator_pharmacies" name="Insurance Aggregator Pharmacies" module="mod_develop"/>
+        <screen id="mas_ins_aggregator_tpainsco" name="Insurance Aggregator Tpa Ins. Co" module="mod_develop"/>        
+        <screen id="mas_review_types" name="Review Types" module="mod_coder_claim_review"/>        
+        <screen id="mas_review_category" name="Review Category" module="mod_coder_claim_review"/>
+        <screen id="mas_roles" name="Roles" />        
+        <screen id="mas_practitioner_types" name="Practitioner Types" />       
+    </screen_group>
+
+    <screen_group id="grp_hospital_billing_masters" name="Billing Masters" defaultModule="mod_billing">
+        <screen id="mas_organizations" name="Rate Sheets" />
+        <screen id="mas_rate_plan" name="Rate Plans" />
+        <screen id="mas_bedmaster" name="Bed Types" />
+        <screen id="consult_charge" name="Consultation Types" />
+        <screen id="consult_charge_upload" name="Consultation Types Upload" />
+        <screen id="mas_reg_charges" name="Registration Charges" />
+        <screen id="mas_reg_charges_upload" name="Registration Charges Upload" />
+        <screen id="mas_doctors" name="Doctors" />
+        <screen id="mas_doctors_cen_app" name="Doctors Center Applicability" />
+        <screen id="mas_diag_test_list" name="Diagnostic Tests" />
+        <screen id="diag_edit_master_id" name="Edit Diagnostic Test"/>
+        <screen id="mas_edit_result_ranges" name="Add/Edit Result Ranges" />
+        <screen id="mas_results_cen_app" name="Diagnostic Results Center Applicability" />
+
+        <screen id="diag_methodology_master_id" name="Diagnostic Methodology"/>
+        <screen id="diagnosticTests_audit_log" name="Diagnostic Tests Audit Log"/>
+        <screen id="mas_services" name="Services" />
+        <screen id="services_audit_log" name="Services Audit Log"/>
+        <screen id="mas_operations" name="Operations" />
+        <screen id="mas_operation_templates" name="Operation Templates"/>
+        <screen id="operations_audit_log" name="Operations Audit Log"/>
+        <screen id="mas_ot" name="Operation Theatres" />
+        <screen id="mas_equipment" name="Equipment" />
+        <screen id="mas_anaesthesia" name="Anaesthesia Type Master" />
+        <screen id="mas_common_charges" name="Other Charges" />
+        <screen id="mas_package_category_master" name="Package Category" />
+        <screen id="mas_packages" name="Packages" />
+        <screen id="mas_order_sets" name="Order Sets" />
+        <screen id="dyna_package" name="Dynamic Packages" />
+        <screen id="dyna_package_category_limits_audit_log" name="Dyna Package Category Limits Audit Log" />
+        <screen id="dyna_package_charges_audit_log" name="Dyna Package Charges Audit Log" />
+        <screen id="mas_dyna_package_cat" name="Dyna Package Category" />
+        <screen id="mas_dyna_package_rule" name="Dyna Package Rules" />
+        <screen id="dietary_master" name="Dietary Master" module="mod_dietary" />
+        <screen id="sponsor_procedure_master" name="Sponsor Procedure Master"/>
+        <screen id="mas_payment_rule" name="Payment Rules" />
+        <screen id="paymentrule_audit_log" name="Payment Rules Audit Log"/>
+        <screen id="mas_out_houses" name="Diag Outsource Master" module="mod_diagnostics" />
+        <screen id="rateplan_spread_sheet" name="Rate Plan Spread Sheet" />
+        <screen id="mas_test_tat_master" name="Add/Edit Test TAT" />
+        <screen id="mas_case_rate" name ="Case Rate"/>
+        <screen id="mas_code_type" name = "Code Type"/>
+    </screen_group>
+
+    <screen_group id="grp_dental_masters" name="Dental Masters" defaultModule="mod_dental_chart">
+        <screen id="mas_dental_supplier_master" name="Dental Supplier Master" />
+        <screen id="mas_dental_supplies_master" name="Dental Supplies Master" />
+        <screen id="mas_dental_supplier_rate_master" name="Dental Supplier Rate Master" />
+        <screen id="mas_dental_shades_master" name="Dental Shades Master" />
+    </screen_group>
+
+    <screen_group id="grp_pharmacy_masters" name="Stores Masters" defaultModule="mod_pharmacy">
+        <screen id="mas_store_type" name="Store Type Master" />
+        <screen id="mas_store_dept" name="Stores" />
+        <screen id="mas_med_cat" name="Item Categories" />
+        <screen id="stores_rate_plan_mas" name="Pharmacy Rate Plans" />
+        <screen id="mas_medicines" name="Item Master" />
+        <screen id="mas_store_item_control_type" name="Item Control Types" />
+
+        <screen id="mas_medicines_issue_rates" name="Item Issue Rates Master" />
+        <screen id="stores_item_rates_mas" name="Store Item Rates" />
+        <screen id="mas_supplier_rate_contracts" name="Supplier Rate Contracts" />
+        <screen id="mas_supplier_contract_item_rates" name="Supplier Contract Item Rates" />
+        <screen id="mas_supplier_rate_contracts_center_ass" name="Supplier Rate Contract Center Applicability" />
+
+
+        <screen id="mas_generic_names" name="Generic Names" />
+        <screen id="mas_generic_classification_names" name="Generic Classification" />
+        <screen id="mas_sub_classification_names" name="Generic Sub Classification" />
+        <screen id="mas_manf" name="Manufacturers" />
+        <screen id="stores_supp_cat_mas" name="Supplier Category" />
+        <screen id="mas_suppliers" name="Suppliers" />
+        <screen id="mas_center_suppliers" name="Suppliers Center Applicability" />
+        <screen id="mas_payment_terms" name="Payment Terms" />
+        <screen id="mas_contractor" name="Contractor Master" />
+        <screen id="stock_upload" name="Stock Upload" />
+        <screen id="mas_misc_settings" name="Miscellaneous Settings" />
+        <screen id="mas_pkg_settings" name="Package UOM" />
+        <screen id="mas_item_form" name="Item Form Master"/>
+        <screen id="mas_item_kit" name="Surgery Kit" module="mod_cssd"/>
+        <screen id="mas_order_kit" name="Order Kit" />
+        <screen id="mas_stock_adj_reason" name="Stock Adjustment Reasons"/>
+        <screen id="mas_Issue_users" name="Issue Users" />
+		
+		<screen id="mas_consumption_uom" name="Consumption UOM" />
+    </screen_group>
+
+    <screen_group id="grp_messaging_masters" name="Messaging Masters" defaultModule="mod_messaging">
+        <screen id="mas_message_type" name="Message Types" module="mod_messaging"/>
+        <screen id="mas_message_dispatcher_config" name="Message Dispatcher Configuration" module="mod_messaging"/>
+    </screen_group>
+
+    <screen_group id="grp_complaints_log" name="Administration" defaultModule="mod_basic">
+        <screen id="usr_userdashboard" name="Roles and Users" />
+        <screen id="mas_foreign_currency" name="Foreign Currency" />
+        <screen id="mas_system_messages" name="System Messages" />
+        <screen id="complaints_log" name="Complaints Log" />
+        <screen id="complaints_log_report" name="Complaints Log Report" />
+        <screen id="usr_role_pagestats" name="Page Stats" />
+        <screen id="email_report_config" name="Email Report Configuration" />
+        <screen id="message_log" name="Message Log" module="mod_messaging"/>
+        <screen id="my_messages" name="My Notifications" module="mod_messaging"/>
+        <screen id="my_msg_notification" name="My Messages sent" module="mod_messaging"/>
+        <screen id="archive_notification" name="Archive Messages" module="mod_messaging"/>
+        <screen id="std_notification" name="Standard Notification" module="mod_messaging"/>
+        <screen id="saved_searches" name="Saved Searches"/>
+        <screen id="mng_center_practo_profiles" name="Manage Center's Practo Profile" module="mod_practo_integration"/>
+        <screen id="mng_doc_practo_profiles" name="Manage Doctor's Practo Profile" module="mod_practo_integration"/>
+        <screen id="portal_dashboard" name="Portal Dashboard"/>
+    </screen_group>
+
+    <screen_group id="grp_dietary" name="Dietary" defaultModule="mod_dietary">
+        <screen id="grp_canteen" name="Canteen" />
+    </screen_group>
+
+    <screen_group id="grp_patient_feedback" name="Patient Feedback" defaultModule="mod_patient_feedback">
+    <!--<screen id="patient_feedback_form" name="Design Patient Feedback Form" /> -->
+        <screen id="survey_question_category" name="Survey Question Category Master" />
+        <screen id="survey_rating_mas" name="Survey Rating Master" />
+        <screen id="survey_feedback_forms_mas" name="Feedback Forms" />
+        <screen id="survey_patient_responses" name="Patient Responses" />
+    </screen_group>
+
+	<screen_group id="grp_insta_subscriptions" name="Insta Subscriptions" defaultModule="mod_insta_subscriptions">
+		<screen id="insta_subscriptions" name="Insta Subscriptions"></screen>
+	</screen_group>
+	
+	<screen_group id="grp_sequences" name="Sequence Master" defaultModule="mod_basic">
+		<screen id="hospital_id_patterns" name="Hospital Id Patterns"/>
+		<screen id="bill_sequence" name="Bill Sequences"/>
+		<screen id="claim_id_sequence" name="Claim Id Sequences"/>
+		<screen id="visit_id_sequence" name="Visit Id Sequences"/>
+		<screen id="pharmacy_bill_id_sequence" name="Pharmacy Sales Bill Sequences"/>
+		<screen id="bill_audit_number_sequence" name="Bill Audit Number Sequences"></screen>
+		<screen id="grn_number_sequence" name="GRN Number Sequences"/>
+		<screen id="purchase_order_sequence" name="Purchase Order Sequences"/>
+		<screen id="voucher_number_sequence" name="Voucher Number Sequences"></screen>
+		<screen id="lab_number_sequence" name="Lab Number Sequences"></screen>
+		<screen id="radiology_number_sequence" name="Radiology Number Sequences"></screen>
+	</screen_group>
+	
+	<screen_group id="grp_master_data_setup" name="Master Data Setup" defaultModule="mod_basic">
+		<screen id="mas_stock_upload" name="Master Data Migration"/>
+	</screen_group>
+	
+<!--    <screen_group id="grp_patient_feedback" name="Import/Export" defaultModule="mod_patient_feedback">
+        <screen id="import/export" name="Import/Export Patient Feedback Data" />
+    </screen_group> -->
+    
+   <screen_group id="grp_practo_advantage" name="Practo Advantage" defaultModule="mod_practo_advantage">
+    	<screen id="mas_practo_advantage_book" name="Book" />
+    </screen_group>
+    
+    <screen_group id="grp_fingerprint" name="Fingerprint" defaultModule="mod_fingerprint">
+    	<screen id="fp_registration" name="Fingerprint Registration" />
+        <screen id="fp_verification" name="Fingerprint Verification" />
+        <screen id="mas_purpose_fp_verification" name="Purpose for Fingerprint Verification" />
+    </screen_group>
+    
+</screen_config>

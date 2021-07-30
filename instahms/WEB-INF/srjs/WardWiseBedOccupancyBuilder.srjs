@@ -1,0 +1,122 @@
+{
+    "title": "Detailed Bed Occupancy Report",
+    "reportGroup": "Patient Stats Reports",
+    "allowNoDate": true,
+    "defaultOrder": "ref_date",
+    "dateFields": [
+        "ref_date"
+    ],
+    "description": "This report describes bed occupancy for given duration in detail, one entry per bed per day. Detailed List reports may be too long, please use Tabular Summary for useful reports.",
+    "tableName": [
+        "rpt_bed_occupancy_detailed_view"
+    ],
+    "defaultShowFields": [
+        "ref_date",
+        "ward_name",
+        "bed_name",
+        "opening_count",
+        "closing_count",
+        "closing_per"
+    ],
+    "fields": {
+        "ref_date": {
+            "dataType": "date",
+            "width": "60",
+            "displayName": "Date",
+            "groupable": true,
+            "filterable": true
+        },
+        "month": {
+            "displayName": "Month",
+            "width": "70",
+            "groupable": true,
+            "filterable": true,
+            "allowedValues": [
+                "JANUARY",
+                "FEBRUARY",
+                "MARCH",
+                "APRIL",
+                "MAY",
+                "JUNE",
+                "JULY",
+                "AUGUST",
+                "SEPTEMBER",
+                "OCTOBER",
+                "NOVEMBER",
+                "DECEMBER"
+            ]
+        },
+        "year": {
+            "displayName": "Year",
+            "width": "70"
+        },
+        "ward_name": {
+            "displayName": "Ward",
+            "width": "100",
+            "groupable": true,
+            "filterable": true,
+            "allowedValuesQuery": "select ward_name from ward_names;"
+        },
+        "bed_name": {
+            "displayName": "Bed Name",
+            "width": "100"
+        },
+        "bed_type": {
+            "displayName": "Bed Type",
+            "width": "100",
+            "groupable": true,
+            "filterable": true,
+            "allowedValuesQuery": "select bed_type_name from bed_types;"
+        },
+        "is_icu": {
+            "displayName": "Is ICU",
+            "width": "50"
+        },
+        "total_count": {
+            "displayName": "Total Count",
+            "width": "50",
+            "dataType": "numeric",
+            "aggFunction": "sum"
+        },
+        "opening_count": {
+            "displayName": "Opening Count",
+            "width": "50",
+            "dataType": "numeric",
+            "aggFunction": "sum",
+            "filterable": true
+        },
+        "allocations": {
+            "displayName": "Allocations",
+            "width": "50",
+            "dataType": "numeric",
+            "aggFunction": "sum"
+        },
+        "deallocations": {
+            "displayName": "Deallocations",
+            "width": "50",
+            "dataType": "numeric",
+            "aggFunction": "sum"
+        },
+        "closing_count": {
+            "displayName": "Closing Count",
+            "width": "50",
+            "dataType": "numeric",
+            "aggFunction": "sum"
+        },
+        "closing_per": {
+            "displayName": "Bed Occupancy %",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "width": "50",
+            "aggFunction": "wavg",
+            "aggWeight": "total_count"
+        },
+        "center_name": {
+            "displayName": "Center",
+            "width": "70",
+            "groupable": false,
+            "filterable": true,
+            "allowedValuesQuery": "SELECT center_name FROM hospital_center_master  ORDER BY center_id"
+        }
+    }
+}

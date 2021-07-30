@@ -1,0 +1,155 @@
+{
+    "title": "Diagnosis Codes Report",
+    "reportGroup": "MRD Reports",
+    "description": "This report shows all diagnosis codes and  patient details within the given date range.",
+    "dateFields": [
+        "reg_date"
+    ],
+    "allowNoDate": true,
+    "defaultOrder": "icd_code",
+    "defaultShowFields": [
+        "mr_no",
+        "patient_id",
+        "full_name",
+        "age",
+        "age_in",
+        "patient_gender",
+        "discharge_date",
+        "icd_code",
+        "description",
+        "admit_date"
+    ],
+    "includes": [
+        "PatientDetailFields.srjs",
+        "PatientVisitFields.srjs"
+    ],
+    "fields": {
+        "icd_code": {
+            "displayName": "Code",
+            "width": "100",
+            "description": "ICD Code",
+            "expression": "md.icd_code",
+            "table": "md",
+            "groupable": true,
+            "filterable": true
+        },
+        "description": {
+            "displayName": "Description",
+            "width": "150",
+            "description": "Description",
+            "expression": "md.description",
+            "table": "md"
+        },
+        "admit_date": {
+            "displayName": "Admission Date",
+            "dataType": "date",
+            "width": "60",
+            "groupable": true,
+            "filterable": true,
+            "expression": "pr.reg_date",
+            "table": "pr"
+        },
+        "code_type": {
+            "displayName": "Diag Code Type",
+            "width": "80",
+            "groupable": true,
+            "filterable": true,
+            "allowedValuesQuery": "SELECT code_type FROM mrd_supported_code_types WHERE status ='A' order by code_type",
+            "expression": "md.code_type",
+            "table": "md"
+        },
+        "diag_type": {
+            "displayName": "Diagnosis Type",
+            "table": "md",
+            "width": "100",
+            "groupable": true,
+            "filterable": true,
+            "expression": "CASE WHEN md.diag_type = 'P' THEN 'Primary' WHEN md.diag_type = 'S' THEN 'Secondary' WHEN md.diag_type = 'V' THEN 'Reason For Visit' END",
+            "allowedValues": [
+                "Primary",
+                "Secondary",
+                "Reason For Visit"
+            ]
+        },
+        "present_on_admission": {
+            "displayName": "POA",
+            "width": "100",
+            "description": "present_on_admission",
+            "expression": "md.present_on_admission",
+            "table": "md",
+            "groupable": true,
+            "filterable": true
+        }
+    },
+    "queryUnits": [
+        {
+            "mainTableAlias": "md",
+            "mainTableName": "mrd_diagnosis",
+            "groupBy": false,
+            "joinTables": [
+                {
+                    "name": "patient_registration",
+                    "alias": "pr",
+                    "expression": "ON (md.visit_id = pr.patient_id)",
+                    "dependsOn": "md"
+                },
+                {
+                    "name": "patient_details",
+                    "alias": "pd",
+                    "expression": "ON (pd.mr_no = pr.mr_no)",
+                    "dependsOn": "pr"
+                }
+            ]
+        },
+        {
+            "mainTableAlias": "hcd",
+            "mainTableName": "hospital_claim_diagnosis",
+            "groupBy": false,
+            "joinTables": [
+                {
+                    "name": "patient_registration",
+                    "alias": "pr",
+                    "expression": "ON (hcd.visit_id = pr.patient_id)",
+                    "dependsOn": "hcd"
+                },
+                {
+                    "name": "patient_details",
+                    "alias": "pd",
+                    "expression": "ON (pd.mr_no = pr.mr_no)",
+                    "dependsOn": "pr"
+                }
+            ],
+            "fieldExpressions": {
+                "icd_code": {
+                    "table": "hcd",
+                    "expression": "hcd.icd_code"
+                },
+                "description": {
+                    "table": "hcd",
+                    "expression": "hcd.description"
+                },
+                "admit_date": {
+                    "table": "pr",
+                    "expression": "pr.reg_date"
+                },
+                "code_type": {
+                    "table": "hcd",
+                    "expression": "hcd.code_type"
+                },
+                "diag_type": {
+                    "table": "hcd",
+                    "expression": "CASE WHEN hcd.diag_type = 'P' THEN 'Primary' WHEN hcd.diag_type = 'S' THEN 'Secondary' WHEN hcd.diag_type = 'V' THEN 'Reason For Visit' END",
+                    "allowedValues": [
+                        "Primary",
+                        "Secondary",
+                        "Reason For Visit"
+                    ]
+                },
+                "present_on_admission": {
+                    "table": "hcd",
+                    "expression": "hcd.present_on_admission"
+                }
+            }
+        }
+    ]
+}

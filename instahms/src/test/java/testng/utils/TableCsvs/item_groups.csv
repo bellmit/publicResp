@@ -1,0 +1,9 @@
+item_group_id,item_group_name,group_code,item_group_display_order,item_group_type_id,status
+100,'biillgrp1','BG',111,'BILLGRP','A'
+200,'biillgrp2','BG',112,'BILLGRP','A'
+201,'VAT','VAT',113,'TAX','A'
+202,'CGST','GST',114,'TAX','A'
+203,'SGST','GST',115,'TAX','A'
+204,'IGST','IGST',116,'TAX','A'
+205,'KSAExempt','KSACEX',117,'TAX','A'
+206,'KSATaxable','KSACTA',118,'TAX','A'

@@ -1,0 +1,782 @@
+{
+    "title": "Diag Internal Lab Report",
+    "reportGroup": "Diagnostics Reports",
+    "dateFields": [
+        "pres_date",
+        "conducted_date",
+        "sample_date",
+        "handed_over_date"
+    ],
+    "description": "This report builder gives a detailed description of all internal lab tests.",
+    "queryUnits": [
+        {
+            "mainTableName": "tests_prescribed",
+            "mainTableAlias": "ptp",
+            "whereExpression": "ptp.conducted != 'X' AND ctp.conducted != 'X' and ptp.coll_prescribed_id IS NULL and ptp.outsource_dest_prescribed_id IS NOT NULL",
+            "whereTable": "ptp,ctp,pr",
+            "joinTables": [
+                {
+                    "type": "JOIN",
+                    "name": "tests_prescribed",
+                    "alias": "ctp",
+                    "expression": "ON ctp.prescribed_id = ptp.curr_location_presc_id"
+                },
+                {
+                    "type": "JOIN",
+                    "name": "tests_prescribed",
+                    "alias": "imtp",
+                    "dependsOn": "ctp",
+                    "expression": "ON imtp.prescribed_id = ctp.source_test_prescribed_id"
+                },
+                {
+                    "type": "JOIN",
+                    "name": "sample_collection",
+                    "alias": "psc",
+                    "dependsOn": "ptp",
+                    "expression": "ON (psc.sample_collection_id = ptp.sample_collection_id)"
+                },
+                {
+                    "type": "JOIN",
+                    "name": "sample_collection",
+                    "alias": "csc",
+                    "dependsOn": "ctp",
+                    "expression": "ON (csc.sample_collection_id = ctp.sample_collection_id)"
+                },
+                {
+                    "type": "JOIN",
+                    "name": "sample_collection",
+                    "alias": "imsc",
+                    "dependsOn": "imtp",
+                    "expression": "ON (imsc.sample_collection_id = imtp.sample_collection_id)"
+                },
+                {
+                    "type": "JOIN",
+                    "name": "outsource_names",
+                    "alias": "os",
+                    "dependsOn": "imtp",
+                    "expression": "ON (os.outsource_dest_id = imtp.outsource_dest_id)"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "test_visit_reports",
+                    "alias": "tvr",
+                    "dependsOn": "ptp",
+                    "expression": "ON ptp.report_id=tvr.report_id"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "tests_conducted",
+                    "alias": "tc",
+                    "dependsOn": "ctp",
+                    "expression": "ON ctp.prescribed_id = tc.prescribed_id"
+                },
+                {
+                    "type": "JOIN",
+                    "name": "diagnostics",
+                    "alias": "diag",
+                    "dependsOn": "ptp",
+                    "expression": "ON (ptp.test_id=diag.test_id)"
+                },
+                {
+                    "type": "JOIN",
+                    "name": "diagnostics_departments",
+                    "alias": "ddep",
+                    "dependsOn": "diag",
+                    "expression": "ON (ddep.ddept_id = diag.ddept_id)"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "patient_details",
+                    "alias": "pd",
+                    "dependsOn": "ptp",
+                    "expression": "ON ptp.mr_no=pd.mr_no"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "salutation_master",
+                    "alias": "sm",
+                    "dependsOn": "pd",
+                    "expression": "ON sm.salutation_id = pd.salutation"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "patient_registration",
+                    "alias": "pr",
+                    "dependsOn": "ptp",
+                    "expression": "ON pr.patient_id = ptp.pat_id"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "op_type_names",
+                    "alias": "otn",
+                    "dependsOn": "pr",
+                    "expression": "ON otn.op_type = pr.op_type"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "incoming_sample_registration",
+                    "alias": "isr",
+                    "dependsOn": "ctp",
+                    "expression": "ON isr.incoming_visit_id = ctp.pat_id"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "hospital_center_master",
+                    "alias": "hc",
+                    "dependsOn": "isr",
+                    "expression": "ON hc.center_id = isr.center_id"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "incoming_hospitals",
+                    "alias": "ih",
+                    "dependsOn": "isr",
+                    "expression": "ON isr.orig_lab_name = ih.hospital_id"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "sample_sources",
+                    "alias": "ss",
+                    "dependsOn": "psc",
+                    "expression": "ON ss.source_id = psc.sample_source_id"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "sample_type",
+                    "alias": "sac",
+                    "dependsOn": "psc",
+                    "expression": "ON sac.sample_type_id = psc.sample_type_id"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "doctors",
+                    "alias": "doc",
+                    "dependsOn": "ptp",
+                    "expression": "ON doc.doctor_id=ptp.pres_doctor"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "doctors",
+                    "alias": "cdoc",
+                    "dependsOn": "tc",
+                    "expression": "ON cdoc.doctor_id=tc.conducted_by"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "sample_collection_centers",
+                    "alias": "scc",
+                    "dependsOn": "pr",
+                    "expression": "ON pr.collection_center_id = scc.collection_center_id"
+                }
+            ]
+        }
+    ],
+    "fields": {
+        "transfer_batch_id": {
+            "table": "imsc",
+            "displayName": "Last Transfer Batch Id",
+            "width": "120",
+            "description": "Transfer Batch Id",
+            "filterable": true,
+            "groupable": true,
+            "expression": "imsc.transfer_batch_id"
+        },
+        "presc_dr": {
+            "table": "doc",
+            "displayName": "Presc. Doctor",
+            "width": "120",
+            "description": "Prescribing Doctor",
+            "filterable": true,
+            "groupable": true,
+            "expression": "doc.doctor_name"
+        },
+        "cond_dr": {
+            "table": "cdoc",
+            "displayName": "Cond. Doctor",
+            "width": "120",
+            "description": "Conducting Doctor",
+            "filterable": true,
+            "groupable": true,
+            "expression": "cdoc.doctor_name"
+        },
+        "test_name": {
+            "table": "diag",
+            "displayName": "Test Name",
+            "width": "150",
+            "groupable": true,
+            "filterable": true,
+            "expression": "diag.test_name"
+        },
+        "cust_id": {
+            "table": "pd",
+            "displayName": "MR No",
+            "width": "60",
+            "expression": "pd.mr_no"
+        },
+        "pres_datetime": {
+            "table": "ptp",
+            "displayName": "Ordered Date Time",
+            "width": "60",
+            "dataType": "timestamp",
+            "expression": "ptp.pres_date"
+        },
+        "sample_no": {
+            "table": "ptp",
+            "displayName": "Sample No",
+            "width": "60",
+            "filterable": true,
+            "expression": "ptp.sample_no"
+        },
+        "pres_date": {
+            "displayName": "Ordered Date",
+            "width": "60",
+            "dataType": "date",
+            "description": "Prescribed Date",
+            "filterable": true,
+            "expression": "DATE(ptp.pres_date)"
+        },
+        "pres_time": {
+            "displayName": "Ordered Time",
+            "width": "70",
+            "expression": "to_char(ptp.pres_date,'HH24:MI')"
+        },
+        "ddept_name": {
+            "table": "ddep",
+            "displayName": "Department",
+            "width": "100",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "expression": "ddep.ddept_name",
+            "allowedValuesQuery": "SELECT ddept_name FROM diagnostics_departments ORDER BY ddept_name"
+        },
+        "conducted_datetime": {
+            "table": "tc",
+            "displayName": "Conducted Date Time",
+            "width": "70",
+            "expression": "to_char(tc.conducted_date,'DD-MM-YYYY hh24:mi:ss')"
+        },
+        "conducted_date": {
+            "table": "tc",
+            "displayName": "Conducted Date",
+            "width": "60",
+            "dataType": "date",
+            "filterable": true,
+            "expression": "DATE(tc.conducted_date)"
+        },
+        "conducted_time": {
+            "table": "tc",
+            "displayName": "Conducted Time",
+            "width": "60",
+            "expression": "(to_char(conducted_date, 'hh24:mi'))"
+        },
+        "sample_needed": {
+            "table": "diag",
+            "displayName": "Sample Needed",
+            "width": "60",
+            "filterable": true,
+            "groupable": true,
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "expression": "CASE WHEN diag.sample_needed='n' THEN 'No' ELSE 'Yes' END"
+        },
+        "sflag": {
+            "table": "ptp,diag,psc",
+            "filterable": true,
+            "groupable": true,
+            "displayName": "Coll Center Sample Status",
+            "width": "60",
+            "allowedValues": [
+                "Collection Pending",
+                "Collection Completed",
+                "Collection Not Required"
+            ],
+            "expressionLines": [
+                "CASE ",
+                " WHEN ptp.sflag = '0' AND diag.sample_needed='y' AND (ptp.conducted='N' OR ptp.conducted='NRN') AND psc.sample_status not in('A','R','C') THEN 'Collection Pending'  ",
+                " WHEN ptp.sflag = '1' AND diag.sample_needed='y' AND psc.sample_status='C' THEN 'Collection Completed'  ",
+                " WHEN ptp.sflag = '0' AND diag.sample_needed='n' THEN 'Collection Not Required' ",
+                " WHEN ptp.sflag = '1' AND diag.sample_needed='y' AND psc.sample_status='A' THEN 'Sample Asserted'  ",
+                " END "
+            ]
+        },
+        "patient_name": {
+            "table": "sm,pd,isr",
+            "displayName": "Patient Name",
+            "expression": "COALESCE(get_patient_full_name(sm.salutation, pd.patient_name, pd.middle_name, pd.last_name),isr.patient_name)",
+            "width": "150"
+        },
+        "name_local_language": {
+                    "table": "pd",
+                    "displayName": "Name In Local Language",
+                    "width": 150,
+                    "expression": "pd.name_local_language"
+          },
+        "gender": {
+            "table": "pd,isr",
+            "displayName": "Gender",
+            "width": "50",
+            "filterable": true,
+            "groupable": true,
+            "expression": "CASE WHEN COALESCE(pd.patient_gender,isr.patient_gender)='M' THEN 'Male' WHEN COALESCE(pd.patient_gender,isr.patient_gender)='F' THEN 'Female' WHEN COALESCE(pd.patient_gender,isr.patient_gender)='C' THEN 'Couple' ELSE 'Others' END",
+            "allowedValues": [
+                "Male",
+                "Female",
+                "Couple",
+                "Others"
+            ]
+        },
+        "patient_type": {
+            "table": "pr",
+            "displayName": "Patient Type",
+            "width": "50",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValues": [
+                "In-Patient",
+                "Out-Patient",
+                "Incoming Sample"
+            ],
+            "expression": "CASE WHEN pr.visit_type='i' THEN 'In-Patient' WHEN pr.visit_type='o' THEN 'Out-Patient' ELSE 'Incoming Sample' END"
+        },
+        "op_type_name": {
+            "table": "otn",
+            "displayName": "Visit/OP Type",
+            "width": "80",
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT op_type_name FROM op_type_names"
+        },
+        "sample_datetime": {
+            "table": "psc",
+            "displayName": "Sample Date Time",
+            "width": "80",
+            "allowNull": true,
+            "dataType": "timestamp",
+            "expression": "psc.sample_date"
+        },
+        "sample_date": {
+            "table": "psc",
+            "displayName": "Sample Date",
+            "width": "80",
+            "dataType": "date",
+            "expression": "DATE(psc.sample_date)"
+        },
+        "sample_type": {
+            "table": "sac",
+            "displayName": "Sample Type",
+            "width": "70",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT sample_type FROM sample_type ORDER BY sample_type"
+        },
+        "dept_category": {
+            "table": "ddep",
+            "displayName": "Department Type",
+            "width": "70",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "expression": "CASE WHEN ddep.category='DEP_LAB' THEN 'Lab' ELSE 'Radiology'END",
+            "allowedValues": [
+                "Lab",
+                "Radiology"
+            ]
+        },
+        "report_name": {
+            "table": "tvr",
+            "displayName": "Report Name",
+            "width": "100",
+            "allowNull": true
+        },
+        "report_user": {
+            "table": "tvr",
+            "displayName": "Report User",
+            "width": "100",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "expression": "tvr.user_name"
+        },
+        "report_datetime": {
+            "table": "tvr",
+            "displayName": "Report Date Time",
+            "width": "70",
+            "allowNull": true,
+            "dataType": "timestamp",
+            "expression": "tvr.report_date"
+        },
+        "report_tat": {
+            "table": "tvr,psc",
+            "displayName": "CollToRptCompletion TAT(hrs)",
+            "width": "70",
+            "allowNull": true,
+            "filterable": true,
+            "expressionLines": [
+                "(EXTRACT(days FROM (tvr.report_date - psc.sample_date))*24) +",
+                "(EXTRACT(hours FROM (tvr.report_date - psc.sample_date)))||':'||",
+                "EXTRACT(minutes FROM (tvr.report_date - psc.sample_date))||':'||",
+                "to_char(tvr.report_date - psc.sample_date, 'SS')"
+            ]
+        },
+        "sample_transfer_tat": {
+            "table": "psc",
+            "displayName": "Delta TAT(hrs)",
+            "width": "70",
+            "allowNull": true,
+            "filterable": true,
+            "expressionLines": [
+                "(EXTRACT(days FROM (psc.transfer_time - psc.sample_date))*24) +",
+                "(EXTRACT(hours FROM (psc.transfer_time - psc.sample_date)))||':'|| ",
+                "EXTRACT(minutes FROM (psc.transfer_time - psc.sample_date))||':'||",
+                "to_char(psc.transfer_time - psc.sample_date, 'SS')"
+            ]
+        },
+        "sample_transfer_to_receive_tat": {
+            "table": "csc,psc",
+            "displayName": "Transport TAT(hrs)",
+            "width": "70",
+            "allowNull": true,
+            "filterable": true,
+            "expressionLines": [
+                "(EXTRACT(days FROM (csc.receipt_time - psc.transfer_time))*24) +",
+                "(EXTRACT(hours FROM (csc.receipt_time - psc.transfer_time)))||':'|| ",
+                "EXTRACT(minutes FROM (csc.receipt_time - psc.transfer_time))||':'||",
+                "to_char(csc.receipt_time - psc.transfer_time, 'SS')"
+            ]
+        },
+        "sample_assertion_tat": {
+            "table": "csc,psc",
+            "displayName": "CollToAssertion TAT(hrs)",
+            "width": "70",
+            "allowNull": true,
+            "filterable": true,
+            "expressionLines": [
+                "(EXTRACT(days FROM (csc.assertion_time - psc.sample_date))*24) +",
+                "(EXTRACT(hours FROM (csc.assertion_time - psc.sample_date)))||':'|| ",
+                "EXTRACT(minutes FROM (csc.assertion_time - psc.sample_date))||':'||",
+                "to_char(csc.assertion_time - psc.sample_date, 'SS')"
+            ]
+        },
+        "sample_to_conduction_tat": {
+            "table": "tc,psc",
+            "displayName": "CollToCond TAT(hrs)",
+            "width": "70",
+            "allowNull": true,
+            "filterable": true,
+            "expressionLines": [
+                "(EXTRACT(days FROM (tc.conducted_date - psc.sample_date))*24) +",
+                "(EXTRACT(hours FROM (tc.conducted_date - psc.sample_date)))||':'|| ",
+                "EXTRACT(minutes FROM (tc.conducted_date - psc.sample_date))||':'||",
+                "to_char(tc.conducted_date - psc.sample_date, 'SS')"
+            ]
+        },
+        "prescription_to_conduction_tat": {
+            "table": "tc,ptp",
+            "displayName": "PrescToCond TAT(hrs)",
+            "width": "70",
+            "allowNull": true,
+            "filterable": true,
+            "expressionLines": [
+                "(EXTRACT(days FROM (tc.conducted_date - ptp.pres_date))*24) +",
+                "(EXTRACT(hours FROM (tc.conducted_date - ptp.pres_date)))||':'|| ",
+                "EXTRACT(minutes FROM (tc.conducted_date - ptp.pres_date))||':'||",
+                "to_char(tc.conducted_date - ptp.pres_date, 'SS')"
+            ]
+        },
+        "handover_tat": {
+            "table": "tvr,psc",
+            "displayName": "CollToHandover TAT(hrs)",
+            "width": "70",
+            "allowNull": true,
+            "filterable": true,
+            "expressionLines": [
+                "(EXTRACT(days FROM (tvr.hand_over_time - psc.sample_date))*24) +",
+                "(EXTRACT(hours FROM (tvr.hand_over_time - psc.sample_date)))||':'|| ",
+                "EXTRACT(minutes FROM (tvr.hand_over_time - psc.sample_date))||':'||",
+                "to_char(tvr.hand_over_time - psc.sample_date, 'SS')"
+            ]
+        },
+        "prescribed_date_time": {
+            "table": "ptp",
+            "displayName": "Prescribed Date Time",
+            "width": "70",
+            "allowNull": true,
+            "filterable": true,
+            "dataType": "timestamp",
+            "expression": "ptp.pres_date"
+        },
+        "sample_date_time": {
+            "table": "psc",
+            "displayName": "Sample Collection Time",
+            "width": "70",
+            "allowNull": true,
+            "dataType": "timestamp",
+            "filterable": true,
+            "expression": "psc.sample_date"
+        },
+        "last_transfer_time": {
+            "table": "imsc",
+            "displayName": "Last Transfer Time",
+            "width": "70",
+            "allowNull": true,
+            "dataType": "timestamp",
+            "filterable": true,
+            "expression": "imsc.transfer_time"
+        },
+        "sample_receive_time": {
+            "table": "csc",
+            "displayName": "Destination Receive Time",
+            "width": "70",
+            "allowNull": true,
+            "dataType": "timestamp",
+            "filterable": true,
+            "expression": "csc.receipt_time"
+        },
+        "report_completion_time": {
+            "table": "tvr",
+            "displayName": "Report Completion Time",
+            "width": "70",
+            "allowNull": true,
+            "filterable": true,
+            "dataType": "timestamp",
+            "expression": "tvr.report_date"
+        },
+        "report_handover_time": {
+            "table": "tvr",
+            "displayName": "Report Handover Time",
+            "width": "70",
+            "allowNull": true,
+            "filterable": true,
+            "dataType": "timestamp",
+            "expression": "tvr.hand_over_time"
+        },
+        "specimen_condition": {
+            "table": "psc",
+            "displayName": "Specimen Condition",
+            "width": "100"
+        },
+        "handed_over": {
+            "table": "tvr",
+            "displayName": "Report Handed Over",
+            "width": "30",
+            "groupable": true,
+            "filterable": true,
+            "allowedValues": [
+                "Y",
+                "N"
+            ],
+            "expression": "COALESCE(tvr.handed_over,'N')"
+        },
+        "handed_over_to": {
+            "table": "tvr",
+            "displayName": "Handed Over To",
+            "width": "70"
+        },
+        "hand_over_time": {
+            "table": "tvr",
+            "displayName": "Handed Over Time",
+            "width": "70",
+            "dataType": "timestamp"
+        },
+        "handed_over_date": {
+            "table": "tvr",
+            "displayName": "Handed Over Date",
+            "width": "70",
+            "expression": "DATE(tvr.hand_over_time)",
+            "dataType": "date"
+        },
+        "assertion_time": {
+            "table": "csc",
+            "displayName": "Dest Assertion Date",
+            "width": "70",
+            "dataType": "timestamp",
+            "expression": "csc.assertion_time"
+        },
+        "source_name": {
+            "table": "ss",
+            "displayName": "Sample Source",
+            "width": "70"
+        },
+        "handover_by": {
+            "table": "psc",
+            "displayName": "Sample Handover By",
+            "width": "70"
+        },
+        "received_by": {
+            "table": "csc,psc",
+            "displayName": "Last Received By",
+            "width": "70",
+            "expression": "COALESCE(csc.receipt_user, imsc.receipt_user)"
+        },
+        "hasamended": {
+            "table": "ctp",
+            "displayName": "Has Amended",
+            "width": "70",
+            "filterable": true,
+            "groupable": true,
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "expression": "CASE WHEN exists (select * from test_details td where original_test_details_id != 0 and td.prescribed_id = ctp.prescribed_id) THEN 'Yes' ELSE 'No' END"
+        },
+        "collection_center": {
+            "table": "scc",
+            "displayName": "Collection Center",
+            "width": "70",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT collection_center FROM sample_collection_centers"
+        },
+        "signed_off": {
+            "table": "tvr",
+            "displayName": "Report Signoff",
+            "width": "30",
+            "groupable": true,
+            "filterable": true,
+            "allowedValues": [
+                "Y",
+                "N"
+            ],
+            "expression": "COALESCE(tvr.signed_off,'N')"
+        },
+        "age": {
+            "table": "pd,isr",
+            "displayName": "Age",
+            "width": "50",
+            "filterable": true,
+            "dataType": "numeric",
+            "decimalType": "integer",
+            "expression": "get_patient_age(pd.dateofbirth, pd.expected_dob,isr.isr_dateofbirth,isr.patient_age)"
+        },
+        "age_in": {
+            "displayName": "Age In",
+            "expression": "get_patient_age_in(pd.dateofbirth, pd.expected_dob,isr.isr_dateofbirth,isr.age_unit)",
+            "width": "50"
+        },
+        "priority": {
+            "table": "ptp",
+            "displayName": "Priority",
+            "width": "60",
+            "groupable": true,
+            "filterable": true,
+            "allowedValues": [
+                "Stat",
+                "Regular"
+            ],
+            "expression": "CASE WHEN ptp.priority='S' THEN 'Stat' ELSE 'Regular' END"
+        },
+        "sample_transfer_status": {
+            "table": "psc",
+            "displayName": "Coll Center Transfer Status",
+            "width": "35",
+            "groupable": true,
+            "filterable": true,
+            "allowedValues": [
+                "Pending",
+                "Transferred"
+            ],
+            "expression": "CASE WHEN psc.sample_transfer_status = 'T' THEN 'Transferred' ELSE 'Pending' END"
+        },
+        "last_transfer_status": {
+            "table": "imsc",
+            "displayName": "Last Transfer Status",
+            "width": "35",
+            "groupable": true,
+            "filterable": true,
+            "allowedValues": [
+                "Pending",
+                "Transferred"
+            ],
+            "expression": "CASE WHEN imsc.sample_transfer_status = 'T' THEN 'Transferred' ELSE 'Pending' END"
+        },
+        "sample_receive_status": {
+            "table": "csc",
+            "displayName": "Destination Received Status",
+            "width": "35",
+            "groupable": true,
+            "filterable": true,
+            "allowedValues": [
+                "Pending",
+                "Received"
+            ],
+            "expression": "CASE WHEN csc.sample_receive_status = 'R' THEN 'Received' ELSE 'Pending' END"
+        },
+        "outsource_name": {
+            "table": "os",
+            "displayName": "Outsource Name",
+            "width": "60",
+            "groupable": true,
+            "filterable": true,
+            "allowedValuesQuery": "SELECT outsource_name FROM outsource_names  WHERE outsource_dest_type = 'C'"
+        },
+        "hospital_name": {
+            "table": "ih",
+            "displayName": "Incoming Hospital",
+            "width": "60",
+            "groupable": true,
+            "filterable": true,
+            "allowedValuesQuery": "SELECT hospital_name FROM incoming_hospitals"
+        },
+        "transfer_other_details": {
+            "table": "psc",
+            "displayName": "Coll Center Tsfr Other Details",
+            "width": "60",
+            "groupable": true,
+            "filterable": true
+        },
+        "last_transfer_other_details": {
+            "table": "imsc",
+            "displayName": "Last Transfer Other Details",
+            "width": "60",
+            "groupable": true,
+            "filterable": true,
+            "expression": "imsc.transfer_other_details"
+        },
+        "receipt_other_details": {
+            "table": "csc",
+            "displayName": "Receipt Other Details",
+            "width": "60",
+            "groupable": true,
+            "filterable": true
+        },
+        "destination_center": {
+            "table": "hc",
+            "displayName": "Destination Center",
+            "width": "60",
+            "groupable": true,
+            "filterable": true,
+            "expression": "hc.center_name"
+        },
+        "visit_id": {
+            "table": "pr,isr",
+            "displayName": "Visit Id",
+            "width": "60",
+            "groupable": true,
+            "filterable": true,
+            "expression": "COALESCE(pr.patient_id,isr.incoming_visit_id)"
+        }
+    },
+    "defaultShowFields": [
+        "cust_id",
+        "test_name",
+        "patient_name",
+        "sample_datetime",
+        "sample_transfer_time",
+        "sample_receive_time",
+        "report_datetime",
+        "destination_center",
+        "sample_transfer_tat",
+        "sample_transfer_to_receive_tat",
+        "sample_assertion_tat",
+        "report_tat",
+        "prescription_to_conduction_tat",
+        "handover_tat"
+    ]
+}

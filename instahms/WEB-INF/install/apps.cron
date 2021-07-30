@@ -1,0 +1,14 @@
+#
+# Cron jobs for insta APPS
+#
+# m h dom mon dow user	command
+
+APP=__app__
+BIN=__apphome__/insta__app__/WEB-INF/install/bin
+LOGDIR=/var/log/insta/__app__
+
+# 20:10 (8:10 pm),17:10,15:10 daily: Check and retrieve the latest upgrade build.
+# 20:10 is the usual expected download, 17:10 is to catch any late deployments,
+# 15:10 is to guard against customers shutting off internet during non-working hours.
+10 15,17,20 * * *		__hmsuser__	sudo $BIN/get_latest_apps.sh >> $LOGDIR/get_latest_apps.log 2>&1
+

@@ -1,0 +1,33 @@
+Time of BP Measurement=172000 
+Systolic BP=00158
+Diastolic BP=0074
+Pulse=00074
+UF Removed=01.50
+UF Rate=01.49
+UF Goal=05.50
+Dialysis Time=00167
+Under-treatment Flag=1
+
+Blood pump Flow Rate=00250
+Heparin pump Infusion Rate=000.0
+Dialysate Temperature=037.0
+Dialysate Conductivity=014.2
+Venous Pressure= 0095
+Dialysate Pressure=-0114
+TMP= 0247
+Dialysate Flow Rate=00500
+Treatment Mode=0
+Temperature alarm=0
+Conductivity alarm=0
+Venous Pressure alarm=0
+Dialysate Pressure alarm=0
+TMP alarm=0
+Air alarm=0
+Blood Leak alarm=0
+Other alarms=0
+BP alarm=0
+
+Substitution Goal=00.00
+Substitution Transit Value=00.00
+Substitution Rate=00.00
+Substitution Temperature=000.0

@@ -1,0 +1,16 @@
+certifi==2018.8.13
+chardet==3.0.4
+gitdb2==2.0.4
+GitPython==2.1.11
+idna==2.6
+minio==4.0.2
+python-dateutil
+pytz==2018.5
+six==1.11.0
+smmap2==2.0.4
+urllib3==1.22
+requests==2.20.0
+psycopg2==2.7.3.2
+bcrypt==3.1.6
+JPype1==0.7.0
+JayDeBeApi==1.1.1

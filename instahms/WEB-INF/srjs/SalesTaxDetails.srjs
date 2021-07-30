@@ -1,0 +1,79 @@
+{
+    "fields": {
+        "tax_amt": {
+            "table": "sstd",
+            "expression": "sstd.tax_amt ",
+            "displayName": "Tax Amount",
+            "width": 80,
+            "dataType": "numeric",
+            "filterable": true,
+            "groupable": true
+        },
+        "tax_rate": {
+            "table": "sstd",
+            "expression": "sstd.tax_rate ",
+            "displayName": "Tax %",
+            "width": 80,
+            "dataType": "numeric",
+            "filterable": true,
+            "groupable": true
+        },
+        "tax_groups": {
+            "table": "ig",
+            "expression": "ig.item_group_name ",
+            "displayName": "Tax Groups Name",
+            "width": 80,
+            "filterable": true,
+            "groupable": true
+        },
+        "tax_sub_groups": {
+            "table": "isg",
+            "expression": "isg.item_subgroup_name ",
+            "displayName": "Tax Sub-Groups Name",
+            "width": 80,
+            "filterable": true,
+            "groupable": true
+        }
+    },
+    "queryUnits": [
+        {
+            "joinTables": [
+                {
+                    "type": "LEFT",
+                    "name": "store_sales_details",
+                    "alias": "ssd",
+                    "expression": "ON (ssd.sale_id = ssm.sale_id) ",
+                    "dependsOn": "ssm"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "store_sales_tax_details",
+                    "alias": "sstd",
+                    "expression": "ON (sstd.sale_item_id = ssd.sale_item_id) ",
+                    "dependsOn": "ssd"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "item_sub_groups",
+                    "alias": "isg",
+                    "expression": "ON (sstd.item_subgroup_id = isg.item_subgroup_id) ",
+                    "dependsOn": "sstd"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "item_groups",
+                    "alias": "ig",
+                    "expression": "ON (isg.item_group_id = ig.item_group_id) ",
+                    "dependsOn": "isg"
+                },
+                {
+                    "type": "LEFT",
+                    "name": "item_group_type",
+                    "alias": "igt",
+                    "expression": "ON (ig.item_group_type_id = igt.item_group_type_id) ",
+                    "dependsOn": "ig"
+                }
+            ]
+        }
+    ]
+}

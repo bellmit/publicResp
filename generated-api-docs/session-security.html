@@ -1,0 +1,1611 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Insta-Session-Security-APIs</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.4/semantic.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/themes/prism-okaidia.min.css" />
+    <style>
+      blockquote {
+        border-left: solid 4px #eee;
+        padding-left: 8px;
+        font-style: italic;
+        margin-left: 0;
+        padding: 8px;
+      }
+
+      .ui.micro.label {
+        font-size: .25rem;
+      }
+
+      .ui.transaction.accordion .title {
+        text-align: center;
+      }
+
+      .ui.transaction.accordion .content {
+        border-top: solid 1px #ddd !important;
+        border-bottom: solid 1px #ddd !important;
+        background-color: rgba(0,0,0,.03);
+        padding: 0.5em 1em !important;
+      }
+
+      .ui.transaction.accordion .content.active {
+        margin-top: 0.5em;
+      }
+
+      .ui.basic.label {
+        text-align: left;
+        overflow: auto;
+      }
+      
+      .ui.basic.label.request-url {
+        user-select: text;
+      }
+
+      .resource .ui.sub.header {
+        text-transform: none;
+      }
+
+      .sidenav .ui.fluid.accordion .title {
+        padding-left: 0.5rem;
+      }
+      .sidenav .ui.fluid.accordion .title:not(:first-child) {
+        border-top: 1px solid #e0e0ec;        
+      }
+
+      .sidenav .ui.fluid.accordion .content {
+        padding: 0 0 0 2rem !important;
+        margin: 0;
+      }
+
+      .sidenav .ui.fluid.accordion .content .ui.secondary.menu {
+        margin: 0;
+      }
+
+      .sidenav .ui.fluid.accordion .content .ui.secondary.menu a.item{
+        margin: 0 0.75rem 0.5rem 0;
+      }
+      .sidenav .ui.fluid.accordion .content a.item > .label{
+        margin-top: 0.1rem;
+      }
+
+      @media only screen and (min-width: 768px) {
+        .sidewrap {
+          margin-right: 2rem;
+          border-right: 1px solid #b4b4be;
+          background-color: #f7f7fa;
+        }
+
+        .sidenav {
+          left: 0;
+          top: 0;
+          width: inherit;
+          position: fixed !important;
+          height: 100% !important;
+          overflow-y: auto !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="ui padded grid">
+      <div class="sidewrap four wide computer five wide tablet sixteen wide mobile column">
+        <div class="sidenav">
+          
+<a href="#introduction">
+  <h3 class="ui header centered" style="margin: 0;padding: 1rem 0;border-bottom: solid 1px #b4b4be;">
+    <img class="ui tiny image" src="data:image/png;base64,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"/>
+    <div class="content" style="padding:0;">
+      &nbsp;
+      <div class="sub header">Hospital Management System</div>
+    </div>
+  </h3>
+</a>
+
+
+<div class="ui accordion fluid">
+  
+    
+    <div class="title active">
+      <i class="dropdown icon"></i>
+      
+        <strong>Session API</strong>
+      
+    </div>
+    <div class="content active">
+      <div class="ui fluid secondary vertical menu">
+      
+        <a class="item green" href="#session-api-list-exposed-session-attributes">
+          <i class="ui green empty circular label"></i>
+          
+            <span>List Exposed Session Attributes</span>
+          
+        </a>
+      
+      </div>
+    </div>
+    
+  
+    
+    <div class="title ">
+      <i class="dropdown icon"></i>
+      
+        <strong>Security API</strong>
+      
+    </div>
+    <div class="content ">
+      <div class="ui fluid secondary vertical menu">
+      
+        <a class="item green" href="#security-api-list-exposed-access-control-attributes">
+          <i class="ui green empty circular label"></i>
+          
+            <span>List Exposed Access Control Attributes</span>
+          
+        </a>
+      
+      </div>
+    </div>
+    
+  
+</div>
+
+
+        </div>
+      </div>
+      <div class="eleven wide computer ten wide tablet sixteen wide mobile column">
+        
+<div class="ui hidden divider header"></div>
+<h1 class="ui huge header" id="introduction">Insta-Session-Security-APIs</h1>
+<hr class="ui divider">
+<div class="description">
+  <p>API for exposure of selected session and access control attributes.</p>
+
+</div>
+
+        <div class="ui hidden divider"></div>
+        
+
+  <div class="ui horizontal divider" >
+    
+  </div>
+  <div class="ui header center aligned">
+    <div class="ui header">
+      <div class="sub header">
+        
+      </div>
+    </div>
+  </div>
+  
+    
+      <div class="ui segments">
+        <div class="ui basic segment resource">
+          <div class="ui black huge ribbon label">
+            Session API
+          </div>
+          
+        </div>
+
+        
+          
+<div class="ui grey horizontal small divider header" style="margin-top:0">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui orange micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block inverted center aligned header" id="session-api-list-exposed-session-attributes">
+              List Exposed Session Attributes
+            </h3>
+            <div class="description"></div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui green large button">
+                  <h3>GET</h3>
+                </div>
+                <a class="ui basic fluid request-url green label">
+                  <code>http://localhost:8080/instahms/session.json</code>
+                </a>
+              </div>
+              
+              
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>application/json</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui blue segment">
+                  <div class="title" style="margin-bottom: 1rem;">
+                    <a class="ui blue circular label">
+                      200
+                    </a>
+                    <code>application/json</code>
+                  </div>
+                  <div class="content tabbed active">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-json">{  
+    &#34;centerId&#34;:0,
+    &#34;sesHospitalId&#34;:&#34;cen&#34;,
+    &#34;roleId&#34;:1,
+    &#34;roleName&#34;:&#34;InstaAdmin&#34;,
+    &#34;userId&#34;:&#34;InstaAdmin&#34;,
+    &#34;centerName&#34;:&#34;Default Center&#34;,
+    &#34;billing_counter&#34;: &#34;Billing Counter&#34;,
+    &#34;billing_counter_id&#34;: &#34;CNT007&#34;
+}
+</code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+              </div>
+            
+          </div>
+        
+        </div>
+      <div class="ui hidden divider"></div>
+    
+  
+    
+      <div class="ui segments">
+        <div class="ui basic segment resource">
+          <div class="ui black huge ribbon label">
+            Security API
+          </div>
+          
+        </div>
+
+        
+          
+<div class="ui grey horizontal small divider header" style="margin-top:0">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui orange micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block inverted center aligned header" id="security-api-list-exposed-access-control-attributes">
+              List Exposed Access Control Attributes
+            </h3>
+            <div class="description"></div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui green large button">
+                  <h3>GET</h3>
+                </div>
+                <a class="ui basic fluid request-url green label">
+                  <code>http://localhost:8080/instahms/security.json</code>
+                </a>
+              </div>
+              
+              
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>application/json</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui blue segment">
+                  <div class="title" style="margin-bottom: 1rem;">
+                    <a class="ui blue circular label">
+                      200
+                    </a>
+                    <code>application/json</code>
+                  </div>
+                  <div class="content tabbed active">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-json">{  
+    &#34;groupAvlblMap&#34;:{  
+      &#34;grp_print_templates&#34;:&#34;Y&#34;,
+      &#34;grp_doctor_consultation&#34;:&#34;Y&#34;,
+      &#34;grp_ward_activities&#34;:&#34;N&#34;,
+      &#34;grp_dietary&#34;:&#34;N&#34;,
+      &#34;grp_stores_procurement&#34;:&#34;Y&#34;,
+      &#34;grp_payments&#34;:&#34;Y&#34;,
+      &#34;grp_opthalmology&#34;:&#34;N&#34;,
+      &#34;grp_adv_ot_services&#34;:&#34;Y&#34;,
+      &#34;grp_consultation_reports&#34;:&#34;Y&#34;,
+      &#34;grp_ward_activities_reports&#34;:&#34;Y&#34;,
+      &#34;grp_eclaim_erx&#34;:&#34;N&#34;,
+      &#34;grp_billing&#34;:&#34;Y&#34;,
+      &#34;grp_radiology&#34;:&#34;Y&#34;,
+      &#34;grp_out_patient_select&#34;:&#34;Y&#34;,
+      &#34;grp_laboratory_reports&#34;:&#34;Y&#34;,
+      &#34;grp_transportation&#34;:&#34;N&#34;,
+      &#34;grp_linen_reports&#34;:&#34;N&#34;,
+      &#34;grp_patient_package_reports&#34;:&#34;Y&#34;,
+      &#34;grp_transportation_reports&#34;:&#34;N&#34;,
+      &#34;grp_medical_records&#34;:&#34;Y&#34;,
+      &#34;grp_store_sales_reports&#34;:&#34;Y&#34;,
+      &#34;grp_billing_prefs&#34;:&#34;Y&#34;,
+      &#34;grp_hospital_billing_masters&#34;:&#34;Y&#34;,
+      &#34;grp_blood_reports&#34;:&#34;Y&#34;,
+      &#34;grp_patient_demography_reports&#34;:&#34;Y&#34;,
+      &#34;grp_service_reports&#34;:&#34;Y&#34;,
+      &#34;grp_adv_packages&#34;:&#34;Y&#34;,
+      &#34;grp_scheduler_reports&#34;:&#34;Y&#34;,
+      &#34;grp_dialysis&#34;:&#34;Y&#34;,
+      &#34;grp_dental_masters&#34;:&#34;Y&#34;,
+      &#34;grp_ins_ext&#34;:&#34;Y&#34;,
+      &#34;grp_ot_reports&#34;:&#34;Y&#34;,
+      &#34;grp_master_reports&#34;:&#34;Y&#34;,
+      &#34;grp_stores_sales_issues&#34;:&#34;Y&#34;,
+      &#34;grp_dashboard_statistics_reports&#34;:&#34;Y&#34;,
+      &#34;grp_insurance_reports&#34;:&#34;Y&#34;,
+      &#34;grp_eclaim_preauth&#34;:&#34;N&#34;,
+      &#34;grp_fixed_asset_mgmt&#34;:&#34;N&#34;,
+      &#34;grp_messaging_masters&#34;:&#34;Y&#34;,
+      &#34;grp_eclaim_pbm&#34;:&#34;N&#34;,
+      &#34;grp_store_mgmt_reports&#34;:&#34;Y&#34;,
+      &#34;grp_common&#34;:&#34;Y&#34;,
+      &#34;grp_stores_management&#34;:&#34;Y&#34;,
+      &#34;grp_pharmacy_masters&#34;:&#34;Y&#34;,
+      &#34;grp_bloodbank_masters&#34;:&#34;Y&#34;,
+      &#34;grp_patient_feedback&#34;:&#34;Y&#34;,
+      &#34;grp_registration&#34;:&#34;Y&#34;,
+      &#34;grp_financial_reports&#34;:&#34;Y&#34;,
+      &#34;grp_complaints_log&#34;:&#34;Y&#34;,
+      &#34;grp_clinical_reports&#34;:&#34;Y&#34;,
+      &#34;grp_ot_services&#34;:&#34;Y&#34;,
+      &#34;grp_dietary_reports&#34;:&#34;N&#34;,
+      &#34;grp_hospital_admin_masters&#34;:&#34;Y&#34;,
+      &#34;grp_dialysis_reports&#34;:&#34;Y&#34;,
+      &#34;grp_blood_bank&#34;:&#34;Y&#34;,
+      &#34;grp_patientfeedback_reports&#34;:&#34;Y&#34;,
+      &#34;grp_store_procure_reports&#34;:&#34;Y&#34;,
+      &#34;grp_dental_reports&#34;:&#34;Y&#34;,
+      &#34;grp_clinical_data&#34;:&#34;Y&#34;,
+      &#34;grp_duty_roster&#34;:&#34;N&#34;,
+      &#34;grp_fav_reports&#34;:&#34;Y&#34;,
+      &#34;grp_new_ui&#34;:&#34;N&#34;,
+      &#34;grp_discharge_summary&#34;:&#34;N&#34;,
+      &#34;grp_patient_search&#34;:&#34;Y&#34;,
+      &#34;grp_insta_subscriptions&#34;:&#34;N&#34;,
+      &#34;grp_linen&#34;:&#34;N&#34;,
+      &#34;grp_network_financial_reports&#34;:&#34;N&#34;,
+      &#34;grp_hospital_templates&#34;:&#34;Y&#34;,
+      &#34;grp_mrd_reports&#34;:&#34;Y&#34;,
+      &#34;grp_scheduler&#34;:&#34;Y&#34;,
+      &#34;grp_ipservices&#34;:&#34;Y&#34;,
+      &#34;grp_hospital_prefs&#34;:&#34;Y&#34;,
+      &#34;grp_roster_reports&#34;:&#34;N&#34;,
+      &#34;grp_general_masters&#34;:&#34;Y&#34;,
+      &#34;grp_services&#34;:&#34;Y&#34;,
+      &#34;grp_billing_reports&#34;:&#34;Y&#34;,
+      &#34;grp_custom_reports&#34;:&#34;Y&#34;,
+      &#34;grp_diagnostics&#34;:&#34;Y&#34;,
+      &#34;grp_resource_mgmt_reports&#34;:&#34;N&#34;,
+      &#34;grp_ivf_reports&#34;:&#34;N&#34;,
+      &#34;grp_cssd&#34;:&#34;N&#34;,
+      &#34;grp_insurance&#34;:&#34;Y&#34;,
+      &#34;grp_bed_reports&#34;:&#34;Y&#34;,
+      &#34;grp_ivf&#34;:&#34;N&#34;
+    },
+    &#34;actionRightsMap&#34;:{  
+      &#34;bed_close&#34;:&#34;A&#34;,
+      &#34;edit_receipt_amounts&#34;:&#34;A&#34;,
+      &#34;allow_new_registration&#34;:&#34;A&#34;,
+      &#34;reopen_consultation_after_time_limit&#34;:&#34;A&#34;,
+      &#34;allow_cancel_test&#34;:&#34;A&#34;,
+      &#34;allow_backdated_app&#34;:&#34;A&#34;,
+      &#34;edit_custom_fields&#34;:&#34;A&#34;,
+      &#34;usr_or_counter_day_book_access&#34;:&#34;N&#34;,
+      &#34;initiate_discharge&#34;:&#34;A&#34;,
+      &#34;add_edit_scheduler_rights&#34;:&#34;N&#34;,
+      &#34;allow_discount_plans_in_bill&#34;:&#34;N&#34;,
+      &#34;edit_bill&#34;:&#34;A&#34;,
+      &#34;view_ceed_response_comments&#34;:&#34;N&#34;,
+      &#34;allow_ratedecrease&#34;:&#34;A&#34;,
+      &#34;patient_category_change&#34;:&#34;A&#34;,
+      &#34;reg_charges_app&#34;:&#34;A&#34;,
+      &#34;dishcharge_close&#34;:&#34;A&#34;,
+      &#34;allow_backdate&#34;:&#34;A&#34;,
+      &#34;view_general_rates&#34;:&#34;A&#34;,
+      &#34;direct_stock_entry&#34;:&#34;N&#34;,
+      &#34;clinical_discharge&#34;:&#34;A&#34;,
+      &#34;cancel_test_any_time&#34;:&#34;A&#34;,
+      &#34;edit_patient_header&#34;:&#34;A&#34;,
+      &#34;allow_dyna_package_include_exclude&#34;:&#34;N&#34;,
+      &#34;change_max_costprice&#34;:&#34;N&#34;,
+      &#34;show_other_center_patients&#34;:&#34;N&#34;,
+      &#34;validate_test_results&#34;:&#34;A&#34;,
+      &#34;edit_first_name&#34;:&#34;A&#34;,
+      &#34;show_avbl_qty&#34;:&#34;N&#34;,
+      &#34;amend_test_results&#34;:&#34;N&#34;,
+      &#34;pbm_prescription_finalize&#34;:&#34;N&#34;,
+      &#34;set_charged_bed_type&#34;:&#34;A&#34;,
+      &#34;addtobill_charges&#34;:&#34;A&#34;,
+      &#34;allow_print_report_visit_wise&#34;:&#34;N&#34;,
+      &#34;allow_denial_acceptance&#34;:&#34;N&#34;,
+      &#34;package_approval&#34;:&#34;A&#34;,
+      &#34;allow_edit_bill_open_date&#34;:&#34;N&#34;,
+      &#34;allow_pharmacy_item_return_after_validity_days&#34;:&#34;N&#34;,
+      &#34;allow_discount&#34;:&#34;A&#34;,
+      &#34;allow_receipt_backdate&#34;:&#34;A&#34;,
+      &#34;reopen_codification&#34;:&#34;A&#34;,
+      &#34;new_bill_for_order_screen&#34;:&#34;A&#34;,
+      &#34;erx_consultation_access&#34;:&#34;N&#34;,
+      &#34;allow_rateincrease&#34;:&#34;A&#34;,
+      &#34;allow_credit_bill_later&#34;:&#34;A&#34;,
+      &#34;cancel_scheduler_appointment&#34;:&#34;A&#34;,
+      &#34;amend_score_card_values&#34;:&#34;N&#34;,
+      &#34;allow_retail_credit_sales&#34;:&#34;N&#34;,
+      &#34;create_bill_for_closed_visit&#34;:&#34;A&#34;,
+      &#34;sign_off_lab_reports&#34;:&#34;A&#34;,
+      &#34;allow_edit_dyna_package&#34;:&#34;N&#34;,
+      &#34;cancel_elements_in_bill&#34;:&#34;A&#34;,
+      &#34;view_all_rates&#34;:&#34;A&#34;,
+      &#34;revert_signoff&#34;:&#34;N&#34;,
+      &#34;cancel_bill&#34;:&#34;A&#34;,
+      &#34;allow_delete_patient_doc&#34;:&#34;N&#34;,
+      &#34;bill_reopen&#34;:&#34;A&#34;,
+      &#34;allow_dynamic_copay_change&#34;:&#34;N&#34;,
+      &#34;allow_refund&#34;:&#34;A&#34;,
+      &#34;allow_preauth_prescription_edit&#34;:&#34;N&#34;,
+      &#34;allow_retail_sales&#34;:&#34;N&#34;
+   },
+    &#34;urlRightsMap&#34;:{  
+      &#34;mas_strength_unit&#34;:&#34;A&#34;,
+      &#34;mas_recurrence_daily_master&#34;:&#34;A&#34;,
+      &#34;doctor_order_print&#34;:&#34;A&#34;,
+      &#34;rep_vital_measurement_builder&#34;:&#34;A&#34;,
+      &#34;mas_blbag&#34;:&#34;A&#34;,
+      &#34;survey_patient_responses&#34;:&#34;A&#34;,
+      &#34;account_xml_import_export_log&#34;:&#34;A&#34;,
+      &#34;pharma_view_grns&#34;:&#34;A&#34;,
+      &#34;rep_trans_rev&#34;:&#34;A&#34;,
+      &#34;bills_backup&#34;:&#34;A&#34;,
+      &#34;change_billtype&#34;:&#34;A&#34;,
+      &#34;mas_foreign_currency&#34;:&#34;A&#34;,
+      &#34;general_message_send&#34;:&#34;A&#34;,
+      &#34;mas_system_messages&#34;:&#34;A&#34;,
+      &#34;consult_token_display_prefs&#34;:&#34;N&#34;,
+      &#34;clinical_data_lab_results_master&#34;:&#34;A&#34;,
+      &#34;test_documents_print&#34;:&#34;A&#34;,
+      &#34;mas_common_charges&#34;:&#34;A&#34;,
+      &#34;ins_generic_print&#34;:&#34;A&#34;,
+      &#34;survey_record_patient_response&#34;:&#34;A&#34;,
+      &#34;rep_network_bill_charge_builder&#34;:&#34;N&#34;,
+      &#34;mas_insurance_cat&#34;:&#34;A&#34;,
+      &#34;mas_ins_sponsor&#34;:&#34;A&#34;,
+      &#34;pharma_sale_pending_bills&#34;:&#34;A&#34;,
+      &#34;rep_store_purchase_details&#34;:&#34;A&#34;,
+      &#34;rad_schedules_search&#34;:&#34;A&#34;,
+      &#34;conduct_operation&#34;:&#34;N&#34;,
+      &#34;admission_request_diagnosis_audit_log&#34;:&#34;A&#34;,
+      &#34;bill_remittance&#34;:&#34;A&#34;,
+      &#34;insurance_history&#34;:&#34;N&#34;,
+      &#34;per_diem_codes_charges_audit_log&#34;:&#34;A&#34;,
+      &#34;dental_consultations_print&#34;:&#34;A&#34;,
+      &#34;preauth_presc_attach_file&#34;:&#34;N&#34;,
+      &#34;lab_incoming_bill_list_print&#34;:&#34;A&#34;,
+      &#34;mas_drg_codes&#34;:&#34;A&#34;,
+      &#34;discharge_summary&#34;:&#34;N&#34;,
+      &#34;transaction_approval&#34;:&#34;N&#34;,
+      &#34;mas_printer_definition&#34;:&#34;A&#34;,
+      &#34;approve_sponsors_approval&#34;:&#34;A&#34;,
+      &#34;charge_head&#34;:&#34;A&#34;,
+      &#34;rad_test_documents&#34;:&#34;A&#34;,
+      &#34;triage_allergy_audit_log&#34;:&#34;A&#34;,
+      &#34;stores_patient_indent_add&#34;:&#34;A&#34;,
+      &#34;fav_rpt_dashbd&#34;:&#34;A&#34;,
+      &#34;mas_insurance_item_cat&#34;:&#34;A&#34;,
+      &#34;mas_fixed_assets&#34;:&#34;N&#34;,
+      &#34;stores_validate_po&#34;:&#34;A&#34;,
+      &#34;rep_store_sales_vat_report&#34;:&#34;A&#34;,
+      &#34;rep_clinical_outcome&#34;:&#34;A&#34;,
+      &#34;mas_tpa_center_association&#34;:&#34;A&#34;,
+      &#34;ope_scheduler&#34;:&#34;A&#34;,
+      &#34;mas_equipment&#34;:&#34;A&#34;,
+      &#34;mas_med_cat&#34;:&#34;A&#34;,
+      &#34;mas_medicines_prescribed&#34;:&#34;A&#34;,
+      &#34;mas_form_components&#34;:&#34;A&#34;,
+      &#34;patient_customfields&#34;:&#34;A&#34;,
+      &#34;lab_prescribe_test&#34;:&#34;A&#34;,
+      &#34;stores_audit_log&#34;:&#34;A&#34;,
+      &#34;email_report_config&#34;:&#34;A&#34;,
+      &#34;rep_pharmacy_stock_chk_point&#34;:&#34;A&#34;,
+      &#34;patient_progress&#34;:&#34;A&#34;,
+      &#34;adt&#34;:&#34;A&#34;,
+      &#34;ivf_pre_cycle&#34;:&#34;N&#34;,
+      &#34;cancel_appointments&#34;:&#34;N&#34;,
+      &#34;mas_sample_barcode_template&#34;:&#34;A&#34;,
+      &#34;mas_sam_collection&#34;:&#34;A&#34;,
+      &#34;ph_receipts&#34;:&#34;A&#34;,
+      &#34;Scheduler_Surgery_Appointment&#34;:&#34;A&#34;,
+      &#34;stores_rate_plan_mas&#34;:&#34;A&#34;,
+      &#34;ph_stock_movement&#34;:&#34;A&#34;,
+      &#34;mas_icd_codes&#34;:&#34;A&#34;,
+      &#34;bill_print&#34;:&#34;A&#34;,
+      &#34;rad_unfinished_tests&#34;:&#34;A&#34;,
+      &#34;mas_fav_rpt_dashbd&#34;:&#34;A&#34;,
+      &#34;mas_region&#34;:&#34;A&#34;,
+      &#34;service_sub_group&#34;:&#34;A&#34;,
+      &#34;deposit_receipts&#34;:&#34;A&#34;,
+      &#34;store_stock_consumption_new&#34;:&#34;A&#34;,
+      &#34;Scheduler_Services_Appointment&#34;:&#34;A&#34;,
+      &#34;insurance_claim_change_logs&#34;:&#34;N&#34;,
+      &#34;mas_reg_charges_upload&#34;:&#34;A&#34;,
+      &#34;usr_role_pagestats&#34;:&#34;A&#34;,
+      &#34;reg_generic_docs&#34;:&#34;A&#34;,
+      &#34;stores_indent&#34;:&#34;A&#34;,
+      &#34;cat_resource_scheduler&#34;:&#34;A&#34;,
+      &#34;rad_signedoff_report_list&#34;:&#34;A&#34;,
+      &#34;service_docs&#34;:&#34;A&#34;,
+      &#34;rep_bill_adj_builder&#34;:&#34;A&#34;,
+      &#34;stores_user_indent&#34;:&#34;A&#34;,
+      &#34;complaints_log_report&#34;:&#34;A&#34;,
+      &#34;ipf_allergy_audit_log&#34;:&#34;A&#34;,
+      &#34;stores_view_patient_issues&#34;:&#34;A&#34;,
+      &#34;operations_pending_list&#34;:&#34;N&#34;,
+      &#34;mas_insurance_comp&#34;:&#34;A&#34;,
+      &#34;mas_shift_master&#34;:&#34;N&#34;,
+      &#34;pharma_view_store_item_batch_details&#34;:&#34;A&#34;,
+      &#34;po_audit_log&#34;:&#34;A&#34;,
+      &#34;mas_insurance_company_tpa&#34;:&#34;A&#34;,
+      &#34;mas_scheduler_message_configure&#34;:&#34;A&#34;,
+      &#34;consolidated_sponsor_receipts&#34;:&#34;A&#34;,
+      &#34;net_fav_rpt_dashbd&#34;:&#34;N&#34;,
+      &#34;patient_inventory_return&#34;:&#34;A&#34;,
+      &#34;ot_consumables&#34;:&#34;A&#34;,
+      &#34;stores_indent_receive&#34;:&#34;A&#34;,
+      &#34;mas_center_suppliers&#34;:&#34;A&#34;,
+      &#34;stores_patient_indent_add_return&#34;:&#34;A&#34;,
+      &#34;order&#34;:&#34;A&#34;,
+      &#34;rep_bill_charge_adj_builder&#34;:&#34;A&#34;,
+      &#34;mas_sections&#34;:&#34;A&#34;,
+      &#34;dietary_daily_meals_report&#34;:&#34;N&#34;,
+      &#34;doctor_order_audit_log&#34;:&#34;A&#34;,
+      &#34;doc_scheduler&#34;:&#34;A&#34;,
+      &#34;rep_clinical_lab&#34;:&#34;A&#34;,
+      &#34;std_notification&#34;:&#34;A&#34;,
+      &#34;donor_details_builder&#34;:&#34;N&#34;,
+      &#34;reward_points&#34;:&#34;A&#34;,
+      &#34;ip_preferences&#34;:&#34;A&#34;,
+      &#34;cancel_pescription&#34;:&#34;A&#34;,
+      &#34;pay_paymentscreen_combined&#34;:&#34;A&#34;,
+      &#34;dialysis_post_sessions&#34;:&#34;A&#34;,
+      &#34;patient_dental_supplies&#34;:&#34;A&#34;,
+      &#34;user_inventory_return&#34;:&#34;A&#34;,
+      &#34;mas_dyna_package_rule&#34;:&#34;A&#34;,
+      &#34;op_out_patient&#34;:&#34;A&#34;,
+      &#34;mrd_indent_close&#34;:&#34;A&#34;,
+      &#34;operation_detailed_screen&#34;:&#34;A&#34;,
+      &#34;mas_encounter_type&#34;:&#34;A&#34;,
+      &#34;mas_order_kit&#34;:&#34;A&#34;,
+      &#34;ambulance_services_rep_builder&#34;:&#34;N&#34;,
+      &#34;get_dialysisorder_charge_claims&#34;:&#34;A&#34;,
+      &#34;patient_dental_supplies_print&#34;:&#34;A&#34;,
+      &#34;doc_appointments&#34;:&#34;N&#34;,
+      &#34;change_visit_tpa&#34;:&#34;A&#34;,
+      &#34;visit_summary&#34;:&#34;A&#34;,
+      &#34;diag_fav_rpt_dashbd&#34;:&#34;A&#34;,
+      &#34;stores_transfer_indent&#34;:&#34;A&#34;,
+      &#34;dialysis_sessions_summary&#34;:&#34;A&#34;,
+      &#34;pay_paymentscreen_ip&#34;:&#34;A&#34;,
+      &#34;bill_email&#34;:&#34;A&#34;,
+      &#34;rep_patient_packages_builder&#34;:&#34;A&#34;,
+      &#34;pay_doctor&#34;:&#34;A&#34;,
+      &#34;mas_generic_images&#34;:&#34;A&#34;,
+      &#34;pharma_direct_stock_entry&#34;:&#34;A&#34;,
+      &#34;sales_purchases_acc_prefixes&#34;:&#34;A&#34;,
+      &#34;mas_prescription_label_template&#34;:&#34;A&#34;,
+      &#34;mas_blood_comp&#34;:&#34;A&#34;,
+      &#34;mas_diagnosis_status&#34;:&#34;A&#34;,
+      &#34;mas_system_gen_sections&#34;:&#34;A&#34;,
+      &#34;bill_fav_rpt_dashbd&#34;:&#34;A&#34;,
+      &#34;ins_generic_image&#34;:&#34;N&#34;,
+      &#34;grp_canteen&#34;:&#34;N&#34;,
+      &#34;mas_medicines_issue_rates&#34;:&#34;A&#34;,
+      &#34;patient_docket&#34;:&#34;A&#34;,
+      &#34;mas_roster_resource_type_master&#34;:&#34;N&#34;,
+      &#34;luxury_tax_rep_builder&#34;:&#34;A&#34;,
+      &#34;rad_equipment_qa&#34;:&#34;A&#34;,
+      &#34;vital_cons_form_audit_log&#34;:&#34;A&#34;,
+      &#34;rep_collection_detailed_builder&#34;:&#34;A&#34;,
+      &#34;patientfeedback_rep&#34;:&#34;A&#34;,
+      &#34;ins_upload_docs&#34;:&#34;N&#34;,
+      &#34;op_patient_docs&#34;:&#34;A&#34;,
+      &#34;mas_collection_barcode_template&#34;:&#34;A&#34;,
+      &#34;ph_purchase_rep_builder&#34;:&#34;A&#34;,
+      &#34;po_builder&#34;:&#34;A&#34;,
+      &#34;operations_audit_log&#34;:&#34;A&#34;,
+      &#34;create_sponsor_credit_note&#34;:&#34;A&#34;,
+      &#34;insurance_claim&#34;:&#34;N&#34;,
+      &#34;view_work_order&#34;:&#34;N&#34;,
+      &#34;insurance_claim_reconciliation&#34;:&#34;A&#34;,
+      &#34;conduct_or_add_operation_doc&#34;:&#34;A&#34;,
+      &#34;pharma_view_stock_adj&#34;:&#34;A&#34;,
+      &#34;rep_reward_points&#34;:&#34;A&#34;,
+      &#34;ip_bed_details&#34;:&#34;A&#34;,
+      &#34;Scheduler_Tests_Appointment&#34;:&#34;A&#34;,
+      &#34;mas_cities&#34;:&#34;A&#34;,
+      &#34;mas_reports_cen_app&#34;:&#34;A&#34;,
+      &#34;ivf_history&#34;:&#34;N&#34;,
+      &#34;mas_diag_depts&#34;:&#34;A&#34;,
+      &#34;ivf_daily_treatment&#34;:&#34;N&#34;,
+      &#34;clinical_data_lab_results&#34;:&#34;A&#34;,
+      &#34;diet_generic_document&#34;:&#34;A&#34;,
+      &#34;patient_generic_form_list&#34;:&#34;A&#34;,
+      &#34;initial_assessment_print&#34;:&#34;A&#34;,
+      &#34;pharma_item_credit_bill&#34;:&#34;A&#34;,
+      &#34;genf_diagnosis_audit_log&#34;:&#34;A&#34;,
+      &#34;get_ot_management_screen&#34;:&#34;A&#34;,
+      &#34;tpapreauth_templates&#34;:&#34;N&#34;,
+      &#34;scheduler_generic_resource_master&#34;:&#34;A&#34;,
+      &#34;complaints_gen_audit_log&#34;:&#34;A&#34;,
+      &#34;rep_pharmacy_stock_catg_chk_point&#34;:&#34;A&#34;,
+      &#34;mas_dialysis_prep&#34;:&#34;A&#34;,
+      &#34;stores_patient_indent_edit&#34;:&#34;A&#34;,
+      &#34;account_head&#34;:&#34;A&#34;,
+      &#34;mas_service_templates&#34;:&#34;A&#34;,
+      &#34;mas_discount_plan_center_ass&#34;:&#34;A&#34;,
+      &#34;patient_dental_quotation_print&#34;:&#34;A&#34;,
+      &#34;complaints_rep_builder&#34;:&#34;N&#34;,
+      &#34;mas_generic_classification_names&#34;:&#34;A&#34;,
+      &#34;mas_payment_mode&#34;:&#34;A&#34;,
+      &#34;contracts&#34;:&#34;N&#34;,
+      &#34;mas_doctors&#34;:&#34;A&#34;,
+      &#34;pharma_pending_sales_print&#34;:&#34;A&#34;,
+      &#34;mas_doctors_cen_app&#34;:&#34;A&#34;,
+      &#34;clini_fav_rpt_dashbd&#34;:&#34;A&#34;,
+      &#34;mas_scheduled_export_prefs&#34;:&#34;A&#34;,
+      &#34;mas_item_form&#34;:&#34;A&#34;,
+      &#34;mas_reg_prefs&#34;:&#34;A&#34;,
+      &#34;tooth_surface_material_master&#34;:&#34;A&#34;,
+      &#34;rep_pharmacy_bonus_items&#34;:&#34;A&#34;,
+      &#34;dialysis_bill_audit_log&#34;:&#34;A&#34;,
+      &#34;ph_stocktransfer_rep_builder&#34;:&#34;A&#34;,
+      &#34;store_mg_fav_rpt_dashbd&#34;:&#34;A&#34;,
+      &#34;usr_userdashboard&#34;:&#34;A&#34;,
+      &#34;fin_fav_rpt_dashbd&#34;:&#34;A&#34;,
+      &#34;preauth_requests&#34;:&#34;N&#34;,
+      &#34;vital_form&#34;:&#34;A&#34;,
+      &#34;mas_stock_adj_reason&#34;:&#34;A&#34;,
+      &#34;patient_sponsors_approval&#34;:&#34;A&#34;,
+      &#34;deposits_realization&#34;:&#34;A&#34;,
+      &#34;ot_record_print&#34;:&#34;A&#34;,
+      &#34;pay_paymentscreen_op&#34;:&#34;A&#34;,
+      &#34;mas_center_outhouses&#34;:&#34;A&#34;,
+      &#34;ambulance_service_list&#34;:&#34;N&#34;,
+      &#34;donor_registry&#34;:&#34;N&#34;,
+      &#34;intra_dialysis_builder&#34;:&#34;A&#34;,
+      &#34;master_vaccine&#34;:&#34;A&#34;,
+      &#34;mas_wards_beds&#34;:&#34;A&#34;,
+      &#34;rep_ip_list_print&#34;:&#34;A&#34;,
+      &#34;mas_transfer_hospitals&#34;:&#34;A&#34;,
+      &#34;lab_test_documents_list&#34;:&#34;A&#34;,
+      &#34;pharma_view_items_stock_level_list&#34;:&#34;A&#34;,
+      &#34;mas_doctors_detail&#34;:&#34;A&#34;,
+      &#34;slida_action&#34;:&#34;N&#34;,
+      &#34;reg_general&#34;:&#34;A&#34;,
+      &#34;sales_abc_blder&#34;:&#34;A&#34;,
+      &#34;diag_builder&#34;:&#34;A&#34;,
+      &#34;mas_package_category_master&#34;:&#34;A&#34;,
+      &#34;doctor_order_report_builder&#34;:&#34;A&#34;,
+      &#34;mas_ref_doctors_app&#34;:&#34;A&#34;,
+      &#34;mas_patient_cat&#34;:&#34;A&#34;,
+      &#34;mas_diag_test_list&#34;:&#34;A&#34;,
+      &#34;patient_docs_audit_log&#34;:&#34;A&#34;,
+      &#34;maintenance_schedule&#34;:&#34;N&#34;,
+      &#34;emr_screen&#34;:&#34;A&#34;,
+      &#34;rep_dialysis_frequency&#34;:&#34;A&#34;,
+      &#34;dyna_package_category_limits_audit_log&#34;:&#34;A&#34;,
+      &#34;ph_sale_item_rep_builder&#34;:&#34;A&#34;,
+      &#34;rad_test_documents_list&#34;:&#34;A&#34;,
+      &#34;mlc_generic_docs&#34;:&#34;A&#34;,
+      &#34;service_sub_group_upload&#34;:&#34;A&#34;,
+      &#34;complaints_log&#34;:&#34;A&#34;,
+      &#34;lab_unfinished_tests_search&#34;:&#34;A&#34;,
+      &#34;contracts_list&#34;:&#34;N&#34;,
+      &#34;mas_test_tat_master&#34;:&#34;A&#34;,
+      &#34;req_blood_donor&#34;:&#34;A&#34;,
+      &#34;ph_indvl_stock_builder&#34;:&#34;A&#34;,
+      &#34;rep_rate_master_print&#34;:&#34;A&#34;,
+      &#34;stores_item_rates_mas&#34;:&#34;A&#34;,
+      &#34;vital_gen_form_audit_log&#34;:&#34;A&#34;,
+      &#34;mas_pbm_observations&#34;:&#34;A&#34;,
+      &#34;ip_outstand_csv_report&#34;:&#34;A&#34;,
+      &#34;rep_pharmacy_surplus_stock&#34;:&#34;A&#34;,
+      &#34;reg_registration&#34;:&#34;A&#34;,
+      &#34;pharma_sales&#34;:&#34;A&#34;,
+      &#34;maint_activity_rep_builder&#34;:&#34;N&#34;,
+      &#34;lab_schedules_list&#34;:&#34;A&#34;,
+      &#34;gen_audit_log&#34;:&#34;A&#34;,
+      &#34;mas_location&#34;:&#34;A&#34;,
+      &#34;vaccination_info&#34;:&#34;A&#34;,
+      &#34;ip_outstand_report&#34;:&#34;A&#34;,
+      &#34;cssd_surgery_kit_avbl&#34;:&#34;N&#34;,
+      &#34;lab_test_documents&#34;:&#34;A&#34;,
+      &#34;dental_supplies_report_builder&#34;:&#34;A&#34;,
+      &#34;paymentrule_audit_log&#34;:&#34;A&#34;,
+      &#34;pres_lead_time_builder&#34;:&#34;A&#34;,
+      &#34;mrd_file_issue&#34;:&#34;A&#34;,
+      &#34;rep_pharmacy_tax&#34;:&#34;A&#34;,
+      &#34;diag_rev_builder&#34;:&#34;A&#34;,
+      &#34;mrd_fav_rpt_dashbd&#34;:&#34;A&#34;,
+      &#34;mas_mlc_templates&#34;:&#34;A&#34;,
+      &#34;mas_patient_header_templates&#34;:&#34;A&#34;,
+      &#34;mas_reg_charges&#34;:&#34;A&#34;,
+      &#34;ot_record&#34;:&#34;A&#34;,
+      &#34;donor_component_search&#34;:&#34;A&#34;,
+      &#34;edit_member_id&#34;:&#34;A&#34;,
+      &#34;mas_sam_sources&#34;:&#34;A&#34;,
+      &#34;visit_details_search&#34;:&#34;A&#34;,
+      &#34;ip_beddetails&#34;:&#34;A&#34;,
+      &#34;mas_claim_template&#34;:&#34;N&#34;,
+      &#34;sponsor_procedure_master&#34;:&#34;A&#34;,
+      &#34;reg_re_admit&#34;:&#34;A&#34;,
+      &#34;cssd_sterile_stock_transfer&#34;:&#34;N&#34;,
+      &#34;mas_payment_rule&#34;:&#34;A&#34;,
+      &#34;fp_service_verify&#34;:&#34;N&#34;,
+      &#34;blood_request_builder&#34;:&#34;A&#34;,
+      &#34;op_case_form_template&#34;:&#34;A&#34;,
+      &#34;today_resource_scheduler&#34;:&#34;A&#34;,
+      &#34;mas_ph_ret_doc&#34;:&#34;A&#34;,
+      &#34;mas_store_item_control_type&#34;:&#34;A&#34;,
+      &#34;mas_general_message_configure&#34;:&#34;A&#34;,
+      &#34;store_item_master_builder&#34;:&#34;A&#34;,
+      &#34;rad_incoming_sample_reg&#34;:&#34;A&#34;,
+      &#34;emr_screen_trendreport&#34;:&#34;A&#34;,
+      &#34;lab_pending_samples&#34;:&#34;A&#34;,
+      &#34;insurance_claim_submission&#34;:&#34;A&#34;,
+      &#34;radio_prescribe_test&#34;:&#34;A&#34;,
+      &#34;mas_diag_template&#34;:&#34;A&#34;,
+      &#34;ip_ipservices_alt&#34;:&#34;A&#34;,
+      &#34;patient_inventory_issue&#34;:&#34;A&#34;,
+      &#34;dialysis_builder&#34;:&#34;A&#34;,
+      &#34;mas_scheduler_message_type&#34;:&#34;A&#34;,
+      &#34;icd_report&#34;:&#34;A&#34;,
+      &#34;stores_process_indent&#34;:&#34;A&#34;,
+      &#34;stores_patient_indent_view&#34;:&#34;A&#34;,
+      &#34;ph_stock_adj_rep_builder&#34;:&#34;A&#34;,
+      &#34;lab_test_reconduction&#34;:&#34;A&#34;,
+      &#34;reg_blood_donor&#34;:&#34;A&#34;,
+      &#34;vital_tri_form_audit_log&#34;:&#34;A&#34;,
+      &#34;complaints_tri_audit_log&#34;:&#34;A&#34;,
+      &#34;mas_bill_label&#34;:&#34;A&#34;,
+      &#34;lab_transfer_sample_barcode&#34;:&#34;A&#34;,
+      &#34;op_case_form&#34;:&#34;A&#34;,
+      &#34;transport_fav_rpt_dashbd&#34;:&#34;N&#34;,
+      &#34;reg_export_data&#34;:&#34;A&#34;,
+      &#34;mas_services&#34;:&#34;A&#34;,
+      &#34;mas_bank&#34;:&#34;A&#34;,
+      &#34;mas_dept&#34;:&#34;A&#34;,
+      &#34;mas_manf&#34;:&#34;A&#34;,
+      &#34;ivf_sessions&#34;:&#34;N&#34;,
+      &#34;indent_item_builder&#34;:&#34;A&#34;,
+      &#34;receipts&#34;:&#34;A&#34;,
+      &#34;pharma_view_supp_returns&#34;:&#34;A&#34;,
+      &#34;mas_ph_po_template&#34;:&#34;A&#34;,
+      &#34;reward_points_ledger&#34;:&#34;A&#34;,
+      &#34;rep_patientstats_table_builder&#34;:&#34;A&#34;,
+      &#34;sr_scanned_reports&#34;:&#34;N&#34;,
+      &#34;op_ip_conversion&#34;:&#34;A&#34;,
+      &#34;pat_discharge&#34;:&#34;N&#34;,
+      &#34;adv_pkg_patient_packages_list&#34;:&#34;A&#34;,
+      &#34;ip_registration&#34;:&#34;A&#34;,
+      &#34;stores_view_patient_returns&#34;:&#34;A&#34;,
+      &#34;medicine_route&#34;:&#34;A&#34;,
+      &#34;credit_bill_collection&#34;:&#34;A&#34;,
+      &#34;mas_message_category&#34;:&#34;A&#34;,
+      &#34;mas_supplier_contract_item_rates&#34;:&#34;A&#34;,
+      &#34;consult_charge&#34;:&#34;A&#34;,
+      &#34;rep_outgoing_test_details&#34;:&#34;A&#34;,
+      &#34;rep_visit_details_builder&#34;:&#34;A&#34;,
+      &#34;pharma_estimate&#34;:&#34;A&#34;,
+      &#34;ins_fav_rpt_dashbd&#34;:&#34;A&#34;,
+      &#34;dial_prescriptions_audit_log&#34;:&#34;A&#34;,
+      &#34;pharma_view_stock_trans&#34;:&#34;A&#34;,
+      &#34;mas_discount_plan&#34;:&#34;A&#34;,
+      &#34;mas_common_print_templates&#34;:&#34;A&#34;,
+      &#34;mas_deposit_templates&#34;:&#34;A&#34;,
+      &#34;pre_auth_forms_print&#34;:&#34;A&#34;,
+      &#34;consult_charge_upload&#34;:&#34;A&#34;,
+      &#34;edit_visit_details&#34;:&#34;A&#34;,
+      &#34;pharma_returns&#34;:&#34;A&#34;,
+      &#34;ot_schedule_rep_builder&#34;:&#34;A&#34;,
+      &#34;bed_linen_current_usage_rep_builder&#34;:&#34;N&#34;,
+      &#34;iss_blood_donor&#34;:&#34;A&#34;,
+      &#34;mas_equipment_upload&#34;:&#34;A&#34;,
+      &#34;mas_govt_type_id&#34;:&#34;A&#34;,
+      &#34;diag_incoming_sample_reg&#34;:&#34;A&#34;,
+      &#34;triage_audit_log&#34;:&#34;A&#34;,
+      &#34;payment_details_builder&#34;:&#34;A&#34;,
+      &#34;req_blbag&#34;:&#34;A&#34;,
+      &#34;channeling_source&#34;:&#34;A&#34;,
+      &#34;mas_pass_prefs&#34;:&#34;A&#34;,
+      &#34;ip_bedshift&#34;:&#34;A&#34;,
+      &#34;lab_manage_reports&#34;:&#34;A&#34;,
+      &#34;consul_fav_rpt_dashbd&#34;:&#34;A&#34;,
+      &#34;ivf_treatment_cycle_builder&#34;:&#34;N&#34;,
+      &#34;erx_presc_list&#34;:&#34;N&#34;,
+      &#34;pharma_retail_sale_pending_bills&#34;:&#34;A&#34;,
+      &#34;mas_ot&#34;:&#34;A&#34;,
+      &#34;cssd_ot_stock_consumption&#34;:&#34;N&#34;,
+      &#34;insta_subscriptions&#34;:&#34;N&#34;,
+      &#34;acc_voucher_types&#34;:&#34;A&#34;,
+      &#34;get_planned_operations_list&#34;:&#34;A&#34;,
+      &#34;mas_payment_category&#34;:&#34;A&#34;,
+      &#34;lab_select_outhouse&#34;:&#34;A&#34;,
+      &#34;autopost_payments&#34;:&#34;A&#34;,
+      &#34;pharma_view_supp_returns_db&#34;:&#34;A&#34;,
+      &#34;erx_request&#34;:&#34;N&#34;,
+      &#34;visit_emr_screen&#34;:&#34;A&#34;,
+      &#34;stores_view_pur_det&#34;:&#34;A&#34;,
+      &#34;rep_ipstats&#34;:&#34;A&#34;,
+      &#34;mas_print_templates&#34;:&#34;A&#34;,
+      &#34;mas_dental_supplier_master&#34;:&#34;A&#34;,
+      &#34;archive_notification&#34;:&#34;A&#34;,
+      &#34;rad_manage_reports&#34;:&#34;A&#34;,
+      &#34;st_in_out_reg_blder&#34;:&#34;A&#34;,
+      &#34;patient_pending_prescriptions&#34;:&#34;A&#34;,
+      &#34;stores_view_po&#34;:&#34;A&#34;,
+      &#34;stores_amend_po&#34;:&#34;A&#34;,
+      &#34;store_stock_consumption_list&#34;:&#34;A&#34;,
+      &#34;mas_states&#34;:&#34;A&#34;,
+      &#34;daybook_builder&#34;:&#34;A&#34;,
+      &#34;mas_dial_machine&#34;:&#34;A&#34;,
+      &#34;statistics&#34;:&#34;A&#34;,
+      &#34;ope_week_scheduler&#34;:&#34;A&#34;,
+      &#34;mas_supplier_rate_contracts_center_ass&#34;:&#34;A&#34;,
+      &#34;rep_icd_codification&#34;:&#34;A&#34;,
+      &#34;radiology_arrivals&#34;:&#34;A&#34;,
+      &#34;pharma_sale_edit_bill&#34;:&#34;A&#34;,
+      &#34;my_messages&#34;:&#34;A&#34;,
+      &#34;custom_rpt_list&#34;:&#34;A&#34;,
+      &#34;sch_fav_rpt_dashbd&#34;:&#34;A&#34;,
+      &#34;insurance_plan_details_audit_log&#34;:&#34;A&#34;,
+      &#34;reg_admission_request&#34;:&#34;A&#34;,
+      &#34;mas_ins_tpas&#34;:&#34;A&#34;,
+      &#34;mas_salutation&#34;:&#34;A&#34;,
+      &#34;rep_progressive_test_details&#34;:&#34;A&#34;,
+      &#34;vital_ia_form_audit_log&#34;:&#34;A&#34;,
+      &#34;mas_packages&#34;:&#34;A&#34;,
+      &#34;blood_transfusions&#34;:&#34;A&#34;,
+      &#34;patient_duplicate_report&#34;:&#34;A&#34;,
+      &#34;insurance_plan_main_audit_log&#34;:&#34;A&#34;,
+      &#34;ip_ipservice_print&#34;:&#34;A&#34;,
+      &#34;pay_reversal&#34;:&#34;A&#34;,
+      &#34;pat_fav_rpt_dashbd&#34;:&#34;A&#34;,
+      &#34;mas_ot_templates&#34;:&#34;A&#34;,
+      &#34;preauth_patient_diagnosis_audit_log&#34;:&#34;N&#34;,
+      &#34;dis_blood_donor&#34;:&#34;A&#34;,
+      &#34;mas_ph_template&#34;:&#34;A&#34;,
+      &#34;ot_fav_rpt_dashbd&#34;:&#34;A&#34;,
+      &#34;mas_diag_templates&#34;:&#34;A&#34;,
+      &#34;mas_supplier_rate_contracts&#34;:&#34;A&#34;,
+      &#34;lab_transfer_sample_manual&#34;:&#34;A&#34;,
+      &#34;change_visit_org&#34;:&#34;A&#34;,
+      &#34;rep_pharmacy_purchase_vat_report&#34;:&#34;A&#34;,
+      &#34;dietary_master_print&#34;:&#34;A&#34;,
+      &#34;ip_diet_prescribe&#34;:&#34;A&#34;,
+      &#34;service_subtask_builder&#34;:&#34;A&#34;,
+      &#34;mas_supported_codes&#34;:&#34;A&#34;,
+      &#34;mas_gen_pref&#34;:&#34;A&#34;,
+      &#34;ins_newcase&#34;:&#34;N&#34;,
+      &#34;dietary_templates&#34;:&#34;N&#34;,
+      &#34;stores_po_approval&#34;:&#34;A&#34;,
+      &#34;services_audit_log&#34;:&#34;A&#34;,
+      &#34;partogram_form&#34;:&#34;A&#34;,
+      &#34;erx_approval&#34;:&#34;N&#34;,
+      &#34;rep_payment_consolidated_builder&#34;:&#34;A&#34;,
+      &#34;rep_karnataka_sales_tax&#34;:&#34;A&#34;,
+      &#34;patient_deposits&#34;:&#34;A&#34;,
+      &#34;mas_dial_access_sites&#34;:&#34;A&#34;,
+      &#34;ip_ipservices&#34;:&#34;A&#34;,
+      &#34;ipf_diagnosis_audit_log&#34;:&#34;A&#34;,
+      &#34;pay_ref_doctor&#34;:&#34;A&#34;,
+      &#34;diet_fav_rpt_dashbd&#34;:&#34;N&#34;,
+      &#34;mas_dial_ratings&#34;:&#34;A&#34;,
+      &#34;mas_serv_dept&#34;:&#34;A&#34;,
+      &#34;rep_presc_det_builder&#34;:&#34;A&#34;,
+      &#34;ph_sale_bill_reports&#34;:&#34;A&#34;,
+      &#34;dental_consultations&#34;:&#34;A&#34;,
+      &#34;mas_misc_settings&#34;:&#34;A&#34;,
+      &#34;billing_tally_export&#34;:&#34;A&#34;,
+      &#34;linen_report_builder&#34;:&#34;N&#34;,
+      &#34;dialysis_machine_status&#34;:&#34;A&#34;,
+      &#34;cancel_radiology&#34;:&#34;A&#34;,
+      &#34;stores_view_stock_issues&#34;:&#34;A&#34;,
+      &#34;mas_dental_supplies_master&#34;:&#34;A&#34;,
+      &#34;reg_quick_estimate&#34;:&#34;A&#34;,
+      &#34;po_pending_item_builder&#34;:&#34;A&#34;,
+      &#34;insurance_accumed_claim&#34;:&#34;A&#34;,
+      &#34;generic_documents_list&#34;:&#34;A&#34;,
+      &#34;rep_network_revenue_builder&#34;:&#34;N&#34;,
+      &#34;mas_custom_list1&#34;:&#34;A&#34;,
+      &#34;mas_custom_list3&#34;:&#34;A&#34;,
+      &#34;clinical_hospitalization_information&#34;:&#34;A&#34;,
+      &#34;get_bill_charge_claims&#34;:&#34;A&#34;,
+      &#34;mas_custom_list2&#34;:&#34;A&#34;,
+      &#34;rad_schedules_list&#34;:&#34;A&#34;,
+      &#34;mas_custom_list5&#34;:&#34;A&#34;,
+      &#34;service_order&#34;:&#34;A&#34;,
+      &#34;mas_custom_list4&#34;:&#34;A&#34;,
+      &#34;mas_custom_list7&#34;:&#34;A&#34;,
+      &#34;lab_pending_sample_assertions&#34;:&#34;A&#34;,
+      &#34;mas_custom_list6&#34;:&#34;A&#34;,
+      &#34;res_availability&#34;:&#34;A&#34;,
+      &#34;mas_custom_list9&#34;:&#34;A&#34;,
+      &#34;mas_custom_list8&#34;:&#34;A&#34;,
+      &#34;mas_dialysate_type&#34;:&#34;A&#34;,
+      &#34;initial_assessment&#34;:&#34;A&#34;,
+      &#34;mas_barcode_template&#34;:&#34;A&#34;,
+      &#34;hl7_configuration&#34;:&#34;A&#34;,
+      &#34;mas_reports_overrides&#34;:&#34;A&#34;,
+      &#34;raise_claim_batch_submission&#34;:&#34;A&#34;,
+      &#34;scheduler_message_send&#34;:&#34;A&#34;,
+      &#34;mas_network_centers&#34;:&#34;N&#34;,
+      &#34;insurance_claim_receipts&#34;:&#34;A&#34;,
+      &#34;nurse_notes_audit_log&#34;:&#34;A&#34;,
+      &#34;license_type&#34;:&#34;N&#34;,
+      &#34;ph_invoice_rep_builder&#34;:&#34;A&#34;,
+      &#34;case_file_details_builder&#34;:&#34;A&#34;,
+      &#34;patient_writeoff_approval&#34;:&#34;A&#34;,
+      &#34;preauth_approvals&#34;:&#34;N&#34;,
+      &#34;adv_pkg_handedover_patient_packages_list&#34;:&#34;A&#34;,
+      &#34;tooth_surface_status_master&#34;:&#34;A&#34;,
+      &#34;dialysis_intra_sessions&#34;:&#34;A&#34;,
+      &#34;linen_stats&#34;:&#34;N&#34;,
+      &#34;mas_dial_access_types&#34;:&#34;A&#34;,
+      &#34;infection_site_master&#34;:&#34;A&#34;,
+      &#34;mas_phrase_suggestions_category_master&#34;:&#34;A&#34;,
+      &#34;emr_access_right&#34;:&#34;A&#34;,
+      &#34;rep_doc_consul_builder&#34;:&#34;A&#34;,
+      &#34;saved_searches&#34;:&#34;A&#34;,
+      &#34;rep_store_purchasesummary&#34;:&#34;A&#34;,
+      &#34;mas_pat_visit_bills_template&#34;:&#34;A&#34;,
+      &#34;pharma_presc_list&#34;:&#34;A&#34;,
+      &#34;mas_receipt_refund_template&#34;:&#34;A&#34;,
+      &#34;new_registration&#34;:&#34;N&#34;,
+      &#34;mlc_genericdoc_print&#34;:&#34;A&#34;,
+      &#34;stores_user_indent_approval&#34;:&#34;A&#34;,
+      &#34;send_to_tpa&#34;:&#34;N&#34;,
+      &#34;update_mrd&#34;:&#34;A&#34;,
+      &#34;complaints_ip_audit_log&#34;:&#34;A&#34;,
+      &#34;doc_week_scheduler&#34;:&#34;A&#34;,
+      &#34;mrd_file_return&#34;:&#34;A&#34;,
+      &#34;lab_edit_results&#34;:&#34;A&#34;,
+      &#34;diag_edit_master_id&#34;:&#34;A&#34;,
+      &#34;rep_stock_ledger&#34;:&#34;A&#34;,
+      &#34;rep_pharmacy_purchase_items_vat_report&#34;:&#34;A&#34;,
+      &#34;birth_details&#34;:&#34;A&#34;,
+      &#34;operation_docs&#34;:&#34;A&#34;,
+      &#34;bedu_fav_rpt_dashbd&#34;:&#34;A&#34;,
+      &#34;mas_contractor&#34;:&#34;A&#34;,
+      &#34;stock_inventory_issue&#34;:&#34;A&#34;,
+      &#34;lab_schedules_search&#34;:&#34;A&#34;,
+      &#34;ip_bed_utilization&#34;:&#34;A&#34;,
+      &#34;rep_network_bill_builder&#34;:&#34;N&#34;,
+      &#34;contract_report_builder&#34;:&#34;N&#34;,
+      &#34;mas_scheduler_cron&#34;:&#34;A&#34;,
+      &#34;ph_supplier_payments&#34;:&#34;A&#34;,
+      &#34;cons_allergy_audit_log&#34;:&#34;A&#34;,
+      &#34;pbm_requests&#34;:&#34;N&#34;,
+      &#34;eandm_calculator&#34;:&#34;A&#34;,
+      &#34;pending_service_prescriptions&#34;:&#34;A&#34;,
+      &#34;bed_view&#34;:&#34;A&#34;,
+      &#34;rep_revenue_builder_popup&#34;:&#34;A&#34;,
+      &#34;rep_revenueaccrual&#34;:&#34;A&#34;,
+      &#34;payment_audit_log&#34;:&#34;A&#34;,
+      &#34;stores_patient_indent_list&#34;:&#34;A&#34;,
+      &#34;stores_asset_approval&#34;:&#34;A&#34;,
+      &#34;op_prescribe&#34;:&#34;A&#34;,
+      &#34;rep_codes&#34;:&#34;A&#34;,
+      &#34;patient_activities_audit_log&#34;:&#34;A&#34;,
+      &#34;pay_miscellaneous&#34;:&#34;A&#34;,
+      &#34;treatment_sheet_print&#34;:&#34;A&#34;,
+      &#34;mas_edit_result_ranges&#34;:&#34;A&#34;,
+      &#34;doctors_note&#34;:&#34;A&#34;,
+      &#34;dietary_master&#34;:&#34;N&#34;,
+      &#34;custom_rpt_add&#34;:&#34;A&#34;,
+      &#34;service_docs_print&#34;:&#34;A&#34;,
+      &#34;pending_radiology_prescriptions&#34;:&#34;A&#34;,
+      &#34;mas_discount_authorizer&#34;:&#34;A&#34;,
+      &#34;service_group&#34;:&#34;A&#34;,
+      &#34;rep_rate_variation&#34;:&#34;A&#34;,
+      &#34;mas_center_prefs&#34;:&#34;A&#34;,
+      &#34;optometrist_screen&#34;:&#34;N&#34;,
+      &#34;lab_incoming_bill_list&#34;:&#34;A&#34;,
+      &#34;rep_rev_dashboard&#34;:&#34;A&#34;,
+      &#34;mas_discharge_type&#34;:&#34;A&#34;,
+      &#34;message_log&#34;:&#34;A&#34;,
+      &#34;mas_hosp_roles&#34;:&#34;A&#34;,
+      &#34;patient_writeoff&#34;:&#34;A&#34;,
+      &#34;license_report_builder&#34;:&#34;N&#34;,
+      &#34;dis_metadata&#34;:&#34;A&#34;,
+      &#34;mas_user_location&#34;:&#34;A&#34;,
+      &#34;vaccinations&#34;:&#34;A&#34;,
+      &#34;pay_paymentscreen&#34;:&#34;A&#34;,
+      &#34;bed_ward_wise_occu_rep_builder&#34;:&#34;A&#34;,
+      &#34;mas_col_cards&#34;:&#34;A&#34;,
+      &#34;doctor_notes_audit_log&#34;:&#34;A&#34;,
+      &#34;mas_store_type&#34;:&#34;A&#34;,
+      &#34;ot_bookings&#34;:&#34;A&#34;,
+      &#34;rep_insurance_claim_batch_builder&#34;:&#34;A&#34;,
+      &#34;registration_audit_log&#34;:&#34;A&#34;,
+      &#34;new_prepaid_bills&#34;:&#34;A&#34;,
+      &#34;mas_prescription_template&#34;:&#34;A&#34;,
+      &#34;dialysis_medications&#34;:&#34;A&#34;,
+      &#34;rep_payment_insurance&#34;:&#34;N&#34;,
+      &#34;st_hdrug_sales&#34;:&#34;A&#34;,
+      &#34;dialysis_pre_sessions&#34;:&#34;A&#34;,
+      &#34;pending_services&#34;:&#34;A&#34;,
+      &#34;mas_section_fields&#34;:&#34;A&#34;,
+      &#34;mng_center_practo_profiles&#34;:&#34;A&#34;,
+      &#34;dialysis_sessions_report&#34;:&#34;A&#34;,
+      &#34;ward_activities&#34;:&#34;A&#34;,
+      &#34;billing_daybook&#34;:&#34;A&#34;,
+      &#34;hospitalization_reasons&#34;:&#34;A&#34;,
+      &#34;doctor_eye_exam&#34;:&#34;N&#34;,
+      &#34;deposit_builder&#34;:&#34;A&#34;,
+      &#34;mas_bill_template&#34;:&#34;A&#34;,
+      &#34;patient_activities_report_builder&#34;:&#34;A&#34;,
+      &#34;stores_po&#34;:&#34;A&#34;,
+      &#34;search_bills&#34;:&#34;A&#34;,
+      &#34;stores_patient_indent_edit_return&#34;:&#34;A&#34;,
+      &#34;dialysis_order&#34;:&#34;A&#34;,
+      &#34;mas_counters&#34;:&#34;A&#34;,
+      &#34;diag_internal_lab_builder&#34;:&#34;A&#34;,
+      &#34;mas_anaesthesia&#34;:&#34;A&#34;,
+      &#34;mas_countries&#34;:&#34;A&#34;,
+      &#34;Scheduler_Doctors_Appointment&#34;:&#34;A&#34;,
+      &#34;op_patient_docs_print&#34;:&#34;A&#34;,
+      &#34;mas_out_houses&#34;:&#34;A&#34;,
+      &#34;ip_audit_log&#34;:&#34;A&#34;,
+      &#34;dialysis_prescriptions&#34;:&#34;A&#34;,
+      &#34;mas_death_reason&#34;:&#34;A&#34;,
+      &#34;service_group_upload&#34;:&#34;A&#34;,
+      &#34;dyna_package_charges_audit_log&#34;:&#34;A&#34;,
+      &#34;rep_pharmacy_purchase_vat_abated_report&#34;:&#34;A&#34;,
+      &#34;lab_unfinished_tests&#34;:&#34;A&#34;,
+      &#34;diagnosis_favourites&#34;:&#34;A&#34;,
+      &#34;mas_bill_ac_vc_templates&#34;:&#34;A&#34;,
+      &#34;operations_conducted_list&#34;:&#34;N&#34;,
+      &#34;donor_screening_search&#34;:&#34;A&#34;,
+      &#34;patient_deposits_collection&#34;:&#34;A&#34;,
+      &#34;pay_paymentscreen_others&#34;:&#34;A&#34;,
+      &#34;serv_cons_master&#34;:&#34;A&#34;,
+      &#34;patient_indent_item_rep_builder&#34;:&#34;A&#34;,
+      &#34;mas_Issue_users&#34;:&#34;A&#34;,
+      &#34;pharma_retail_sale_pending_bills_print&#34;:&#34;A&#34;,
+      &#34;rep_patient_admitdischarge_trend_builder&#34;:&#34;A&#34;,
+      &#34;pending_consultation_prescriptions&#34;:&#34;A&#34;,
+      &#34;test_equipment_master&#34;:&#34;A&#34;,
+      &#34;nurse_note&#34;:&#34;A&#34;,
+      &#34;edit_receipt&#34;:&#34;A&#34;,
+      &#34;ot_cons_master&#34;:&#34;A&#34;,
+      &#34;rep_bill_status_change&#34;:&#34;A&#34;,
+      &#34;duty_roster_report&#34;:&#34;N&#34;,
+      &#34;mas_system_preferences&#34;:&#34;A&#34;,
+      &#34;rad_select_outhouse&#34;:&#34;A&#34;,
+      &#34;stores_supp_cat_mas&#34;:&#34;A&#34;,
+      &#34;genf_allergy_audit_log&#34;:&#34;A&#34;,
+      &#34;pending_operation_prescriptions&#34;:&#34;A&#34;,
+      &#34;triage_form&#34;:&#34;A&#34;,
+      &#34;license&#34;:&#34;N&#34;,
+      &#34;connect_disconnect_tpa&#34;:&#34;A&#34;,
+      &#34;duty_roster&#34;:&#34;N&#34;,
+      &#34;mas_results_cen_app&#34;:&#34;A&#34;,
+      &#34;mas_vensite&#34;:&#34;A&#34;,
+      &#34;consult_token_display_system&#34;:&#34;N&#34;,
+      &#34;mas_generic_names&#34;:&#34;A&#34;,
+      &#34;radiology_audit_log&#34;:&#34;A&#34;,
+      &#34;usr_userdashboard_user&#34;:&#34;A&#34;,
+      &#34;rep_test_equipment_details_builder&#34;:&#34;A&#34;,
+      &#34;mas_plan&#34;:&#34;A&#34;,
+      &#34;pbm_presc_list&#34;:&#34;N&#34;,
+      &#34;mas_operation_templates&#34;:&#34;A&#34;,
+      &#34;lab_test_audit_list&#34;:&#34;A&#34;,
+      &#34;mas_sub_classification_names&#34;:&#34;A&#34;,
+      &#34;accounting_group_master&#34;:&#34;A&#34;,
+      &#34;mas_phrase_suggestions_master&#34;:&#34;A&#34;,
+      &#34;mas_insurance_cat_center&#34;:&#34;A&#34;,
+      &#34;stores_stock_adjust&#34;:&#34;A&#34;,
+      &#34;pharmacy_stock_point&#34;:&#34;A&#34;,
+      &#34;po_items_builder&#34;:&#34;A&#34;,
+      &#34;folowup_details&#34;:&#34;A&#34;,
+      &#34;lab_equipment_qa&#34;:&#34;A&#34;,
+      &#34;insurance_view_msg&#34;:&#34;N&#34;,
+      &#34;rep_network_collection_builder&#34;:&#34;N&#34;,
+      &#34;mas_visit_custom_list2&#34;:&#34;A&#34;,
+      &#34;mas_dialyzer_types&#34;:&#34;A&#34;,
+      &#34;mat_blood_donor&#34;:&#34;A&#34;,
+      &#34;ph_pend_rep_report&#34;:&#34;A&#34;,
+      &#34;sample_rejections_builder&#34;:&#34;A&#34;,
+      &#34;rep_patientvisitstats_trend_builder&#34;:&#34;A&#34;,
+      &#34;mas_visit_custom_list1&#34;:&#34;A&#34;,
+      &#34;receipt_print&#34;:&#34;A&#34;,
+      &#34;pharma_view_store_item_batch_list&#34;:&#34;A&#34;,
+      &#34;mas_reg_cards&#34;:&#34;A&#34;,
+      &#34;lab_incoming_test_reconduction&#34;:&#34;A&#34;,
+      &#34;mas_prescription_instructions_master&#34;:&#34;A&#34;,
+      &#34;dialysis_adequacy&#34;:&#34;A&#34;,
+      &#34;rep_ipopstats&#34;:&#34;A&#34;,
+      &#34;ip_bedalloc&#34;:&#34;A&#34;,
+      &#34;mas_anaesthesia_upload&#34;:&#34;A&#34;,
+      &#34;ins_estimate&#34;:&#34;N&#34;,
+      &#34;patient_expensive_statement&#34;:&#34;A&#34;,
+      &#34;vital_form_audit_log&#34;:&#34;A&#34;,
+      &#34;pbm_approvals&#34;:&#34;N&#34;,
+      &#34;lab_test_result_builder&#34;:&#34;A&#34;,
+      &#34;complaints_cons_audit_log&#34;:&#34;A&#34;,
+      &#34;clinical_vaccination_no_reason&#34;:&#34;A&#34;,
+      &#34;mrd_file_indent&#34;:&#34;A&#34;,
+      &#34;complaints_surgery_audit_log&#34;:&#34;A&#34;,
+      &#34;mas_suppliers&#34;:&#34;A&#34;,
+      &#34;service_conduction_print&#34;:&#34;A&#34;,
+      &#34;stock_upload&#34;:&#34;A&#34;,
+      &#34;mas_out_houses_list&#34;:&#34;A&#34;,
+      &#34;pharma_sales_print&#34;:&#34;A&#34;,
+      &#34;ins_templates&#34;:&#34;N&#34;,
+      &#34;patient_deposits_print&#34;:&#34;A&#34;,
+      &#34;reagent_consumables_builder&#34;:&#34;A&#34;,
+      &#34;intake_output&#34;:&#34;A&#34;,
+      &#34;complaints_log_report_print&#34;:&#34;A&#34;,
+      &#34;otrecord_diagnosis_audit_log&#34;:&#34;A&#34;,
+      &#34;mas_image_markers&#34;:&#34;A&#34;,
+      &#34;mas_payment_terms&#34;:&#34;A&#34;,
+      &#34;ins_dashboard&#34;:&#34;N&#34;,
+      &#34;pre_auth_forms&#34;:&#34;N&#34;,
+      &#34;out_pat_reg&#34;:&#34;A&#34;,
+      &#34;work_order&#34;:&#34;N&#34;,
+      &#34;score_card_list&#34;:&#34;A&#34;,
+      &#34;rep_insurance_claim_builder&#34;:&#34;A&#34;,
+      &#34;mng_doc_practo_profiles&#34;:&#34;A&#34;,
+      &#34;ip_prescriptions&#34;:&#34;A&#34;,
+      &#34;rep_patient_dues_builder&#34;:&#34;A&#34;,
+      &#34;patient_diag_status_search&#34;:&#34;A&#34;,
+      &#34;mas_reg_templates&#34;:&#34;A&#34;,
+      &#34;mas_dental_supplier_rate_master&#34;:&#34;A&#34;,
+      &#34;mas_incoming_samples&#34;:&#34;A&#34;,
+      &#34;payments_paid_builder&#34;:&#34;A&#34;,
+      &#34;mas_areas&#34;:&#34;A&#34;,
+      &#34;outhouse_payment&#34;:&#34;A&#34;,
+      &#34;growth_chart&#34;:&#34;A&#34;,
+      &#34;mas_operations&#34;:&#34;A&#34;,
+      &#34;preauth_presc_list&#34;:&#34;N&#34;,
+      &#34;cons_audit_log&#34;:&#34;A&#34;,
+      &#34;stores_reorder&#34;:&#34;A&#34;,
+      &#34;consolidated_bill&#34;:&#34;A&#34;,
+      &#34;mrd_file_search&#34;:&#34;A&#34;,
+      &#34;tests_presc_ordered_report&#34;:&#34;A&#34;,
+      &#34;tooth_surface_option_master&#34;:&#34;A&#34;,
+      &#34;usr_userdashboard_role&#34;:&#34;A&#34;,
+      &#34;sponsor_writeoff_approval&#34;:&#34;A&#34;,
+      &#34;rep_network_patients_builder&#34;:&#34;N&#34;,
+      &#34;rad_incoming_bill_list_print&#34;:&#34;A&#34;,
+      &#34;clinical_vaccinations&#34;:&#34;A&#34;,
+      &#34;mas_ref_doctors&#34;:&#34;A&#34;,
+      &#34;linen_fav_rpt_dashbd&#34;:&#34;N&#34;,
+      &#34;mas_dyna_upload&#34;:&#34;A&#34;,
+      &#34;diag_report_print&#34;:&#34;A&#34;,
+      &#34;mas_component_barcode_template&#34;:&#34;A&#34;,
+      &#34;mas_pkg_settings&#34;:&#34;A&#34;,
+      &#34;clinical_infection_master&#34;:&#34;A&#34;,
+      &#34;lab_pending_samples_search&#34;:&#34;A&#34;,
+      &#34;crown_status_master&#34;:&#34;A&#34;,
+      &#34;mas_icd_codes_cm_upload&#34;:&#34;A&#34;,
+      &#34;mas_ph_ret_spon&#34;:&#34;A&#34;,
+      &#34;serv_audit_log&#34;:&#34;A&#34;,
+      &#34;radiology_test_reconduction&#34;:&#34;A&#34;,
+      &#34;mas_doctors_upload&#34;:&#34;A&#34;,
+      &#34;col_blood_donor&#34;:&#34;A&#34;,
+      &#34;radiology_incoming_test_reconduction&#34;:&#34;A&#34;,
+      &#34;preauth_presc&#34;:&#34;N&#34;,
+      &#34;mas_store_dept&#34;:&#34;A&#34;,
+      &#34;dialysis_machine_shift&#34;:&#34;A&#34;,
+      &#34;cons_diagnosis_audit_log&#34;:&#34;A&#34;,
+      &#34;stores_stock_ledger&#34;:&#34;A&#34;,
+      &#34;stores_indent_approval&#34;:&#34;A&#34;,
+      &#34;dialysis_receipts&#34;:&#34;A&#34;,
+      &#34;discharge_summary_print&#34;:&#34;A&#34;,
+      &#34;bill_audit_log&#34;:&#34;A&#34;,
+      &#34;medication_chart&#34;:&#34;A&#34;,
+      &#34;rateplan_spread_sheet&#34;:&#34;A&#34;,
+      &#34;patient_summary&#34;:&#34;A&#34;,
+      &#34;bed_occu_rep_builder&#34;:&#34;A&#34;,
+      &#34;mas_allergy&#34;:&#34;N&#34;,
+      &#34;rep_network_visits_builder&#34;:&#34;N&#34;,
+      &#34;stores_batch_po&#34;:&#34;A&#34;,
+      &#34;diagnosticTests_audit_log&#34;:&#34;A&#34;,
+      &#34;mas_print&#34;:&#34;A&#34;,
+      &#34;snp_scheduler&#34;:&#34;A&#34;,
+      &#34;mas_plan_upload&#34;:&#34;A&#34;,
+      &#34;per_diem_codes&#34;:&#34;A&#34;,
+      &#34;rep_incoming_test_details&#34;:&#34;A&#34;,
+      &#34;mas_dental_shades_master&#34;:&#34;A&#34;,
+      &#34;show_maint_activity&#34;:&#34;N&#34;,
+      &#34;mas_generic_doc_template&#34;:&#34;A&#34;,
+      &#34;serv_res_master&#34;:&#34;A&#34;,
+      &#34;patient_details_builder&#34;:&#34;A&#34;,
+      &#34;change_consult_doctor&#34;:&#34;A&#34;,
+      &#34;mas_rate_plan&#34;:&#34;A&#34;,
+      &#34;survey_question_category&#34;:&#34;A&#34;,
+      &#34;fp_service_enroll&#34;:&#34;N&#34;,
+      &#34;conducted_services&#34;:&#34;A&#34;,
+      &#34;ins_estimate_print&#34;:&#34;N&#34;,
+      &#34;pending_lab_prescriptions&#34;:&#34;A&#34;,
+      &#34;generic_documents_print&#34;:&#34;A&#34;,
+      &#34;label_master&#34;:&#34;A&#34;,
+      &#34;mas_doctempl_cen_app&#34;:&#34;A&#34;,
+      &#34;mas_vitalparameters&#34;:&#34;A&#34;,
+      &#34;reg_upload&#34;:&#34;N&#34;,
+      &#34;asset_complaints&#34;:&#34;N&#34;,
+      &#34;scheduler_audit_log&#34;:&#34;A&#34;,
+      &#34;pay_supplier&#34;:&#34;A&#34;,
+      &#34;op_op_prescription_print&#34;:&#34;A&#34;,
+      &#34;lab_receive_split_sample&#34;:&#34;A&#34;,
+      &#34;sale_fav_rpt_dashbd&#34;:&#34;A&#34;,
+      &#34;rh_blood_group&#34;:&#34;A&#34;,
+      &#34;mas_bedmaster&#34;:&#34;A&#34;,
+      &#34;laboratory_audit_log&#34;:&#34;A&#34;,
+      &#34;edit_claim&#34;:&#34;A&#34;,
+      &#34;outstanding_deposits&#34;:&#34;A&#34;,
+      &#34;ph_itemwise_stock_builder&#34;:&#34;A&#34;,
+      &#34;pharma_stock_transfer&#34;:&#34;A&#34;,
+      &#34;diag_reagent_master&#34;:&#34;A&#34;,
+      &#34;mas_packages_applicability&#34;:&#34;A&#34;,
+      &#34;consultation_favourites&#34;:&#34;A&#34;,
+      &#34;ins_generic_docs&#34;:&#34;N&#34;,
+      &#34;discharge_medication_print&#34;:&#34;A&#34;,
+      &#34;score_card&#34;:&#34;A&#34;,
+      &#34;lab_signedoff_report_list&#34;:&#34;A&#34;,
+      &#34;generic_general_image&#34;:&#34;A&#34;,
+      &#34;bloodbag_report_builder&#34;:&#34;A&#34;,
+      &#34;pbm_presc&#34;:&#34;N&#34;,
+      &#34;mas_health_authority_pref&#34;:&#34;A&#34;,
+      &#34;pharma_item_credit_bill_print&#34;:&#34;A&#34;,
+      &#34;mas_organizations&#34;:&#34;A&#34;,
+      &#34;insurance_haad_claim&#34;:&#34;A&#34;,
+      &#34;mas_medicine_dosage&#34;:&#34;A&#34;,
+      &#34;mas_denial_codes&#34;:&#34;A&#34;,
+      &#34;infections_data&#34;:&#34;A&#34;,
+      &#34;indent_flow_builder&#34;:&#34;A&#34;,
+      &#34;discharge_medication&#34;:&#34;N&#34;,
+      &#34;bulk_arrival&#34;:&#34;N&#34;,
+      &#34;stock_consumption_rep_builder&#34;:&#34;A&#34;,
+      &#34;mas_icd_codes_cm&#34;:&#34;A&#34;,
+      &#34;rep_bill_charge_builder&#34;:&#34;A&#34;,
+      &#34;mas_mrd_casefile_users&#34;:&#34;A&#34;,
+      &#34;op_cons_form&#34;:&#34;A&#34;,
+      &#34;ia_audit_log&#34;:&#34;A&#34;,
+      &#34;rep_collection_allocation_builder&#34;:&#34;A&#34;,
+      &#34;stores_po_print&#34;:&#34;A&#34;,
+      &#34;pay_dashboard&#34;:&#34;A&#34;,
+      &#34;activities_list&#34;:&#34;A&#34;,
+      &#34;pharmacy_doc_wise_sales_report&#34;:&#34;A&#34;,
+      &#34;stores_view_user_returns&#34;:&#34;A&#34;,
+      &#34;revenue_accrual_report_builder&#34;:&#34;A&#34;,
+      &#34;diet_generic_document_print&#34;:&#34;A&#34;,
+      &#34;stores_supp_ret_builder&#34;:&#34;A&#34;,
+      &#34;mas_medicines&#34;:&#34;A&#34;,
+      &#34;rad_edit_results&#34;:&#34;A&#34;,
+      &#34;services_presc_ordered_report&#34;:&#34;A&#34;,
+      &#34;UHID_search&#34;:&#34;N&#34;,
+      &#34;mas_dyna_package_cat&#34;:&#34;A&#34;,
+      &#34;rep_revenue_doctor&#34;:&#34;A&#34;,
+      &#34;mas_card_type&#34;:&#34;A&#34;,
+      &#34;rep_insurance_claim_det_builder&#34;:&#34;A&#34;,
+      &#34;emergency_call_list_rep_builder&#34;:&#34;N&#34;,
+      &#34;Doctor_Appointment&#34;:&#34;A&#34;,
+      &#34;equipment_order&#34;:&#34;A&#34;,
+      &#34;pharma_estimate_list&#34;:&#34;A&#34;,
+      &#34;mas_hvf_template&#34;:&#34;A&#34;,
+      &#34;rep_ip_list&#34;:&#34;A&#34;,
+      &#34;comp_blood_donor&#34;:&#34;A&#34;,
+      &#34;stores_patient_indent_view_return&#34;:&#34;A&#34;,
+      &#34;dyna_package&#34;:&#34;A&#34;,
+      &#34;grp_blood_donor&#34;:&#34;A&#34;,
+      &#34;mas_item_kit&#34;:&#34;N&#34;,
+      &#34;mas_bloodtype&#34;:&#34;A&#34;,
+      &#34;rep_patientstats_trend_builder&#34;:&#34;A&#34;,
+      &#34;rep_markup_rates_report&#34;:&#34;A&#34;,
+      &#34;rep_revenue_builder&#34;:&#34;A&#34;,
+      &#34;ot_audit_log&#34;:&#34;A&#34;,
+      &#34;mas_operations_upload&#34;:&#34;A&#34;,
+      &#34;operation_docs_print&#34;:&#34;A&#34;,
+      &#34;linen_dashboard&#34;:&#34;N&#34;,
+      &#34;rateplan_spread_sheet_upload&#34;:&#34;A&#34;,
+      &#34;patient_details_search&#34;:&#34;A&#34;,
+      &#34;patient_bed_occ_builder&#34;:&#34;A&#34;,
+      &#34;mas_roster_resource_master&#34;:&#34;N&#34;,
+      &#34;proc_fav_rpt_dashbd&#34;:&#34;A&#34;,
+      &#34;search_resource_scheduler&#34;:&#34;A&#34;,
+      &#34;collection_approval_receipts&#34;:&#34;A&#34;,
+      &#34;mas_services_upload&#34;:&#34;A&#34;,
+      &#34;rad_test_audit_list&#34;:&#34;A&#34;,
+      &#34;diag_methodology_master_id&#34;:&#34;A&#34;,
+      &#34;pharma_sale_duplicate_bill&#34;:&#34;A&#34;,
+      &#34;mas_pat_header_prefs&#34;:&#34;A&#34;,
+      &#34;operation_documents_list&#34;:&#34;A&#34;,
+      &#34;donation_details&#34;:&#34;N&#34;,
+      &#34;ivf_cycle_completion&#34;:&#34;N&#34;,
+      &#34;change_billprimary&#34;:&#34;A&#34;,
+      &#34;diag_sample_type_master&#34;:&#34;A&#34;,
+      &#34;scheduler_generic_resource_type_master&#34;:&#34;A&#34;,
+      &#34;my_msg_notification&#34;:&#34;A&#34;,
+      &#34;rep_pharmacy_pharmacy_dues_report&#34;:&#34;A&#34;,
+      &#34;reg_card_print&#34;:&#34;A&#34;,
+      &#34;emergency_call_list&#34;:&#34;N&#34;,
+      &#34;patient_category_change&#34;:&#34;A&#34;,
+      &#34;pay_prescribe_doctor&#34;:&#34;A&#34;,
+      &#34;mas_rejection_reason&#34;:&#34;A&#34;,
+      &#34;donor_report_builder&#34;:&#34;A&#34;,
+      &#34;survey_feedback_forms_mas&#34;:&#34;A&#34;,
+      &#34;mas_emailTemplates&#34;:&#34;A&#34;,
+      &#34;mas_general_message_type&#34;:&#34;A&#34;,
+      &#34;maint_schedule_rep_builder&#34;:&#34;N&#34;,
+      &#34;rep_pharmacy_chkpoint_difference&#34;:&#34;A&#34;,
+      &#34;service_builder&#34;:&#34;A&#34;,
+      &#34;addchannel_appointment&#34;:&#34;N&#34;,
+      &#34;edit_pharmacy_item_amount&#34;:&#34;A&#34;,
+      &#34;all_receipts_audit_log&#34;:&#34;A&#34;,
+      &#34;serv_fav_rpt_dashbd&#34;:&#34;A&#34;,
+      &#34;mas_dept_units&#34;:&#34;A&#34;,
+      &#34;survey_rating_mas&#34;:&#34;A&#34;,
+      &#34;dial_fav_rpt_dashbd&#34;:&#34;A&#34;,
+      &#34;mas_blood_disc&#34;:&#34;A&#34;,
+      &#34;create_patient_credit_note&#34;:&#34;A&#34;,
+      &#34;deposit_receipts_builder&#34;:&#34;A&#34;,
+      &#34;rad_incoming_bill_list&#34;:&#34;A&#34;,
+      &#34;list_laundry&#34;:&#34;N&#34;,
+      &#34;dia_scheduler&#34;:&#34;A&#34;,
+      &#34;dental_trtment_report_builder&#34;:&#34;A&#34;,
+      &#34;reg_expression&#34;:&#34;A&#34;,
+      &#34;bill_pharma_sales_print&#34;:&#34;A&#34;,
+      &#34;rep_bill_builder&#34;:&#34;A&#34;,
+      &#34;dialysis_current_sessions&#34;:&#34;A&#34;,
+      &#34;mas_centers&#34;:&#34;A&#34;,
+      &#34;intake_output_audit_log&#34;:&#34;A&#34;,
+      &#34;ins_remittance&#34;:&#34;A&#34;,
+      &#34;bed_dur_occu_rep_builder&#34;:&#34;A&#34;,
+      &#34;root_status_master&#34;:&#34;A&#34;,
+      &#34;mas_scan_doc_types&#34;:&#34;A&#34;
+   },
+    &#34;menuAvlblMap&#34;:{  
+      &#34;grp_print_templates&#34;:&#34;Y&#34;,
+      &#34;grp_dietary&#34;:&#34;N&#34;,
+      &#34;grp_stores_procurement&#34;:&#34;Y&#34;,
+      &#34;grp_payments&#34;:&#34;Y&#34;,
+      &#34;grp_opthalmology&#34;:&#34;N&#34;,
+      &#34;grp_consultation_reports&#34;:&#34;Y&#34;,
+      &#34;grp_ward_activities_reports&#34;:&#34;Y&#34;,
+      &#34;grp_radiology&#34;:&#34;Y&#34;,
+      &#34;grp_laboratory_reports&#34;:&#34;Y&#34;,
+      &#34;grp_transportation&#34;:&#34;N&#34;,
+      &#34;grp_linen_reports&#34;:&#34;N&#34;,
+      &#34;grp_patient_package_reports&#34;:&#34;Y&#34;,
+      &#34;grp_transportation_reports&#34;:&#34;N&#34;,
+      &#34;grp_medical_records&#34;:&#34;Y&#34;,
+      &#34;grp_store_sales_reports&#34;:&#34;Y&#34;,
+      &#34;grp_reports&#34;:&#34;Y&#34;,
+      &#34;grp_billing_prefs&#34;:&#34;Y&#34;,
+      &#34;grp_hospital_billing_masters&#34;:&#34;Y&#34;,
+      &#34;grp_blood_reports&#34;:&#34;Y&#34;,
+      &#34;grp_patient_demography_reports&#34;:&#34;Y&#34;,
+      &#34;grp_service_reports&#34;:&#34;Y&#34;,
+      &#34;grp_adv_packages&#34;:&#34;Y&#34;,
+      &#34;grp_scheduler_reports&#34;:&#34;Y&#34;,
+      &#34;grp_dialysis&#34;:&#34;Y&#34;,
+      &#34;grp_patient&#34;:&#34;Y&#34;,
+      &#34;grp_dental_masters&#34;:&#34;Y&#34;,
+      &#34;grp_masters&#34;:&#34;Y&#34;,
+      &#34;grp_ot_reports&#34;:&#34;Y&#34;,
+      &#34;grp_master_reports&#34;:&#34;Y&#34;,
+      &#34;grp_ins_ext&#34;:&#34;Y&#34;,
+      &#34;grp_stores_sales_issues&#34;:&#34;Y&#34;,
+      &#34;grp_dashboard_statistics_reports&#34;:&#34;Y&#34;,
+      &#34;grp_insurance_reports&#34;:&#34;Y&#34;,
+      &#34;grp_eclaim_preauth&#34;:&#34;N&#34;,
+      &#34;grp_fixed_asset_mgmt&#34;:&#34;N&#34;,
+      &#34;grp_messaging_masters&#34;:&#34;Y&#34;,
+      &#34;grp_store_mgmt_reports&#34;:&#34;Y&#34;,
+      &#34;grp_eclaim_pbm&#34;:&#34;N&#34;,
+      &#34;grp_stores_management&#34;:&#34;Y&#34;,
+      &#34;grp_pharmacy_masters&#34;:&#34;Y&#34;,
+      &#34;grp_bloodbank_masters&#34;:&#34;Y&#34;,
+      &#34;grp_patient_feedback&#34;:&#34;Y&#34;,
+      &#34;grp_registration&#34;:&#34;Y&#34;,
+      &#34;grp_financial_reports&#34;:&#34;Y&#34;,
+      &#34;grp_complaints_log&#34;:&#34;Y&#34;,
+      &#34;grp_clinical_reports&#34;:&#34;Y&#34;,
+      &#34;grp_dietary_reports&#34;:&#34;N&#34;,
+      &#34;grp_hospital_admin_masters&#34;:&#34;Y&#34;,
+      &#34;grp_dialysis_reports&#34;:&#34;Y&#34;,
+      &#34;grp_patientfeedback_reports&#34;:&#34;Y&#34;,
+      &#34;grp_blood_bank&#34;:&#34;Y&#34;,
+      &#34;grp_store_procure_reports&#34;:&#34;Y&#34;,
+      &#34;grp_dental_reports&#34;:&#34;Y&#34;,
+      &#34;grp_clinical_data&#34;:&#34;Y&#34;,
+      &#34;grp_duty_roster&#34;:&#34;N&#34;,
+      &#34;grp_fav_reports&#34;:&#34;Y&#34;,
+      &#34;grp_new_ui&#34;:&#34;N&#34;,
+      &#34;grp_patient_search&#34;:&#34;Y&#34;,
+      &#34;grp_insta_subscriptions&#34;:&#34;N&#34;,
+      &#34;grp_quick_links&#34;:&#34;Y&#34;,
+      &#34;grp_settings&#34;:&#34;Y&#34;,
+      &#34;grp_linen&#34;:&#34;N&#34;,
+      &#34;grp_network_financial_reports&#34;:&#34;N&#34;,
+      &#34;grp_hospital_templates&#34;:&#34;Y&#34;,
+      &#34;grp_mrd_reports&#34;:&#34;Y&#34;,
+      &#34;grp_operations&#34;:&#34;Y&#34;,
+      &#34;grp_hospital_prefs&#34;:&#34;Y&#34;,
+      &#34;grp_scheduler&#34;:&#34;Y&#34;,
+      &#34;grp_roster_reports&#34;:&#34;N&#34;,
+      &#34;grp_general_masters&#34;:&#34;Y&#34;,
+      &#34;grp_services&#34;:&#34;Y&#34;,
+      &#34;grp_billing_reports&#34;:&#34;Y&#34;,
+      &#34;grp_custom_reports&#34;:&#34;Y&#34;,
+      &#34;grp_ivf_reports&#34;:&#34;N&#34;,
+      &#34;grp_resource_mgmt_reports&#34;:&#34;N&#34;,
+      &#34;grp_diagnostics&#34;:&#34;Y&#34;,
+      &#34;grp_cssd&#34;:&#34;N&#34;,
+      &#34;grp_bed_reports&#34;:&#34;Y&#34;,
+      &#34;grp_insurance&#34;:&#34;Y&#34;,
+      &#34;grp_ivf&#34;:&#34;N&#34;
+   },
+    &#34;multiStoreAccess&#34;:&#34;N&#34;,
+    &#34;modules_activated&#34;:[  
+      &#34;mod_op_forms&#34;,
+      &#34;mod_basic&#34;,
+      &#34;mod_messaging&#34;,
+      &#34;mod_trend&#34;,
+      &#34;mod_payments&#34;,
+      &#34;mod_op_prescription&#34;,
+      &#34;mod_services&#34;,
+      &#34;mod_op&#34;,
+      &#34;mod_stores&#34;,
+      &#34;mod_scheduler&#34;,
+      &#34;mod_scheduler_messages&#34;,
+      &#34;mod_registration&#34;,
+      &#34;mod_billing_ext&#34;,
+      &#34;mod_general_messages&#34;,
+      &#34;mod_prescribe&#34;,
+      &#34;mod_dialysis&#34;,
+      &#34;mod_mrd_icd&#34;,
+      &#34;mod_mrd&#34;,
+      &#34;mod_billing&#34;,
+      &#34;mod_tally&#34;,
+      &#34;mod_diagnostics&#34;,
+      &#34;mod_consumables_flow&#34;,
+      &#34;mod_pharmacy&#34;,
+      &#34;mod_centers&#34;,
+      &#34;mod_clinical_data&#34;,
+      &#34;mod_scorecard&#34;,
+      &#34;mod_ipservices&#34;,
+      &#34;mod_adt&#34;,
+      &#34;mod_reward_points&#34;,
+      &#34;mod_patient_feedback&#34;,
+      &#34;mod_wardactivities&#34;,
+      &#34;mod_mrd_casefile&#34;,
+      &#34;mod_adv_packages&#34;,
+      &#34;mod_clinical_reports&#34;,
+      &#34;mod_dental_chart&#34;,
+      &#34;mod_central_lab&#34;,
+      &#34;mod_vaccination&#34;,
+      &#34;mod_patient_portal&#34;,
+      &#34;mod_mobile&#34;,
+      &#34;mod_download_reports&#34;,
+      &#34;mod_practo_integration&#34;,
+      &#34;mod_notification&#34;,
+      &#34;mod_advanced_ot&#34;,
+      &#34;mod_blood_bank&#34;,
+      &#34;mod_eclaim&#34;,
+      &#34;mod_ins_ext&#34;,
+      &#34;mod_adv_ins&#34;
+   ]
+}
+</code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+              </div>
+            
+          </div>
+        
+        </div>
+      <div class="ui hidden divider"></div>
+    
+  
+
+
+      </div>
+    </div>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.1/components/accordion.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.1/components/tab.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.1/components/transition.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.1/components/popup.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.13.0/prism.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.13.0/components/prism-json.min.js"></script>
+    <script type="text/javascript">
+      $(function() {
+        $('.ui.accordion').accordion({ animateChildren: false, duration: 0 });
+        $('.content.tabbed').each(function(index) {
+          $('.ui.tabular .item', $(this)).tab({ context: $(this) });
+        });
+        $('.ui.vertical.menu').on('click', '.item', function() {
+          $('.ui.vertical.menu .item').removeClass('active');
+          $(this).addClass('active');
+        });
+        $('.ui.empty.circular.label').popup();
+      });
+    </script>
+  </body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

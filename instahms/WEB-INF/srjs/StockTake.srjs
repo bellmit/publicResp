@@ -1,0 +1,110 @@
+{
+    "title": "Stock Take",
+    "reportGroup": "Store Management Reports",
+    "dateFields": [
+        "initiated_datetime",
+        "approved_datetime",
+        "reconciled_datetime"
+    ],
+    "description": "This report shows the list of Ongoing, Completed and Cancelled Stock Takes.",
+    "tableName": [
+        "rpt_stock_take_view"
+    ],
+    "defaultShowFields": [
+        "stock_take_id",
+        "store_name",
+        "status",
+        "initiated_datetime",
+        "initiated_by",
+        "variance_perc",
+        "cost_value"
+    ],
+    "fields": {
+        "stock_take_id": {
+            "displayName": "Stock Take No.",
+            "width": "60"
+        },
+        "status": {
+            "displayName": "Status",
+            "width": "60",
+            "filterable": true,
+            "groupable": true,
+            "allowedValues": [
+                "In Progress",
+                "Pending Reconciliation",
+                "Pending Approval",
+                "Completed",
+                "Cancelled"
+            ]
+        },
+        "store_name": {
+            "displayName": "Store Name",
+            "width": "100",
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT dept_name FROM stores ORDER BY dept_name"
+        },
+        "center_name": {
+            "displayName": "Center Name",
+            "filterable": true,
+            "groupable": true,
+            "width": "100",
+            "allowedValuesQuery": "SELECT center_name FROM hospital_center_master  order by center_name"
+        },
+        "initiated_by": {
+            "displayName": "Initiated By",
+            "dataType": "string",
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT emp_username FROM u_user ORDER BY emp_username ",
+            "width": "80"
+        },
+        "reconciled_by": {
+            "displayName": "Reconciled By",
+            "dataType": "string",
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT emp_username FROM u_user ORDER BY emp_username ",
+            "width": "80"
+        },
+        "approved_by": {
+            "displayName": "Approved By",
+            "dataType": "string",
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT emp_username FROM u_user ORDER BY emp_username ",
+            "width": "80"
+        },
+        "variance_perc": {
+            "displayName": "Variance %",
+            "width": "60",
+            "decimalType": "amount",
+            "dataType": "numeric"
+        },
+        "cost_value": {
+            "displayName": "Cost Value",
+            "width": "60",
+            "decimalType": "amount",
+            "dataType": "numeric"
+        },
+        "initiated_datetime": {
+            "displayName": "Initiated Date",
+            "dataType": "date",
+            "width": "60"
+        },
+        "approved_datetime": {
+            "displayName": "Approved Date",
+            "dataType": "date",
+            "width": "60"
+        },
+        "reconciled_datetime": {
+            "displayName": "Reconciled Date",
+            "dataType": "date",
+            "width": "60"
+        },
+        "adj_no": {
+            "displayName": "Adj. No.",
+            "width": "60"
+        }
+    }
+}

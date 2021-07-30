@@ -1,0 +1,142 @@
+#!/bin/bash
+#
+# Upgrade: this is called from the current version that is installed,
+# to upgrade to the new version that has been downloaded to 
+# $HMS_DIST_HOME/builds/<version>
+#
+# The main task is to copy over the version and hand over to scripts in
+# the new version. It is better to keep maximum control in the new version.
+#
+
+source `dirname $0`/functions
+LOGFILE=$LOGDIR/upgrade.log
+
+#
+# Initial Checks
+#
+VERSION=$1
+[ -z $VERSION ] && do_log "Cannot upgrade, version missing." && exit 1
+
+CURVER=`get_current_version`
+
+NEWVERN=`get_numeric_version $VERSION`
+CURVERN=`get_numeric_version $CURVER`
+CURMINOR=`get_string_maj_min $CURVER`
+CUR_MINOR_WITHOUT_DOT=${CURMINOR/./}
+NEWMAJOR=$((NEWVERN/100))
+CURMAJOR=$((CURVERN/100))
+
+MINOR=`get_string_maj_min $VERSION`
+MINOR_WITHOUT_DOT=${MINOR/./}
+
+if [ $NEWVERN -lt $CURVERN ] ; then
+	# downgrade, disallow. If desparate, please hand-migrate.
+	do_log "ERROR: New version is older than current version, not upgrading"
+	exit 1
+fi
+
+#
+# Check if there is a minimum version requirement for the new version, and if the current version
+# is less than that minumum version, disallow the upgrade. This is only applicable if the major
+# versions differ.
+#
+if [ $CUR_MINOR_WITHOUT_DOT -lt 1202 ] ; then
+	# The new version MUST have the min_upgrade_ver. Chicken out if not found.
+	do_log "Direct upgrade from version lower than 12.2 is unsupported."
+	exit 1
+fi
+
+run_pre_upgrade_checks
+if [ $? -ne 0 ] ; then
+   do_log "Pre upgrade checks failed, stopping upgrade and exiting"
+   exit 1
+else
+   do_log "Pre upgrade checks passed, continuing with upgrade"
+fi
+
+TOMCAT_VER=$($TOMCAT_HOME/bin/version.sh | grep "Server number" | sed -e 's/[A-Za-z\: ]//g' | cut -d'.' -f1)
+if [ $NEWMAJOR -ge 1204 && $TOMCAT_VER -lt 9 ] ; then                                                                            
+   do_log "Missing major dependency : Tomcat 9 not found, TOMCAT_HOME = $TOMCAT_HOME used based on options file or defaults."
+   exit 1
+fi 
+
+DISTDIR=$HMS_DIST_HOME/builds/$VERSION
+[ ! -d $DISTDIR ] && do_log "Missing distribution: $DISTDIR. Aborting upgrade" && exit 1
+
+do_log "--------- Upgrade Begin: `date` ---------"
+do_log "Attempting upgrade to $VERSION"
+
+
+OLDVER=`get_current_version`
+do_log "Current version is" $OLDVER
+
+
+#
+# Stop the application
+#
+if [ "$UPGRADE_RESTART" != "N" ] ; then
+	do_log "Stopping tomcat-9"
+	sudo /etc/init.d/tomcat-9 stop
+
+	if [ -f /tmp/dialysis_poll_*.pid ] ; then
+		do_log "Stopping dialysis pollers"
+		sudo kill `cat /tmp/dialysis_poll_*.pid`
+
+		#removing docs and examples directories of tomcat-9 if present
+		if [ -d $TOMCAT_HOME/webapps/docs ]; then sudo rm -Rf $TOMCAT_HOME/webapps/docs; fi
+		if [ -d $TOMCAT_HOME/webapps/examples ]; then sudo rm -Rf $TOMCAT_HOME/webapps/examples; fi
+
+	fi
+
+	sudo kill `ps -aef | grep hl7_istat_recv.pl | awk '{print $2}'`
+	sudo kill `ps -aef | grep hl7_socket_in.pl | awk '{print $2}'`
+
+else
+	do_log "Not stopping tomcat-9 as per preference settings"
+fi
+
+if [ ! -f /etc/cron.d/hl7 ] ;
+then
+	sudo crontab -l > /etc/hms/crontab.orig
+	#comment hl7 cron jobs in linux crontab
+	sudo crontab -l | sed '/install\/bin\/hl7/ s/^/#/' | sudo crontab
+else
+	sudo mv /etc/cron.d/hl7 /etc/hms/hl7_cron
+fi
+
+sleep 120
+
+#
+# Software: copy in the new version under a temporary name
+#
+do_log "Copying in new version"
+sudo rm -rf $APPROOT.orig $APPROOT.new
+sudo cp -a $DISTDIR $APPROOT.new
+
+NEWBINPATH=$APPROOT.new/WEB-INF/install/bin
+sudo chmod +x $NEWBINPATH/*
+
+#
+# Copy old sentry.properties config and update release version
+#
+if [ -f $APPROOT/WEB-INF/classes/sentry.properties ] ;
+then
+	sudo cp $APPROOT/WEB-INF/classes/sentry.properties $APPROOT.new/WEB-INF/classes/sentry.properties
+	sudo sed --in-place -e "s/^release.*$/release=$VERSION/" \
+		$APPROOT.new/WEB-INF/classes/sentry.properties
+fi
+if [ -f $APPROOT/WEB-INF/classes/sentry-ui.properties ] ;
+then
+	sudo cp $APPROOT/WEB-INF/classes/sentry-ui.properties $APPROOT.new/WEB-INF/classes/sentry-ui.properties
+fi
+
+#
+# switch the old and new software
+#
+sudo cp -a $NEWBINPATH/switchver /tmp/
+exec /tmp/switchver $APPROOT $APPROOT.orig $APPROOT.new  WEB-INF/install/bin/postswitch $OLDVER
+
+######
+# exec does not return
+######
+

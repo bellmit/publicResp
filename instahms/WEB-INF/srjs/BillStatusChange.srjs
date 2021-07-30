@@ -1,0 +1,197 @@
+{
+    "title": "Bills Status Change Report",
+    "reportGroup": "Billing Reports",
+    "description": "This report shows all status changes in bills",
+    "dateFields": [
+        "mod_date"
+    ],
+    "allowNoDate": true,
+    "defaultOrder": "mod_time",
+    "defaultShowFields": [
+        "bill_no",
+        "bill_patient_full_name",
+        "bill_old_status",
+        "bill_new_status",
+        "user_name",
+        "mod_date",
+        "total_amount"
+    ],
+    "includes": [
+        "BillDetailFields.srjs",
+        "PatientVisitFields.srjs"
+    ],
+    "fields": {
+        "bill_no": {
+            "dataType": "string",
+            "displayName": "Bill No.",
+            "filterable": false,
+            "groupable": true,
+            "table": "al",
+            "width": 65
+        },
+        "bill_patient_full_name": {
+            "displayName": "Patient Name",
+            "width": "150",
+            "description": "Patient or Retail Customer Name",
+            "expressionLines": [
+                "COALESCE ((smb.salutation || ' ' || pd.patient_name ",
+                " || CASE WHEN coalesce(pd.middle_name, '') = '' THEN '' ELSE (' ' || pd.middle_name) END ",
+                " || CASE WHEN coalesce(pd.last_name, '')   = '' THEN '' ELSE (' ' || pd.last_name) END), ",
+                " prc.customer_name, isr.patient_name) "
+            ],
+            "table": "smb,pr,prc,isr",
+            "groupable": true
+        },
+        "bill_old_status": {
+            "allowedValues": [
+                "Open",
+                "Finalized",
+                "Closed",
+                "Cancelled"
+            ],
+            "dataType": "string",
+            "displayName": "Bill Old Status",
+            "expressionLines": [
+                "CASE WHEN al.old_value = 'A' THEN 'Open' ",
+                " WHEN al.old_value = 'F' THEN 'Finalized' ",
+                " WHEN al.old_value = 'C' THEN 'Closed' ",
+                " ELSE 'Cancelled' END  "
+            ],
+            "filterable": true,
+            "groupable": true,
+            "table": "al",
+            "width": 50
+        },
+        "bill_new_status": {
+            "allowedValues": [
+                "Open",
+                "Finalized",
+                "Closed",
+                "Cancelled"
+            ],
+            "dataType": "string",
+            "displayName": "Bill New Status",
+            "expressionLines": [
+                "CASE WHEN al.new_value = 'A' THEN 'Open' ",
+                " WHEN al.new_value = 'F' THEN 'Finalized' ",
+                " WHEN al.new_value = 'C' THEN 'Closed' ",
+                " ELSE 'Cancelled' END  "
+            ],
+            "filterable": true,
+            "groupable": true,
+            "table": "al",
+            "width": 50
+        },
+        "user_name": {
+            "displayName": "User Name",
+            "width": "100",
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT emp_username FROM u_user JOIN u_role USING(role_id)\n    WHERE portal_id='N' ORDER BY emp_username",
+            "table": "al"
+        },
+        "mod_time": {
+            "displayName": "Date With Time",
+            "expression": "al.mod_time",
+            "table": "al",
+            "dataType": "timestamp",
+            "width": "60",
+            "groupable": true,
+            "filterable": true
+        },
+        "mod_date": {
+            "displayName": "Date",
+            "expression": "date(al.mod_time)",
+            "table": "al",
+            "dataType": "date",
+            "width": "60",
+            "groupable": true,
+            "filterable": true
+        },
+        "total_amount": {
+            "displayName": "Total Amount",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "width": "60",
+            "expression": "b.total_amount",
+            "filterable": true,
+            "table": "b"
+        },
+        "cancel_reason": {
+            "dataType": "string",
+            "displayName": "Cancel Reason",
+            "expression": "alr.new_value",
+            "filterable": true,
+            "groupable": true,
+            "table": "alr",
+            "width": 150
+        },
+        "reopen_reason": {
+            "dataType": "string",
+            "displayName": "Reopen Reason",
+            "expression": "alr1.new_value",
+            "filterable": true,
+            "groupable": true,
+            "table": "alr1",
+            "width": 150
+        },
+        "mr_no": {
+            "dataType": "string",
+            "displayName": "MR No",
+            "expression": "pr1.mr_no",
+            "filterable": true,
+            "groupable": true,
+            "table": "pr1",
+            "width": 60
+        },
+        "open_date": {
+            "dataType": "timestamp",
+            "displayName": "Open Date",
+            "expression": "b.open_date",
+            "filterable": true,
+            "groupable": true,
+            "table": "b",
+            "width": 60
+        },
+        "name_local_language": {
+                 "table": "pd",
+                 "displayName": "Name In Local Language",
+                 "width": 150,
+                 "expression": "pd.name_local_language"
+        }
+    },
+    "queryUnits": [
+        {
+            "mainTableAlias": "al",
+            "mainTableName": "bill_audit_log",
+            "groupBy": false,
+            "joinTables": [
+                {
+                    "name": "bill_audit_log",
+                    "alias": "alr",
+                    "expression": "ON (date_trunc('second', al.mod_time) = date_trunc('second', alr.mod_time) AND alr.field_name = 'cancel_reason')",
+                    "dependsOn": "al"
+                },
+                {
+                    "name": "bill_audit_log",
+                    "alias": "alr1",
+                    "expression": "ON (al.mod_time = alr1.mod_time AND alr1.field_name = 'reopen_reason')",
+                    "dependsOn": "al"
+                },
+                {
+                    "name": "bill",
+                    "alias": "b",
+                    "expression": "ON (b.bill_no = al.bill_no)",
+                    "dependsOn": "al"
+                },
+                {
+                    "name": "patient_registration",
+                    "alias": "pr1",
+                    "expression": "ON (pr1.patient_id = b.visit_id)",
+                    "dependsOn": "b"
+                }
+            ],
+            "whereExpression": "al.operation ='UPDATE' AND al.field_name ='status' "
+        }
+    ]
+}

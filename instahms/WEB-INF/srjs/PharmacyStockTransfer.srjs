@@ -1,0 +1,271 @@
+{
+  "title": "Stock Transfers Report",
+  "defaultOrder": "from_store",
+  "reportGroup": "Store Mgmt Reports",
+  "dateFields": ["transfer_date"],
+  "description": "This report builder describes the store to store movement of stock within the selected date range.",
+  "tableName": ["rpt_store_stock_transfer_view"],
+  "defaultShowFields": [
+    "transfer_no",
+    "from_store",
+    "to_store",
+    "medicine_name",
+    "batch_no",
+    "transfer_date",
+    "qty",
+    "value_cp",
+    "value_mrp",
+    "value_sp"
+  ],
+  "fields": {
+    "transfer_no": {
+      "displayName": "Transfer No.",
+      "filterable": true,
+      "groupable": true,
+      "allowNull": true,
+      "dataType": "numeric",
+      "width": "60"
+    },
+    "indent_no": {
+      "displayName": "Indent No.",
+      "filterable": true,
+      "groupable": true,
+      "allowNull": true,
+      "dataType": "numeric",
+      "width": "60"
+    },
+    "from_store": {
+      "displayName": "From Store",
+      "filterable": true,
+      "groupable": true,
+      "width": "100",
+      "allowedValuesQuery": "SELECT dept_name AS from_store FROM stores ORDER BY dept_name"
+    },
+    "to_store": {
+      "displayName": "To Store",
+      "filterable": true,
+      "groupable": true,
+      "width": "100",
+      "allowedValuesQuery": "SELECT dept_name AS to_store FROM stores ORDER BY dept_name"
+    },
+    "to_center_name": {
+      "displayName": "To Center Name",
+      "filterable": true,
+      "groupable": true,
+      "width": "100",
+      "allowedValuesQuery": "SELECT center_name FROM hospital_center_master WHERE center_id!=0 order by center_name"
+    },
+    "from_center_name": {
+      "displayName": "From Center Name",
+      "filterable": true,
+      "groupable": true,
+      "width": "100",
+      "allowedValuesQuery": "SELECT center_name FROM hospital_center_master WHERE center_id!=0 order by center_name"
+    },
+    "from_store_type": {
+      "displayName": "From Store Type",
+      "width": "80",
+      "filterable": true,
+      "groupable": true,
+      "allowNull": true,
+      "allowedValuesQuery": "SELECT store_type_name FROM store_type_master ORDER BY store_type_name"
+    },
+    "to_store_type": {
+      "displayName": "To Store Type",
+      "width": "80",
+      "filterable": true,
+      "groupable": true,
+      "allowNull": true,
+      "allowedValuesQuery": "SELECT store_type_name FROM store_type_master ORDER BY store_type_name"
+    },
+    "category": {
+      "displayName": "Category",
+      "width": "100",
+      "filterable": true,
+      "groupable": true,
+      "allowedValuesQuery": "SELECT category FROM store_category_master ORDER BY category"
+    },
+    "medicine_name": {
+      "displayName": "Item",
+      "filterable": true,
+      "allowNull": true,
+      "groupable": true,
+      "width": "80"
+    },
+    "cust_item_code": {
+      "displayName": "Custom Item Code",
+      "filterable": true,
+      "allowNull": true,
+      "groupable": true,
+      "width": "80"
+    },
+    "batch_no": {
+      "displayName": "Batch No.",
+      "filterable": false,
+      "groupable": false,
+      "width": "60"
+    },
+    "transfer_date": {
+      "displayName": "Transfer Date",
+      "filterable": false,
+      "dataType": "date",
+      "groupable": false,
+      "width": "70"
+    },
+    "username": {
+      "displayName": "User",
+      "width": "80",
+      "filterable": true,
+      "groupable": true,
+      "allowNull": true,
+      "allowedValuesQuery": "SELECT emp_username AS username FROM u_user ORDER BY username"
+    },
+    "control_type_name": {
+      "displayName": "Control Type",
+      "filterable": true,
+      "groupable": true,
+      "width": "55",
+      "allowedValuesQuery": "SELECT control_type_name from store_item_controltype ORDER BY control_type_name"
+    },
+    "issue_base_unit": {
+      "displayName": "Pack Size",
+      "filterable": true,
+      "numeric": true,
+      "dataType": "numeric",
+      "groupable": false,
+      "width": "60"
+    },
+    "qty": {
+      "displayName": "Qty.",
+      "aggFunction": "sum",
+      "filterable": true,
+      "decimalType": "quantity",
+      "groupable": false,
+      "width": "60",
+      "dataType": "numeric"
+    },
+    "value_cp": {
+      "displayName": "Total(CP)",
+      "aggFunction": "sum",
+      "filterable": true,
+      "groupable": false,
+      "width": "80",
+      "dataType": "numeric",
+      "decimalType": "amount"
+    },
+    "received_cost_value": {
+      "displayName": "Received(CP)",
+      "aggFunction": "sum",
+      "filterable": true,
+      "groupable": false,
+      "width": "80",
+      "dataType": "numeric",
+      "decimalType": "amount"
+    },
+    "unit_mrp": {
+      "displayName": "Unit Mrp",
+      "filterable": true,
+      "groupable": false,
+      "width": "80",
+      "dataType": "numeric",
+      "decimalType": "amount"
+    },
+    "value_mrp": {
+      "displayName": "Value(Mrp)",
+      "aggFunction": "sum",
+      "filterable": true,
+      "groupable": false,
+      "width": "80",
+      "dataType": "numeric",
+      "decimalType": "amount"
+    },
+    "value_sp": {
+      "displayName": "Value(SP)",
+      "aggFunction": "sum",
+      "filterable": true,
+      "groupable": false,
+      "width": "80",
+      "dataType": "numeric",
+      "decimalType": "amount"
+    },
+    "reason": {
+      "displayName": "Reason",
+      "filterable": false,
+      "groupable": false,
+      "width": "75"
+    },
+    "exp_dt": {
+      "displayName": "Expiry Date",
+      "filterable": false,
+      "groupable": false,
+      "width": "70"
+    },
+    "bin": {
+      "displayName": "Bin/Rack",
+      "filterable": true,
+      "groupable": true,
+      "width": "60"
+    },
+    "uom": {
+      "displayName": "UOM During Transfer",
+      "description": "UOM chosen at the time of Transfer",
+      "filterable": false,
+      "groupable": false,
+      "width": "60"
+    },
+    "issue_uom": {
+      "displayName": "Unit UOM",
+      "filterable": false,
+      "groupable": false,
+      "width": "60"
+    },
+    "pkg_uom": {
+      "displayName": "Pkg. UOM",
+      "description": "Package UOM",
+      "filterable": false,
+      "groupable": false,
+      "width": "60"
+    },
+    "transfer_uom_type": {
+      "displayName": "UOM Type During Transfer",
+      "description": "UOM Type chosen at the time of Transfer",
+      "filterable": true,
+      "groupable": true,
+      "width": "60",
+      "allowedValues": ["Issue","Pkg"]
+    },
+    "processed_by": {
+      "displayName": "Processed By",
+      "width": "60"
+    },
+    "processed_date": {
+      "displayName": "Processed Date",
+      "dataType": "timestamp",
+      "width": "60"
+    },
+    "received_by": {
+      "displayName": "Received By",
+      "width": "60"
+    },
+    "received_date": {
+      "displayName": "Received Date",
+      "dataType": "timestamp",
+      "width": "60"
+    },
+    "service_group_name": {
+      "displayName": "Service Group Name",
+      "filterable": true,
+      "groupable": true,
+      "width": "100",
+      "allowedValuesQuery": "SELECT service_group_name FROM service_groups order by service_groups"
+    },
+    "service_sub_group_name": {
+      "displayName": "Service Sub Group Name",
+      "filterable": true,
+      "groupable": true,
+      "width": "100",
+      "allowedValuesQuery": "SELECT service_sub_group_name FROM service_sub_groups order by service_sub_group_name"
+     }
+
+  }
+}

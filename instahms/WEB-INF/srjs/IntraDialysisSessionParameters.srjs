@@ -1,0 +1,213 @@
+{
+    "description": "This repoet shows all intra dialysis session parameters within the time range and visit wise.",
+    "reportGroup": "Dialysis Reports",
+    "dateFields": [
+        "start_time"
+    ],
+    "title": "Intra Dialysis Session Parameters",
+    "queryLines": [
+        [
+            "SELECT * FROM ( ",
+            "SELECT bp_high ||'/'||bp_low as blood_pressure, pulse_rate, uf_removed, uf_rate, blood_pump_rate,",
+            "dsp.heparin_rate, dialysate_temp, conductivity_alarm, venous_pressure,",
+            "dialysate_pressure, tmp, dialysis_time, dialysate_rate,",
+            "pd.mr_no, pr.patient_id, ds.start_time::date, to_char(ds.start_time::time, 'HH24:mi')::text AS starttime, to_char(ds.end_time::time, 'HH24:mi')::text AS endtime,",
+            "dsp.obs_time::time as obs_time, CASE WHEN pr.visit_type='o' THEN 'OP' ELSE 'IP' END AS patient_type,",
+            "'' as username,'' as description, '' as incident_type,",
+            "ds.order_id, (extract (epoch from (ds.end_time - dsp.obs_time))/60)::integer as time_range,",
+            " get_patient_full_name(sm.salutation, pd.patient_name, pd.middle_name, pd.last_name)::text",
+            "AS patient_name,",
+            "hcm.center_name,pd.name_local_language,",
+            "hcm1.center_name AS equipment_center, to_char((pr.reg_date+pr.reg_time), 'dd-MM-yyyy hh24:mi') AS visit_date_time ",
+            "FROM  dialysis_session ds",
+            "LEFT JOIN dialysis_session_parameters dsp ON (ds.order_id = dsp.order_id)",
+            "LEFT JOIN dialysis_session_incidents dsi ON (dsi.order_id = dsp.order_id)",
+            "JOIN services_prescribed sp ON (sp.prescription_id = ds.order_id)",
+            "LEFT JOIN patient_registration pr ON (pr.patient_id = sp.patient_id)",
+            "LEFT JOIN patient_details pd ON (pd.mr_no = pr.mr_no)",
+            "LEFT JOIN salutation_master sm ON (sm.salutation_id = pd.salutation)",
+            "LEFT JOIN hospital_center_master hcm ON (hcm.center_id = pr.center_id)",
+            "LEFT JOIN dialysis_machine_master dmm ON (dmm.machine_id = ds.machine_id)",
+            "LEFT JOIN location_master lm ON (lm.location_id = dmm.location_id)",
+            "LEFT JOIN hospital_center_master hcm1 ON (hcm1.center_id = lm.center_id)",
+            "UNION",
+            "SELECT '' as blood_pressure,null as pulse_rate, null as uf_removed,null as uf_rate,null as blood_pump_rate,",
+            "null as heparin_rate, null as dialysate_temp,'' as conductivity_alarm,null as venous_pressure,",
+            "null as dialysate_pressure,null as tmp,null as  dialysis_time,null as dialysate_rate,",
+            "pd.mr_no, pr.patient_id, ds.start_time::date, to_char(ds.start_time::time, 'HH24:mi')::text AS starttime, to_char(ds.end_time::time, 'HH24:mi')::text AS endtime,",
+            "dsi.incident_time::time as obs_time, CASE WHEN pr.visit_type='o' THEN 'OP' ELSE 'IP' END AS patient_type,",
+            "dsi.username, dsi.description, CASE WHEN dsi.incident_type='A' THEN 'Alert' ELSE 'Info' END AS incident_type,",
+            "ds.order_id, (extract (epoch from (ds.end_time - ((ds.start_time::date+dsi.incident_time)::timestamp)))/60)::integer as time_range,",
+            "get_patient_full_name(sm.salutation, pd.patient_name, pd.middle_name, pd.last_name)::text",
+            "AS patient_name,",
+            "hcm.center_name,",
+            "hcm1.center_name AS equipment_center, to_char((pr.reg_date+pr.reg_time), 'dd-MM-yyyy hh24:mi') AS visit_date_time ",
+            "FROM  dialysis_session ds",
+            "LEFT JOIN dialysis_session_incidents dsi ON (dsi.order_id = ds.order_id)",
+            "JOIN services_prescribed sp ON (sp.prescription_id = ds.order_id)",
+            "LEFT JOIN patient_registration pr ON (pr.patient_id = sp.patient_id)",
+            "LEFT JOIN patient_details pd ON (pd.mr_no = pr.mr_no)",
+            "LEFT JOIN salutation_master sm ON (sm.salutation_id = pd.salutation)",
+            "LEFT JOIN hospital_center_master hcm ON (hcm.center_id = pr.center_id)",
+            "LEFT JOIN dialysis_machine_master dmm ON (dmm.machine_id = ds.machine_id)",
+            "LEFT JOIN location_master lm ON (lm.location_id = dmm.location_id)",
+            "LEFT JOIN hospital_center_master hcm1 ON (hcm1.center_id = lm.center_id)",
+            ")as foo"
+        ]
+    ],
+    "defaultShowFields": [
+        "patient_name",
+        "mr_no",
+        "patient_id",
+        "center_name",
+        "blood_pressure",
+        "pulse_rate",
+        "uf_removed",
+        "uf_rate",
+        "blood_pump_rate",
+        "heparin_rate",
+        "dialysate_temp",
+        "conductivity_alarm",
+        "venous_pressure",
+        "dialysate_pressure",
+        "tmp",
+        "dialysis_time",
+        "dialysate_rate",
+        "obs_time",
+        "equipment_center"
+    ],
+    "fields": {
+        "center_name": {
+            "displayName": "Center Name",
+            "groupable": true,
+            "filterable": true,
+            "width": 60,
+            "allowedValuesQuery": "SELECT center_name FROM hospital_center_master  ORDER BY center_id"
+        },
+        "equipment_center": {
+            "displayName": "Equipment Resource(Centre)",
+            "groupable": true,
+            "filterable": true,
+            "width": 60,
+            "allowedValuesQuery": "SELECT center_name FROM hospital_center_master  ORDER BY center_id"
+        },
+        "blood_pressure": {
+            "displayName": "Blood Pressure",
+            "width": 60
+        },
+        "pulse_rate": {
+            "displayName": "Pulse(bmp)",
+            "width": 60
+        },
+        "uf_removed": {
+            "displayName": "Total UF Removed (L)",
+            "width": 60
+        },
+        "uf_rate": {
+            "displayName": "UF Rate (L/hr)",
+            "width": 60
+        },
+        "blood_pump_rate": {
+            "displayName": "Blood Pump Flow rate (ml/min)",
+            "width": 60
+        },
+        "heparin_rate": {
+            "displayName": "Heparin Pump Infusion Rate (ml/hr)",
+            "width": 60
+        },
+        "dialysate_temp": {
+            "displayName": "Dialysate Temperature (c)",
+            "width": 60
+        },
+        "conductivity_alarm": {
+            "displayName": "Conductivity (ms/cm)",
+            "width": 60
+        },
+        "venous_pressure": {
+            "displayName": "Venous Pressure (mmHg)",
+            "width": 60
+        },
+        "dialysate_pressure": {
+            "displayName": "Dialysate Pressure (mmHg)",
+            "width": 60
+        },
+        "tmp": {
+            "displayName": "TMP (mmHg)",
+            "width": 60
+        },
+        "dialysis_time": {
+            "displayName": "Dialysis Time (min)",
+            "width": 60
+        },
+        "dialysate_rate": {
+            "displayName": "Dialysate Flow Rate (ml/min)",
+            "width": 60
+        },
+        "name_local_language": {
+             "displayName": "Name In Local Language",
+             "width": 150
+        },
+        "start_time": {
+            "displayName": "Dialysis Start Date",
+            "width": 60,
+            "groupable": true,
+            "filterable": true
+        },
+        "time_range": {
+            "displayName": "Time Range(min)",
+            "width": 60,
+            "filterable": true,
+            "dataType": "integer"
+        },
+        "patient_type": {
+            "displayName": "Patient Type",
+            "width": 40,
+            "filterable": true,
+            "groupable": true,
+            "allowedValues": [
+                "OP",
+                "IP"
+            ]
+        },
+        "mr_no": {
+            "displayName": "MrNo",
+            "filterable": true,
+            "groupable": true,
+            "width": 60
+        },
+        "patient_id": {
+            "displayName": "Patient Id",
+            "groupable": true,
+            "filterable": true,
+            "width": 60
+        },
+        "patient_name": {
+            "displayName": "Patient Name",
+            "width": 70
+        },
+        "username": {
+            "displayName": "Incident Author",
+            "width": 60
+        },
+        "description": {
+            "displayName": "Incident Description",
+            "width": 60
+        },
+        "incident_type": {
+            "displayName": "Incident Type",
+            "width": 60
+        },
+        "starttime": {
+            "displayName": "Start Time",
+            "width": 60
+        },
+        "endtime": {
+            "displayName": "End Time",
+            "width": 60
+        },
+        "visit_date_time": {
+            "displayName": "Visit Date & Time",
+            "width": 60
+        }
+    }
+}

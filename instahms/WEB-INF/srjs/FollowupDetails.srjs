@@ -1,0 +1,104 @@
+{
+    "title": "Follow Up Details",
+    "reportGroup": "Patient Stats Reports",
+    "dateFields": [
+        "followup_date"
+    ],
+    "description": "This report shows the list of Pending Follow Up Details.",
+    "defaultShowFields": [
+        "mr_no",
+        "patient_id",
+        "patient_name",
+        "dept_name",
+        "doctor_name",
+        "followup_date",
+        "followup_remarks",
+        "patient_phone"
+    ],
+    "fields": {
+        "mr_no": {
+            "table": "pd",
+            "displayName": "MR No",
+            "width": "60"
+        },
+        "patient_name": {
+            "table": "pd",
+            "displayName": "Patient Name",
+            "width": "60"
+        },
+
+       "name_local_language": {
+            "table": "pd",
+            "displayName": "Name In Local Language",
+            "width": 150,
+            "expression": "pd.name_local_language"
+        },
+        "dept_name": {
+            "table": "dept",
+            "displayName": "Follow Up Department",
+            "width": "100",
+            "filterable": true,
+            "groupable": true
+        },
+        "doctor_name": {
+            "table": "doc",
+            "displayName": "Follow Up Doctor",
+            "filterable": true,
+            "groupable": true,
+            "width": "100"
+        },
+        "followup_date": {
+            "table": "fud",
+            "displayName": "Follow Up Date",
+            "dataType": "date",
+            "width": "60",
+            "groupable": true,
+            "filterable": true
+        },
+        "followup_remarks": {
+            "table": "fud",
+            "displayName": "Remarks",
+            "width": "100"
+        },
+        "patient_phone": {
+            "table": "pd",
+            "displayName": "Mobile No.",
+            "width": "100"
+        }
+    },
+    "queryUnits": [
+        {
+            "mainTableName": "follow_up_details",
+            "mainTableAlias": "fud",
+            "joinTables": [
+                {
+                    "name": "patient_registration",
+                    "alias": "pr",
+                    "dependsOn": "fud",
+                    "expression": " ON fud.patient_id=pr.patient_id"
+                },
+                {
+                    "name": "patient_details",
+                    "alias": "pd",
+                    "dependsOn": "pr",
+                    "expression": " ON pr.mr_no=pd.mr_no",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "doctors",
+                    "alias": "doc",
+                    "dependsOn": "fud",
+                    "expression": " ON doc.doctor_id = fud.followup_doctor_id",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "department",
+                    "alias": "dept",
+                    "dependsOn": "doc",
+                    "expression": " ON dept.dept_id = doc.dept_id",
+                    "type": "LEFT"
+                }
+            ]
+        }
+    ]
+}

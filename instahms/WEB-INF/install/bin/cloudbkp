@@ -1,0 +1,143 @@
+#!/bin/bash
+
+#
+# This script takes a snapshot of the local database and rsyncs the dump
+# to the backup location in the cloud (apps.instahealthsolutions.com). This 
+# script is meant only for local servers, not for apps.instahealthsolutions.com
+#
+
+source `dirname $0`/functions
+
+[ -z "$IT_SUPPORT_MAIL_ID" ] && IT_SUPPORT_MAIL_ID='insta-devops@practo.com centralsupport@practo.com'
+REPLY_TO="root@hub.instahealthsolutions.com"
+CONTENT="/tmp/cloudbkpcheck.out"
+MESSAGE="/tmp/cloudbkpcheck.msg"
+echo > $CONTENT
+
+#
+# Disable if not a local server or if it is a backup server, 
+# or if it is disabled (hospital has not purchased cloud backup)
+#
+is_local_server || exit 0
+is_backup_server && exit 0
+
+if [ "$CLOUDBKP_ENABLED" == "N" ] ; then
+	[ "$1" != "immediate" ] && exit 0
+fi
+
+PIDFILE=/var/run/cloudbkp.pid
+
+sudo mkdir -p $HMS_WORK_HOME/snapshots/$DB
+cd $HMS_WORK_HOME/snapshots/$DB
+
+#
+# Sleep for a fixed, but random amount of time between 0 and 60 (3600 seconds) minutes, so that
+# all local servers don't fire the backup into the server simultaneously.
+# At the same time, every server should have the same delay every time, making the
+# backups exactly 1 hour between them. So we use stat -c of a known directory, which just
+# prints the inode number -- which could be any random number, but always the same for a host.
+#
+if [ "$1" != "immediate" ] ; then
+	RAN=`stat -c%i /var/log/insta/$DB`
+	sleep $((RAN%3600))
+fi
+
+if [ -f $PIDFILE ] ; then
+	echo "`date '+%Y/%m/%d %T'` - Backup in progress, not initiating another"
+	exit 1
+fi
+echo $$ > $PIDFILE
+
+HOD=`date +%H`
+echo "`date '+%Y/%m/%d %T'` - Cloud backup START"
+
+START=`date +%s`
+
+#
+# Only once a day do a full dump. Rest of the time, take a partial dump, excluding
+# non-priority tables
+#
+if [ $HOD == "03" -a "$CLOUDBKP_FULL_ENABLED" != "N" ] ; then
+	filename=latest.dump
+	exclude=
+else
+	filename=latest_partial.dump
+	exclude="--exclude-table *.patient_documents --exclude-table *.test_report_files"
+	exclude="$exclude --exclude-table *.*audit_log"
+fi
+
+# take a dump: disable compression so that rsync is more efficient: it compresses by itself
+backup_db $filename partial nocompress
+
+sudo /usr/bin/pg_dump $DB -Fc -U postgres -f $filename $exclude -Z0
+if [ $? -ne 0 ] ; then
+	echo "Error in backup creation, not syncing to cloud."
+	exit 1
+fi
+
+# some stats for the dump
+END=`date +%s`
+DIFF=$((END - START))
+SIZE=`stat -c %s $filename`
+echo "`date '+%Y/%m/%d %T'` - DB dump $SIZE bytes created in $DIFF seconds"
+
+
+#check file size, decide whether to rsync or not 
+#Do not rsync if cloud bkp file size exceeds 2GB and notify by sending mail
+if [ "$SIZE" -gt 2000000000 ] ; then
+subject="Cloudbkp File size got exceeded"
+echo "Cloudbkp File size got exceeded to more than 2GB, sending mail."
+        # file size exceeded, send the mail
+        echo "From: $HOST Cloud backup Check <$HOST@hub.instahealthsolutions.com>" > $MESSAGE
+        echo "To: $IT_SUPPORT_MAIL_ID" >> $MESSAGE
+        echo "Subject: $HOST $subject" >> $MESSAGE
+        echo >> $MESSAGE
+
+        if [ "$filename" = "latest.dump"  ] ; then
+                 echo "Cloudbkp File size $SIZE which got exceeded to more than 2GB limit in full dump" >> $CONTENT
+        fi
+
+        if [ "$filename" = "latest_partial.dump"  ] ; then
+                 echo "Cloudbkp File size $SIZE which got exceeded to more than 2GB limit in partial dump" >> $CONTENT
+        fi
+        cat $CONTENT >> $MESSAGE
+
+        sudo /usr/sbin/sendmail -t -r $REPLY_TO < $MESSAGE
+        exit 0
+fi
+
+
+# restrict sync bandwidth to 64 kbps (=8kB/s = 28MB/hour)
+# Due to compression, this actually gives 3-4 times better bandwidth, ie, 24-32 kB/s
+if [ "$UNLIMITED_BANDWIDTH" = "Y" ] ; then
+	BWLIMIT=""
+else
+	BWLIMIT="--bwlimit=8"
+fi
+
+# Now sync the dump: inactivity timeout of 15 minutes.
+START=`date +%s`
+sudo /usr/bin/rsync $BWLIMIT -az --timeout 900 $filename $HUBVPN::$HOST/$DB/
+ERROR=$?
+
+END=`date +%s`
+DIFF=$((END - START))
+
+# sync an indicator saying that we successfully synced the latest dump, provided
+# that the sync was successful
+if [ $ERROR -eq 0 ] ; then
+	echo "Sync successful in $DIFF seconds"
+	# save the version of the schema, and any other info that we frequently require
+	get_current_version > version
+	sudo /usr/bin/rsync -az version $HUBVPN::$HOST/$DB/
+	sudo /usr/bin/rsync -az $LOGDIR/migrate.log $HUBVPN::$HOST/$DB
+else
+	echo "Error syncing backup to data center"
+fi
+
+sudo rm $PIDFILE
+
+echo "`date '+%Y/%m/%d %T'` - Cloud backup FINISH"
+echo
+
+

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<suite name="CaseRateTest" verbose="10" allow-return-values="true">
+	<test name="caserate">
+		<classes>
+			<class name="testng.com.insta.hms.mdm.caserate.CaseRateServiceTest" />
+			<methods>
+				<exclude name="getSessionServiceAttributes" />
+			</methods>
+			<class name="testng.com.insta.hms.mdm.caserate.CaseRateControllerTest"/>
+		</classes>
+	</test>
+
+</suite>

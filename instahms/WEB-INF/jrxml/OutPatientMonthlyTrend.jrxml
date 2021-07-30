@@ -1,0 +1,396 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="OutPatientMonthlyTrend" pageWidth="595" pageHeight="842" whenNoDataType="NoDataSection" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="40" bottomMargin="40">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<style name="Crosstab Data Text" isDefault="false" hAlign="Center"/>
+	<parameter name="fromDate" class="java.sql.Date" isForPrompting="false">
+		<defaultValueExpression><![CDATA[java.sql.Date.valueOf("2008-04-01")]]></defaultValueExpression>
+	</parameter>
+	<parameter name="toDate" class="java.sql.Date" isForPrompting="false">
+		<defaultValueExpression><![CDATA[java.sql.Date.valueOf("2009-03-31")]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select pr.patient_id,extract (year from pr.reg_date) as year ,extract (month from pr.reg_date) as month,
+count (pr.patient_id) as new ,0 as total_amount,revisit
+from patient_registration  pr
+where date(pr.reg_date) between  $P{fromDate}  and  $P{toDate}
+and pr.visit_type = 'o'
+group by pr.patient_id,year,month,revisit
+
+union all
+
+select ' ' as patient_id, extract (year from bc.posted_date) as year ,extract (month from bc.posted_date) as month,
+0 as new ,sum(amount) as total_amount,revisit
+from patient_registration  pr
+ left join bill b on b.visit_id = pr.patient_id
+ left join bill_charge bc on bc.bill_no = b.bill_no and b.status != 'X' and bc.status != 'X'
+where date(bc.posted_date) between  $P{fromDate}  and  $P{toDate}
+and pr.visit_type = 'o'
+group by b.visit_id,year,month,revisit]]>
+	</queryString>
+	<field name="patient_id" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="year" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="month" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="new" class="java.lang.Long">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="total_amount" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="revisit" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<background>
+		<band/>
+	</background>
+	<title>
+		<band height="50">
+			<staticText>
+				<reportElement key="staticText-1" x="0" y="4" width="535" height="20"/>
+				<textElement textAlignment="Center">
+					<font size="14" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Out Patient Count and Revenue Monthly ]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="false">
+				<reportElement key="textField-1" x="299" y="29" width="66" height="16"/>
+				<textElement/>
+				<textFieldExpression class="java.util.Date"><![CDATA[$P{toDate}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText-2" x="275" y="29" width="24" height="16"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[to]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="false">
+				<reportElement key="textField-2" x="211" y="29" width="64" height="16"/>
+				<textElement/>
+				<textFieldExpression class="java.util.Date"><![CDATA[$P{fromDate}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band/>
+	</pageHeader>
+	<columnHeader>
+		<band/>
+	</columnHeader>
+	<detail>
+		<band/>
+	</detail>
+	<columnFooter>
+		<band/>
+	</columnFooter>
+	<pageFooter>
+		<band/>
+	</pageFooter>
+	<summary>
+		<band height="440">
+			<crosstab>
+				<reportElement key="crosstab-2" x="1" y="349" width="587" height="24"/>
+				<crosstabHeaderCell>
+					<cellContents/>
+				</crosstabHeaderCell>
+				<rowGroup name="revisit" width="100" totalPosition="End">
+					<bucket>
+						<bucketExpression class="java.lang.String"><![CDATA[$F{revisit}.equalsIgnoreCase( "Y" )?"Follow On Patients":
+$F{revisit}.equalsIgnoreCase( "N" )?"New Patients":""]]></bucketExpression>
+					</bucket>
+					<crosstabRowHeader>
+						<cellContents>
+							<box>
+								<topPen lineWidth="0.25" lineStyle="Solid"/>
+								<leftPen lineWidth="0.25" lineStyle="Solid"/>
+								<bottomPen lineWidth="0.25" lineStyle="Solid"/>
+								<rightPen lineWidth="0.25" lineStyle="Solid"/>
+							</box>
+							<textField isBlankWhenNull="false">
+								<reportElement key="textField" x="0" y="0" width="100" height="30"/>
+								<textElement textAlignment="Left" verticalAlignment="Middle"/>
+								<textFieldExpression class="java.lang.String"><![CDATA[$V{revisit}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabRowHeader>
+					<crosstabTotalRowHeader>
+						<cellContents>
+							<box>
+								<topPen lineWidth="0.25" lineStyle="Solid"/>
+								<leftPen lineWidth="0.25" lineStyle="Solid"/>
+								<bottomPen lineWidth="0.25" lineStyle="Solid"/>
+								<rightPen lineWidth="0.25" lineStyle="Solid"/>
+							</box>
+							<textField isBlankWhenNull="false">
+								<reportElement key="textField" x="0" y="0" width="100" height="30"/>
+								<textElement textAlignment="Left" verticalAlignment="Middle"/>
+								<textFieldExpression class="java.lang.String"><![CDATA["Total"]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabTotalRowHeader>
+				</rowGroup>
+				<columnGroup name="month" height="25" totalPosition="End" headerPosition="Center">
+					<bucket>
+						<bucketExpression class="java.lang.String"><![CDATA[(new DecimalFormat("00")).format($F{month})
++ "-" +
+(new DecimalFormat("00")).format($F{year})]]></bucketExpression>
+					</bucket>
+					<crosstabColumnHeader>
+						<cellContents>
+							<box>
+								<topPen lineWidth="0.25" lineStyle="Solid"/>
+								<leftPen lineWidth="0.25" lineStyle="Solid"/>
+								<bottomPen lineWidth="0.25" lineStyle="Solid"/>
+								<rightPen lineWidth="0.25" lineStyle="Solid"/>
+							</box>
+							<textField isBlankWhenNull="false">
+								<reportElement key="textField" x="0" y="0" width="60" height="25"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<textFieldExpression class="java.lang.String"><![CDATA[$V{month}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabColumnHeader>
+					<crosstabTotalColumnHeader>
+						<cellContents>
+							<box>
+								<topPen lineWidth="0.25" lineStyle="Solid"/>
+								<leftPen lineWidth="0.25" lineStyle="Solid"/>
+								<bottomPen lineWidth="0.25" lineStyle="Solid"/>
+								<rightPen lineWidth="0.25" lineStyle="Solid"/>
+							</box>
+							<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+								<reportElement key="textField" x="0" y="0" width="60" height="25"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<textFieldExpression class="java.lang.String"><![CDATA["Total"]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabTotalColumnHeader>
+				</columnGroup>
+				<measure name="total_amount_Sum" class="java.math.BigDecimal" calculation="Sum">
+					<measureExpression><![CDATA[$F{total_amount}]]></measureExpression>
+				</measure>
+				<crosstabCell width="60" height="30">
+					<cellContents>
+						<box>
+							<topPen lineWidth="0.25" lineStyle="Solid"/>
+							<leftPen lineWidth="0.25" lineStyle="Solid"/>
+							<bottomPen lineWidth="0.25" lineStyle="Solid"/>
+							<rightPen lineWidth="0.25" lineStyle="Solid"/>
+						</box>
+						<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
+							<reportElement key="textField" x="0" y="0" width="60" height="30"/>
+							<textElement textAlignment="Right" verticalAlignment="Middle"/>
+							<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{total_amount_Sum}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell width="60" height="30" columnTotalGroup="month">
+					<cellContents>
+						<box>
+							<topPen lineWidth="0.25" lineStyle="Solid"/>
+							<leftPen lineWidth="0.25" lineStyle="Solid"/>
+							<bottomPen lineWidth="0.25" lineStyle="Solid"/>
+							<rightPen lineWidth="0.25" lineStyle="Solid"/>
+						</box>
+						<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
+							<reportElement key="textField" x="0" y="0" width="60" height="30"/>
+							<textElement textAlignment="Right" verticalAlignment="Middle"/>
+							<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{total_amount_Sum}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell width="60" height="30" rowTotalGroup="revisit">
+					<cellContents>
+						<box>
+							<topPen lineWidth="0.25" lineStyle="Solid"/>
+							<leftPen lineWidth="0.25" lineStyle="Solid"/>
+							<bottomPen lineWidth="0.25" lineStyle="Solid"/>
+							<rightPen lineWidth="0.25" lineStyle="Solid"/>
+						</box>
+						<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
+							<reportElement key="textField" x="0" y="0" width="60" height="30"/>
+							<textElement textAlignment="Right" verticalAlignment="Middle"/>
+							<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{total_amount_Sum}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell width="60" height="30" rowTotalGroup="revisit" columnTotalGroup="month">
+					<cellContents>
+						<box>
+							<topPen lineWidth="0.25" lineStyle="Solid"/>
+							<leftPen lineWidth="0.25" lineStyle="Solid"/>
+							<bottomPen lineWidth="0.25" lineStyle="Solid"/>
+							<rightPen lineWidth="0.25" lineStyle="Solid"/>
+						</box>
+						<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
+							<reportElement key="textField" x="0" y="0" width="60" height="30"/>
+							<textElement textAlignment="Right" verticalAlignment="Middle"/>
+							<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{total_amount_Sum}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<whenNoDataCell>
+					<cellContents/>
+				</whenNoDataCell>
+			</crosstab>
+			<staticText>
+				<reportElement key="staticText-3" x="4" y="331" width="284" height="13"/>
+				<textElement textAlignment="Left">
+					<font isBold="true" isUnderline="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Out Patient Revenue
+]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-4" x="1" y="56" width="210" height="13"/>
+				<textElement textAlignment="Left">
+					<font isBold="true" isUnderline="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Out Patient Count
+]]></text>
+			</staticText>
+			<crosstab>
+				<reportElement x="0" y="85" width="535" height="29"/>
+				<rowGroup name="revisit" width="100" totalPosition="End">
+					<bucket>
+						<bucketExpression class="java.lang.String"><![CDATA[$F{revisit}.equalsIgnoreCase( "N" )?"New Patients":
+$F{revisit}.equalsIgnoreCase( "Y" )?"Follow On Patients":""]]></bucketExpression>
+					</bucket>
+					<crosstabRowHeader>
+						<cellContents backcolor="#F0F8FF">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<textField>
+								<reportElement style="Crosstab Data Text" x="0" y="0" width="100" height="25"/>
+								<textElement textAlignment="Left" verticalAlignment="Middle"/>
+								<textFieldExpression class="java.lang.String"><![CDATA[$V{revisit}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabRowHeader>
+					<crosstabTotalRowHeader>
+						<cellContents backcolor="#BFE1FF">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<staticText>
+								<reportElement x="0" y="0" width="100" height="25"/>
+								<textElement textAlignment="Left" verticalAlignment="Middle"/>
+								<text><![CDATA[Total ]]></text>
+							</staticText>
+						</cellContents>
+					</crosstabTotalRowHeader>
+				</rowGroup>
+				<columnGroup name="month" height="30" totalPosition="End">
+					<bucket>
+						<bucketExpression class="java.lang.String"><![CDATA[(new DecimalFormat("00")).format($F{month})
++ "-" +
+(new DecimalFormat("0000")).format($F{year})]]></bucketExpression>
+					</bucket>
+					<crosstabColumnHeader>
+						<cellContents backcolor="#F0F8FF">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<textField>
+								<reportElement style="Crosstab Data Text" x="0" y="0" width="50" height="30"/>
+								<textElement verticalAlignment="Middle"/>
+								<textFieldExpression class="java.lang.String"><![CDATA[$V{month}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabColumnHeader>
+					<crosstabTotalColumnHeader>
+						<cellContents backcolor="#BFE1FF">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<staticText>
+								<reportElement x="0" y="0" width="50" height="30"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<text><![CDATA[Total]]></text>
+							</staticText>
+						</cellContents>
+					</crosstabTotalColumnHeader>
+				</columnGroup>
+				<measure name="newMeasure" class="java.lang.Long" calculation="Sum">
+					<measureExpression><![CDATA[$F{new}]]></measureExpression>
+				</measure>
+				<crosstabCell width="50" height="25">
+					<cellContents>
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="50" height="25"/>
+							<textElement textAlignment="Center" verticalAlignment="Middle"/>
+							<textFieldExpression class="java.lang.Long"><![CDATA[$V{newMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell height="25" rowTotalGroup="revisit">
+					<cellContents backcolor="#BFE1FF">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="50" height="25"/>
+							<textElement textAlignment="Center" verticalAlignment="Middle"/>
+							<textFieldExpression class="java.lang.Long"><![CDATA[$V{newMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell width="50" height="25" columnTotalGroup="month">
+					<cellContents backcolor="#BFE1FF">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="50" height="25"/>
+							<textElement textAlignment="Center" verticalAlignment="Middle"/>
+							<textFieldExpression class="java.lang.Long"><![CDATA[$V{newMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="revisit" columnTotalGroup="month">
+					<cellContents backcolor="#BFE1FF">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="50" height="25"/>
+							<textElement textAlignment="Center" verticalAlignment="Middle"/>
+							<textFieldExpression class="java.lang.Long"><![CDATA[$V{newMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+			</crosstab>
+			<staticText>
+				<reportElement x="2" y="1" width="533" height="28"/>
+				<textElement>
+					<font isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<text><![CDATA[Note : - 1.Count is based on registration date
+             2.Revenue is based on posted date
+        ]]></text>
+			</staticText>
+		</band>
+	</summary>
+	<noData>
+		<band height="50">
+			<staticText>
+				<reportElement x="0" y="0" width="588" height="50"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[No data found for the given date range]]></text>
+			</staticText>
+		</band>
+	</noData>
+</jasperReport>

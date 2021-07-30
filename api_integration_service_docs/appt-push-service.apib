@@ -1,0 +1,106 @@
+FORMAT: 1A
+HOST: https://source/provided/callback/URL
+
+# Insta HMS API 12.3
+
+## Appointment Update Event Push Service [/]
+
+Allows appointment sending source to subscribe to appointment update events. The callback URL must accept HTTP Method __POST__ and __application/json__ as request body Content Type. To validate genuineness of incoming request subscriber must compute BASE64 encoded HMAC SHA256 hash of Request Body JSON using shared secret as salt and compare it with value sent in __x-insta-signature__ request header.
+
+A sample Java and python code to generate signature is as below
+
+```java
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+import org.apache.commons.codec.binary.Base64;
+
+  private String generateSignature(String jsonBody, String salt) {
+    Mac sha256HMac;
+    try {
+      sha256HMac = Mac.getInstance("HmacSHA256");
+      SecretKeySpec secretKey = new SecretKeySpec(salt.getBytes(), "HmacSHA256");
+      sha256HMac.init(secretKey);
+      byte[] hash = sha256HMac.doFinal(jsonData.getBytes());
+      String hexDigest = bytesToHex(hash);
+      return Base64.encodeBase64String(hexDigest.getBytes());
+    } catch (NoSuchAlgorithmException ex) {
+      logger.error("Unsupported Algorithm: HmacSHA256");
+    } catch (InvalidKeyException ex) {
+      logger.error("Invalid salt supplied");
+    }
+    return "";
+  }
+
+```
+
+```python
+import hmac
+import hashlib
+import base64
+
+def generate_signature(json_body, signing_key):
+    h = hmac.new(signing_key.encode(), json_body, hashlib.sha256)
+    computed_signature = base64.b64encode(h.hexdigest().encode()).decode()
+```
+
+
+### Appointment Update Event Push Service [POST]
+
++ Request (application/json)
+    + Headers
+        x-insta-schema : <schema>
+        x-insta-signature: <BASE64 encoded SHA256 hash of Request Body JSON Payload with shared secret as salt> 
+
+    + Attributes (object)
+        + `event_type`: `APPOINTMENT_BOOKED` (enum[string])
+            
+            Event Type
+
+            + `APPOINTMENT_BOOKED` - Appointment booked
+            + `APPOINTMENT_CONFIRMED` - Appointment got confirmed
+            + `APPOINTMENT_NOSHOW` - Appointment marked as no show
+            + `APPOINTMENT_CANCEL` - Appointment got canceled
+            + `APPOINTMENT_ARRIVED` - Patient arrived against appointment
+            + `APOINTMENT_COMPLETED` - All services against Appointment got completed 
+            + `APPOINTMENT_RESCHEDULED` - Appointment got rescheduled
+
+        + `appointment` (object) - Updated Appointment Details
+            + appointment_id: 82397 (number) - Insta installation site specific department identifier
+            + appointment_date: `2018-03-19T10:30:00Z` (string) - Start time of appointment in ISO8601 format
+            + duration:30 (number) - Duration of appointment in minutes
+            + appointment_status: `Booked` (string) - Status of appointment
+            + patient_name: `Mr. Mahesh Rajput` (string) - Full name of the patient
+            + app_cat: `DOC` (string) - Appointment category
+            + app_source_id: 0 (string) - Insta installation site specific appointment source identifier
+            + app_source_name: `Okadoc` (string) - label for appointment source
+            + scheduler_visit_type: `M` (enum[string]) - Configured outpatient visit type
+                + `M` - Main visit
+                + `F` - Follow-up visit with consultation
+                + `D` - Follow-up visit without consultation
+                + `R` - Revisit
+            + complaint: `Fever` (string) - Complaint as stated by patient 
+            + center_id: 7 (string) - Insta installation site specific center identifier
+            + center_name: `XYZ Hospital - Bannerghatta Road` (string) - Name of center where appointment will be conducted
+            + presc_doc_id: `DOC0481` (string) - Insta installation site specific doctor identifier for prescribing doctor
+            + presc_doc_name: `Dr. Vijay Ranganathan` (string) - Name of prescribing doctor
+            + cond_doc_id: `DOC0212` (string) - Insta installation site specific doctor identifier for conducting doctor
+            + cond_doc_name: `Dr. Adarsh Prakash` (string) - Name of conducting doctor
+            + department_id: `DEPT003` (string) - Insta installation site specific department identifier
+            + department_name: `Radiology` (string) - Name of the department
+            + package_id: null (string, nullable) - Insta installation site specific package identifier, if appointment is part of a package
+            + package_name: null (string, nullable) - Package name, if appointment is part of a package
+            + appointment_pack_group_id: null
+            + primary_resource: (object) - Details of secondary resource booked as part of this appointment
+                + resource_id: `DOC0212` (string) - Insta installation site specific resource identifier 
+                + resource_name: `Dr. Adarsh Prakash` (string) - Insta installation site specific resource identifier 
+            + secondary_resource: (object) - Details of secondary resource booked as part of this appointment
+                + resource_id: `DGC1108` (string) - Insta installation site specific resource identifier 
+                + resource_name: `MRA Lumbar spine vessels WO contrast` (string) - Insta installation site specific resource identifier 
+            + additional_resource: (array, object) - List containing details of additional resource booked as part of this appointment
+                - (object)
+                    + resource_id: `66` (string) - Insta installation site specific resource identifier 
+                    + resource_type: `EQID` (string) - Insta installation site specific resource identifier 
+            + remarks: `appointment remarks goes here` (string) - Remarks
+            
++ Response 201 
+

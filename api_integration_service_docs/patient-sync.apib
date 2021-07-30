@@ -1,0 +1,133 @@
+FORMAT: 1A
+HOST: http://localhost/instahms
+
+# Insta Patient Sync API
+
+Listener API where external systems can post update for a patient.
+
+___
+#### Interpreting Response Status Codes
+
+The API responds with standard HTTP Codes:
+
+**HTTP 200 OK**
+
+Request was valid and got processed.
+
+**HTTP 400 BAD REQUEST**
+
+Request was valid but request payload had errors.
+
+**HTTP 405 METHOD NOT ALLOWED**
+
+Trying to use GET, PUT, PATCH instead of POST
+
+**HTTP 503 SERVICE UNAVAILABLE**
+
+Insta HMS down for maintenance.
+
+___
+#### Notes for Etihad HRMS Integration
+
+Following is mapping of values for Custom Fields
+
+##### Patient
+
+
+**custom_list2_value**: Employee Status
+
+**custom_list3_value**: Marital Status
+
+**custom_field15**: Separation Date
+
+##### Visit
+
+**visit_custom_list1**: Company
+
+**visit_custom_list2**: Location
+
+**visit_custom_field1**: Cost Center
+
+**visit_custom_field2**: Department
+
+**visit_custom_field3**: Job Title
+
+
+___
+
+## Sync External Patient Record [/syncexternalpatient]
+
+### Sync External Patient Record [POST]
+
+Allows update of an existing patient record or creates a new patient record based on data received from external system.
+
++ Request (application/json)
+    
+    + Attributes (SyncPatientRecordRequest)
+
++ Response 200 (application/json)
+
+    + Attributes (SyncPatientRecordResponse)
+
++ Response 400 (application/json)
+
+    + Attributes (SyncPatientRecordError)
+
+
+# Data Structures
+
+## Patient (object) - Patient Record
++ `old_mr_no`: EY1234 (string, required) - Identifier of record in external system. Ex: MR No, Employee ID
++ `first_name`: Jhon (string, required) - First Name
++ `middle_name`: Edward Adam (string) - Middle Name
++ `last_name`: Doe (string) - Last Name/Family Name/Surname
++ `gender`: Not available (enum[string], required) - Gender
+    + Members
+        + M - Male 
+        + F - Female 
+        + C - Couple 
+        + O - Others
+        + N - Not available 
+        
++ `date_of_birth`: `2002-05-04` (string, required) - Date of Birth in YYYY-MM-DD Format
++ `nationality_id`: ARE (enum) - 3 letter Nationality Code as per ICAO Doc 9303 https://bit.ly/2v1bHz5
++ `government_identifier`: `7000-1000-3000000-0` (string) - Government civil identifier
++ email: jhon.doe@example.com (string) - Email
++ `custom_list2_value`: Active (enum) - Value need to as per predefined values in Patient Custom List 2 Master.
++ `custom_list3_value`: Single (enum) - Value need to as per predefined values in Visit Custom List 3 Master.
++ `custom_field15`: `2018-04-05` (string) - Value for patient custom date field in YYYY-MM-DD Format
+
+ 
+## PrePopulateVisitInfo (object) - Data that needs to be prepopulated for new visits
++ `visit_custom_list1`: `Etihad Guest LLC` (enum) - Value need to as per predefined values in Visit Custom List 1 Master.
++ `visit_custom_list2`: `Al Ain` (enum) - Value need to as per predefined values in Visit Custom List 2 Master.
++ `visit_custom_field1`: `30CCORS312` (string) - Value for visit custom field 1
++ `visit_custom_field2`: `EY Technical fleet dept` (string) - Value for visit custom field 2
++ `visit_custom_field3`: `Chief Pilot` (string) - Value for visit custom field 3
+
+
+
+## SyncPatientRecordRequest (object) - Sync Patient Record Request
++ `schema`: etihad (string, required) - Hospital in Insta
++ `patient` (Patient, required)
++ `prepopulate_visit_info` (PrePopulateVisitInfo)
+
+## SyncPatientRecordResponse (object) - Sync Patient Record Response
++ `sync_operation`: create, update (enum, required) - Operation performed by Insta
++ `mr_no`: MR00012345 (string, required) - MR No generated or updated. Max length is 15 characters.
+
+## PatientError (object) - Patient Error Object
++ `old_mr_no`: old_mr_number is required and cannot be empty. (string,) - Errors for required fields
++ `first_name`: first_name cannot be empty. If this field is not to be updated discard field from request body. (string) - Errors for optional fields
++ `date_of_birth`: Provided value not in YYYY-MM-DD format. (string) - Errors for optional fields
++ `custom_list2_value`: Provided value not in List Master. (string) - Errors for optional fields
++ `custom_list3_value`: Provided value not in List Master. (string) - Errors for optional fields
++ `custom_field15`: Provided value not in YYYY-MM-DD format. (string) - Errors for optional fields
+
+## PrePopulateVisitInfoError (object) - Prepopulate Visit Info Error Object
++ `visit_custom_list1`: Provided value not in List Master. (string) - Errors for optional fields
++ `visit_custom_list2`: Provided value not in List Master. (string) - Errors for optional fields
+
+## SyncPatientRecordError (object) - Sync Patient Record Error
++ `patient` (PatientError)
++ `prepopulate_visit_info` (PrePopulateVisitInfoError)

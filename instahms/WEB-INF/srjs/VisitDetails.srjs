@@ -1,0 +1,654 @@
+{
+    "title": "Visit Details Report",
+    "reportGroup": "Patient Stats Reports",
+    "description": "This report shows the list of patient visits",
+    "dateFields": [
+        "reg_date",
+        "discharge_date",
+        "first_visit_date"
+    ],
+    "allowNoDate": true,
+    "includes": [
+        "PatientDetailFields.srjs",
+        "PatientVisitFields.srjs"
+    ],
+    "queryUnits": [
+        {
+            "mainTableName": "patient_registration",
+            "mainTableAlias": "pr",
+            "joinTables": [
+                {
+                    "includeName": "PatientVisitFields.srjs"
+                },
+                {
+                    "name": "doctors",
+                    "alias": "doct",
+                    "dependsOn": "pr",
+                    "expression": "on doct.doctor_id = pr.discharge_doctor_id"
+                },
+                {
+                    "name": "admission",
+                    "alias": "adm",
+                    "dependsOn": "pr",
+                    "expression": "ON (adm.patient_id=pr.patient_id)"
+                },
+                {
+                    "name": "patient_registration",
+                    "alias": "parreg",
+                    "dependsOn": "adm",
+                    "expression": "ON parreg.patient_id = adm.parent_id"
+                },
+                {
+                    "name": "discharge_type_master",
+                    "alias": "dtm",
+                    "dependsOn": "pr",
+                    "type": "LEFT",
+                    "expression": "ON pr.discharge_type_id = dtm.discharge_type_id"
+                },
+                {
+                    "name": "patient_discharge",
+                    "alias": "pdis",
+                    "dependsOn": "pr",
+                    "type": "LEFT",
+                    "expression": "ON pdis.patient_id = pr.patient_id"
+                },
+                {
+                    "name": "u_user",
+                    "alias": "uuin",
+                    "dependsOn": "pdis",
+                    "type": "LEFT",
+                    "expression": "ON pdis.initiate_entered_by = uuin.emp_username"
+                },
+                {
+                    "name": "u_user",
+                    "alias": "uucl",
+                    "dependsOn": "pdis",
+                    "type": "LEFT",
+                    "expression": "ON pdis.clinical_entered_by = uucl.emp_username"
+                },
+                {
+                    "name": "u_user",
+                    "alias": "uufn",
+                    "dependsOn": "pdis",
+                    "type": "LEFT",
+                    "expression": "ON pdis.financial_entered_by = uufn.emp_username"
+                },
+                {
+                    "name": "u_user",
+                    "alias": "uuph",
+                    "dependsOn": "pr",
+                    "type": "LEFT",
+                    "expression": "ON pr.user_name = uuph.emp_username"
+                },
+                {
+                    "name": "discharge_state_names",
+                    "alias": "dsn",
+                    "dependsOn": "pr",
+                    "type": "JOIN",
+                    "expression": "ON dsn.discharge_state = pr.patient_discharge_status"
+                },
+                {
+                    "name": "patient_details",
+                    "alias": "pardet",
+                    "dependsOn": "parreg",
+                    "expression": "ON pardet.mr_no= parreg.mr_no"
+                },
+                {
+                    "name": "salutation_master",
+                    "alias": "parsm",
+                    "dependsOn": "pardet",
+                    "expression": "on  parsm.salutation_id = pardet.salutation"
+                },
+                {
+                    "name": "patient_details",
+                    "alias": "pd",
+                    "dependsOn": "pr",
+                    "expression": "ON (pd.mr_no = pr.mr_no)"
+                },
+                {
+                    "name": "patient_orders_visit_report_view",
+                    "alias": "povrv",
+                    "dependsOn": "pr",
+                    "expression": "ON (povrv.patient_id = pr.patient_id)",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "pending_operation_view",
+                    "alias": "pov",
+                    "dependsOn": "pr",
+                    "expression": "ON (pov.patient_id = pr.patient_id)",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "pending_ward_activities_view",
+                    "alias": "pwav",
+                    "dependsOn": "pr",
+                    "expression": "ON (pwav.patient_id = pr.patient_id)",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "pending_patient_indent_view",
+                    "alias": "ppiv",
+                    "dependsOn": "pr",
+                    "expression": "ON (ppiv.visit_id = pr.patient_id)",
+                    "type": "LEFT"
+                },
+                {
+                    "type": "LEFT",
+                    "alias": "csim",
+                    "name": "indication_for_caesarean_section",
+                    "expression": "ON (csim.id = pd.caesarean_indication_id)"
+                }
+            ]
+        }
+    ],
+    "fields": {
+        "cur_visit_id": {},
+        "previous_visit_id": {},
+        "age_group": {
+            "table": "pd,pr",
+            "displayName": "Age Group",
+            "width": 110,
+            "groupable": true,
+            "filterable": true,
+            "allowedValues": [
+                "0 - 30 Days - Neo Natal",
+                "31 Days - 1 Year: Infant",
+                "1 - 14 Yrs - Paediatrics",
+                "15 - 80 Yrs - General",
+                "80+ Yrs - Geriatric"
+            ],
+            "expressionLines": [
+                "CASE WHEN round(pr.reg_date - coalesce(pd.dateofbirth, pd.expected_dob)) < 31 ",
+                " THEN '0 - 30 Days - Neo Natal' ",
+                " WHEN round(pr.reg_date - coalesce(pd.dateofbirth, pd.expected_dob)) < 1*365 ",
+                " THEN '31 Days - 1 Year: Infant' ",
+                "WHEN round(pr.reg_date - coalesce(pd.dateofbirth, pd.expected_dob)) < 14*365 ",
+                " THEN '1 - 14 Yrs - Paediatrics' ",
+                "WHEN round(pr.reg_date - coalesce(pd.dateofbirth, pd.expected_dob)) > (80*365) ",
+                " THEN '80+ Yrs - Geriatric'",
+                " ELSE '15 - 80 Yrs - General' ",
+                "END"
+            ]
+        },
+        "revisit": {
+            "table": "pr",
+            "displayName": "New/Revisit Patient",
+            "width": 70,
+            "groupable": true,
+            "filterable": true,
+            "allowedValues": [
+                "Revisit",
+                "New"
+            ],
+            "expression": "CASE WHEN pr.revisit='Y' THEN 'Revisit' ELSE 'New' END "
+        },
+        "op_ip_visit": {
+            "table": "pr",
+            "displayName": "OP-IP Visit",
+            "width": 50,
+            "groupable": false,
+            "filterable": true,
+            "allowedValues": [
+                "Y",
+                "N"
+            ],
+            "expression": "CASE WHEN pr.original_visit_id != ' ' THEN 'Y' ELSE 'N' END"
+        },
+        "referred_to": {
+            "table": "pr",
+            "displayName": "Referred To",
+            "width": 120,
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "expression": "CASE WHEN pr.referred_to = '' THEN NULL ELSE pr.referred_to END"
+        },
+        "discharged": {
+            "table": "pr",
+            "displayName": "Discharged",
+            "width": 70,
+            "groupable": true,
+            "filterable": true,
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "expression": "CASE WHEN pr.discharge_flag='D' THEN 'Yes' ELSE 'No' END"
+        },
+        "physical_discharge_by": {
+            "table": "uuph,pr",
+            "displayName": "Physical Discharge Done By",
+            "width": 100,
+            "filterable": false,
+            "groupable": false,
+            "expression": "CASE WHEN pr.discharge_flag = 'D' THEN uuph.temp_username ELSE NULL END"
+        },
+        "discharge_doctor": {
+            "table": "doct",
+            "displayName": "Discharging Doctor",
+            "width": 120,
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT doctor_name as discharge_doctor FROM doctors",
+            "expression": "doct.doctor_name"
+        },
+        "dateofbirth": {
+            "table": "pd",
+            "displayName": "Date of Birth",
+            "dataType": "date",
+            "filterable": true,
+            "groupable": true,
+            "width": "80",
+            "name": "dateofbirth"
+        },
+        "timeofbirth": {
+            "table": "pd",
+            "displayName": "Time of Birth",
+            "width": 80
+        },
+        "isbaby": {
+            "table": "pd,pr",
+            "displayName": "New Born",
+            "width": 40,
+            "groupable": true,
+            "filterable": true,
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "expression": "CASE WHEN pr.reg_date = pd.dateofbirth THEN 'Yes' ELSE 'No' END"
+        },
+        "parent_name": {
+            "table": "pardet,parsm",
+            "displayName": "Parent Name",
+            "width": 130,
+            "expression": "get_patient_full_name(parsm.salutation, pardet.patient_name, pardet.middle_name, pardet.last_name)"
+        },
+        "visit_time": {
+            "table": "pr",
+            "displayName": "Visit Time",
+            "width": 50,
+            "expression": "pr.reg_time"
+        },
+        "visit_datetime": {
+            "table": "pr",
+            "displayName": "Visit Date With Time",
+            "width": 90,
+            "expression": "TO_CHAR((pr.reg_date+pr.reg_time), 'dd-MM-yyyy hh24:mi')"
+        },
+        "established_type": {
+            "table": "pr",
+            "displayName": "Established Type",
+            "width": 70,
+            "groupable": true,
+            "filterable": true,
+            "allowedValues": [
+                "Established",
+                "New"
+            ],
+            "expression": "CASE WHEN pr.established_type='N' THEN 'New' ELSE 'Established' END"
+        },
+        "discharge_time": {
+            "table": "pr",
+            "displayName": "Discharge Time",
+            "width": 50
+        },
+        "death_date": {
+            "table": "pd",
+            "displayName": "Death Date",
+            "width": "80",
+            "dataType": "date"
+        },
+        "death_time": {
+            "table": "pd",
+            "displayName": "Death Time",
+            "width": "80"
+        },
+        "death_datetime": {
+            "table": "pd",
+            "displayName": "Death Date With Time",
+            "width": "90",
+            "expression": "TO_CHAR((pd.death_date+pd.death_time), 'dd-MM-yyyy hh24:mi')"
+        },
+        "death_reason": {
+            "table": "drm",
+            "displayName": "Death Reason",
+            "width": "100",
+            "groupable": true,
+            "filterable": true,
+            "allowedValuesQuery": "SELECT reason FROM death_reason_master GROUP BY reason ORDER BY reason",
+            "expression": "drm.reason"
+        },
+        "dead_on_arrival": {
+            "table": "pd",
+            "displayName": "Dead On Arrival",
+            "width": "100",
+            "groupable": true,
+            "filterable": true
+        },
+        "still_born": {
+            "table": "pd",
+            "displayName": "Stillborn",
+            "width": "100",
+            "groupable": true,
+            "filterable": true,
+            "expression": "CASE WHEN pd.stillborn = 'Y' THEN 'Yes' ELSE 'No' END"
+        },
+        "cause_of_death_icdcode": {
+            "table": "pd",
+            "displayName": "Cause of Death (ICD Code)",
+            "width": "100",
+            "groupable": true,
+            "filterable": true
+        },
+        "user_name": {
+            "table": "pr",
+            "displayName": "Last Modified By",
+            "width": "80",
+            "groupable": true,
+            "filterable": true
+        },
+        "created_by": {
+            "table": "pr",
+            "displayName": "Created By",
+            "width": "80",
+            "groupable": true,
+            "filterable": true
+        },
+        "mlc_no": {
+            "table": "pr",
+            "displayName": "MLC No",
+            "width": "90",
+            "filterable": true
+        },
+        "mlc_type": {
+            "table": "pr",
+            "displayName": "MLC Type",
+            "width": "90",
+            "filterable": true
+        },
+        "accident_place": {
+            "table": "pr",
+            "displayName": "Accident Place",
+            "width": "90",
+            "filterable": true
+        },
+        "police_stn": {
+            "table": "pr",
+            "displayName": "Police Station",
+            "width": "90",
+            "filterable": true
+        },
+        "mlc_remarks": {
+            "table": "pr",
+            "displayName": "MLC Remarks",
+            "width": "90",
+            "filterable": true
+        },
+        "certificate_status": {
+            "table": "pr",
+            "displayName": "Certificate Status",
+            "width": "90",
+            "filterable": true
+        },
+        "discharge_finalized_user": {
+            "table": "pr",
+            "displayName": "Discharge Summary Finalized By",
+            "width": "100",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true
+        },
+        "physical_discharge_remarks": {
+            "table": "pr",
+            "displayName": "Physical Discharge Remarks",
+            "width": "100",
+            "groupable": false,
+            "filterable": false,
+            "expression": "CASE WHEN pr.discharge_flag = 'D' THEN pr.discharge_remarks ELSE NULL END"
+        },
+        "discharge_type": {
+            "table": "dtm",
+            "displayName": "Discharge Type",
+            "width": "100",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT discharge_type FROM discharge_type_master order by discharge_type",
+            "expression": "CASE WHEN pr.visit_type='i' AND pr.discharge_flag='D' THEN COALESCE(dtm.discharge_type, 'Normal') ELSE dtm.discharge_type END"
+        },
+        "noofdays": {
+            "table": "pr",
+            "displayName": "Period Of Stay(in days)",
+            "width": "100",
+            "filterable": true,
+            "dataType": "numeric",
+            "decimalType": "integer",
+            "expressionLines": [
+                "CASE WHEN ROUND(EXTRACT(EPOCH from ( ",
+                " CASE WHEN pr.discharge_date is null THEN LOCALTIMESTAMP(0) ",
+                " ELSE TO_TIMESTAMP(TO_CHAR(pr.discharge_date,'dd-MM-yyyy') ||' ' ",
+                "  ||TO_CHAR(pr.discharge_time,'HH24:MI:SS'),'dd-MM-yyyy HH24:MI:SS') ",
+                " END) ",
+                " -TO_TIMESTAMP(to_char(pr.reg_date,'dd-MM-yyyy') ",
+                "   ||' '||to_char(pr.reg_time,'HH24:MI:SS'),'dd-MM-yyyy HH24:MI:SS'))::numeric ",
+                " /(60*60*24),1) = 0 ",
+                " THEN ",
+                "  CASE WHEN pr.discharge_date is not null THEN 1 ELSE 0 END else ",
+                "  ROUND(extract(EPOCH from (CASE WHEN pr.discharge_date is null THEN LOCALTIMESTAMP(0) ELSE",
+                "   TO_TIMESTAMP(TO_CHAR(pr.discharge_date,'dd-MM-yyyy') ",
+                "   ||' '||TO_CHAR(pr.discharge_time,'HH24:MI:SS'),'dd-MM-yyyy HH24:MI:SS') ",
+                " END) ",
+                " -TO_TIMESTAMP(TO_CHAR(pr.reg_date,'dd-MM-yyyy') ",
+                "  ||' '||TO_CHAR(pr.reg_time,'HH24:MI:SS'),'dd-MM-yyyy HH24:MI:SS'))::numeric ",
+                "  /(60*60*24),1)::integer ",
+                "END"
+            ]
+        },
+        "admit_datetime": {
+            "table": "adm",
+            "displayName": "Admission Date With Time",
+            "width": "90",
+            "expression": "TO_CHAR(adm.admit_time, 'dd-MM-yyyy hh24:mi')"
+        },
+        "admit_date": {
+            "table": "adm",
+            "displayName": "Admission Date",
+            "width": "90",
+            "expression": "date(adm.admit_time)"
+        },
+        "admit_count": {
+            "displayName": "Admission Count",
+            "width": 60,
+            "dataType": "numeric",
+            "decimalType": "integer",
+            "aggFunction": "sum",
+            "expression": "1"
+        },
+        "referrer_mobile": {
+            "table": "rdoc,ref",
+            "displayName": "Referer Mobile",
+            "width": 100,
+            "expression": "COALESCE(ref.referal_mobileno, rdoc.doctor_mobile)"
+        },
+        "discharge_state_name": {
+            "table": "dsn",
+            "displayName": "Discharge Status",
+            "width": 100,
+            "groupable": true,
+            "filterable": true,
+            "allowedValuesQuery": "select discharge_state_name from discharge_state_names"
+        },
+        "initiate_discharging_date": {
+            "table": "pdis",
+            "displayName": "Initiate Discharge Date/Time",
+            "width": 100,
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "expression": "TO_CHAR(pdis.initiate_discharging_date + pdis.initiate_discharging_time, 'dd-MM-yyyy HH24:MI:SS')"
+        },
+        "initiate_temp_username": {
+            "table": "uuin",
+            "expression": "uuin.temp_username",
+            "displayName": "Initiate Discharge Done By",
+            "width": 100
+        },
+        "initiate_discharge_comments": {
+            "table": "pdis",
+            "displayName": "Initiate Discharge Remarks",
+            "width": 100
+        },
+        "clinical_discharging_date": {
+            "table": "pdis",
+            "displayName": "Clinical Discharge Date/Time",
+            "width": 100,
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "expression": "TO_CHAR(pdis.clinical_discharging_date + pdis.clinical_discharging_time, 'dd-MM-yyyy HH24:MI:SS')"
+        },
+        "clinical_tepm_username": {
+            "table": "uucl",
+            "expression": "uucl.temp_username",
+            "displayName": "Clinical Discharge Done By",
+            "width": 100
+        },
+        "clinical_discharge_comments": {
+            "table": "pdis",
+            "displayName": "Clinical Discharge Remarks",
+            "width": 100
+        },
+        "financial_discharge_date": {
+            "table": "pdis",
+            "displayName": "Financial Discharge Date/Time",
+            "width": 100,
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "expression": "TO_CHAR(pdis.financial_discharge_date + pdis.financial_discharge_time, 'dd-MM-yyyy HH24:MI:SS')"
+        },
+        "financial_temp_username": {
+            "table": "uufn",
+            "expression": "uufn.temp_username",
+            "displayName": "Financial Discharge Done By",
+            "width": 100
+        },
+        "discharge_date_time": {
+            "table": "pdis",
+            "displayName": "Physical Discharge Date/Time",
+            "width": 100,
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "expression": "TO_CHAR(pr.discharge_date + pr.discharge_time, 'dd-MM-yyyy HH24:MI:SS')"
+        },
+        "clinical_discharge_tat": {
+            "table": "pdis",
+            "displayName": "Clinical Discharge TAT",
+            "width": 100,
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "expression": "CASE WHEN (extract ('day' from (pdis.clinical_discharging_date+pdis.clinical_discharging_time)-(pdis.initiate_discharging_date+initiate_discharging_time)) > 0 ) THEN  to_char((pdis.clinical_discharging_date+pdis.clinical_discharging_time)-(pdis.initiate_discharging_date+pdis.initiate_discharging_time),'DD' ) || ' Days ' || to_char((pdis.clinical_discharging_date+pdis.clinical_discharging_time) - (pdis.initiate_discharging_date+pdis.initiate_discharging_time),'HH24:MI:SS') ELSE to_char((pdis.clinical_discharging_date+pdis.clinical_discharging_time)-(pdis.initiate_discharging_date+pdis.initiate_discharging_time), 'DD') || ' Days ' ||  to_char((pdis.clinical_discharging_date+pdis.clinical_discharging_time) - (pdis.initiate_discharging_date+pdis.initiate_discharging_time), 'HH24:MI:SS') END"
+        },
+        "financial_discharge_tat": {
+            "table": "pdis",
+            "displayName": "Financial Discharge TAT",
+            "width": 100,
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "expression": "CASE WHEN (extract ('day' from (pdis.financial_discharge_date+pdis.financial_discharge_time)-(pdis.clinical_discharging_date+pdis.clinical_discharging_time)) > 0 ) THEN  to_char((pdis.financial_discharge_date+pdis.financial_discharge_time)-(pdis.clinical_discharging_date+pdis.clinical_discharging_time),'DD' ) || ' Days ' || to_char((pdis.financial_discharge_date+pdis.financial_discharge_time) - (pdis.clinical_discharging_date+pdis.clinical_discharging_time),'HH24:MI:SS') ELSE to_char((pdis.financial_discharge_date+pdis.financial_discharge_time)-(pdis.clinical_discharging_date+pdis.clinical_discharging_time),'DD') || ' Days ' || to_char((pdis.financial_discharge_date+pdis.financial_discharge_time) - (pdis.clinical_discharging_date+pdis.clinical_discharging_time),'HH24:MI:SS') END"
+        },
+        "discharge_tat": {
+            "table": "pr,pdis",
+            "displayName": "Discharge TAT",
+            "width": 100,
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "expression": "CASE WHEN (extract ('day' from (pr.discharge_date + pr.discharge_time)-(pdis.initiate_discharging_date+initiate_discharging_time)) > 0 ) THEN  to_char((pr.discharge_date + pr.discharge_time)-(pdis.initiate_discharging_date+initiate_discharging_time),'DD' ) || ' Days ' || to_char((pr.discharge_date+pr.discharge_time) - (pdis.initiate_discharging_date+pdis.initiate_discharging_time),'HH24:MI:SS') ELSE to_char((pr.discharge_date+pr.discharge_time) - (pdis.initiate_discharging_date+pdis.initiate_discharging_time),'DD') || ' Days ' || to_char((pr.discharge_date+pr.discharge_time) - (pdis.initiate_discharging_date+pdis.initiate_discharging_time),'HH24:MI:SS') END"
+        },
+        "expected_discharge_date_time": {
+            "table": "pdis",
+            "displayName": "Expected Discharge Date/Time ",
+            "width": 100,
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "expression": "TO_CHAR(pdis.expected_discharge_date + pdis.expected_discharge_time, 'dd-MM-yyyy HH24:MI:SS')"
+        },
+        "discharge_finalized_date_time": {
+            "table": "pr",
+            "displayName": "Discharge Summary Finalized Date/Time",
+            "width": 100,
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "expression": "TO_CHAR(pr.discharge_finalized_date + pr.discharge_finalized_time, 'dd-MM-yyyy HH24:MI:SS')"
+        },
+        "expected_dob": {
+            "table": "pd",
+            "displayName": "Expected Date of Birth",
+            "dataType": "date",
+            "filterable": true,
+            "groupable": true,
+            "width": "80",
+            "name": "expected_dob"
+        },
+        "pending_ordered_activities": {
+            "table": "pov,povrv",
+            "displayName": "Pending Ordered Activities",
+            "dataType": "numeric",
+            "decimalType": "integer",
+            "width": "100",
+            "expression": "coalesce(pending_tests_services_count, 0)+coalesce(pending_operation_count, 0)"
+        },
+        "pending_ward_activities": {
+            "table": "pwav",
+            "displayName": "Pending Ward Activities",
+            "dataType": "numeric",
+            "decimalType": "integer",
+            "width": "100",
+            "expression": "coalesce(pending_ward_activity_count, 0)"
+        },
+        "pending_patient_indent": {
+            "table": "ppiv",
+            "displayName": "Pending Patient Indents",
+            "dataType": "numeric",
+            "decimalType": "integer",
+            "width": "100",
+            "expression": "coalesce(pending_patient_indent_count, 0)"
+        },
+        "delivery_type": {
+            "table": "pd",
+            "filterable": true,
+            "groupable": true,
+            "displayName": "Delivery Type",
+            "width": 100,
+            "expression": "CASE WHEN pd.delivery_type='N' THEN 'Normal' WHEN pd.delivery_type = 'C' THEN 'Caesarean' END"
+        },
+        "indication_cs": {
+            "table": "csim",
+            "displayName": "Indication for CS",
+            "width": 100,
+            "filterable": true,
+            "groupable": true,
+            "expressionLines": "csim.indication"
+        }
+    },
+    "defaultShowFields": [
+        "mr_no",
+        "patient_id",
+        "patient_type_name",
+        "full_name",
+        "age",
+        "age_in",
+        "patient_gender",
+        "dept_name",
+        "reg_date"
+    ]
+}

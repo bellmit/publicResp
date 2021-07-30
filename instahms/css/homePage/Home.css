@@ -1,0 +1,176 @@
+.screen-name a, 
+.screen-name a:hover {
+    color: inherit;
+}
+
+.cancel {
+    visibility: hidden;
+    float: right;
+    margin: 0px 0px 0px 8px;
+    font-size: 13px;
+}
+
+.cancel > img {
+    width: 12px;
+    padding: 2px 0px 0px;
+}
+
+.screen-link {
+    display: none;
+}
+
+.add-to-home-page-button {
+    font-size: 12px;
+    font-family: Arial;
+    color: #BABABA;
+    float: right;
+    padding: 4px 3px 0px 0px;
+}
+
+.add-to-home-page-div {
+    float: left;
+    margin: 0px 4px 0px 0px;
+}
+
+.add-to-home-page-content {
+    float: left;
+    font-weight: bold;
+}
+
+.add-to-home-page-img {
+    width: 14px;
+    height: 14px;
+}
+
+.home-page-tab {
+    font-size: 13px;
+    font-family: Arial;
+    float: left;
+    padding: 4px 8px;
+    max-width: 144px;
+    min-width: 55px;
+}
+
+.screen-name {
+    float: left;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    max-width: 115px;
+    min-width: 3px;
+    color: #BABABA;
+    font-weight: bold;
+} 
+
+.screen-name:hover, 
+.add-to-home-page-button:hover {
+    color: #495A6E;
+    cursor: pointer;
+}
+
+.home-page-tab:hover {
+    cursor: pointer;
+    background-color: #EEEEEE;
+}
+
+.home-page-tab:hover .cancel {
+    visibility: visible;
+}
+
+#add-to-home-page-report-content option,
+#add-to-home-page-work-list-content option {
+    width: 157px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.default-list {
+    color: #D6D6D6;
+    font-family: Arial;
+    font-size: 14px;
+    padding: 4px 0px;
+}
+
+#add-to-home-page-dialog, 
+#delete-dialog {
+    display: none;
+    max-width: 420px;
+}
+
+.container {
+    box-sizing: content-box;
+    margin: 20px 0px 0px;
+}
+
+.home-page-header {
+    height: 25px;
+}
+
+.hr-style {
+    border: none;
+    border-top: 2px solid #DDE0E3;
+    margin: 11px 0px 0px;
+}
+
+.home-page-content {
+    box-sizing: content-box;
+    margin: 6px 0px 0px;
+}
+
+.empty-home-image-div {
+    width: 200px;
+    margin: 100px auto 0px;
+}
+
+.empty-home-content-div {
+    width: 302px;
+    margin: 15px auto 122px;
+    font-size: 12px;
+    font-family: Arial;
+    color: #666;
+}
+
+.empty-home-content {
+    padding: 0px 0px 0px 56px;
+}
+
+.refresh-button {
+    color: #495A6E;
+    float:right;
+    margin: 4px 2px 8px 0px;
+    font-family: Arial;
+    font-size: 13px;
+}
+
+.refresh-button:hover {
+    cursor: pointer;
+}
+
+.refresh-button > span > img {
+    width: 9px;
+    padding: 0px 5px 0px 0px;
+}
+
+.report-title {
+    float:left;
+}
+
+.report-title > h1 {
+    margin: 3px 0px 9px 0px;
+}
+
+#fav-screen {
+    width: 100%;
+    border: none;
+    display: none;
+}
+
+.header-home-decorator {
+    border: none;
+    padding: 0px;
+}
+
+#tblMain,
+.empty-home-image {
+    width: 100%;
+}

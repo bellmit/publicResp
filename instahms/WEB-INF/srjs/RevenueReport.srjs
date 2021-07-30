@@ -1,0 +1,34 @@
+{
+    "title": "Revenue Report",
+    "reportGroup": "Financial Reports",
+    "description": "This report shows all Revenue recognised through Bills within the given date range.  Revenue is considered to be recognized only after a bill has been finalized, therefore this report only includes charges from bills which are finalized.  <br/> <br/><font color='red'> NOTE: We would recommend that you use the Bill Charge Adjustment Report Builder and migrate all Favorite Reports as revenue recognition is not dependent on Bill Finalization as was the case in previous releases and instead based on Accrual. This report is now not being maintained and would be removed soon. Do contact us at insta-support@practo.com if you need support or any more details.</font>",
+    "dateFields": [
+        "finalized_date",
+        "open_date",
+        "closed_date"
+    ],
+    "allowNoDate": true,
+    "defaultOrder": "bill_no",
+    "defaultShowFields": [
+        "bill_no",
+        "bill_patient_full_name",
+        "posted_date",
+        "chargehead_name",
+        "act_description",
+        "amount",
+        "discount",
+        "net_amount"
+    ],
+    "includes": [
+        "BillCharge.srjs"
+    ],
+    "queryUnits": [
+        {
+            "joinTables": [],
+            "mainTableAlias": "bc",
+            "mainTableName": "bill_charge",
+            "whereExpression": "b.status != 'X' AND bc.status != 'X' AND b.status != 'A'",
+            "whereTable": "b"
+        }
+    ]
+}

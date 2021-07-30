@@ -1,0 +1,371 @@
+{
+    "title": "Scheduled Appointments Report",
+    "reportGroup": "Consultation Reports",
+    "dateFields": [
+        "appointment_date",
+        "booked_date",
+        "orig_appt_date",
+        "arrival_date"
+    ],
+    "description": "This report shows all the appointment lists that are taken by patients irrespective of OP or IP Patient.",
+    "tableName": [
+        "rpt_appointment_details_view"
+    ],
+    "defaultShowFields": [
+        "appointment_date",
+        "appointment_time",
+        "mr_no",
+        "visit_id",
+        "patient_name",
+        "appointment_type",
+        "appointment_status",
+        "booked_resource",
+        "test_name",
+        "service_name",
+        "surgery_name",
+        "duration",
+        "other_secondary_resources"
+    ],
+    "fields": {
+        "appointment_date": {
+            "displayName": "Appointment Date",
+            "dataType": "date",
+            "width": "60",
+            "groupable": true,
+            "filterable": true
+        },
+        "appointment_time": {
+            "displayName": "Appointment Date/Time",
+            "width": "60",
+            "groupable": true,
+            "filterable": true
+        },
+        "booked_date": {
+            "displayName": "Booked Date",
+            "dataType": "date",
+            "width": "60",
+            "groupable": true,
+            "filterable": true
+        },
+        "orig_appt_date": {
+            "displayName": "Orig Appt Date",
+            "dataType": "date",
+            "width": "60",
+            "groupable": true,
+            "filterable": true
+        },
+        "arrival_date": {
+            "displayName": "Arrival Date",
+            "dataType": "date",
+            "width": "60",
+            "groupable": true,
+            "filterable": true
+        },
+        "booked_time": {
+            "displayName": "Booked Date/Time",
+            "width": "60",
+            "groupable": true,
+            "filterable": true
+        },
+        "orig_appt_time": {
+            "displayName": "Orig Appt Date/Time",
+            "width": "60",
+            "groupable": true,
+            "filterable": true
+        },
+        "arrival_time": {
+            "displayName": "Arrival Date/Time",
+            "width": "60",
+            "groupable": true,
+            "filterable": true
+        },
+        "mr_no": {
+            "displayName": "MR No.",
+            "width": "65",
+            "groupable": false,
+            "filterable": false
+        },
+        "visit_id": {
+            "displayName": "Visit Id",
+            "width": "60",
+            "groupable": false,
+            "filterable": false
+        },
+        "patient_name": {
+            "displayName": "Patient Name",
+            "width": "100",
+            "groupable": false,
+            "filterable": false
+        },
+        "patient_contact": {
+            "displayName": "Patient Mobile",
+            "width": "100",
+            "groupable": false,
+            "filterable": false
+        },
+        "patient_age": {
+            "displayName": "Age",
+            "width": "60",
+            "groupable": false,
+            "filterable": false
+        },
+        "patient_age_in": {
+            "displayName": "Age In",
+            "width": "30",
+            "groupable": false,
+            "filterable": false
+        },
+         "name_local_language": {
+                    "displayName": "Name In Local Language",
+                    "width": 150
+         },
+        "patient_gender": {
+            "displayName": "Gender",
+            "width": "70",
+            "groupable": false,
+            "filterable": false
+        },
+        "complaint_name": {
+            "displayName": "Complaint",
+            "width": "100",
+            "groupable": true,
+            "filterable": true
+        },
+        "remarks": {
+            "displayName": "Remarks",
+            "width": "100"
+        },
+        "diag_code": {
+            "displayName": "Diagnosis Code",
+            "width": "80",
+            "allowNull": true
+        },
+        "diag_descr": {
+            "displayName": "Diagnosis Description",
+            "allowNull": true,
+            "width": "120",
+            "groupable": true,
+            "filterable": true
+        },
+        "changed_by": {
+            "displayName": "Modified By",
+            "width": "80",
+            "groupable": true,
+            "filterable": true,
+            "allowedValuesQuery": "SELECT distinct emp_username FROM u_user;"
+        },
+        "cancel_reason": {
+            "displayName": "Appointment Cancel Reason",
+            "width": "100",
+            "groupable": true,
+            "filterable": true
+        },
+        "consultation_type": {
+            "displayName": "Consultation Type",
+            "width": "100",
+            "groupable": true,
+            "filterable": true,
+            "allowedValuesQuery": "select consultation_type from consultation_types"
+        },
+        "bed_name": {
+            "displayName": "Bed Name",
+            "width": "70",
+            "groupable": true,
+            "filterable": true,
+            "allowedValuesQuery": "select bed_name from bed_names"
+        },
+        "ward_name": {
+            "displayName": "Ward Name",
+            "width": "70",
+            "groupable": true,
+            "filterable": true,
+            "allowedValuesQuery": "select ward_name from ward_names"
+        },
+        "appointment_type": {
+            "displayName": "Appointment Type",
+            "width": "70",
+            "groupable": true,
+            "filterable": true,
+            "allowedValues": [
+                "Consultation",
+                "Test",
+                "Surgery",
+                "Service"
+            ]
+        },
+        "appointment_status": {
+            "displayName": "Appointment Status",
+            "width": "65",
+            "groupable": true,
+            "filterable": true,
+            "allowedValues": [
+                "Arrived",
+                "Confirmed",
+                "Booked",
+                "Completed",
+                "No Show",
+                "Cancel"
+            ]
+        },
+        "visit_mode": {
+            "displayName": "Visit Mode",
+            "width": "65",
+            "groupable": true,
+            "filterable": true,
+            "allowedValues": [
+                "In Person",
+                "Online"
+            ]
+        },
+        "rescheduled": {
+            "displayName": "Rescheduled",
+            "width": "65",
+            "groupable": true,
+            "filterable": true,
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "test_name": {
+            "displayName": "Test Name",
+            "width": "120",
+            "groupable": true,
+            "filterable": true
+        },
+        "service_name": {
+            "displayName": "Service Name",
+            "width": "120",
+            "groupable": true,
+            "filterable": true
+        },
+        "surgery_name": {
+            "displayName": "Surgery Name",
+            "width": "120",
+            "groupable": true,
+            "filterable": true
+        },
+        "booked_resource": {
+            "displayName": "Primary Resource",
+            "width": "120",
+            "groupable": true,
+            "filterable": true
+        },
+        "booked_by": {
+            "displayName": "Booked By",
+            "width": "65",
+            "groupable": true,
+            "filterable": true,
+            "allowedValuesQuery": "SELECT distinct emp_username FROM u_user;"
+        },
+        "surgeon_name": {
+            "displayName": "Surgeon Name",
+            "width": "120",
+            "groupable": true,
+            "filterable": true
+        },
+        "anesthetist_name": {
+            "displayName": "Anesthetist Name",
+            "width": "70",
+            "groupable": true,
+            "filterable": true
+        },
+        "technician_name": {
+            "displayName": "Technician/Radiologist",
+            "width": "70",
+            "groupable": true,
+            "filterable": true
+        },
+        "equipment_name": {
+            "displayName": "Equipment Name",
+            "width": "70",
+            "groupable": true,
+            "filterable": true
+        },
+        "consultant_name": {
+            "displayName": "Consultant",
+            "width": "70",
+            "groupable": true,
+            "filterable": true,
+            "allowedValuesQuery": "select doctor_name from doctors order by doctor_name"
+        },
+        "doctor_name": {
+            "displayName": "Service Doctor",
+            "width": "70",
+            "groupable": true,
+            "allowHorizGroup": false,
+            "filterable": true,
+            "allowedValuesQuery": "select doctor_name from doctors order by doctor_name"
+        },
+        "prescribing_doctor_name": {
+            "displayName": "Prescribing doctor",
+            "width": "100",
+            "groupable": true,
+            "filterable": true
+        },
+        "other_secondary_resources": {
+            "displayName": "Other Resources",
+            "width": "100",
+            "groupable": true,
+            "allowHorizGroup": false,
+            "filterable": true
+        },
+        "duration": {
+            "displayName": "Duration (Mins)",
+            "width": "50",
+            "description": "Duration in Minutes",
+            "dataType": "numeric",
+            "decimalType": "integer",
+            "groupable": true,
+            "filterable": true
+        },
+        "duration_hrs": {
+            "displayName": "Duration (Hrs)",
+            "width": "50",
+            "description": "Duration in Hours",
+            "dataType": "numeric",
+            "filterable": true
+        },
+        "theatre_name": {
+            "displayName": "Theatre Name",
+            "width": "50",
+            "groupable": true,
+            "filterable": true
+        },
+        "scheduler_visit_type": {
+            "displayName": "Scheduler Visit Type",
+            "width": "100",
+            "groupable": true,
+            "filterable": true,
+            "allowedValues": [
+                "Main",
+                "Follow Up"
+            ]
+        },
+        "center_name": {
+            "displayName": "Center Name",
+            "width": "100",
+            "groupable": true,
+            "filterable": true,
+            "allowedValuesQuery": "select center_name from hospital_center_master where center_id != 0 order by center_name"
+        },
+        "waitlist": {
+            "table": "sa",
+            "displayName": "Waitlist Number ",
+            "width": "50",
+            "expression": "CASE when waitlist = 0 THEN 'NA' ELSE waitlist::text END ",
+            "dataType": "numeric",
+            "decimalType": "integer",
+            "groupable": true,
+            "filterable": true
+        },
+        "patient_group": {
+            "table": "cgm",
+            "displayName": "Patient Confidentiality Group",
+            "width": "150",
+            "expression": "cgm.name",
+            "filterable": true,
+            "groupable": true
+        }
+    }
+}

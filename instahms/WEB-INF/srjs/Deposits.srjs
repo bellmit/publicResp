@@ -1,0 +1,153 @@
+{
+    "title": "Deposits Report",
+    "reportGroup": "Billing Reports",
+    "description": "This report shows the deposits per patient: total collected, used up and balance.",
+    "allowNoDate": true,
+    "defaultDate": "None",
+    "dateFields": [
+        "first_deposit_date",
+        "last_deposit_date",
+        "first_visit_date"
+    ],
+    "defaultOrder": "mr_no",
+    "includes": [
+        "PatientDetailFields.srjs"
+    ],
+    "queryUnits": [
+        {
+            "mainTableName": "deposit_dates_view",
+            "mainTableAlias": "dv",
+            "joinTables": [
+                {
+                    "name": "patient_details",
+                    "alias": "pd",
+                    "dependsOn": "dv",
+                    "expression": "ON (pd.mr_no = dv.mr_no)"
+                },
+                {
+                    "name": "deposit_setoff_total",
+                    "alias": "dst",
+                    "dependsOn": "dv",
+                    "expression": "ON (pd.mr_no = dst.mr_no)"
+                },
+                {
+                    "name": "ip_deposits_view",
+                    "alias": "ipv",
+                    "expression": "ON (pd.mr_no = ipv.mr_no)"
+                }
+            ]
+        }
+    ],
+    "fields": {
+        "first_deposit_date": {
+            "table": "dv",
+            "displayName": "Initial Deposit Date",
+            "width": "60",
+            "dataType": "date",
+            "description": "First Deposit Date"
+        },
+        "last_deposit_date": {
+            "table": "dv",
+            "displayName": "Final Deposit Date",
+            "width": "60",
+            "dataType": "date",
+            "description": "Last Deposit Access Date"
+        },
+        "hosp_total_deposits": {
+            "table": "dst",
+            "displayName": "Total Deposits",
+            "width": "60",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "aggFunction": "sum",
+            "filterable": true,
+            "expression": "COALESCE(dst.hosp_total_deposits,0.00)"
+        },
+        "hosp_total_setoffs": {
+            "table": "dst",
+            "displayName": "Total Set-Offs",
+            "width": "60",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "aggFunction": "sum",
+            "filterable": true,
+            "expression": "COALESCE(dst.hosp_total_setoffs,0.00)"
+        },
+        "hosp_total_balance": {
+            "table": "dst",
+            "displayName": "Balance",
+            "width": "60",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "aggFunction": "sum",
+            "filterable": true,
+            "expression": "COALESCE(dst.hosp_total_balance,0.00)"
+        },
+        "credit_card_commission_amount": {
+            "displayName": "Commission Amount",
+            "width": 50,
+            "groupable": true,
+            "filterable": true,
+            "allowedValuesQuery": "SELECT credit_card_commission_amount FROM bill_receipts br join receipts r on (r.receipt_id=br.receipt_no) left join card_type_master c on (c.card_type_id=r.card_type_id)"
+        },
+        "credit_card_commission_percentage": {
+            "displayName": "Commission Percentage",
+            "width": 50,
+            "groupable": true,
+            "filterable": true,
+            "allowedValuesQuery": "SELECT credit_card_commission_percentage FROM bill_receipts br join receipts r on (r.receipt_id=br.receipt_no) left join card_type_master c on (c.card_type_id=r.card_type_id)"
+        },
+        "bill_no": {
+            "table": "dst",
+            "displayName": "Bill No",
+            "width": "300",
+            "groupable": true,
+            "filterable": true,
+            "expressionLines": [
+                " (SELECT textcat_commacat(bill_no) ",
+                "  FROM bill b ",
+                "  JOIN patient_registration par ON (b.visit_id=par.patient_id) ",
+                "  WHERE dst.mr_no = par.mr_no AND b.deposit_set_off > 0) "
+            ]
+        },
+        "ip_total_deposits": {
+            "table": "ipv",
+            "displayName": "Total IP Deposits",
+            "width": "60",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "aggFunction": "sum",
+            "filterable": true,
+            "expression": "COALESCE(ipv.total_ip_deposits,0.00)"
+        },
+        "ip_total_setoffs": {
+            "table": "ipv",
+            "displayName": "Total IP Set-Offs",
+            "width": "60",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "aggFunction": "sum",
+            "filterable": true,
+            "expression": "COALESCE(ipv.total_ip_set_offs,0.00)"
+        },
+        "ip_total_balance": {
+            "table": "ipv",
+            "displayName": "Total IP Balance",
+            "width": "60",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "aggFunction": "sum",
+            "filterable": true,
+            "expression": "COALESCE(ipv.total_ip_deposits,0.00)-COALESCE(ipv.total_ip_set_offs,0.00)"
+        }
+    },
+    "defaultShowFields": [
+        "mr_no",
+        "full_name",
+        "first_visit_date",
+        "hosp_total_deposits",
+        "hosp_total_setoffs",
+        "hosp_total_balance",
+        "bill_no"
+    ]
+}

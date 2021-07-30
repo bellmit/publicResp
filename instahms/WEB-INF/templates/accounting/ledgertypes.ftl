@@ -1,0 +1,7 @@
+[#assign bank = "BANK"]
+[#assign cash = "CASH"]
+[#assign cv = "CUSTOMER/VENDOR ACCOUNT"]
+[#assign al = "ASSETS/LIABILITIES ACCOUNT"]
+[#assign ie = "INCOME/EXPENSES ACCOUNT"]
+[#assign sales = "SALES ACCOUNT"]
+[#assign purchases = "PURCHASES ACCOUNT"]

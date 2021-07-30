@@ -1,0 +1,4 @@
+-- liquibase formatted sql
+-- changeset sanjana.goyal:new-masters-for-patient-details
+
+ALTER TABLE patient_details ADD race_id integer, add CONSTRAINT fk_race FOREIGN KEY (race_id) REFERENCES race_master(race_id), ADD religion_id integer, add CONSTRAINT fk_religion FOREIGN KEY (religion_id) REFERENCES religion_master(religion_id), ADD marital_status_id integer, add CONSTRAINT fk_marital_status FOREIGN KEY (marital_status_id) REFERENCES marital_status_master(marital_status_id), ADD blood_group_id integer, add CONSTRAINT fk_blood_group FOREIGN KEY (blood_group_id) REFERENCES blood_group_master(blood_group_id);

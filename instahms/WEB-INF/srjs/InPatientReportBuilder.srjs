@@ -1,0 +1,209 @@
+{
+    "title": "In Patient List",
+    "reportGroup": "Patient Stats Reports",
+    "allowNoDate": true,
+    "dateFields": [
+        "admission_date"
+    ],
+    "description": "This reports shows in patients details",
+    "tableName": [
+        "rpt_in_patient_report_view"
+    ],
+    "defaultShowFields": [
+        "mr_no",
+        "patient_id",
+        "patient_name",
+        "age",
+        "patient_gender",
+        "doctor_name",
+        "referal_doctor",
+        "alloc_bed_name",
+        "admission_datetime",
+        "discharge_datetime",
+        "mlc_status",
+        "deposit",
+        "approval_amount",
+        "noofdays"
+    ],
+    "fields": {
+        "mr_no": {
+            "displayName": "MR No.",
+            "width": "65",
+            "groupable": true
+        },
+        "patient_id": {
+            "displayName": "Patient ID",
+            "width": "65",
+            "groupable": true
+        },
+        "patient_name": {
+            "displayName": "Patient Name",
+            "width": "130",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true
+        },
+        "name_local_language": {
+             "displayName": "Name In Local Language",
+             "width": 150
+        },
+        "age": {
+            "displayName": "Age",
+            "width": "50"
+        },
+        "patient_gender": {
+            "displayName": "Gender",
+            "width": "50"
+        },
+        "doctor_name": {
+            "displayName": "Admitting Doctor",
+            "width": "80",
+            "groupable": true
+        },
+        "referal_doctor": {
+            "displayName": "Referal Doctor",
+            "width": "80",
+            "groupable": true
+        },
+        "alloc_bed_name": {
+            "displayName": "Bed Name",
+            "width": "100",
+            "filterable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT 'Not Allocated' AS bed_name UNION SELECT * FROM (SELECT bed_name FROM bed_names GROUP BY bed_name ORDER BY bed_name) AS foo"
+        },
+        "admission_date": {
+            "displayName": "Admission Date",
+            "dataType": "date",
+            "width": "60"
+        },
+        "admission_time": {
+            "displayName": "Admission Time",
+            "width": "60"
+        },
+        "admission_datetime": {
+            "displayName": "DOA",
+            "width": "90"
+        },
+        "discharge_datetime": {
+            "displayName": "DOD",
+            "width": "100"
+        },
+        "mlc_status": {
+            "displayName": "MLC Status",
+            "width": "100"
+        },
+        "deposit": {
+            "displayName": "Advance",
+            "width": "100",
+            "filterable": true,
+            "decimalType": "amount",
+            "dataType": "numeric"
+        },
+        "approval_amount": {
+            "displayName": "Apd Limit",
+            "width": "100"
+        },
+        "primary_tpa": {
+            "displayName": "Primary Sponsor",
+            "width": "100",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT 'GENERAL' AS tpa_name UNION SELECT tpa_name FROM tpa_master ORDER BY tpa_name"
+        },
+        "secondary_tpa": {
+            "displayName": "Secondary Sponsor",
+            "width": "100",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT tpa_name FROM tpa_master ORDER BY tpa_name"
+        },
+        "plan_name": {
+            "displayName": "Plan Name",
+            "width": "100",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT plan_name FROM insurance_plan_main ORDER BY plan_name"
+        },
+        "plan_type": {
+            "displayName": "Plan Type",
+            "width": "80",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT category_name FROM insurance_category_master ORDER BY category_name"
+        },
+        "ward_name": {
+            "displayName": "Ward Name",
+            "width": 100,
+            "allowedValuesQuery": "SELECT ward_name FROM ward_names GROUP BY ward_name ORDER BY ward_name",
+            "allowNull": true,
+            "filterable": true,
+            "groupable": true
+        },
+        "primary_insurance_co_name": {
+            "displayName": "Primary Insurance Company Name",
+            "width": "100",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT insurance_co_name FROM insurance_company_master ORDER BY insurance_co_name"
+        },
+        "secondary_insurance_co_name": {
+            "displayName": "Secondary Insurance Company Name",
+            "width": "100",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT insurance_co_name FROM insurance_company_master ORDER BY insurance_co_name"
+        },
+        "dept_name": {
+            "displayName": "Admitting Department",
+            "width": "110",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true
+        },
+        "complaint": {
+            "displayName": "Admitting Complaint",
+            "width": "100",
+            "filterable": true,
+            "allowNull": true
+        },
+        "noofdays": {
+            "displayName": "Period Of Stay(in days)",
+            "width": "100"
+        },
+        "bed_start_date": {
+            "displayName": "Start Date",
+            "width": "100",
+            "filterable": true,
+            "allowNull": true,
+            "dataType": "date"
+        },
+        "bed_end_date": {
+            "displayName": "End Date",
+            "width": "100",
+            "filterable": true,
+            "allowNull": true,
+            "dataType": "date"
+        },
+        "bill_bed_type": {
+            "displayName": "Billing Bed Type",
+            "width": "100",
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT bed_type_name FROM bed_types ORDER BY bed_type_name"
+        },
+        "center_name": {
+            "displayName": "Center Name",
+            "width": "100",
+            "groupable": true,
+            "filterable": true,
+            "allowedValuesQuery": "SELECT center_name FROM hospital_center_master WHERE center_id!=0"
+        }
+    }
+}

@@ -1,0 +1,3 @@
+charge_id,activity_id,payment_charge_head,charge_group,act_description_id,doctor_id,doctor_payment_id,doctor_amount,activity_conducted,username,activity_code,conducted_datetime
+'CH259818','79357','INVITE',,'3612',,,'0.00','Y',,'PHI',
+'CH259819','140','INVRET',,'3612',,,'0.00','Y',,'PHI',

@@ -1,0 +1,175 @@
+{
+    "comment": "Coder Claim Review Report",
+    "title": "Coder Claim Review Report",
+    "description": "This report gives the Coder's Review Comments, Responses and Status details",
+    "allowNoDate": true,
+    "dateFields": [
+        "created_date"
+    ],
+    "tableName": [
+        "rpt_coder_claim_review_view"
+    ],
+    "defaultShowFields": [
+        "title",
+        "body",
+        "created_by",
+        "status",
+        "review_type"
+    ],
+    "filterOnlyFields": {
+        "created_date": {
+            "displayName": "Review Raised at",
+            "width": 100,
+            "dataType": "date"
+        }
+    },
+    "fields": {
+        "mr_no": {
+            "displayName": "MR No",
+            "width": 100,
+            "filterable": true,
+            "groupable": true
+        },
+        "patient_name": {
+            "displayName": "Patient Name",
+            "width": 100,
+            "filterable": false,
+            "groupable": true
+        },
+        "name_local_language": {
+             "displayName": "Name In Local Language",
+             "width": "150"
+         },
+        "title": {
+            "displayName": "Reason",
+            "width": 100,
+            "filterable": false,
+            "groupable": true
+        },
+        "body": {
+            "displayName": "Reason Details",
+            "width": 100,
+            "filterable": false,
+            "groupable": true
+        },
+        "patient_id": {
+            "displayName": "Visit ID",
+            "width": 100,
+            "filterable": true,
+            "groupable": true
+        },
+        "reg_date": {
+            "displayName": "Visit Date",
+            "width": 100,
+            "filterable": true,
+            "groupable": true,
+            "dataType": "date"
+        },
+        "review_type": {
+            "displayName": "Review Type",
+            "width": 100,
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "select review_type from review_types"
+        },
+        "created_by": {
+            "displayName": "Review Raised By",
+            "width": 120,
+            "filterable": false,
+            "groupable": true
+        },
+        "created_date": {
+            "displayName": "Review Raised At",
+            "width": 80,
+            "filterable": true,
+            "groupable": true,
+            "dataType": "date"
+        },
+        "created_date_time": {
+            "displayName": "Review Raised At Time",
+            "width": 80,
+            "filterable": true,
+            "groupable": true,
+            "dataType": "timestamp"
+        },
+        "assignedto": {
+            "displayName": "Assigned To",
+            "width": 100,
+            "filterable": false,
+            "groupable": true
+        },
+        "assigned_to_role_name": {
+            "displayName": "Assigned to Role",
+            "width": 100,
+            "filterable": false,
+            "groupable": true
+        },
+        "comment_by": {
+            "displayName": "Responsed By",
+            "width": 100,
+            "filterable": false,
+            "groupable": true,
+            "dataType": "string"
+        },
+        "comment_at": {
+            "displayName": "Responsed At",
+            "width": 80,
+            "filterable": true,
+            "groupable": true,
+            "dataType": "timestamp"
+        },
+        "center_name": {
+            "displayName": "Center Name",
+            "width": 100,
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT center_name FROM hospital_center_master WHERE center_id!=0"
+        },
+        "status": {
+            "displayName": "Status",
+            "width": 100,
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT DISTINCT status FROM reviews ORDER BY status"
+        },
+        "doctor_name": {
+            "displayName": "Doctor Name",
+            "width": 80,
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT DISTINCT doctor_name FROM doctors WHERE status = 'A' ORDER BY doctor_name"
+        },
+        "consultation_status": {
+            "displayName": "Consultation Status",
+            "width": 100,
+            "filterable": true,
+            "groupable": true,
+            "allowedValues": [
+                "Active",
+                "Partial",
+                "Completed",
+                "Not Applicable",
+                "Cancelled"
+            ]
+        },
+        "codification_status": {
+            "displayName": "Codification Status",
+            "width": 100,
+            "filterable": true,
+            "groupable": true,
+            "allowedValues": [
+                "In-Progress",
+                "Completed",
+                "Completed-Needs Verification",
+                "Verified and Closed"
+            ]
+        },
+        "op_type_name": {
+            "displayName": "OP Type",
+            "width": 80,
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT op_type_name FROM op_type_names"
+        }
+    }
+}

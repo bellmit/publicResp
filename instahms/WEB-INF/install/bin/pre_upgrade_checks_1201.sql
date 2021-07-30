@@ -1,0 +1,1 @@
+(select cast(substring(version from '[0-9]{2}.[0-9]+') as double precision) from system_data) < '11.0'

@@ -1,0 +1,7 @@
+claim_id,charge_id,bill_no,sponsor_id,approval_id,insurance_claim_amt,claim_status,claim_recd_total,denial_code,prior_auth_id,prior_auth_mode_id,denial_remarks,code_type,charge_excluded,insurance_category_id,first_of_category,amount_included,return_insurance_claim_amt,charge_head,claim_activity_id,closure_type,rejection_reason_category_id,copay_ded_adj,max_copay_adj,sponsor_limit_adj,copay_perc_adj,include_in_claim_calc,tax_amt
+'CLD000412','CH258225','BC17000271','TPAID0001',,'0.00','O','0.00',,,,,,'N','-1','f','0.00','0.00','GREG',,'O',,'0.00','0.00','0.00','0.00','f','0.00'
+'CLD000412','CH258226','BC17000271','TPAID0001',,'0.00','O','0.00',,,,,,'N','-1','f','0.00','0.00','OPREG',,'O',,'0.00','0.00','0.00','0.00','f','0.00'
+'CLD000412','CH258227','BC17000271','TPAID0001',,'167.00','O','0.00',,,,,,'N','1','f','0.00','0.00','OPDOC',,'O',,'0.00','0.00','0.00','-167.00','t','0.00'
+'CLD000579','CH259687','BC18000084','TPAID0102',,'59.50','O',,,'',,,'',,'3','t','0.00','0.00','LTDIA',,'O',,'0.00','0.00','0.00','-28.05','t','5.95'
+'CLD000579','CH259818','BC18000118','TPAID0102',,'17.25','O',,,,,,,,'-1',,,'0.00','INVITE',,'O',,'0.00','0.00','0.00','-8.13','t','1.72'
+'CLD000579','CH259819','BC18000118','TPAID0102',,'0.00','O',,,,,,,,'-1','t','0.00','0.00','INVRET',,'O',,'0.00','0.00','0.00','0.00','t','0.00'

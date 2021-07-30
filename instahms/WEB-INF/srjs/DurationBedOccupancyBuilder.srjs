@@ -1,0 +1,199 @@
+{
+    "title": "Bed Occupancy Report",
+    "reportGroup": "Bed Util Reports",
+    "allowNoDate": true,
+    "defaultOrder": "ref_date",
+    "dateFields": [
+        "ref_date"
+    ],
+    "description": "This report describes total beds occupied/allocation/deallocation and in-patients/admissions/discharges on a daily basis.",
+    "tableName": [
+        "rpt_duration_bed_occupancy_view"
+    ],
+    "defaultShowFields": [
+        "ref_date",
+        "opening_count",
+        "allocations",
+        "deallocations",
+        "closing_count",
+        "total_beds",
+        "closing_per"
+    ],
+    "fields": {
+        "ref_date": {
+            "dataType": "date",
+            "width": "60",
+            "displayName": "Date",
+            "groupable": true,
+            "filterable": true
+        },
+        "month": {
+            "displayName": "Month",
+            "width": "70",
+            "groupable": true,
+            "filterable": true,
+            "allowedValues": [
+                "JANUARY",
+                "FEBRUARY",
+                "MARCH",
+                "APRIL",
+                "MAY",
+                "JUNE",
+                "JULY",
+                "AUGUST",
+                "SEPTEMBER",
+                "OCTOBER",
+                "NOVEMBER",
+                "DECEMBER"
+            ]
+        },
+        "day": {
+            "displayName": "Day",
+            "width": "50",
+            "dataType": "numeric",
+            "groupable": true,
+            "filterable": true,
+            "allowedValues": [
+                "1",
+                "2",
+                "3",
+                "4",
+                "5",
+                "6",
+                "7",
+                "8",
+                "9",
+                "10",
+                "11",
+                "12",
+                "13",
+                "14",
+                "15",
+                "16",
+                "17",
+                "18",
+                "19",
+                "20",
+                "21",
+                "22",
+                "23",
+                "24",
+                "25",
+                "26",
+                "27",
+                "28",
+                "29",
+                "30",
+                "31"
+            ]
+        },
+        "opening_count": {
+            "displayName": "Opening Bed Count",
+            "width": "50",
+            "dataType": "numeric"
+        },
+        "total_beds": {
+            "displayName": "Total Beds",
+            "width": "50",
+            "dataType": "numeric"
+        },
+        "admission": {
+            "displayName": "Admissions",
+            "width": "50",
+            "dataType": "numeric",
+            "aggFunction": "sum"
+        },
+        "normal_dis": {
+            "displayName": "Normal Discharges",
+            "width": "50",
+            "dataType": "numeric",
+            "aggFunction": "sum"
+        },
+        "abscond_dis": {
+            "displayName": "Absconded",
+            "width": "50",
+            "dataType": "numeric",
+            "aggFunction": "sum"
+        },
+        "death_dis": {
+            "displayName": "Death",
+            "width": "50",
+            "dataType": "numeric",
+            "aggFunction": "sum"
+        },
+        "dama_dis": {
+            "displayName": "DAMA",
+            "width": "50",
+            "dataType": "numeric",
+            "aggFunction": "sum"
+        },
+        "ref_dis": {
+            "displayName": "Referred Out",
+            "width": "50",
+            "dataType": "numeric",
+            "aggFunction": "sum"
+        },
+        "discharges": {
+            "displayName": "Total Discharges",
+            "width": "50",
+            "dataType": "numeric",
+            "aggFunction": "sum"
+        },
+        "closing_count": {
+            "displayName": "Closing Bed Count",
+            "width": "50",
+            "dataType": "numeric"
+        },
+        "allocations": {
+            "displayName": "Bed Allocations",
+            "width": "70",
+            "dataType": "numeric",
+            "aggFunction": "sum"
+        },
+        "deallocations": {
+            "displayName": "Bed Deallocations",
+            "width": "70",
+            "dataType": "numeric",
+            "aggFunction": "sum"
+        },
+        "opening_ip_count": {
+            "displayName": "Opening IP Count",
+            "width": "50",
+            "dataType": "numeric",
+            "aggFunction": "sum"
+        },
+        "closing_ip_count": {
+            "displayName": "Closing IP Count",
+            "width": "50",
+            "dataType": "numeric",
+            "aggFunction": "sum"
+        },
+        "closing_per": {
+            "displayName": "Bed Occupancy%",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "width": "70",
+            "aggFunction": "wavg",
+            "aggWeight": "total_beds"
+        },
+        "admn_cancelled": {
+            "displayName": "Admissions Cancelled",
+            "width": "70",
+            "dataType": "numeric",
+            "aggFunction": "sum"
+        },
+        "other_discharges": {
+            "displayName": "Other Discharges",
+            "width": "70",
+            "dataType": "numeric",
+            "aggFunction": "sum"
+        },
+        "center_name": {
+            "displayName": "Center Name",
+            "width": "90",
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT center_name FROM hospital_center_master WHERE center_id != 0 ORDER BY center_name"
+        }
+    }
+}

@@ -1,0 +1,343 @@
+{
+    "title": "Service Sub Tasks Report",
+    "defaultOrder": "desc_short",
+    "reportGroup": "Services Sub Tasks Reports",
+    "description": "This report builder gives a detailed description of all Services Sub Tasks within the selected date range. (Note: The builder describes only those Sub Tasks, which were added from Dental Consultation screen. )",
+    "dateFields": [
+        "planned_date",
+        "presc_date",
+        "conducteddate"
+    ],
+    "allowNoDate": true,
+    "defaultShowFields": [
+        "mr_no",
+        "service_name",
+        "desc_short",
+        "status",
+        "presc_date",
+        "conducteddate"
+    ],
+    "fields": {
+        "mr_no": {
+            "displayName": "MR No.",
+            "width": "65",
+            "table": "pd"
+        },
+        "planned_date": {
+            "displayName": "Planned Date",
+            "width": "65",
+            "groupable": true,
+            "expression": "date(ttd.planned_date)"
+        },
+        "patient_id": {
+            "displayName": "Patient ID",
+            "width": "65",
+            "table": "pr"
+        },
+        "patient_name": {
+            "displayName": "Patient Name",
+            "width": "130",
+            "table": "pd"
+        },
+        "service_name": {
+            "displayName": "Service Name",
+            "width": "100",
+            "allowNull": true,
+            "filterable": true,
+            "groupable": true,
+            "table": "s",
+            "allowedValuesQuery": "SELECT service_name FROM services GROUP BY service_name ORDER BY service_name"
+        },
+        "patient_type": {
+            "displayName": "Patient Type",
+            "width": "60",
+            "filterable": true,
+            "groupable": true,
+            "expression": "CASE WHEN pr.visit_type='i' THEN 'In-Patient' WHEN pr.visit_type='o' THEN 'Out-Patient' END",
+            "allowedValues": [
+                "In-Patient",
+                "Out-Patient"
+            ],
+            "table": "pr"
+        },
+        "department": {
+            "displayName": "Department",
+            "width": "100",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "table": "sdt",
+            "allowedValuesQuery": "SELECT department FROM services_departments ORDER BY department"
+        },
+        "age": {
+            "table": "pd",
+            "displayName": "Age",
+            "width": "50",
+            "dataType": "numeric",
+            "decimalType": "integer",
+            "groupable": true,
+            "allowNull": true,
+            "expression": "COALESCE(get_patient_age(pd.dateofbirth, pd.expected_dob))"
+        },
+  "name_local_language": {
+            "table": "pd",
+            "displayName": "Name In Local Language",
+            "width": 150,
+            "expression": "pd.name_local_language"
+  },
+        "gender": {
+            "displayName": "Gender",
+            "width": "50",
+            "filterable": true,
+            "groupable": true,
+            "table": "pd",
+            "allowedValues": [
+                "Male",
+                "Female",
+                "Couple",
+                "Others"
+            ],
+            "expression": "CASE WHEN pd.patient_gender='M' THEN 'Male' WHEN pd.patient_gender='F' THEN 'Female' WHEN pd.patient_gender='C' THEN 'Couple' WHEN pd.patient_gender='O' THEN 'Others' END"
+        },
+        "op_type_name": {
+            "displayName": "Visit/OP Type",
+            "width": "80",
+            "groupable": true,
+            "filterable": true,
+            "table": "otm",
+            "allowedValuesQuery": "SELECT op_type_name FROM op_type_names"
+        },
+        "presc_date": {
+            "displayName": "Presc. Date",
+            "width": "70",
+            "dataType": "date",
+            "expression": "date(sp.presc_date)"
+        },
+        "presc_time": {
+            "displayName": "Presc. Time",
+            "width": "60",
+            "expression": "to_char(sp.presc_date, 'hh24:mi')"
+        },
+        "presc_doctor": {
+            "displayName": "Presc. Doctor",
+            "width": "100",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "table": "pdoc",
+            "allowedValuesQuery": "SELECT doctor_name AS presc_doctor FROM doctors ORDER BY doctor_name",
+            "expression": "pdoc.doctor_name"
+        },
+        "condby": {
+            "table": "cdoc",
+            "displayName": "Cond. Doctor",
+            "width": "100",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT doctor_name AS condby FROM  doctors ORDER BY doctor_name",
+            "expression": "cdoc.doctor_name"
+        },
+        "conducted": {
+            "displayName": "Service Conducted Status",
+            "width": "85",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "table": "sp",
+            "allowedValues": [
+                "Conducted",
+                "Not Conducted",
+                "Cancelled",
+                "Condn. Unnecessary",
+                "Partially Conducted"
+            ],
+            "expression": "CASE WHEN sp.conducted='C' THEN 'Conducted' WHEN sp.conducted='N' THEN 'Not Conducted' WHEN sp.conducted='X' THEN 'Cancelled' WHEN sp.conducted='U' THEN 'Condn. Unnecessary' WHEN sp.conducted='P' THEN 'Partially Conducted' END"
+        },
+        "conducteddate": {
+            "displayName": "Conducted Dt.",
+            "width": "70",
+            "dataType": "date",
+            "expression": "date(ttd.completed_date)"
+        },
+        "cond_time": {
+            "displayName": "Conducted Time",
+            "width": "60",
+            "expression": "to_char(ttd.completed_date, 'hh24:mi')"
+        },
+        "center_name": {
+            "displayName": "Center Name",
+            "width": "100",
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT center_name FROM hospital_center_master WHERE center_id!=0",
+            "table": "hcm"
+        },
+        "quantity": {
+            "displayName": "Qty Ordered",
+            "width": "65",
+            "dataType": "numeric",
+            "table": "sp"
+        },
+        "tooth_number": {
+            "displayName": "Tooth Number",
+            "width": "42",
+            "filterable": true,
+            "expression": "CASE WHEN COALESCE(ttd.tooth_unv_number, '') = '' THEN ttd.tooth_fdi_number ELSE ttd.tooth_unv_number END",
+            "table": "ttd"
+        },
+        "completedby": {
+            "displayName": "Sub Task Cond.By",
+            "width": "65",
+            "allowedValuesQuery": "SELECT doctor_name AS completedby FROM  services_presc_tasks spt join doctors doc on(spt.completed_by=doc.dcotor_id) ORDER BY doc.doctor_name",
+            "expression": "doc.doctor_name",
+            "table": "doc"
+        },
+        "desc_short": {
+            "displayName": "Sub Task Name",
+            "filterable": true,
+            "groupable": true,
+            "width": "65",
+            "table": "sst",
+            "allowedValuesQuery": "SELECT desc_short FROM service_sub_tasks ORDER BY desc_short"
+        },
+        "desc_long": {
+            "displayName": "Description",
+            "width": "65",
+            "table": "sst"
+        },
+        "status": {
+            "displayName": "Sub Task Status",
+            "filterable": true,
+            "groupable": true,
+            "width": "65",
+            "table": "spt",
+            "allowedValues": [
+                "Completed",
+                "Not Completed",
+                "Not Required"
+            ],
+            "expression": "CASE WHEN spt.status='C' THEN 'Completed' WHEN spt.status='NC' THEN 'Not Completed' WHEN spt.status='NR' THEN 'Not Required' END"
+        },
+        "completion_time": {
+            "displayName": "Sub Task Compl.Time",
+            "groupable": true,
+            "width": "65",
+            "table": "spt"
+        },
+        "treatment_status": {
+            "displayName": "Treatment Status",
+            "groupable": true,
+            "filterable": true,
+            "width": "65",
+            "table": "ttd",
+            "allowedValues": [
+                "Planned",
+                "In Progress",
+                "Completed",
+                "Cancelled"
+            ],
+            "expression": "CASE WHEN ttd.treatment_status='P' THEN 'Planned' WHEN ttd.treatment_status='I' THEN 'In Progress' WHEN ttd.treatment_status='C' THEN 'Completed' WHEN ttd.treatment_status='X' THEN 'Cancelled' END"
+        }
+    },
+    "queryUnits": [
+        {
+            "mainTableAlias": "sp",
+            "mainTableName": "services_prescribed",
+            "groupBy": false,
+            "joinTables": [
+                {
+                    "name": "tooth_treatment_details",
+                    "alias": "ttd",
+                    "expression": "ON (sp.prescription_id=ttd.service_prescribed_id)",
+                    "dependsOn": "sp",
+                    "type": "left"
+                },
+                {
+                    "name": "services",
+                    "alias": "s",
+                    "expression": "ON (sp.service_id=s.service_id)",
+                    "dependsOn": "sp",
+                    "type": "left"
+                },
+                {
+                    "name": "services_presc_tasks",
+                    "alias": "spt",
+                    "expression": "ON (ttd.treatment_id=spt.treatment_id)",
+                    "dependsOn": "ttd",
+                    "type": "left"
+                },
+                {
+                    "name": "service_sub_tasks",
+                    "alias": "sst",
+                    "expression": "ON (spt.sub_task_id=sst.sub_task_id)",
+                    "dependsOn": "spt",
+                    "type": "left"
+                },
+                {
+                    "name": "patient_details",
+                    "alias": "pd",
+                    "expression": "ON (sp.mr_no=pd.mr_no)",
+                    "dependsOn": "sp",
+                    "type": "left"
+                },
+                {
+                    "name": "services_departments",
+                    "alias": "sdt",
+                    "expression": "ON (s.serv_dept_id=sdt.serv_dept_id)",
+                    "dependsOn": "s",
+                    "type": "join"
+                },
+                {
+                    "name": "salutation_master",
+                    "alias": "sm",
+                    "expression": "ON (pd.salutation=sm.salutation_id)",
+                    "dependsOn": "pd",
+                    "type": "left"
+                },
+                {
+                    "name": "patient_registration",
+                    "alias": "pr",
+                    "expression": "ON (sp.patient_id=pr.patient_id)",
+                    "dependsOn": "sp",
+                    "type": "left"
+                },
+                {
+                    "name": "hospital_center_master",
+                    "alias": "hcm",
+                    "expression": "ON (pr.center_id=hcm.center_id)",
+                    "dependsOn": "pr",
+                    "type": "left"
+                },
+                {
+                    "name": "op_type_names",
+                    "alias": "otm",
+                    "expression": "ON (pr.op_type=otm.op_type)",
+                    "dependsOn": "pr",
+                    "type": "left"
+                },
+                {
+                    "name": "doctors",
+                    "alias": "doc",
+                    "expression": "ON (doc.doctor_id=spt.completed_by)",
+                    "dependsOn": "spt",
+                    "type": "left"
+                },
+                {
+                    "name": "doctors",
+                    "alias": "cdoc",
+                    "expression": "ON (cdoc.doctor_id=ttd.completed_by)",
+                    "dependsOn": "sp",
+                    "type": "left"
+                },
+                {
+                    "name": "doctors",
+                    "alias": "pdoc",
+                    "expression": "ON (pdoc.doctor_id=sp.doctor_id)",
+                    "dependsOn": "sp",
+                    "type": "left"
+                }
+            ]
+        }
+    ]
+}

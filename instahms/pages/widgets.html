@@ -1,0 +1,287 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Widget samples for the widget library</title>
+    <!-- note that we use strict mode as declared in the first line of this document -->
+    <link type="text/css" rel="stylesheet" href="widgets.css">
+    <script language="javascript" type="text/javascript" src="widgets.js"></script>
+  </head>
+
+  <body>
+    <h3>Block tabs sample</h3>
+    <table cellspacing="0" cellpadding="0" border="0" class="tabBlockMain" id="tabs:block">
+      <!-- first row: contains the tab titles -->
+      <tr><td class="tabBlockButtons">
+        <table cellspacing="0" cellpadding="0" border ="0" class="tabBlockButtons">
+<!--        
+        <table class="tabBlockButtons">
+-->        
+          <tr>
+            <td class="tabBlockButton-first">
+              <div class="tabBlockButton-first" id="btn:/page1">General<div>
+            </td>
+            <td class="tabBlockButton-mid">
+              <div class="tabBlockButton-mid" id="btn:/page2">Category 2</div>
+            </td>
+            <td class="tabBlockButton-mid">
+              <div class="tabBlockButton-mid" id="btn:/page3">Page 3</div>
+            </td>
+            <td class="tabBlockButton-mid">
+              <div class="tabBlockButton-mid" id="btn:/page4">Tab 4</div>
+            </td>
+            <td class="tabBlockButton-mid">
+              <div class="tabBlockButton-mid" id="btn:/page5">Page 5</div>
+            </td>
+            <td class="tabBlockButton-mid">
+              <div class="tabBlockButton-mid" id="btn:/page6">Page 6</div>
+            </td>
+            <td class="tabBlockButton-last">
+              <div class="tabBlockButton-last" id="btn:/page7">Page 7</div>
+            </td>
+          </tr>
+        </table>
+      </tr></td>
+
+      <!-- second row: contains the tab pages area -->
+      <tr><td class="tabBlockContents">
+        <div class="tabBlockPage" id="page:/page1">
+          Contents of tab:/page1
+        </div>
+        <div class="tabBlockPage" id="page:/page2">
+          tab:/page2<br> tab:/page2<br> tab:/page2<br>
+        </div>
+        <div class="tabBlockPage" id="page:/page3">
+          tab:/page3<p> tab:/page3<p> tab:/page3<p>
+        </div>
+        <div class="tabBlockPage" id="page:/page4">
+          44444444 444444444 4444444 44444444<br>44444444 444444444 4444444 44444444<br>
+        </div>
+        <div class="tabBlockPage" id="page:/page5">
+          55555555 555555555 5555555 55555555<br>55555555 555555555 5555555 55555555<br>
+        </div>
+        <div class="tabBlockPage" id="page:/page6">
+          66666666 666666666 6666666 66666666<br>66666666 666666666 6666666 66666666<br>
+        </div>
+        <div class="tabBlockPage" id="page:/page7">
+          77777777 777777777 7777777 77777777<br>77777777 777777777 7777777 77777777<br>
+        </div>
+      </tr></td>
+    </table>
+
+    <!-- initialize: name of the tab and which tab to show on init -->
+    <script language="javascript">tabInitialize('block','/page4');</script>
+
+    <!-- Tree sample, this is what it shows:
+        o Root
+        +- o Node1
+        |  |- o Leaf11
+        |  |_ o LastLeaf11
+        +- o LastNode2
+           |- o Leaf21
+           |_ o LastLeaf21
+    -->
+    <hr/>
+    <h3>Tree sample</h3>
+
+    <!-- the root: note that root does not have a +, all first level items are shown -->
+    <div id="treecont">
+    <table>
+      <tr>
+        <td class="treeIcon"><img src="icons/folder.gif"></td>
+        <td>Root 0</td>
+        <td> <input type="button" onclick="treeExpand('treecont', 1)" value="1"/></td>
+        <td> <input type="button" onclick="treeExpand('treecont', 2)" value="2"/></td>
+        <td> <input type="button" onclick="treeExpand('treecont', 3)" value="3"/></td>
+      </tr>
+    </table>
+    <!-- every top level item is a table -->
+    <table>
+      <!-- a row for our info -->
+      <tr>
+        <!-- 3 cells: link, icon, label -->
+        <td class="treeNode-open" id="tree:/node1" onclick="treeToggle('/node1')"></td>
+        <td class="treeIcon"><img src="icons/folder.gif"></td>
+        <td>Node 1</td>
+      </tr>
+      <!-- a row for children: will be hidden/shown -->
+      <tr>
+        <!-- first cell for the link to our sibling -->
+        <td class="treeLink"></td>
+        <!-- next cell contains our child item -->
+        <td class="treeChild" colspan="2">
+          <div id="page:/node1" style="display:block">
+            <table>
+              <tr>
+                <td class="treeLeaf"></td>
+                <td class="treeIcon"><img src="icons/folder.gif"></td>
+                <td>Leaf 11</td>
+              </tr>
+              <!-- since this is a leaf, no child row -->
+            </table>
+            <table>
+              <tr>
+                <td class="treeLastLeaf"></td>
+                <td class="treeIcon"><img src="icons/folder.gif"></td>
+                <td>LastLeaf 12</td>
+              </tr>
+              <!-- since this is a leaf, no child row -->
+            </table>
+          </div>
+        </td>
+      </tr>
+    </table>
+    <table>
+      <tr>
+        <td class="treeLastNode-open" id="tree:/lastnode2" onclick="treeToggle('/lastnode2')"></td>
+        <td class="treeIcon"><img src="icons/folder.gif"></td>
+        <td>LastNode 2</td>
+      </tr>
+      <tr>
+        <!-- first cell for the link to our sibling: empty for a last node -->
+        <td class="treeBlank"></td>
+        <td class="treeChild" colspan="2">
+          <div id="page:/lastnode2" style="display:block">
+            <table>
+              <tr>
+                <td class="treeLeaf"></td>
+                <td class="treeIcon"><img src="icons/folder.gif"></td>
+                <td>Leaf 21</td>
+              </tr>
+            </table>
+            <table>
+              <tr>
+                <td class="treeNode-open" id="tree:/lastnode2/node2" onclick="treeToggle('/lastnode2/node2')"></td>
+                <td class="treeIcon"><img src="icons/folder.gif"></td>
+                <td>Node 22</td>
+              </tr>
+              <tr>
+                <td class="treeLink"></td>
+                <td class="treeChild" colspan="2">
+                  <div id="page:/lastnode2/node2" style="display:block">
+                    <table>
+                      <tr>
+                        <td class="treeLeaf"></td>
+                        <td class="treeIcon"><img src="icons/folder.gif"></td>
+                        <td>Leaf 221</td>
+                      </tr>
+                    </table>
+                  </div>
+                </td>
+              </tr>
+            </table>
+            <table>
+              <tr>
+                <td class="treeLastLeaf"></td>
+                <td class="treeIcon"><img src="icons/folder.gif"></td>
+                <td>LastLeaf 23</td>
+              </tr>
+            </table>
+          </div>
+        </td>
+      </tr>
+    </table>
+    </div>
+    <hr/>
+
+    <h3>Tabs sample</h3>
+    <!-- 
+      if you want a full page tab, remove the height: style like this:
+        <div class="tabMain" id="tabs:/" active="/vsite-general">
+      otherwise, the height of the tabs is restricted to whatever is given.
+    -->
+    <div class="tabMain" id="tabs:/" style="min-height: 10em">
+      <div class="tabButtons">
+        <a class="tabButton" id="btn:/vsite-general">General</a>
+        <a class="tabButton" id="btn:/vnetwork" href="#/just-a-display-thing">Tab button</a>
+        <!-- tabInitialize will set the onclick, but you can override by specifying it here -->
+        <a class="tabButton" id="btn:/data-type-library" 
+            onclick="alert('custom action')">Page 2</a>
+        <a class="tabButton" id="btn:/rate-control">Another page</a>
+      </div>
+      <div class="tabDecBar" id="tabDecBar"></div>
+      <div class="tabPage" id="page:/vsite-general">
+        Contents of tab:/vsite-general (General)<br/>
+        Contents of tab:/vsite-general (General)<br/>
+        Contents of tab:/vsite-general (General)<br/>
+        Contents of tab:/vsite-general (General)<br/>
+        Contents of tab:/vsite-general (General)<br/>
+      </div>
+      <div class="tabPage" id="page:/vnetwork">
+        Contents of tab:/vnetwork (Tab Button)<br/>
+      </div>
+      <div class="tabPage" id="page:/data-type-library">
+        Contents of tab:/data-type-library<br/>
+      </div>
+      <div class="tabPage" id="page:/rate-control">
+        Contents of tab:/rate-control<br/>
+      </div>
+    </div>
+    <!-- initialize: name of the tab and which tab to show on init -->
+    <script language="javascript">tabInitialize('/','/vsite-general');</script>
+
+    <!-- twiddle sample -->
+    <hr/>
+    <h3>Twiddle sample</h3>
+    <table class="twMain">
+      <tr class="twDecTop">
+        <td class="twDecTopLeft" rowspan="3"></td>
+        <td></td>
+        <td rowspan="3" class="twDecTopRight"></td>
+      </tr>
+      <tr class="twTitleRow">
+        <!-- match the class prefix -open to the display for the page -->
+        <td class="twTitle-open" id="tw:id77119/services" 
+            onclick="twToggle('id77119/services')">
+          <a class="twTitle">Twiddle (starts open)</a>
+        </td>
+      </tr>
+      <tr class="twPageRow">
+        <td class="twPageRow">
+          <div class="twPage" style="display:block" id="page:id77119/services">
+            Contents of Application<br/>
+            Contents of Application<br/>
+            Contents of Application<br/>
+          </div>
+        </td>
+      </tr>
+      <tr class="twDecBottom">
+        <td class="twDecBottomLeft"></td>
+        <td></td>
+        <td class="twDecBottomRight"></td>
+      </tr>
+    </table>
+
+    <table class="twMain">
+      <tr class="twDecTop">
+        <td class="twDecTopLeft" rowspan="3"></td>
+        <td></td>
+        <td rowspan="3" class="twDecTopRight"></td>
+      </tr>
+      <tr class="twTitleRow">
+        <!-- match the class prefix -open to the display for the page -->
+        <td class="twTitle" id="tw:id77119/services2" 
+            onclick="twToggle('id77119/services2')">
+          <a class="twTitle">Twiddle (starts closed)</a>
+        </td>
+      </tr>
+      <tr class="twPageRow">
+        <td class="twPageRow">
+          <div class="twPage" style="display:none" id="page:id77119/services2">
+            Contents of Application<br/>
+            Contents of Application<br/>
+            Contents of Application<br/>
+          </div>
+        </td>
+      </tr>
+      <tr class="twDecBottom">
+        <td class="twDecBottomLeft"></td>
+        <td></td>
+        <td class="twDecBottomRight"></td>
+      </tr>
+    </table>
+
+
+  </body>
+</html>
+

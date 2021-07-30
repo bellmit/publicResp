@@ -1,0 +1,447 @@
+{
+    "queryUnits": [
+        {
+            "joinTables": [
+                {
+                    "name": "manf_master",
+                    "alias": "mm",
+                    "type": "JOIN",
+                    "dependsOn": "sid",
+                    "expression": "ON (mm.manf_code = sid.manf_name)"
+                },
+                {
+                    "name": "store_item_controltype",
+                    "alias": "ct",
+                    "type": "JOIN",
+                    "dependsOn": "sid",
+                    "expression": "ON (ct.control_type_id = sid.control_type_id)"
+                },
+                {
+                    "name": "item_insurance_categories",
+                    "alias": "icm",
+                    "type": "JOIN",
+                    "dependsOn": "sid",
+                    "expression": "ON (icm.insurance_category_id = sid.insurance_category_id)"
+                },
+                {
+                    "name": "generic_name",
+                    "alias": "gn",
+                    "dependsOn": "sid",
+                    "expression": "ON (gn.generic_code = sid.generic_name)"
+                },
+                {
+                    "name": "generic_classification_master",
+                    "alias": "cl",
+                    "dependsOn": "gn",
+                    "expression": "ON (cl.classification_id = gn.classification_id)"
+                },
+                {
+                    "name": "generic_sub_classification_master",
+                    "alias": "scl",
+                    "dependsOn": "gn",
+                    "expression": "ON (scl.sub_classification_id = gn.sub_classification_id)"
+                },
+                {
+                    "name": "store_category_master",
+                    "alias": "scm",
+                    "dependsOn": "sid",
+                    "expression": "ON (scm.category_id = sid.med_category_id)"
+                },
+                {
+                    "name": "service_sub_groups",
+                    "alias": "ssg",
+                    "dependsOn": "sid",
+                    "expression": "ON (ssg.service_sub_group_id = sid.service_sub_group_id)"
+                },
+                {
+                    "name": "service_groups",
+                    "alias": "sg",
+                    "dependsOn": "ssg",
+                    "expression": "ON (sg.service_group_id = ssg.service_group_id)"
+                },
+                {
+                    "name": "item_form_master",
+                    "alias": "ifm",
+                    "dependsOn": "sid",
+                    "expression": "ON (ifm.item_form_id=sid.item_form_id)"
+                },
+                {
+                    "name": "medicine_route",
+                    "alias": "smr",
+                    "dependsOn": "sid",
+                    "expression": "ON (smr.route_id::text=sid.route_of_admin)"
+                },
+                {
+                    "name": "consumption_uom_master",
+                    "alias": "cum",
+                    "dependsOn": "sid",
+                    "expression": "ON (cum.cons_uom_id=sid.cons_uom_id)"
+                }
+            ]
+        }
+    ],
+    "fields": {
+        "item_name": {
+            "table": "sid",
+            "displayName": "Item Long Name",
+            "width": 160,
+            "filterable": true,
+            "groupable": true,
+            "expression": "sid.medicine_name"
+        },
+        "cust_item_code": {
+            "table": "sid",
+            "displayName": "Custom Item Code",
+            "width": 160,
+            "filterable": true,
+            "groupable": true,
+            "expression": "sid.cust_item_code"
+        },
+        "item_short_name": {
+            "table": "sid",
+            "displayName": "Item Name",
+            "width": 100,
+            "description": "Item Short Name",
+            "filterable": true,
+            "groupable": true,
+            "expression": "sid.medicine_short_name"
+        },
+        "manf_name": {
+            "table": "mm",
+            "displayName": "Manufacturer Name",
+            "width": 120,
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "description": "Manufacturer full name",
+            "allowedValuesQuery": "SELECT manf_name FROM manf_master ORDER BY manf_mnemonic"
+        },
+        "manf_mnemonic": {
+            "table": "mm",
+            "displayName": "Manfr.",
+            "width": 50,
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "description": "Manufacturer short name",
+            "allowedValuesQuery": "SELECT manf_mnemonic FROM manf_master ORDER BY manf_mnemonic"
+        },
+        "generic_name": {
+            "table": "gn",
+            "displayName": "Generic Name",
+            "width": 80,
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT generic_name FROM generic_name ORDER BY generic_name"
+        },
+        "generic_criticality": {
+            "table": "gn",
+            "displayName": "Criticality",
+            "width": 80,
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValues": [
+                "Vital",
+                "Essential",
+                "Desirable"
+            ],
+            "expressionLines": [
+                "CASE WHEN gn.criticality = 'V' THEN 'Vital'",
+                "  WHEN gn.criticality = 'E' THEN 'Essential'",
+                "  WHEN gn.criticality = 'D' THEN 'Desirable' END "
+            ]
+        },
+        "max_cost_price": {
+            "table": "sid",
+            "displayName": "Max. Item Cost Price",
+            "width": 60,
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "description": "Upper limit on cost price for purchases",
+            "filterable": true
+        },
+        "package_size": {
+            "table": "sid",
+            "displayName": "Pkg Size",
+            "width": 60,
+            "dataType": "numeric",
+            "decimalType": "integer",
+            "description": "Package size as in the item Master",
+            "filterable": true,
+            "expression": "sid.issue_base_unit"
+        },
+        "package_type": {
+            "table": "sid",
+            "displayName": "Pack Type",
+            "width": 60,
+            "filterable": true,
+            "groupable": true
+        },
+        "issue_uom": {
+            "table": "sid",
+            "displayName": "Unit UOM",
+            "width": 60,
+            "filterable": true,
+            "groupable": true,
+            "expression": "sid.issue_units"
+        },
+        "package_uom": {
+            "table": "sid",
+            "displayName": "Package UOM",
+            "width": 60,
+            "filterable": true,
+            "groupable": true
+        },
+        "consumption_uom": {
+            "table": "cum",
+            "displayName": "Consumption UOM",
+            "width": 60,
+            "filterable": true,
+            "groupable": true
+        },
+        "consumption_capacity": {
+            "table": "sid",
+            "displayName": "Consumption Capacity",
+            "width": 60,
+            "dataType": "numeric",
+            "filterable": true,
+            "groupable": false
+        },
+        "route_name": {
+            "table": "smr",
+            "displayName": "Route of Adm.",
+            "width": 80,
+            "filterable": true,
+            "groupable": true
+        },
+        "item_barcode_id": {
+            "table": "sid",
+            "displayName": "Barcode ID",
+            "width": 80,
+            "groupable": false
+        },
+        "item_status": {
+            "table": "sid",
+            "displayName": "Status",
+            "width": 40,
+            "groupable": true,
+            "filterable": true,
+            "allowedValues": [
+                "Active",
+                "Inactive"
+            ],
+            "expression": "CASE WHEN sid.status = 'A' THEN 'Active' ELSE 'Inactive' END"
+        },
+        "item_value": {
+            "table": "sid",
+            "displayName": "Value",
+            "width": 40,
+            "groupable": true,
+            "filterable": true,
+            "allowedValues": [
+                "High",
+                "Low",
+                "Medium"
+            ],
+            "expressionLines": [
+                " CASE WHEN sid.value = 'H' THEN 'High' ",
+                " WHEN sid.value = 'L' THEN 'Low' ",
+                " ELSE 'Medium' END"
+            ]
+        },
+        "issue_type": {
+            "table": "scm",
+            "displayName": "Issue Type",
+            "width": 70,
+            "groupable": true,
+            "filterable": true,
+            "allowedValues": [
+                "Retailable",
+                "Consumable",
+                "Reusable",
+                "Permanent"
+            ],
+            "expressionLines": [
+                " CASE WHEN scm.issue_type='R' THEN 'Retailable' ",
+                " WHEN scm.issue_type='C' THEN 'Consumable' ",
+                " WHEN scm.issue_type='L' THEN 'Reusable' ",
+                " WHEN scm.issue_type='P' THEN 'Permanent' END "
+            ]
+        },
+        "identification_type": {
+            "table": "scm",
+            "displayName": "Identification Type",
+            "width": 40,
+            "groupable": true,
+            "filterable": true,
+            "allowedValues": [
+                "Batch",
+                "Serial"
+            ],
+            "expression": "CASE WHEN scm.identification = 'B' THEN 'Batch' ELSE 'Serial' END"
+        },
+        "billable": {
+            "table": "scm",
+            "displayName": "Billable",
+            "width": 40,
+            "groupable": true,
+            "filterable": true,
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "expression": "CASE WHEN scm.billable THEN 'Yes' ELSE 'No' END"
+        },
+        "retailable": {
+            "table": "scm",
+            "displayName": "Retailable",
+            "width": 40,
+            "groupable": true,
+            "filterable": true,
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "expression": "CASE WHEN scm.retailable THEN 'Yes' ELSE 'No' END"
+        },
+        "claimable": {
+            "table": "scm",
+            "displayName": "Claimable",
+            "width": 40,
+            "groupable": true,
+            "filterable": true,
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "expression": "CASE WHEN scm.claimable THEN 'Yes' ELSE 'No' END"
+        },
+        "asset_tracking": {
+            "table": "scm",
+            "displayName": "Track Asset",
+            "width": 40,
+            "groupable": true,
+            "filterable": true,
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "expression": "CASE WHEN scm.asset_tracking = 'Y' THEN 'Yes' ELSE 'No' END"
+        },
+        "prior_auth_required": {
+            "table": "sid",
+            "displayName": "Prior Auth",
+            "width": 40,
+            "groupable": true,
+            "filterable": true,
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "expression": "CASE WHEN prior_auth_required = 'Y' THEN 'Yes' ELSE 'No' END"
+        },
+        "classification_name": {
+            "table": "cl",
+            "displayName": "Classification",
+            "width": 80,
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT classification_name FROM generic_classification_master ORDER BY classification_name"
+        },
+        "sub_classification_name": {
+            "table": "scl",
+            "displayName": "Sub-classification",
+            "width": 80,
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT sub_classification_name FROM generic_sub_classification_master ORDER BY sub_classification_name"
+        },
+        "category_name": {
+            "table": "scm",
+            "displayName": "Item Category",
+            "width": 70,
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT category FROM store_category_master ORDER BY category",
+            "expression": "scm.category"
+        },
+        "insurance_category_name": {
+            "table": "icm",
+            "displayName": "Insurance Category",
+            "width": 70,
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT insurance_category_name FROM item_insurance_categories ORDER BY insurance_category_name"
+        },
+        "control_type_name": {
+            "table": "ct",
+            "displayName": "Control Type",
+            "width": 55,
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT control_type_name FROM store_item_controltype ORDER BY control_type_name"
+        },
+        "service_group_name": {
+            "table": "sg",
+            "displayName": "Service Group",
+            "width": 80,
+            "filterable": true,
+            "groupable": true,
+            "allowHorizGroup": false,
+            "allowedValuesQuery": "SELECT service_group_name FROM service_groups ORDER BY service_group_name"
+        },
+        "service_sub_group_name": {
+            "table": "ssg",
+            "displayName": "Service Sub Group",
+            "width": 80,
+            "filterable": true,
+            "groupable": true,
+            "allowHorizGroup": false,
+            "allowedValuesQuery": "SELECT service_sub_group_name FROM service_sub_groups ORDER BY service_sub_group_name"
+        },
+        "item_form_name": {
+            "table": "ifm",
+            "displayName": "Item Form Name",
+            "width": 80,
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT item_form_name FROM item_form_master ORDER BY item_form_name"
+        },
+        "bin": {
+            "table": "sid",
+            "displayName": "Bin/Rack",
+            "width": 60,
+            "filterable": true,
+            "groupable": true
+        },
+        "tax_rate": {
+            "table": "sid",
+            "displayName": "Tax Rate",
+            "dataType": "Numeric",
+            "decimalType": "percent",
+            "filterable": true,
+            "groupable": true
+        },
+        "tax_type": {
+            "table": "sid",
+            "displayName": "Tax Basis",
+            "width": 90,
+            "filterable": true,
+            "groupable": true,
+            "allowedValues": [
+                "MRP with bonus",
+                "MRP without bonus",
+                "Cost Price Based"
+            ],
+            "expressionLines": [
+                " CASE WHEN sid.tax_type='MB' then 'MRP with bonus' ",
+                " WHEN sid.tax_type='M' then 'MRP without bonus' ",
+                " WHEN sid.tax_type='C' then 'CP Based without bonus' ELSE 'CP Based with bonus' END "
+            ]
+        }
+    }
+}

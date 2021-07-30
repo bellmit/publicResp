@@ -1,0 +1,11 @@
+<xml version="1.0" encoding="UTF-8">
+
+<suite name="InsurancePlanMasterTest" verbose="10" allow-return-values="true">
+	<test name="insurancePlan">
+		<classes>
+			<class name="testng.com.insta.hms.mdm.insuranceplans.InsurancePlanServiceTest" />
+		</classes>
+	</test>
+</suite>
+</xml>
+  

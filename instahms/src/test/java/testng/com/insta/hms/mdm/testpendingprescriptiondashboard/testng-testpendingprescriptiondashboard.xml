@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suite name="PendingPrescriptionServiceTest" verbose="10" allow-return-values="true">
+	<test name="pendingprescriptiondashboardtest">
+		<classes>
+			<class name="testng.com.insta.hms.mdm.testpendingprescriptiondashboard.PendingPrescriptionServiceTest" />
+			<methods>
+				<exclude name="buildParamMap" />
+				<exclude name="buildSearchParamMap" />
+			</methods>
+		</classes>
+	</test>
+</suite> 

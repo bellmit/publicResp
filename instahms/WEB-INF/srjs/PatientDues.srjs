@@ -1,0 +1,243 @@
+{
+    "title": "Patient Dues Report",
+    "reportGroup": "Billing Reports",
+    "description": "This report shows all patient dues within the given date range,and previous billed amt,current billed amt,previous receipt amt, current receipt amt depending upon the given date range.",
+    "dateFields": [
+        "open_date"
+    ],
+    "queryLines": [
+        [
+            "          SELECT query.*,hcm.*, ",
+            "            (' Prior: Before ' || ${fromDate}::date || '    Current: ' || ${fromDate}::date || ' to ' || ${toDate}::date    ",
+            "                || '    Next: ' || ${toDate}::date || ' to ' || (date_trunc('month', ${toDate}::date)+'2 month'::interval-'1 day'::interval)::date  ",
+            "                || '    Post: After ' || (date_trunc('month', ${toDate}::date)+'2 month'::interval-'1 day'::interval)::date ) AS description , ",
+            "              get_patient_full_name(sm.salutation, pd.patient_name, pd.middle_name, pd.last_name)::text AS patient_full_name,pd.name_local_language ",
+            "            FROM( ",
+            "                SELECT open_date,mr_no,sum(billed_amt) AS billed_amt,sum(prior_billed_amt) as prior_billed_amt, ",
+            "              sum(current_billed_amt) as current_billed_amt, sum(next_billed_amt) as next_billed_amt,  ",
+            "                sum(post_billed_amt) as post_billed_amt, sum(receipt_amt) as receipt_amt, ",
+            "              sum(prior_receipt_amt) as prior_receipt_amt, ",
+            "              sum(current_receipt_amt) as current_receipt_amt, ",
+            "              sum(next_receipt_amt) as next_receipt_amt, ",
+            "              sum(post_receipt_amt) as post_receipt_amt, ",
+            "              (sum(billed_amt)-sum(receipt_amt)) as total_due_amt, ",
+            "            (sum(billed_amt)-sum(total_claim)-sum(total_receipts)-sum(deposit_set_off)-sum(points_redeemed_amt)) as pat_due_amt, ",
+            "              (sum(prior_billed_amt)-sum(prior_receipt_amt)) as prior_due_amt, ",
+            "              (sum(current_billed_amt)-sum(current_receipt_amt)) as current_due_amt, ",
+            "              (sum(next_billed_amt)-sum(next_receipt_amt)) as next_due_amt, ",
+            "              (sum(post_billed_amt)-sum(post_receipt_amt)) as post_due_amt ",
+            "              FROM ( ",
+            "                  SELECT mr_no,total_amount+total_tax as billed_amt, ",
+            "                  CASE WHEN date(open_date) < ${fromDate}  ",
+            "                  then total_amount+total_tax ELSE 0 END as prior_billed_amt, ",
+            "                  CASE WHEN date(open_date) >= ${fromDate} AND date(open_date) <= ${toDate}  ",
+            "                  THEN total_amount+total_tax ELSE 0 END AS current_billed_amt, ",
+            "                  CASE WHEN date(open_date) > ${toDate}   ",
+            "                     AND date(open_date) <= (date_trunc('month', ${toDate}::date)+'2 month'::interval-'1 day'::interval)::date   ",
+            "                  THEN total_amount+total_tax ELSE 0 END AS next_billed_amt, ",
+            "                  CASE WHEN date(open_date) > (date_trunc('month', ${toDate}::date)+'2 month'::interval-'1 day'::interval)::date ",
+            "                  THEN total_amount+total_tax ELSE 0 END AS post_billed_amt, ",
+            "                  0 as receipt_amt,0 AS prior_receipt_amt,  ",
+            "                  0 AS current_receipt_amt, 0 AS next_receipt_amt, 0 AS post_receipt_amt , open_date, total_claim+total_claim_tax as total_claim, total_receipts, deposit_set_off, points_redeemed_amt",
+            "                  FROM bill b  ",
+            "                  JOIN patient_details pd ON(pd.visit_id=b.visit_id)  ",
+            "                  WHERE date(open_date) <= (${toDate} ::date + ('2 month'::INTERVAL))::date   ",
+            "                  UNION ALL ",
+            "                  SELECT pd.mr_no,0 AS billed_amt,0 AS prior_billed_amt,  ",
+            "                  0 AS current_billed_amt, 0 AS next_billed_amt, 0 AS post_billed_amt,   ",
+            "                  r.amount as receipt_amt,  ",
+            "                  CASE WHEN date(r.display_date) < ${fromDate}  ",
+            "                  then r.amount ELSE 0 END as prior_receipt_amt,  ",
+            "                  CASE WHEN date(r.display_date) >= ${fromDate}  ",
+            "                  AND date(r.display_date) <= ${toDate}   ",
+            "                  THEN r.amount ELSE 0 END AS current_receipt_amt,  ",
+            "                  CASE WHEN date(r.display_date) > ${toDate}    ",
+            "                     AND date(r.display_date) <= (date_trunc('month', ${toDate}::date)+'2 month'::interval-'1 day'::interval)::date  ",
+            "                  then r.amount ELSE 0 END as next_receipt_amt,  ",
+            "                    CASE WHEN date(r.display_date) > (date_trunc('month', ${toDate}::date)+'2 month'::interval-'1 day'::interval)::date   ",
+            "                  then r.amount ELSE 0 END AS post_receipt_amt  , open_date, 0 as total_claim, 0 as total_receipts, 0 as deposit_set_off, 0 as  points_redeemed_amt",
+            "                  FROM receipts r ",
+            "               JOIN bill_receipts br  ON r.receipt_id = br.receipt_no AND NOT r.is_deposit ",
+            "                  JOIN bill b USING(bill_no)  ",
+            "                  JOIN patient_details pd ON(pd.visit_id=b.visit_id)  ",
+            "                  WHERE date(r.display_date) <= (${toDate} ::date + ('2 month'::INTERVAL))::date  ",
+            "                  ) as foo group by mr_no,open_date) as query ",
+            "            JOIN patient_details pd ON(pd.mr_no=query.mr_no) ",
+            "            JOIN patient_registration pr ON(pr.patient_id = pd.visit_id) ",
+            "            LEFT JOIN salutation_master sm ON(sm.salutation_id = pd.salutation) ",
+            "       LEFT JOIN hospital_center_master hcm ON(hcm.center_id = pr.center_id) "
+        ]
+    ],
+    "fields": {
+        "patient_full_name": {
+            "displayName": "Patient Name",
+            "width": "150",
+            "description": "Patient or Retail Customer Name",
+            "groupable": true
+        },
+        "mr_no": {
+            "displayName": "Mr No",
+            "width": "80",
+            "groupable": true,
+            "filterable": true
+        },
+        "billed_amt": {
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "aggFunction": "sum",
+            "filterable": true,
+            "displayName": "Billed Amt. Total",
+            "width": "70"
+        },
+        "receipt_amt": {
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "aggFunction": "sum",
+            "filterable": true,
+            "displayName": "Receipt Amt. Total",
+            "width": "70"
+        },
+        "total_due_amt": {
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "aggFunction": "sum",
+            "filterable": true,
+            "displayName": "Due Amt. Total",
+            "width": "70"
+        },
+        "pat_due_amt": {
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "aggFunction": "sum",
+            "filterable": true,
+            "displayName": "Pat Due Amt. Total",
+            "width": "70"
+        },
+        "name_local_language": {
+              "displayName": "Name In Local Language",
+              "width": 150
+          },
+        "prior_billed_amt": {
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "aggFunction": "sum",
+            "filterable": true,
+            "displayName": "Billed Amt. Prior",
+            "width": "70"
+        },
+        "prior_receipt_amt": {
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "aggFunction": "sum",
+            "filterable": true,
+            "displayName": "Receipt Amt. Prior",
+            "width": "70"
+        },
+        "prior_due_amt": {
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "aggFunction": "sum",
+            "filterable": true,
+            "displayName": "Due Amt. Prior",
+            "width": "70"
+        },
+        "current_billed_amt": {
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "aggFunction": "sum",
+            "filterable": true,
+            "displayName": "Billed Amt. Current",
+            "width": "70"
+        },
+        "current_receipt_amt": {
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "aggFunction": "sum",
+            "filterable": true,
+            "displayName": "Receipt Amt. Current",
+            "width": "70"
+        },
+        "current_due_amt": {
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "aggFunction": "sum",
+            "filterable": true,
+            "displayName": "Due Amt. Current",
+            "width": "70"
+        },
+        "next_billed_amt": {
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "aggFunction": "sum",
+            "filterable": true,
+            "displayName": "Billed Amt. Next",
+            "width": "70"
+        },
+        "next_receipt_amt": {
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "aggFunction": "sum",
+            "filterable": true,
+            "displayName": "Receipt Amt. Next",
+            "width": "70"
+        },
+        "next_due_amt": {
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "aggFunction": "sum",
+            "filterable": true,
+            "displayName": "Due Amt. Next",
+            "width": "70"
+        },
+        "post_billed_amt": {
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "aggFunction": "sum",
+            "filterable": true,
+            "displayName": "Billed Amt. Post",
+            "width": "70"
+        },
+        "post_receipt_amt": {
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "aggFunction": "sum",
+            "filterable": true,
+            "displayName": "Receipt Amt. Post",
+            "width": "70"
+        },
+        "post_due_amt": {
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "aggFunction": "sum",
+            "filterable": true,
+            "displayName": "Due Amt. Post",
+            "width": "70"
+        },
+        "description": {
+            "displayName": "Date Range Description",
+            "width": "400",
+            "groupable": true,
+            "filterable": true
+        },
+        "center_name": {
+            "displayName": "Center Name",
+            "width": "120",
+            "groupable": true,
+            "filterable": true,
+            "allowedValuesQuery": "SELECT center_name FROM hospital_center_master  ORDER BY center_name"
+        },
+        "open_date": {
+            "displayName": "Open Date",
+            "dataType": "date"
+        }
+    },
+    "defaultShowFields": [
+        "mr_no",
+        "patient_full_name",
+        "billed_amt",
+        "receipt_amt",
+        "total_due_amt",
+        "pat_due_amt"
+    ],
+    "defaultOrder": "mr_no"
+}

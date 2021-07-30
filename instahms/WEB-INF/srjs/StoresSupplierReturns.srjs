@@ -1,0 +1,205 @@
+{
+  "title": "Store Supplier Returns Report",
+  "defaultOrder": "medicine_name",
+  "reportGroup": "Procurement Reports",
+  "dateFields": ["date"],
+  "description": "This report lists Supplier wise Returns in the given time period.",
+  "tableName": ["rpt_store_supp_ret_view"],
+  "defaultShowFields": [
+    "dept_name",
+    "medicine_name",
+    "batch_no",
+    "qty",
+    "amt",
+    "supplier_name",
+    "return_no",
+    "date"
+  ],
+  "fields": {
+    "dept_name": {
+      "displayName": "Store Name",
+      "filterable": true,
+      "groupable": true,
+      "width": "100",
+      "allowNull": true,
+      "allowedValuesQuery": "SELECT dept_name FROM stores ORDER BY dept_name"
+    },
+    "center_name": {
+      "displayName": "Center Name",
+      "filterable": true,
+      "groupable": true,
+      "width": "100",
+      "allowedValuesQuery": "SELECT center_name FROM hospital_center_master WHERE center_id!=0 order by center_name"
+    },
+    "medicine_name": {
+      "displayName": "Item Name",
+      "filterable": true,
+      "groupable": true,
+      "allowNull": true,
+      "width": "125"
+    },
+    "cust_item_code": {
+      "displayName": "Custom Item Code",
+      "filterable": true,
+      "groupable": true,
+      "allowNull": true,
+      "width": "125"
+    },
+    "batch_no": {
+      "displayName": "Batch",
+      "filterable": false,
+      "groupable": false,
+      "width": "60"
+    },
+    "qty": {
+      "displayName": "Return Quantity",
+      "filterable": true,
+      "aggFunction": "sum",
+      "groupable": false,
+      "dataType": "numeric",
+      "width": "60",
+      "decimalType": "quantity"
+    },
+    "pkg_qty": {
+      "displayName": "Return Pkg Quantity",
+      "filterable": true,
+      "aggFunction": "sum",
+      "groupable": false,
+      "dataType": "numeric",
+      "width": "60",
+      "decimalType": "quantity"
+    },
+    "amt": {
+      "displayName": "Amount",
+      "dataType": "numeric",
+      "width": "60",
+      "aggFunction": "sum",
+      "decimalType": "amount"
+    },
+    "category": {
+      "displayName": "Category",
+      "filterable": true,
+      "groupable": true,
+      "allowNull": true,
+      "width": "70",
+      "allowedValuesQuery": "SELECT category FROM store_category_master ORDER BY category"
+    },
+    "tax_rate": {
+      "displayName": "Tax Rate",
+      "dataType": "numeric",
+      "filterable": true,
+      "width": "60",
+      "aggFunction": "sum"
+    },
+    "generic_name": {
+      "displayName": "Generic Name",
+      "filterable": true,
+      "groupable": true,
+      "allowNull": true,
+      "width": "80",
+      "allowedValuesQuery": "SELECT generic_name FROM generic_name ORDER BY generic_name"
+    },
+    "package_type": {
+      "displayName": "Pack Type",
+      "filterable": false,
+      "groupable": false,
+      "width": "60"
+    },
+    "supplier_name": {
+      "displayName": "Supplier",
+      "filterable": true,
+      "groupable": true,
+      "width": "100",
+      "allowedValuesQuery": "SELECT supplier_name FROM supplier_master ORDER BY supplier_name"
+    },
+    "cust_supplier_code": {
+      "displayName": "Supplier Code",
+      "filterable": true,
+      "groupable": true,
+      "width": "100"
+    },
+    "drug_license_no": {
+      "displayName": "Drug License No.",
+      "filterable": false,
+      "groupable": false,
+      "width": "60"
+    },
+    "pan_no": {
+      "displayName": "PAN No.",
+      "filterable": false,
+      "groupable": false,
+      "width": "60"
+    },
+    "cin_no": {
+      "displayName": "CIN No.",
+      "filterable": false,
+      "groupable": false,
+      "width": "60"
+    },
+    "return_no": {
+      "displayName": "Return No",
+      "filterable": true,
+      "groupable": true,
+      "dataType": "integer",
+      "width": "60"
+    },
+    "orig_return_no": {
+      "displayName": "Orig Return No",
+      "filterable": true,
+      "groupable": true,
+      "dataType": "integer",
+      "width": "60"
+    },
+    "date": {
+      "displayName": "Return Date",
+      "dataType": "date",
+      "width": "60"
+    },
+    "returntype": {
+      "displayName": "Type",
+      "filterable": true,
+      "groupable": true,
+      "width": "60",
+      "allowedValues": ["Damage","Expiry","Non-Moving","Others"]
+    },
+    "retstatus": {
+      "displayName": "Status",
+      "filterable": true,
+      "groupable": true,
+      "width": "60",
+      "allowedValues": ["Open","Closed","Partially Received","Received"]
+    },
+    "itemvalue": {
+      "displayName": "Value",
+      "filterable": true,
+      "groupable": true,
+      "width": "60",
+      "allowedValues": ["Medium","High","Low"]
+    },
+    "item_code": {
+      "displayName": "Item Code",
+      "filterable": false,
+      "groupable": false,
+      "width": "60"
+    },
+    "item_barcode_id": {
+      "displayName": "Bar Code",
+      "filterable": false,
+      "groupable": false,
+      "width": "60"
+    },
+    "user_name": {
+      "displayName": "User",
+      "filterable": false,
+      "groupable": false,
+      "width": "60"
+    },
+    "txntype": {
+      "displayName": "Txn",
+      "filterable": true,
+      "groupable": false,
+      "width": "55",
+      "allowedValues": ["Return","Replace"]
+    }
+  }
+}

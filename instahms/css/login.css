@@ -1,0 +1,281 @@
+@font-face { font-family: CamphorWeb-Bold; src: url("../fonts/Camphor-web-bold.ttf"); }
+@font-face { font-family: CamphorWeb-Regular; src: url("../fonts/Camphor-web-regular.ttf"); }
+
+input:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0px 1000px #F6F6F9 inset;
+    -webkit-text-fill-color: #536478;
+}
+
+.login-card, .login-card-footer {
+    transition: 1200ms cubic-bezier(.4, 0, .2, 1);
+    -webkit-transition: 1200ms cubic-bezier(.4, 0, .2, 1);
+    -ms-transition: 1200ms cubic-bezier(.4, 0, .2, 1);
+}
+
+.form-input, .form-input label, .form-input input, .form-input .spin {
+    transition: 300ms cubic-bezier(.4, 0, .2, 1);
+    -webkit-transition: 300ms cubic-bezier(.4, 0, .2, 1);
+    -ms-transition: 300ms cubic-bezier(.4, 0, .2, 1);
+}
+
+.login-card, .login-card-footer {
+    width: 603px;
+    opacity: 0.01;
+}
+
+.login-card {
+    margin: 84px auto 0px auto;
+}
+
+.login-card-table {
+    border-collapse: collapse;
+}
+
+.login-card-footer {
+    margin: 0px auto 0px auto;
+    border: none;
+}
+
+.login-header, .login-header-inst, .expired-inst {
+    font-family: CamphorWeb-Regular;
+    font-size: 15px;
+    color: #253667;
+}
+
+.login-header-inst {
+    font-size: 11px;
+    padding: 5px 0px 0px 0px;
+}
+
+.login-card-image {
+    width: 275px;
+}
+
+.login-card-details {
+    width: 328px;
+    background-color: #F6F6F9;
+    padding: 16px 28px 0px 16px;
+}
+
+.login-card-image-logo {
+    margin: 0px 76.5px 0px 76.5px;
+    width: 120px;
+    height: 120px;
+}
+
+.login-card-image-logo img {
+    width: 120px;
+    height: 120px;
+}
+
+.login-card-footer-spec {
+    margin: 15px 0px 0px 0px;
+    float: right;
+    padding: 0px 5px 0px 0px;
+}
+
+.login-card-footer-logo {
+    float: left;
+    width: 100%
+}
+
+.login-card-footer-logo img{
+    width: 147px;
+}
+
+.required {
+    color: red;
+}
+
+.error, .login-success {
+    font-family: CamphorWeb-Regular;
+    font-size: 10px;
+    height: 32px;
+}
+
+.error {
+    color: #FA4545;
+}
+
+.login-success {
+    color: #01B66E;
+}
+
+.form-input .spin {
+    width: 95%;
+    float: left;
+    height: 1px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    background: #FFA000;
+    z-index: 1;
+    width: 0;
+}
+
+.form-input {
+    height: 64px;
+}
+
+.form-input, .form-input input {
+    position: relative;
+    background-color: #F6F6F9;
+    outline: none;
+}
+
+.form-input input {
+    height: 24px;
+    top: 38px;
+    border: none;
+    width: 100%;
+    font-size: 13px;
+    font-family: CamphorWeb-Regular;
+    color: #414146;
+}
+
+.form-input label {
+    font-size: 12px;
+    position: absolute;
+    top: 33px;
+    left: 0;
+    z-index: 1;
+    cursor: pointer;
+    line-height: 35px;
+    outline: none;
+    font-family: CamphorWeb-Regular;
+    color: #787887;
+}
+
+.form-input:before {
+    width: 100%;
+    height: 1px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    content: "";
+    background: #AEAEAE;
+    z-index: 1;
+    outline: none;
+}
+
+input:after {
+    outline: none;
+}
+
+.footer {
+    width: 100%;
+    font-size: 11px;
+    color: #ABBCBD;
+}
+
+.footer-supportlink {
+    font-size: 11px;
+    color: #536478
+}
+
+form, tbody, td, tr {
+    margin: 0px;
+    padding: 0px;
+}
+
+.table-spec {
+    width: 100%;
+}
+
+.warning-spec {
+    padding-top: 70px;
+}
+
+.warning-inst {
+    padding-bottom: 70px;
+}
+
+.waring-inst-spec {
+    padding-left: 43px;
+    padding-top: 10px;
+    color: #FA4545;
+}
+
+.waring-inst-spec-expired {
+    padding-left: 42px;
+    padding-top: 10px;
+    color: #FA4545;
+}
+
+.success-chanePassword-spec {
+    height: 223px;
+}
+
+.success-chanePassword-spec img {
+    margin-left: 118px;
+}
+
+.changePassword-sucess-inst {
+    margin: 12px 0px 0px 75px;
+}
+
+.warning-spec img {
+    margin: 0px 0px 0px 115px;
+}
+
+.sen {
+    color: #FA4545;
+    text-align:center;
+}
+
+.footer a {
+    text-decoration:none;
+}
+
+.insta-header {
+    margin:0px 0px 2px 0px;
+}
+
+.insta-header-image {
+    height:21px;
+}
+
+.insta-header-content {
+    font-family:CamphorWeb-Regular;
+    font-size: 11px;
+    color: #787887;
+    letter-spacing: 0;
+    margin: 0px 0px 0px 2px;
+}
+
+.login-details-card {
+    border: 1px solid;
+    border-color: #C8CDD9;
+    border-radius: 2px;
+}
+
+.footer-image {
+    margin:0px 0px 5px 0px;
+}
+
+.footer-image-practo {
+    height: 14px;   
+}
+
+.footer-content {
+    font-family: CamphorWeb-Regular; 
+    font-size: 11px; 
+    color: #787887; 
+    line-height: 15px;
+}
+
+.login-card-margin {
+    margin: 0px 0px 100px 0px;
+}
+
+.expired-inst {
+    font-size: 12px;
+    line-height: 1.5;
+    padding: 20px 0 150px 0;
+}
+
+.return-link {
+    font-family: CamphorWeb-Regular;
+    font-size: 11px;
+    text-decoration:none;
+}

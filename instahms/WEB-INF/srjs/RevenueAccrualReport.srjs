@@ -1,0 +1,644 @@
+{
+    "allowNoDate": false,
+    "dateFields": [
+        "incr_date"
+    ],
+    "defaultOrder": "bill_no",
+    "defaultShowFields": [
+        "incr_date",
+        "bill_no",
+        "mr_no",
+        "restriction_type",
+        "visit_type",
+        "dept_name",
+        "chargehead_name",
+        "incr_amount"
+    ],
+    "description": "This report shows how much amount has been added to revenue on a date basis. <br/> <br/><font color='red'> NOTE: We would recommend that you use the Bill Charge Adjustment Report Builder and migrate all Favorite Reports as revenue recognition is not dependent on Bill Finalization as was the case in previous releases and instead based on Accrual. This report is now not being maintained and would be removed soon. Do contact us at insta-support@practo.com if you need support or any more details.</font>",
+    "fields": {
+        "incr_date": {
+            "displayName": "Increment Date",
+            "dataType": "date",
+            "expression": "date(al.mod_time)",
+            "groupable": true,
+            "name": "incr_date",
+            "table": "al",
+            "width": "80"
+        },
+        "bill_no": {
+            "allowNull": true,
+            "displayName": "Bill No.",
+            "expression": "(b.bill_no)",
+            "groupable": true,
+            "name": "bill_no",
+            "table": "b",
+            "width": "65"
+        },
+        "mr_no": {
+            "displayName": "MR No.",
+            "expression": "(pd.mr_no)",
+            "filterable": true,
+            "groupable": true,
+            "name": "mr_no",
+            "table": "pd",
+            "width": "65"
+        },
+        "full_name": {
+            "displayName": "Patient Name",
+            "expression": "(sm.salutation || ' ' || pd.patient_name || case when coalesce(pd.middle_name, '') = '' then '' else (' ' || pd.middle_name) end || case when coalesce(pd.last_name, '') = '' then '' else (' ' || pd.last_name) end)",
+            "table": "sm,pd,",
+            "width": "150",
+            "groupable": true,
+            "filterable": true
+        },
+         "name_local_language": {
+                    "table": "pd",
+                    "displayName": "Name In Local Language",
+                    "width": 150,
+                    "expression": "pd.name_local_language"
+          },
+        "restriction_type": {
+            "displayName": "Usage Type",
+            "width": "50",
+            "groupable": true,
+            "filterable": true,
+            "expression": "(CASE WHEN b.restriction_type = 'N'::bpchar THEN 'Hospital'::text WHEN b.restriction_type = 'P'::bpchar THEN 'Pharmacy'::text WHEN b.restriction_type = 'T'::bpchar THEN 'Test'::text END)",
+            "allowedValues": [
+                "Hospital",
+                "Pharmacy",
+                "Test"
+            ],
+            "name": "restriction_type",
+            "table": "b"
+        },
+        "visit_type": {
+            "allowedValues": [
+                "IP",
+                "OP",
+                "Retail",
+                "Test"
+            ],
+            "displayName": "Visit Type",
+            "expression": "(vtn.visit_type_name)",
+            "filterable": true,
+            "groupable": true,
+            "name": "visit_type",
+            "table": "vtn",
+            "width": "60"
+        },
+        "op_type_name": {
+            "displayName": "Visit/OP Type",
+            "width": "80",
+            "groupable": true,
+            "filterable": true,
+            "allowedValuesQuery": "SELECT op_type_name FROM op_type_names",
+            "expression": "(otn.op_type_name)",
+            "name": "op_type_name",
+            "table": "otn"
+        },
+        "ward_name": {
+            "displayName": "Ward Name",
+            "width": "100",
+            "groupable": true,
+            "filterable": true,
+            "allowedValuesQuery": "SELECT ward_name FROM ward_names order by ward_name",
+            "expression": "(wn.ward_name)",
+            "name": "ward_name",
+            "table": "wn"
+        },
+        "dept_name": {
+            "displayName": "Admitting Department",
+            "width": "120",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT dept_name FROM department ORDER BY dept_name",
+            "expression": "dep.dept_name",
+            "name": "dept_name",
+            "table": "dep"
+        },
+        "chargehead_name": {
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT chargehead_name FROM chargehead_constants ORDER BY chargehead_name",
+            "displayName": "Charge Head",
+            "expression": "(chc.chargehead_name)",
+            "filterable": true,
+            "groupable": true,
+            "name": "chargehead_name",
+            "table": "chc",
+            "width": "100"
+        },
+        "incr_billed_amount": {
+            "displayName": "Billed Amount",
+            "dataType": "numeric",
+            "aggFunction": "sum",
+            "expression": "(CASE WHEN al.field_name = 'amount' THEN (al.new_value::numeric - COALESCE(al.old_value::numeric, 0)) WHEN al.field_name = 'status' AND al.new_value = 'X' THEN (0 - bc.amount) ELSE 0 END + CASE WHEN al.field_name = 'discount' THEN (al.new_value::numeric - COALESCE(al.old_value::numeric, 0)) WHEN al.field_name= 'status' AND al.new_value = 'X' THEN (0 - bc.discount) ELSE 0 END )",
+            "width": "70",
+            "filterable": true,
+            "name": "incr_billed_amount",
+            "table": "al,bc"
+        },
+        "incr_discount": {
+            "displayName": "Discount",
+            "dataType": "numeric",
+            "aggFunction": "sum",
+            "width": "70",
+            "filterable": true,
+            "expression": "(CASE WHEN al.field_name = 'discount' THEN (al.new_value::numeric - COALESCE(al.old_value::numeric, 0)) WHEN al.field_name= 'status' AND al.new_value = 'X' THEN (0 - bc.discount) ELSE 0 END)",
+            "name": "incr_discount",
+            "table": "al,bc"
+        },
+        "incr_amount": {
+            "aggFunction": "sum",
+            "displayName": "Net Amount",
+            "dataType": "numeric",
+            "expression": "(CASE WHEN al.field_name = 'amount' THEN (al.new_value::numeric - COALESCE(al.old_value::numeric, 0)) WHEN al.field_name = 'status' AND al.new_value = 'X' THEN (0 - bc.amount) ELSE 0 END)",
+            "filterable": true,
+            "name": "incr_amount",
+            "table": "al,bc",
+            "width": "70"
+        },
+        "charge_id": {
+            "displayName": "Charge ID",
+            "width": "65",
+            "expression": "(al.charge_id)",
+            "name": "charge_id",
+            "table": "al"
+        },
+        "bill_type": {
+            "displayName": "Bill Type",
+            "width": "50",
+            "groupable": true,
+            "filterable": true,
+            "expression": "(CASE WHEN b.bill_type = 'P'::bpchar THEN 'Bill Now'::text WHEN b.bill_type = 'C'::bpchar THEN 'Bill Later'::text END)",
+            "allowedValues": [
+                "Bill Now",
+                "Bill Later"
+            ],
+            "name": "bill_type",
+            "table": "b"
+        },
+        "bill_status": {
+            "allowedValues": [
+                "Open",
+                "Finalized",
+                "Closed",
+                "Cancelled"
+            ],
+            "displayName": "Bill Status",
+            "expression": "(CASE WHEN b.status = 'A'::bpchar THEN 'Open'::text WHEN b.status = 'F'::bpchar THEN 'Finalized'::text WHEN b.status = 'S'::bpchar THEN 'Settled'::text WHEN b.status = 'C'::bpchar THEN 'Closed'::text ELSE 'Cancelled'::text END)",
+            "filterable": true,
+            "groupable": true,
+            "name": "bill_status",
+            "table": "b",
+            "width": "70"
+        },
+        "finalized_date": {
+            "dataType": "date",
+            "displayName": "Finalized Date",
+            "expression": "date(b.finalized_date)",
+            "width": "80",
+            "groupable": true,
+            "name": "finalized_date",
+            "table": "b"
+        },
+        "open_date": {
+            "displayName": "Opened Date",
+            "expression": "date(b.open_date)",
+            "width": "70",
+            "dataType": "date",
+            "groupable": true,
+            "name": "open_date",
+            "table": "b"
+        },
+        "closed_date": {
+            "displayName": "Closed Date",
+            "expression": "date(b.closed_date)",
+            "width": "70",
+            "dataType": "date",
+            "groupable": true,
+            "name": "closed_date",
+            "table": "b"
+        },
+        "posted_date": {
+            "dataType": "date",
+            "displayName": "Posted Date",
+            "expression": "date(bc.posted_date)",
+            "width": "75",
+            "groupable": true,
+            "name": "posted_date",
+            "table": "bc"
+        },
+        "act_description": {
+            "displayName": "Item Description",
+            "width": "150",
+            "allowNull": true,
+            "groupable": true,
+            "filterable": true,
+            "name": "act_description",
+            "table": "bc"
+        },
+        "treating_dept": {
+            "displayName": "Treating Department",
+            "width": "120",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT dept_name AS treating_dept FROM treating_departments_view GROUP BY dept_name ORDER BY dept_name",
+            "expression": "(tdep.dept_name)",
+            "name": "treating_dept",
+            "table": "tdep"
+        },
+        "doctor_name": {
+            "displayName": "Doctor",
+            "width": "110",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT doctor_name FROM doctors GROUP BY doctor_name ORDER BY doctor_name",
+            "expression": "doc.doctor_name",
+            "name": "doctor_name",
+            "table": "doc"
+        },
+        "conducting_doctor": {
+            "displayName": "Conducting Doctor",
+            "width": "110",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT doctor_name FROM doctors GROUP BY doctor_name ORDER BY doctor_name",
+            "expression": "(cdoc.doctor_name)",
+            "name": "conducting_doctor",
+            "table": "cdoc"
+        },
+        "referer": {
+            "displayName": "Referrer",
+            "width": "110",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT referal_name AS referer FROM referral UNION ALL SELECT doctor_name AS referer FROM doctors GROUP BY referer ORDER BY referer",
+            "expression": "(COALESCE(rdoc.doctor_name, ref.referal_name))",
+            "name": "referer",
+            "table": "rdoc,ref"
+        },
+        "rate_plan": {
+            "displayName": "Rate Plan",
+            "width": "70",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT org_name AS rate_plan FROM organization_details ORDER BY org_name",
+            "expression": "od.org_name",
+            "name": "rate_plan",
+            "table": "od"
+        },
+        "primary_tpa_name": {
+            "displayName": "Primary Sponsor",
+            "width": "80",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT tpa_name FROM tpa_master ORDER BY tpa_name",
+            "expression": "ptm.tpa_name",
+            "name": "primary_tpa_name",
+            "table": "ptm"
+        },
+        "secondary_tpa_name": {
+            "displayName": "Secondary Sponsor",
+            "width": "80",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT tpa_name FROM tpa_master ORDER BY tpa_name",
+            "expression": "stm.tpa_name",
+            "name": "secondary_tpa_name",
+            "table": "stm"
+        },
+        "plan_type": {
+            "displayName": "Plan Type",
+            "width": "80",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT category_name FROM insurance_category_master ORDER BY category_name",
+            "expression": "in_cat.category_name",
+            "name": "plan_type",
+            "table": "in_cat"
+        },
+        "plan": {
+            "displayName": "Plan Name",
+            "expression": "ipm.plan_name",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT plan_name FROM insurance_plan_main ORDER BY plan_name",
+            "name": "plan",
+            "table": "ipm",
+            "width": "100"
+        },
+        "primary_insurance_co_name": {
+            "displayName": "Primary Insurance Company",
+            "width": "100",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT insurance_co_name FROM insurance_company_master ORDER BY insurance_co_name",
+            "expression": "(picm.insurance_co_name)",
+            "name": "primary_insurance_co_name",
+            "table": "picm"
+        },
+        "secondary_insurance_co_name": {
+            "displayName": "Secondary Insurance Company",
+            "width": "100",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT insurance_co_name FROM insurance_company_master ORDER BY insurance_co_name",
+            "expression": "(sicm.insurance_co_name)",
+            "name": "secondary_insurance_co_name",
+            "table": "sicm"
+        },
+        "chargegroup_name": {
+            "displayName": "Charge Group",
+            "width": "75",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT chargegroup_name FROM chargegroup_constants ORDER BY chargegroup_name",
+            "expression": "(cgc.chargegroup_name)",
+            "name": "chargegroup_name",
+            "table": "cgc"
+        },
+        "ac_head": {
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT account_head_name AS ac_head FROM bill_account_heads ORDER BY account_head_name",
+            "displayName": "Account Head",
+            "expression": "(bahc.account_head_name)",
+            "filterable": true,
+            "groupable": true,
+            "name": "ac_head",
+            "table": "bahc",
+            "width": "120"
+        },
+        "account_group_name": {
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT account_group_name AS account_group_name FROM account_group_master ORDER BY account_group_name",
+            "displayName": "Account Group",
+            "expression": "(agm.account_group_name)",
+            "filterable": true,
+            "groupable": true,
+            "name": "account_group_name",
+            "table": "agm",
+            "width": "80"
+        },
+        "patient_area": {
+            "displayName": "Area",
+            "width": "80",
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "name": "patient_area",
+            "table": "pd"
+        },
+        "center_name": {
+            "displayName": "Center Name",
+            "width": 100,
+            "allowHorizGroup": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT center_name FROM hospital_center_master WHERE center_id!=0",
+            "filterable": true,
+            "groupable": true,
+            "name": "center_name",
+            "table": "bhcm"
+        }
+    },
+    "queryUnits": [
+        {
+            "joinTables": [
+                {
+                    "alias": "bc",
+                    "dependsOn": "al",
+                    "expression": "ON (al.charge_id::text = bc.charge_id::text)",
+                    "name": "bill_charge",
+                    "type": "JOIN"
+                },
+                {
+                    "alias": "b",
+                    "dependsOn": "bc",
+                    "expression": "ON (bc.bill_no::text = b.bill_no::text)",
+                    "name": "bill",
+                    "type": "JOIN"
+                },
+                {
+                    "alias": "pr",
+                    "dependsOn": "b",
+                    "expression": "ON (pr.patient_id::text = b.visit_id::text)",
+                    "name": "patient_registration",
+                    "type": "LEFT"
+                },
+                {
+                    "alias": "otn",
+                    "dependsOn": "pr",
+                    "expression": "ON (otn.op_type = pr.op_type)",
+                    "name": "op_type_names",
+                    "type": "LEFT"
+                },
+                {
+                    "alias": "pd",
+                    "dependsOn": "pr",
+                    "expression": "ON (pd.mr_no = pr.mr_no)",
+                    "name": "patient_details",
+                    "type": "LEFT"
+                },
+                {
+                    "alias": "sm",
+                    "dependsOn": "pd",
+                    "expression": "ON (pd.salutation = sm.salutation_id)",
+                    "name": "salutation_master",
+                    "type": "LEFT"
+                },
+                {
+                    "alias": "vtn",
+                    "dependsOn": "b",
+                    "expression": "ON (vtn.visit_type = b.visit_type)",
+                    "name": "visit_type_names",
+                    "type": "JOIN"
+                },
+                {
+                    "alias": "dep",
+                    "dependsOn": "pr",
+                    "expression": "ON (dep.dept_id::text = pr.dept_name::text)",
+                    "name": "department",
+                    "type": "LEFT"
+                },
+                {
+                    "alias": "tdep",
+                    "dependsOn": "bc",
+                    "expression": "ON (tdep.dept_id = bc.act_department_id::text)",
+                    "name": "treating_departments_view",
+                    "type": "LEFT"
+                },
+                {
+                    "alias": "doc",
+                    "dependsOn": "pr",
+                    "expression": "ON (doc.doctor_id::text = pr.doctor::text)",
+                    "name": "doctors",
+                    "type": "LEFT"
+                },
+                {
+                    "alias": "cdoc",
+                    "dependsOn": "bc",
+                    "expression": "ON (cdoc.doctor_id::text = bc.payee_doctor_id::text)",
+                    "name": "doctors",
+                    "type": "LEFT"
+                },
+                {
+                    "alias": "rdoc",
+                    "dependsOn": "pr",
+                    "expression": "ON (rdoc.doctor_id::text = pr.reference_docto_id::text)",
+                    "name": "doctors",
+                    "type": "LEFT"
+                },
+                {
+                    "alias": "ref",
+                    "dependsOn": "pr",
+                    "expression": "ON (ref.referal_no::text = pr.reference_docto_id::text)",
+                    "name": "referral",
+                    "type": "LEFT"
+                },
+                {
+                    "alias": "od",
+                    "dependsOn": "pr",
+                    "expression": "ON (od.org_id::text = pr.org_id::text)",
+                    "name": "organization_details",
+                    "type": "LEFT"
+                },
+                {
+                    "alias": "ptm",
+                    "dependsOn": "pr",
+                    "expression": "ON (ptm.tpa_id::text = pr.primary_sponsor_id::text)",
+                    "name": "tpa_master",
+                    "type": "LEFT"
+                },
+                {
+                    "alias": "stm",
+                    "dependsOn": "pr",
+                    "expression": "ON (stm.tpa_id::text = pr.secondary_sponsor_id::text)",
+                    "name": "tpa_master",
+                    "type": "LEFT"
+                },
+                {
+                    "alias": "ipm",
+                    "dependsOn": "pr",
+                    "expression": "ON (ipm.plan_id = pr.plan_id)",
+                    "name": "insurance_plan_main",
+                    "type": "LEFT"
+                },
+                {
+                    "alias": "in_cat",
+                    "dependsOn": "ipm",
+                    "expression": "ON (in_cat.category_id = ipm.category_id)",
+                    "name": "insurance_category_master",
+                    "type": "LEFT"
+                },
+                {
+                    "alias": "picm",
+                    "dependsOn": "pr",
+                    "expression": "ON (picm.insurance_co_id = pr.primary_insurance_co)",
+                    "name": "insurance_company_master",
+                    "type": "LEFT"
+                },
+                {
+                    "alias": "sicm",
+                    "dependsOn": "pr",
+                    "expression": "ON (sicm.insurance_co_id = pr.secondary_insurance_co)",
+                    "name": "insurance_company_master",
+                    "type": "LEFT"
+                },
+                {
+                    "alias": "chc",
+                    "dependsOn": "bc",
+                    "expression": "ON (chc.chargehead_id::text = bc.charge_head::text)",
+                    "name": "chargehead_constants",
+                    "type": "JOIN"
+                },
+                {
+                    "alias": "cgc",
+                    "dependsOn": "chc",
+                    "expression": "ON (cgc.chargegroup_id::text = chc.chargegroup_id::text)",
+                    "name": "chargegroup_constants",
+                    "type": "JOIN"
+                },
+                {
+                    "alias": "agm",
+                    "dependsOn": "bc",
+                    "expression": "ON (agm.account_group_id = bc.account_group)",
+                    "name": "account_group_master",
+                    "type": "LEFT"
+                },
+                {
+                    "alias": "bahc",
+                    "dependsOn": "chc",
+                    "expression": "ON (bahc.account_head_id = chc.account_head_id)",
+                    "name": "bill_account_heads",
+                    "type": "JOIN"
+                },
+                {
+                    "alias": "s",
+                    "dependsOn": "bc",
+                    "expression": "ON (s.service_id = bc.act_description_id)",
+                    "name": "services",
+                    "type": "LEFT"
+                },
+                {
+                    "alias": "adm",
+                    "dependsOn": "b",
+                    "expression": "ON (adm.patient_id = b.visit_id)",
+                    "name": "admission",
+                    "type": "LEFT"
+                },
+                {
+                    "alias": "bn",
+                    "dependsOn": "adm",
+                    "expression": "ON (bn.bed_id=adm.bed_id)",
+                    "name": "bed_names",
+                    "type": "LEFT"
+                },
+                {
+                    "alias": "wn",
+                    "dependsOn": "bn",
+                    "expression": "ON (bn.ward_no=wn.ward_no)",
+                    "name": "ward_names",
+                    "type": "LEFT"
+                },
+                {
+                    "alias": "prc",
+                    "dependsOn": "b",
+                    "expression": "ON (prc.customer_id = b.visit_id)",
+                    "name": "store_retail_customers",
+                    "type": "LEFT"
+                },
+                {
+                    "alias": "isr",
+                    "dependsOn": "b",
+                    "expression": "ON (isr.incoming_visit_id = b.visit_id)",
+                    "name": "incoming_sample_registration",
+                    "type": "LEFT"
+                },
+                {
+                    "alias": "bhcm",
+                    "dependsOn": "pr,isr,prc",
+                    "expression": "ON (pr.center_id=bhcm.center_id or isr.center_id=bhcm.center_id or prc.center_id=bhcm.center_id)",
+                    "name": "hospital_center_master",
+                    "type": "LEFT"
+                }
+            ],
+            "mainTableAlias": "al",
+            "mainTableName": "bill_charge_audit_log",
+            "whereExpression": "al.field_name IN ('amount', 'discount') OR (al.field_name = 'status' AND al.operation = 'UPDATE')"
+        }
+    ],
+    "title": "Revenue Accrual Report",
+    "reportGroup": "Financial Reports"
+}

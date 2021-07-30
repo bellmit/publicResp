@@ -1,0 +1,102 @@
+{
+  "title": "Payment for Insurance",
+  "defaultOrder": "payee_name",
+  "reportGroup": "Billing Reports",
+  "dateFields": ["date","bill_receipt_date","bill_sponsor_date"],
+  "description": "This report gives the conducting doctor / prescribing doctor / referral payments which were made during the selected date range, before receiving the insurance claim amount from Sponsor.",
+  "tableName": ["rpt_payment_for_insurance_view"],
+  "defaultShowFields": [
+    "payee_name",
+    "patient_name",
+    "payment_type",
+    "mr_no",
+    "description",
+    "amount",
+    "bill_receipt_date",
+    "claim_status",
+    "date",
+    "bill_sponsor_date"
+  ],
+  "fields": {
+    "payee_name": {
+      "displayName": "Payee Name",
+      "width": "110",
+      "filterable": true,
+      "groupable": true,
+      "allowNull": true,
+      "allowedValuesQuery": "SELECT payee_name from payeenames_view ORDER BY payee_name"
+    },
+    "patient_name": {
+      "displayName": "Patient Name",
+      "width": "110",
+      "allowNull": true,
+      "filterable": false,
+      "groupable": false
+    },
+    "payment_type": {
+      "displayName": "Payment Type",
+      "width": "150",
+      "filterable": true,
+      "groupable": true,
+      "allowNull": true,
+      "allowedValues": ["Conducting Doctor","Prescribing Doctor","Referral Doctor"]
+    },
+    "mr_no": {
+      "displayName": "MR No",
+      "width": "65",
+      "allowNull": true,
+      "fileterable": false,
+      "groupable": false
+    },
+  "name_local_language": {
+      "displayName": "Name In Local Language",
+      "width": 150
+  },
+    "description": {
+      "displayName": "Description",
+      "width": "100",
+      "allowNull": true,
+      "filterable": false,
+      "groupable": false
+    },
+    "amount": {
+      "displayName": "Amount",
+      "width": "50",
+      "allowNull": true,
+      "filterable": false,
+      "groupable": false
+    },
+    "bill_receipt_date": {
+      "displayName": "Amount Received On",
+      "width": "60",
+      "allowNull": true,
+      "filterable": false
+    },
+    "claim_status": {
+      "displayName": "Claim Status",
+      "width": "50",
+      "allowNull": true,
+      "filterable": true,
+      "allowedValues": ["Open","Sent","Closed"]
+    },
+    "date": {
+      "displayName": "Payment Date",
+      "width": "100",
+      "dataType": "date"
+    },
+    "bill_sponsor_date": {
+      "displayName": "Consolidate Sponsor Receipt Date",
+      "dataType": "date",
+      "width": "100"
+    },
+	"center_name": {
+	  "displayName": "Center Name",
+	  "width": 100,
+	  "allowHorizGroup": true,
+	  "allowNull": true,
+	  "allowedValuesQuery": "SELECT center_name FROM hospital_center_master WHERE center_id!=0",
+	  "filterable": true,
+	  "groupable": true
+	}
+  }
+}

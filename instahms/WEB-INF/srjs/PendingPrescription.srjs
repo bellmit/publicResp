@@ -1,0 +1,810 @@
+{
+    "title": "OP Pending Prescriptions Report",
+    "description": "This report builder gives a detailed description of OP consultation based pending prescriptions and their status which includes test, service and doctor prescriptions and follow up details.",
+    "reportGroup": "Consultation Reports",
+    "defaultOrder": "mr_no",
+    "dateFields": [
+        "prescribed_date",
+        "reg_date"
+    ],
+    "includes": [
+        "PatientDetailFields.srjs",
+        "PatientVisitFields.srjs"
+    ],
+    "queryUnits": [
+        {
+            "mainTableName": "patient_pending_prescriptions",
+            "mainTableAlias": "pres",
+            "whereExpression": "pres.presc_item_type='Ser'",
+            "whereTable": "pres",
+            "joinTables": [
+                {
+                    "name": "patient_prescription",
+                    "alias": "pp",
+                    "dependsOn": "pres",
+                    "expression": "ON (pp.patient_presc_id=pres.patient_presc_id)",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "(select max(pending_prescription_details_id) as pending_prescription_details_id,pending_prescription_id from pending_prescription_details where NOT system_log group by pending_prescription_id)",
+                    "alias": "ppd",
+                    "dependsOn": "pres",
+                    "expression": "ON (ppd.pending_prescription_id=pres.pat_pending_presc_id)",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "pending_prescription_details",
+                    "alias": "presd",
+                    "dependsOn": "ppd",
+                    "expression": "ON (presd.pending_prescription_details_id=ppd.pending_prescription_details_id AND (remark != null OR remark != ''))",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "doctor_consultation",
+                    "alias": "dc",
+                    "dependsOn": "pp",
+                    "expression": "ON (pp.consultation_id=dc.consultation_id)"
+                },
+                {
+                    "name": "doctors",
+                    "alias": "cons_d",
+                    "dependsOn": "dc",
+                    "expression": "ON (dc.doctor_name=cons_d.doctor_id)"
+                },
+                {
+                    "name": "patient_registration",
+                    "alias": "pr",
+                    "dependsOn": "pres",
+                    "expression": "ON (pr.patient_id = pres.visit_id)",
+                    "type": "JOIN"
+                },
+                {
+                    "includeName": "PatientVisitFields.srjs"
+                },
+                {
+                    "name": "patient_details",
+                    "alias": "pd",
+                    "dependsOn": "pr",
+                    "expression": "ON (pd.mr_no = pr.mr_no)",
+                    "type": "JOIN"
+                },
+                {
+                    "includeName": "PatientDetailFields.srjs"
+                },
+                {
+                    "name": "services",
+                    "alias": "s",
+                    "dependsOn": "pres",
+                    "expression": "ON (s.service_id=pres.presc_item_id)"
+                },
+                {
+                    "name": "u_user",
+                    "alias": "u",
+                    "dependsOn": "pres",
+                    "expression": "ON (u.emp_username=pres.assigned_to_user_id)"
+                },
+                {
+                    "name": "hospital_roles_master",
+                    "alias": "r",
+                    "dependsOn": "pres",
+                    "expression": "ON (r.hosp_role_id=pres.assigned_to_role_id)"
+                },
+                {
+                    "name": "preauth_prescription_activities",
+                    "alias": "ppa",
+                    "dependsOn": "pres",
+                    "expression": "ON (ppa.preauth_act_id = pres.preauth_activity_id)"
+                },
+                {
+                    "name": "preauth_prescription",
+                    "alias": "preauth",
+                    "dependsOn": "ppa",
+                    "expression": "ON (preauth.preauth_presc_id = ppa.preauth_presc_id)"
+                },
+                {
+                    "name": "scheduler_appointments",
+                    "alias": "sa",
+                    "dependsOn": "pres",
+                    "expression": "ON (pres.pat_pending_presc_id = sa.patient_presc_id)"
+                },
+                {
+                    "name": "preauth_request_approval_details",
+                    "alias": "prad",
+                    "dependsOn": "preauth",
+                    "expression": "ON (prad.preauth_request_id=preauth.preauth_request_id)"
+                },
+                {
+                    "name": "u_user",
+                    "alias": "modu",
+                    "dependsOn": "presd",
+                    "expression": "ON (modu.emp_username=presd.modified_by)"
+                }
+            ],
+            "fieldExpressions": {
+                "item_prescribed": {
+                    "table": "s",
+                    "expression": "service_name"
+                },
+                "prescription_type": {
+                    "expression": "'Service'::text"
+                },
+                "prescribed_qty": {
+                    "expression": "1"
+                },
+                "prescribed_date_time": {
+                    "expression": "pres.prescribed_date"
+                },
+                "prescribed_date": {
+                    "expression": "date(pres.prescribed_date)"
+                },
+                "user_name": {
+                    "expression": "pp.username"
+                },
+                "start_date": {
+                    "expression": "date(pres.start_datetime)"
+                },
+                "remark": {
+                    "table": "presd",
+                    "expression": "presd.remark"
+                },
+                "modified_by": {
+                    "table": "modu",
+                    "expression": "COALESCE(modu.temp_username,modu.emp_username)"
+                },
+                "assigned_to_user_role": {
+                    "table": "u,r",
+                    "expression": "COALESCE(COALESCE(u.temp_username,u.emp_username), r.hosp_role_name)"
+                },
+                "preauth_act_status": {
+                    "table": "ppa",
+                    "expression": "CASE WHEN ppa.preauth_act_status='O' THEN 'Open' WHEN ppa.preauth_act_status='D' THEN 'Denied' WHEN ppa.preauth_act_status='C' THEN 'Approved' END"
+                },
+                "order_status": {
+                    "table": "pp",
+                    "expression": "CASE WHEN pp.status='P' THEN 'Prescibed' WHEN  pp.status='O' THEN 'Ordered' WHEN pp.status='PA' THEN 'Patially Ordered' ELSE NULL END"
+                },
+                "patient_readiness": {
+                    "table": "pres",
+                    "expression": "CASE WHEN pres.declined_reason_id is NOT NULL THEN 'Declined' ELSE '' END"
+                },
+                "preauth_end_date": {
+                    "table": "prad",
+                    "expression": "date(prad.end_date)"
+                }
+            }
+        },
+        {
+            "mainTableName": "patient_pending_prescriptions",
+            "mainTableAlias": "pres",
+            "whereExpression": "pres.presc_item_type in('Lab','Rad')",
+            "whereTable": "pres",
+            "joinTables": [
+                {
+                    "name": "patient_prescription",
+                    "alias": "pp",
+                    "dependsOn": "pres",
+                    "expression": "ON (pp.patient_presc_id=pres.patient_presc_id)",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "(select max(pending_prescription_details_id) as pending_prescription_details_id,pending_prescription_id from pending_prescription_details where  NOT system_log group by pending_prescription_id)",
+                    "alias": "ppd",
+                    "dependsOn": "pres",
+                    "expression": "ON (ppd.pending_prescription_id=pres.pat_pending_presc_id)",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "pending_prescription_details",
+                    "alias": "presd",
+                    "dependsOn": "ppd",
+                    "expression": "ON (presd.pending_prescription_details_id=ppd.pending_prescription_details_id AND (remark != null OR remark != ''))",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "doctor_consultation",
+                    "alias": "dc",
+                    "dependsOn": "pp",
+                    "expression": "ON (pp.consultation_id=dc.consultation_id)"
+                },
+                {
+                    "name": "doctors",
+                    "alias": "cons_d",
+                    "dependsOn": "dc",
+                    "expression": "ON (dc.doctor_name=cons_d.doctor_id)"
+                },
+                {
+                    "name": "patient_registration",
+                    "alias": "pr",
+                    "dependsOn": "pres",
+                    "expression": "ON (pr.patient_id = pres.visit_id)",
+                    "type": "JOIN"
+                },
+                {
+                    "includeName": "PatientVisitFields.srjs"
+                },
+                {
+                    "name": "patient_details",
+                    "alias": "pd",
+                    "dependsOn": "pr",
+                    "expression": "ON (pd.mr_no = pr.mr_no)",
+                    "type": "JOIN"
+                },
+                {
+                    "includeName": "PatientDetailFields.srjs"
+                },
+                {
+                    "name": "diagnostics",
+                    "alias": "test",
+                    "dependsOn": "pres",
+                    "expression": "ON (pres.presc_item_id=test.test_id)"
+                },
+                {
+                    "name": "u_user",
+                    "alias": "u",
+                    "dependsOn": "pres",
+                    "expression": "ON (u.emp_username=pres.assigned_to_user_id)"
+                },
+                {
+                    "name": "hospital_roles_master",
+                    "alias": "r",
+                    "dependsOn": "pres",
+                    "expression": "ON (r.hosp_role_id=pres.assigned_to_role_id)"
+                },
+                {
+                    "name": "preauth_prescription_activities",
+                    "alias": "ppa",
+                    "dependsOn": "pres",
+                    "expression": "ON (ppa.preauth_act_id = pres.preauth_activity_id)"
+                },
+                {
+                    "name": "preauth_prescription",
+                    "alias": "preauth",
+                    "dependsOn": "ppa",
+                    "expression": "ON (preauth.preauth_presc_id = ppa.preauth_presc_id)"
+                },
+                {
+                    "name": "scheduler_appointments",
+                    "alias": "sa",
+                    "dependsOn": "pres",
+                    "expression": "ON (pres.pat_pending_presc_id = sa.patient_presc_id)"
+                },
+                {
+                    "name": "preauth_request_approval_details",
+                    "alias": "prad",
+                    "dependsOn": "preauth",
+                    "expression": "ON (prad.preauth_request_id=preauth.preauth_request_id)"
+                },
+                {
+                    "name": "u_user",
+                    "alias": "modu",
+                    "dependsOn": "presd",
+                    "expression": "ON (modu.emp_username=presd.modified_by)"
+                }
+            ],
+            "fieldExpressions": {
+                "item_prescribed": {
+                    "table": "test",
+                    "expression": "COALESCE(test_name,'')"
+                },
+                "prescription_type": {
+                    "table": "pres",
+                    "expression": "CASE WHEN pres.presc_item_type='Lab' THEN 'Lab'::text WHEN pres.presc_item_type='Rad' THEN 'Rad'::text END"
+                },
+                "prescribed_qty": {
+                    "expression": "1"
+                },
+                "prescribed_date_time": {
+                    "expression": "pres.prescribed_date"
+                },
+                "prescribed_date": {
+                    "expression": "date(pres.prescribed_date)"
+                },
+                "user_name": {
+                    "expression": "pp.username"
+                },
+                "start_date": {
+                    "expression": "date(pres.start_datetime)"
+                },
+                "remark": {
+                    "table": "presd",
+                    "expression": "presd.remark"
+                },
+                "modified_by": {
+                    "table": "modu",
+                    "expression": "COALESCE(modu.temp_username,modu.emp_username)"
+                },
+                "assigned_to_user_role": {
+                    "table": "u,r",
+                    "expression": "COALESCE(COALESCE(u.temp_username,u.emp_username), r.hosp_role_name)"
+                },
+                "preauth_act_status": {
+                    "table": "ppa",
+                    "expression": "CASE WHEN ppa.preauth_act_status='O' THEN 'Open' WHEN ppa.preauth_act_status='D' THEN 'Denied' WHEN ppa.preauth_act_status='C' THEN 'Approved' END"
+                },
+                "order_status": {
+                    "table": "pp",
+                    "expression": "CASE WHEN pp.status='P' THEN 'Prescibed' WHEN  pp.status='O' THEN 'Ordered' WHEN pp.status='PA' THEN 'Patially Ordered' ELSE NULL END"
+                },
+                "patient_readiness": {
+                    "table": "pres",
+                    "expression": "CASE WHEN pres.declined_reason_id is NOT NULL THEN 'Declined' ELSE '' END"
+                },
+                "preauth_end_date": {
+                    "table": "prad",
+                    "expression": "date(prad.end_date)"
+                }
+            }
+        },
+        {
+            "mainTableName": "patient_pending_prescriptions",
+            "mainTableAlias": "pres",
+            "whereExpression": "pres.presc_item_type in('Ref','Dep')",
+            "whereTable": "pres",
+            "joinTables": [
+                {
+                    "name": "patient_prescription",
+                    "alias": "pp",
+                    "dependsOn": "pres",
+                    "expression": "ON (pp.patient_presc_id=pres.patient_presc_id)",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "(select max(pending_prescription_details_id) as pending_prescription_details_id,pending_prescription_id from pending_prescription_details where  NOT system_log group by pending_prescription_id)",
+                    "alias": "ppd",
+                    "dependsOn": "pres",
+                    "expression": "ON (ppd.pending_prescription_id=pres.pat_pending_presc_id)",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "pending_prescription_details",
+                    "alias": "presd",
+                    "dependsOn": "ppd",
+                    "expression": "ON (presd.pending_prescription_details_id=ppd.pending_prescription_details_id AND (remark != null OR remark != ''))",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "doctor_consultation",
+                    "alias": "dc",
+                    "dependsOn": "pp",
+                    "expression": "ON (pp.consultation_id=dc.consultation_id)"
+                },
+                {
+                    "name": "doctors",
+                    "alias": "cons_d",
+                    "dependsOn": "dc",
+                    "expression": "ON (dc.doctor_name=cons_d.doctor_id)"
+                },
+                {
+                    "name": "patient_registration",
+                    "alias": "pr",
+                    "dependsOn": "pres",
+                    "expression": "ON (pr.patient_id = pres.visit_id)",
+                    "type": "JOIN"
+                },
+                {
+                    "includeName": "PatientVisitFields.srjs"
+                },
+                {
+                    "name": "patient_details",
+                    "alias": "pd",
+                    "dependsOn": "pr",
+                    "expression": "ON (pd.mr_no = pr.mr_no)",
+                    "type": "JOIN"
+                },
+                {
+                    "includeName": "PatientDetailFields.srjs"
+                },
+                {
+                    "name": "doctors",
+                    "alias": "pres_d",
+                    "dependsOn": "pres",
+                    "expression": "ON (pres.presc_item_id=pres_d.doctor_id)"
+                },
+                {
+                    "name": "u_user",
+                    "alias": "u",
+                    "dependsOn": "pres",
+                    "expression": "ON (u.emp_username=pres.assigned_to_user_id)"
+                },
+                {
+                    "name": "hospital_roles_master",
+                    "alias": "r",
+                    "dependsOn": "pres",
+                    "expression": "ON (r.hosp_role_id=pres.assigned_to_role_id)"
+                },
+                {
+                    "name": "preauth_prescription_activities",
+                    "alias": "ppa",
+                    "dependsOn": "pres",
+                    "expression": "ON (ppa.preauth_act_id = pres.preauth_activity_id)"
+                },
+                {
+                    "name": "preauth_prescription",
+                    "alias": "preauth",
+                    "dependsOn": "ppa",
+                    "expression": "ON (preauth.preauth_presc_id = ppa.preauth_presc_id)"
+                },
+                {
+                    "name": "scheduler_appointments",
+                    "alias": "sa",
+                    "dependsOn": "pres",
+                    "expression": "ON (pres.pat_pending_presc_id = sa.patient_presc_id)"
+                },
+                {
+                    "name": "preauth_request_approval_details",
+                    "alias": "prad",
+                    "dependsOn": "preauth",
+                    "expression": "ON (prad.preauth_request_id=preauth.preauth_request_id)"
+                },
+                {
+                    "name": "department",
+                    "alias": "prdep",
+                    "dependsOn": "pres",
+                    "expression": "ON (pres.presc_item_dept_id=prdep.dept_id)"
+                },
+                {
+                    "name": "u_user",
+                    "alias": "modu",
+                    "dependsOn": "presd",
+                    "expression": "ON (modu.emp_username=presd.modified_by)"
+                }
+            ],
+            "fieldExpressions": {
+                "item_prescribed": {
+                    "table": "pres_d,prdep",
+                    "expression": "CASE WHEN pres.presc_item_type='Ref' THEN COALESCE(pres_d.doctor_name,'') WHEN pres.presc_item_type='Dep' THEN COALESCE(prdep.dept_name,'') END"
+                },
+                "prescribed_date": {
+                    "expression": "date(pres.prescribed_date)"
+                },
+                "prescribed_date_time": {
+                    "expression": "pres.prescribed_date"
+                },
+                "user_name": {
+                    "expression": "pp.username"
+                },
+                "prescription_type": {
+                    "table": "pres",
+                    "expression": "CASE WHEN pres.presc_item_type='Ref' THEN 'Doctor'::text WHEN pres.presc_item_type='Dep' THEN 'Department'::text END"
+                },
+                "prescribed_qty": {
+                    "expression": "1"
+                },
+                "start_date": {
+                    "expression": "date(pres.start_datetime)"
+                },
+                "remark": {
+                    "table": "presd",
+                    "expression": "presd.remark"
+                },
+                "modified_by": {
+                    "table": "modu",
+                    "expression": "COALESCE(modu.temp_username,modu.emp_username)"
+                },
+                "assigned_to_user_role": {
+                    "table": "u,r",
+                    "expression": "COALESCE(COALESCE(u.temp_username,u.emp_username), r.hosp_role_name)"
+                },
+                "preauth_act_status": {
+                    "table": "ppa",
+                    "expression": "CASE WHEN ppa.preauth_act_status='O' THEN 'Open' WHEN ppa.preauth_act_status='D' THEN 'Denied' WHEN ppa.preauth_act_status='C' THEN 'Approved' END"
+                },
+                "order_status": {
+                    "table": "pp",
+                    "expression": "CASE WHEN pp.status='P' THEN 'Prescribed' WHEN  pp.status='O' THEN 'Ordered' WHEN pp.status='PA' THEN 'Patially Ordered' ELSE NULL END"
+                },
+                "patient_readiness": {
+                    "table": "pres",
+                    "expression": "CASE WHEN pres.declined_reason_id is NOT NULL THEN 'Declined' ELSE '' END"
+                },
+                "preauth_end_date": {
+                    "table": "prad",
+                    "expression": "date(prad.end_date)"
+                }
+            }
+        },
+        {
+            "mainTableName": "patient_pending_prescriptions",
+            "mainTableAlias": "pres",
+            "whereExpression": "presc_item_type='Followup'",
+            "whereTable": "pres",
+            "joinTables": [
+                {
+                    "name": "(select max(pending_prescription_details_id) as pending_prescription_details_id,pending_prescription_id from pending_prescription_details where  NOT system_log group by pending_prescription_id)",
+                    "alias": "ppd",
+                    "dependsOn": "pres",
+                    "expression": "ON (ppd.pending_prescription_id=pres.pat_pending_presc_id)",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "pending_prescription_details",
+                    "alias": "presd",
+                    "dependsOn": "ppd",
+                    "expression": "ON (presd.pending_prescription_details_id=ppd.pending_prescription_details_id AND (remark != null OR remark != ''))",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "doctor_consultation",
+                    "alias": "dc",
+                    "dependsOn": "pres",
+                    "expression": "ON (pres.visit_id=dc.patient_id)"
+                },
+                {
+                    "name": "doctors",
+                    "alias": "cons_d",
+                    "dependsOn": "dc",
+                    "expression": "ON (dc.doctor_name=cons_d.doctor_id)"
+                },
+                {
+                    "name": "patient_registration",
+                    "alias": "pr",
+                    "dependsOn": "pres",
+                    "expression": "ON (pr.patient_id = pres.visit_id)",
+                    "type": "JOIN"
+                },
+                {
+                    "includeName": "PatientVisitFields.srjs"
+                },
+                {
+                    "name": "patient_details",
+                    "alias": "pd",
+                    "dependsOn": "pr",
+                    "expression": "ON (pd.mr_no = pr.mr_no)",
+                    "type": "JOIN"
+                },
+                {
+                    "includeName": "PatientDetailFields.srjs"
+                },
+                {
+                    "name": "doctors",
+                    "alias": "pres_d",
+                    "dependsOn": "pres",
+                    "expression": "ON (pres.presc_item_id=pres_d.doctor_id)"
+                },
+                {
+                    "name": "u_user",
+                    "alias": "u",
+                    "dependsOn": "pres",
+                    "expression": "ON (u.emp_username=pres.assigned_to_user_id)"
+                },
+                {
+                    "name": "hospital_roles_master",
+                    "alias": "r",
+                    "dependsOn": "pres",
+                    "expression": "ON (r.hosp_role_id=pres.assigned_to_role_id)"
+                },
+                {
+                    "name": "preauth_prescription_activities",
+                    "alias": "ppa",
+                    "dependsOn": "pres",
+                    "expression": "ON (ppa.preauth_act_id = pres.preauth_activity_id)"
+                },
+                {
+                    "name": "preauth_prescription",
+                    "alias": "preauth",
+                    "dependsOn": "ppa",
+                    "expression": "ON (preauth.preauth_presc_id = ppa.preauth_presc_id)"
+                },
+                {
+                    "name": "scheduler_appointments",
+                    "alias": "sa",
+                    "dependsOn": "pres",
+                    "expression": "ON (pres.pat_pending_presc_id = sa.patient_presc_id)"
+                },
+                {
+                    "name": "preauth_request_approval_details",
+                    "alias": "prad",
+                    "dependsOn": "preauth",
+                    "expression": "ON (prad.preauth_request_id=preauth.preauth_request_id)"
+                },
+                {
+                    "name": "u_user",
+                    "alias": "modu",
+                    "dependsOn": "presd",
+                    "expression": "ON (modu.emp_username=presd.modified_by)"
+                }
+            ],
+            "fieldExpressions": {
+                "item_prescribed": {
+                    "table": "pres_d",
+                    "expression": "COALESCE(pres_d.doctor_name,'')"
+                },
+                "prescribed_date": {
+                    "expression": "date(pres.prescribed_date)"
+                },
+                "prescribed_date_time": {
+                    "expression": "pres.prescribed_date"
+                },
+                "user_name": {
+                    "expression": "NULL::text"
+                },
+                "prescription_type": {
+                    "expression": "'Followup'::text"
+                },
+                "prescribed_qty": {
+                    "expression": "1"
+                },
+                "start_date": {
+                    "expression": "date(pres.start_datetime)"
+                },
+                "remark": {
+                    "table": "presd",
+                    "expression": "presd.remark"
+                },
+                "modified_by": {
+                    "table": "modu",
+                    "expression": "COALESCE(modu.temp_username,modu.emp_username)"
+                },
+                "assigned_to_user_role": {
+                    "table": "u,r",
+                    "expression": "COALESCE(COALESCE(u.temp_username,u.emp_username), r.hosp_role_name)"
+                },
+                "preauth_act_status": {
+                    "table": "ppa",
+                    "expression": "CASE WHEN ppa.preauth_act_status='O' THEN 'Open' WHEN ppa.preauth_act_status='D' THEN 'Denied' WHEN ppa.preauth_act_status='C' THEN 'Approved' END"
+                },
+                "order_status": {
+                    "expression": "NULL::text"
+                },
+                "patient_readiness": {
+                    "table": "pres",
+                    "expression": "CASE WHEN pres.declined_reason_id is NOT NULL THEN 'Declined' ELSE '' END"
+                },
+                "preauth_end_date": {
+                    "table": "prad",
+                    "expression": "date(prad.end_date)"
+                }
+            }
+        }
+    ],
+    "fields": {
+        "consulting_doctor_name": {
+            "table": "cons_d",
+            "expression": "cons_d.doctor_name",
+            "displayName": "Prescribing Doctor",
+            "width": 100,
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT doctor_name FROM doctors ORDER BY doctor_name"
+        },
+        "user_name": {
+            "displayName": "Prescribed User",
+            "width": 100,
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT emp_username FROM u_user JOIN u_role USING(role_id)\n    WHERE portal_id='N' ORDER BY emp_username"
+        },
+        "prescribed_date": {
+            "displayName": "Prescribed Date",
+            "width": 70,
+            "dataType": "date"
+        },
+        "prescribed_date_time": {
+            "displayName": "Prescribed Date Time",
+            "width": 100,
+            "dataType": "timestamp",
+            "filterable": true
+        },
+        "item_prescribed": {
+            "displayName": "Prescribed Item",
+            "width": 100,
+            "groupable": true,
+            "filterable": true
+        },
+        "prescription_type": {
+            "displayName": "Prescription Type",
+            "width": 70,
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValues": [
+                "Service",
+                "Test",
+                "Doctor"
+            ]
+        },
+        "prescribed_qty": {
+            "displayName": "Prescribed Quantity",
+            "width": 55,
+            "dataType": "numeric",
+            "decimalType": "integer",
+            "filterable": true,
+            "aggFunction": "sum"
+        },
+        "start_date": {
+            "displayName": "Prescription Start Date",
+            "width": 70,
+            "dataType": "date"
+        },
+        "remark": {
+            "displayName": "Last Remarks",
+            "width": 70,
+            "groupable": true
+        },
+        "modified_by": {
+            "displayName": "Last Remarks Added By",
+            "width": 100,
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT COALESCE(temp_username,emp_username) FROM u_user JOIN u_role USING(role_id)\n    WHERE portal_id='N' ORDER BY emp_username"
+        },
+        "assigned_to_user_role": {
+            "displayName": "Assigned to Role/User",
+            "width": 100,
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT COALESCE(temp_username,emp_username) as username FROM u_user UNION ALL select hosp_role_name  as username from  hospital_roles_master order by username"
+        },
+        "preauth_act_status": {
+            "displayName": "Prior Auth Status",
+            "width": 70,
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValues": [
+                "Open",
+                "Denied",
+                "Approved"
+            ]
+        },
+        "order_status": {
+            "displayName": "Order Status",
+            "width": 70,
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true,
+            "allowedValues": [
+                "Prescribed",
+                "Ordered",
+                "Patially Ordered"
+            ]
+        },
+        "appointment_status": {
+            "table": "sa",
+            "displayName": "Appointment Status",
+            "width": 65,
+            "groupable": true,
+            "filterable": true,
+            "allowedValues": [
+                "Arrived",
+                "Confirmed",
+                "Booked",
+                "Completed",
+                "No Show",
+                "Cancelled"
+            ],
+            "expressionLines": [
+                " CASE WHEN sa.appointment_status = 'Arrived' THEN 'Arrived'",
+                " WHEN sa.appointment_status = 'Noshow' THEN 'No Show'",
+                " WHEN sa.appointment_status = 'Confirmed' THEN 'Confirmed'",
+                " WHEN sa.appointment_status = 'Booked' THEN 'Booked'",
+                " WHEN sa.appointment_status = 'Completed' THEN 'Completed'",
+                " WHEN sa.appointment_status = 'Cancel' THEN 'Cancelled' END"
+            ]
+        },
+        "patient_readiness": {
+            "displayName": "Patient Readiness",
+            "width": 70,
+            "groupable": true,
+            "filterable": true,
+            "allowNull": true
+        },
+        "preauth_end_date": {
+            "displayName": "Prior Auth Exp Date",
+            "width": 70,
+            "dataType": "date"
+        }
+    },
+    "defaultShowFields": [
+        "mr_no",
+        "full_name",
+        "patient_id",
+        "consulting_doctor_name",
+        "prescribed_date",
+        "item_prescribed"
+    ]
+}

@@ -1,0 +1,176 @@
+{
+    "title": "Stock Adjustment Report",
+    "defaultOrder": "adj_date",
+    "reportGroup": "Store Mgmt Reports",
+    "dateFields": [
+        "adj_date"
+    ],
+    "description": "This report builder shows the adjustment of stock quantities in a store within the selected date range.",
+    "tableName": [
+        "rpt_store_stock_adjustment_view"
+    ],
+    "defaultShowFields": [
+        "store",
+        "category",
+        "medicine_name",
+        "batch_no",
+        "adj_no",
+        "adj_date",
+        "username",
+        "qty",
+        "value_cp",
+        "value_mrp",
+        "adj_type"
+    ],
+    "fields": {
+        "store": {
+            "displayName": "Store",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "width": "100",
+            "allowedValuesQuery": "SELECT dept_name AS store FROM stores ORDER BY dept_name"
+        },
+        "store_type_name": {
+            "displayName": "Store Type",
+            "width": "80",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT store_type_name FROM store_type_master ORDER BY store_type_name"
+        },
+        "category": {
+            "displayName": "Category",
+            "width": "100",
+            "filterable": true,
+            "groupable": true,
+            "allowedValuesQuery": "SELECT category FROM store_category_master ORDER BY category"
+        },
+        "center_name": {
+            "displayName": "Center Name",
+            "filterable": true,
+            "groupable": true,
+            "width": "100",
+            "allowedValuesQuery": "SELECT center_name FROM hospital_center_master WHERE center_id!=0 order by center_name"
+        },
+        "medicine_name": {
+            "displayName": "Medicine Name",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "width": "80"
+        },
+        "cust_item_code": {
+            "displayName": "Custom Item Code",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "width": "80"
+        },
+        "batch_no": {
+            "displayName": "Batch No.",
+            "filterable": false,
+            "groupable": false,
+            "width": "60"
+        },
+        "adj_date": {
+            "displayName": "Adj. Date",
+            "filterable": false,
+            "groupable": false,
+            "width": "70",
+            "dataType": "date"
+        },
+        "username": {
+            "displayName": "User",
+            "width": "80",
+            "filterable": true,
+            "groupable": true,
+            "allowNull": true,
+            "allowedValuesQuery": "SELECT emp_username AS username FROM u_user ORDER BY username"
+        },
+        "control_type_name": {
+            "displayName": "Control Type",
+            "filterable": true,
+            "groupable": true,
+            "width": "55",
+            "allowedValuesQuery": "SELECT control_type_name FROM store_item_controltype ORDER BY control_type_name"
+        },
+        "issue_base_unit": {
+            "displayName": "Pack Size",
+            "filterable": true,
+            "dataType": "numeric",
+            "groupable": false,
+            "width": "60"
+        },
+        "qty": {
+            "displayName": "Adj. Qty.",
+            "decimalType": "quantity",
+            "filterable": true,
+            "groupable": false,
+            "width": "60",
+            "dataType": "numeric"
+        },
+        "value_cp": {
+            "displayName": "CP Value",
+            "filterable": true,
+            "groupable": false,
+            "width": "80",
+            "dataType": "numeric",
+            "aggFunction": "sum",
+            "decimalType": "amount"
+        },
+        "value_mrp": {
+            "displayName": "MRP Value",
+            "filterable": true,
+            "groupable": false,
+            "width": "80",
+            "dataType": "numeric",
+            "aggFunction": "sum",
+            "decimalType": "amount"
+        },
+        "adj_type": {
+            "displayName": "Adj Type",
+            "filterable": true,
+            "groupable": true,
+            "width": "100",
+            "allowedValues": [
+                "Increase",
+                "Decrease"
+            ]
+        },
+        "adj_no": {
+            "displayName": "Adj No",
+            "filterable": true,
+            "groupable": true,
+            "dataType": "numeric",
+            "width": "70"
+        },
+        "description": {
+            "displayName": "Description",
+            "width": "250"
+        },
+        "reason": {
+            "displayName": "Reason",
+            "filterable": true,
+            "groupable": true,
+            "width": "75"
+        },
+        "exp_dt": {
+            "displayName": "Expiry Date",
+            "filterable": false,
+            "groupable": false,
+            "width": "70"
+        },
+        "bin": {
+            "displayName": "Bin/Rack",
+            "filterable": true,
+            "groupable": true,
+            "width": "60"
+        },
+        "stock_take_id": {
+            "displayName": "Stock Take No.",
+            "filterable": true,
+            "width": "60"
+        }
+    }
+}

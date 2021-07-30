@@ -1,0 +1,226 @@
+FORMAT: 1A
+HOST: http://polls.apiblueprint.org/
+
+# Insta Order API 
+    Ordering the items by ordered_items and visit details.
+## Insta Order API [/orderitemsbyvisit]
+
+### Order items by items and visit details [POST]
+
++ Request (application/json)
+
+        {  
+           "visit_id":"OP121844",
+           "ordered_items":{  
+              "others":[  
+        
+              ],
+              "packages":[  
+        
+              ],
+              "doctors":[  
+                 {  
+                    "doctors_item_id":"DOC0208",
+                    "doctors_multi_visit_package":false,#default false
+                    "doctors_head":-1,#consultation_type_id
+                    "doctors_prescribed_date":"10-01-2019 14:57"
+                 }
+              ],
+              "tests":[  
+                 {  
+                    "tests_multi_visit_package":false,#default false
+                    "tests_item_id":"DGC0981",
+                    "tests_prescribed_date":"10-01-2019 14:57"
+                 }
+              ],
+              "services":[  
+                 {  
+                    "services_multi_visit_package":false,#default false
+                    "services_item_id":"SERV0183",
+                    "services_quantity":1,
+                    "services_prescribed_date":"10-01-2019 14:57",
+                    "services_prescribed_doctor_id":"DOC0208"
+                 }
+              ]
+           }
+        }
+
++ Response 201 (application/json)
+
+    + Body
+
+            {  
+               "allOrders":[  
+                  {  
+                     "cond_doctor_name":"",
+                     "tooth_number":null,
+                     "pres_date":"10-01-2019",
+                     "type":"Doctor",
+                     "amount":0,
+                     "item_code":null,
+                     "bill_no":"BC18000118",
+                     "prior_auth_mode_id":null,
+                     "package_ref":null,
+                     "finalization_status":"U",
+                     "pres_doctor_id":null,
+                     "pres_timestamp":"10-01-2019 14:57:00",
+                     "item_name":"DoctorAPI6",
+                     "to_timestamp":null,
+                     "patient_id":"OP121844",
+                     "operation_ref":null,
+                     "outsource_dest_prescribed_id":null,
+                     "first_of_category":false,
+                     "multi_visit_package":false,
+                     "consultation_type_id":-1,
+                     "qty":1,
+                     "dialysis_status":"",
+                     "bill_status":"A",
+                     "additional_info_reqts":"",
+                     "discount":0,
+                     "activity_code":"DOC",
+                     "prior_auth_id":null,
+                     "from_timestamp":"10-01-2019 17:32:12",
+                     "is_tpa":true,
+                     "sample_collected":"N",
+                     "package_id":null,
+                     "insurance_category_id":1,
+                     "sponsor_tax_amt":0,
+                     "pres_doctor_name":null,
+                     "isdialysis":"",
+                     "pat_package_id":null,
+                     "remarks":null,
+                     "details":"10-01-2019 17:32",
+                     "canclebill":true,
+                     "labno":null,
+                     "item_id":"DOC0208",
+                     "status":"N",
+                     "order_id":13913,
+                     "mandate_additional_info":"N",
+                     "insurance_claim_amount":0,
+                     "charge_id":"CH260582",
+                     "posted_date":"10-01-2019 14:57:00",
+                     "urgent":"",
+                     "bill_type":"C",
+                     "sub_type_name":"OP Consultation",
+                     "completion_status":"",
+                     "tax_amt":0,
+                     "common_order_id":150740,
+                     "sub_type":"-1",
+                     "cond_doctor_id":null
+                  },
+                  {  
+                     "cond_doctor_name":"",
+                     "tooth_number":null,
+                     "pres_date":"10-01-2019",
+                     "type":"Doctor",
+                     "amount":0,
+                     "item_code":null,
+                     "from_timestamp":"10-01-2019 17:24:54",
+                     "bill_no":"BC18000118",
+                     "prior_auth_mode_id":null,
+                     "package_ref":null,
+                     "finalization_status":"U",
+                     "pres_doctor_id":null,
+                     "pres_timestamp":"10-01-2019 14:57:00",
+                     "item_name":"DoctorAPI6",
+                     "to_timestamp":null,
+                     "patient_id":"OP121844",
+                     "operation_ref":null,
+                     "outsource_dest_prescribed_id":null,
+                     "first_of_category":false,
+                     "details":"10-01-2019 17:24",
+                     "multi_visit_package":false,
+                     "consultation_type_id":-1,
+                     "qty":1,
+                     "dialysis_status":"",
+                     "bill_status":"A",
+                     "additional_info_reqts":"",
+                     "discount":0,
+                     "activity_code":"DOC",
+                     "prior_auth_id":null,
+                     "is_tpa":true,
+                     "sample_collected":"N",
+                     "package_id":null,
+                     "insurance_category_id":1,
+                     "sponsor_tax_amt":0,
+                     "pres_doctor_name":null,
+                     "isdialysis":"",
+                     "pat_package_id":null,
+                     "remarks":null,
+                     "canclebill":true,
+                     "labno":null,
+                     "item_id":"DOC0208",
+                     "order_id":13912,
+                     "status":"N",
+                     "mandate_additional_info":"N",
+                     "insurance_claim_amount":0,
+                     "charge_id":"CH260580",
+                     "common_order_id":150734,
+                     "posted_date":"10-01-2019 14:57:00",
+                     "urgent":"",
+                     "bill_type":"C",
+                     "sub_type_name":"OP Consultation",
+                     "completion_status":"",
+                     "tax_amt":0,
+                     "sub_type":"-1",
+                     "cond_doctor_id":null
+                  },
+                  {  
+                     "cond_doctor_name":"",
+                     "tooth_number":null,
+                     "pres_date":"10-01-2019",
+                     "type":"Doctor",
+                     "amount":0,
+                     "item_code":null,
+                     "bill_no":"BC18000118",
+                     "prior_auth_mode_id":null,
+                     "package_ref":null,
+                     "finalization_status":"U",
+                     "pres_doctor_id":null,
+                     "pres_timestamp":"10-01-2019 14:57:00",
+                     "item_name":"DoctorAPI6",
+                     "to_timestamp":null,
+                     "patient_id":"OP121844",
+                     "operation_ref":null,
+                     "outsource_dest_prescribed_id":null,
+                     "first_of_category":false,
+                     "details":"10-01-2019 17:24",
+                     "multi_visit_package":false,
+                     "consultation_type_id":-1,
+                     "qty":1,
+                     "dialysis_status":"",
+                     "bill_status":"A",
+                     "additional_info_reqts":"",
+                     "discount":0,
+                     "activity_code":"DOC",
+                     "prior_auth_id":null,
+                     "is_tpa":true,
+                     "sample_collected":"N",
+                     "package_id":null,
+                     "insurance_category_id":1,
+                     "sponsor_tax_amt":0,
+                     "pres_doctor_name":null,
+                     "isdialysis":"",
+                     "pat_package_id":null,
+                     "remarks":null,
+                     "canclebill":true,
+                     "labno":null,
+                     "item_id":"DOC0208",
+                     "status":"N",
+                     "mandate_additional_info":"N",
+                     "order_id":13911,
+                     "charge_id":"CH260579",
+                     "insurance_claim_amount":0,
+                     "common_order_id":150733,
+                     "posted_date":"10-01-2019 14:57:00",
+                     "urgent":"",
+                     "bill_type":"C",
+                     "from_timestamp":"10-01-2019 17:24:16",
+                     "sub_type_name":"OP Consultation",
+                     "completion_status":"",
+                     "tax_amt":0,
+                     "sub_type":"-1",
+                     "cond_doctor_id":null
+                  }
+               ]
+            }

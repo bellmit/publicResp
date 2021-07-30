@@ -1,0 +1,397 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="InsuranceCasesheet" pageWidth="594" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="534" leftMargin="30" rightMargin="30" topMargin="40" bottomMargin="40">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="mrNo" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="patientName" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="dept" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="billAmount" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="paidByPatient" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="insuranceId" class="java.lang.Integer" isForPrompting="false"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="visitNo" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="admitDoctor" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="refDoctor" class="java.lang.String"/>
+	<parameter name="patient_age" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT  ITP.TRANS_TYPE_NAME AS TYPE,
+IT.TRANSACTION_DESC, IT.AMT_VALUE, IT.CREATED_DATETIME,
+TO_CHAR(IT.SENT_TPA_DATETIME, 'DD-MM-YYYY HH24:MI') AS SENT_TPA_DATE,
+IT.ATTCH_FILENAME
+FROM INSURANCE_TRANSACTION IT JOIN
+INSURANCE_TRANS_TYPE ITP ON ITP.TRANS_TYPE_ID=IT.TRANS_TYPE_ID
+WHERE IT.INSURANCE_ID=$P{insuranceId} ORDER BY CREATED_DATETIME]]>
+	</queryString>
+	<field name="amt_value" class="java.math.BigDecimal"/>
+	<field name="attch_filename" class="java.lang.String"/>
+	<field name="created_datetime" class="java.sql.Timestamp"/>
+	<field name="sent_tpa_date" class="java.lang.String"/>
+	<field name="transaction_desc" class="java.lang.String"/>
+	<field name="type" class="java.lang.String"/>
+	<group name="PatientDetails">
+		<groupExpression><![CDATA[]]></groupExpression>
+		<groupHeader>
+			<band height="33">
+				<staticText>
+					<reportElement key="staticText-1" stretchType="RelativeToTallestObject" x="1" y="1" width="100" height="16"/>
+					<textElement verticalAlignment="Middle">
+						<font size="9" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[Patient Details ]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-2" stretchType="RelativeToTallestObject" x="1" y="18" width="63" height="15"/>
+					<textElement verticalAlignment="Middle">
+						<font size="9" pdfFontName="Helvetica"/>	
+					</textElement>
+					<text><![CDATA[Mr No. :]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement key="textField" stretchType="RelativeToTallestObject" x="64" y="18" width="75" height="15" isPrintWhenDetailOverflows="true"/>
+					<textElement verticalAlignment="Middle">
+						<font size="9" pdfFontName="Helvetica"/>	
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{mrNo}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement key="staticText-16" stretchType="RelativeToTallestObject" x="139" y="18" width="70" height="15"/>
+					<textElement verticalAlignment="Middle">
+						<font size="9" pdfFontName="Helvetica"/>	
+					</textElement>
+					<text><![CDATA[Patient Name :]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement key="textField-3" stretchType="RelativeToTallestObject" x="209" y="18" width="142" height="15" isPrintWhenDetailOverflows="true"/>
+					<textElement verticalAlignment="Middle">
+						<font size="9" pdfFontName="Helvetica"/>	
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{patientName}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="416" y="18" width="102" height="15"/>
+					<textElement verticalAlignment="Middle"/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{patient_age}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="351" y="18" width="64" height="15"/>
+					<textElement textAlignment="Left"/>
+					<text><![CDATA[Age : ]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<group name="doctors">
+		<groupExpression><![CDATA[$P{mrNo}]]></groupExpression>
+		<groupHeader>
+			<band height="15">
+				<staticText>
+					<reportElement x="1" y="0" width="63" height="15"/>
+					<textElement verticalAlignment="Middle"/>
+					<text><![CDATA[Visit No. :]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="64" y="0" width="75" height="15"/>
+					<textElement verticalAlignment="Middle"/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{visitNo}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="139" y="0" width="72" height="15"/>
+					<textElement verticalAlignment="Middle"/>
+					<text><![CDATA[Admit Doctor :]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="209" y="0" width="123" height="15"/>
+					<textElement verticalAlignment="Middle"/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{admitDoctor}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="351" y="0" width="65" height="15"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle"/>
+					<text><![CDATA[Referred by :]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="416" y="0" width="115" height="15"/>
+					<textElement verticalAlignment="Middle"/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{refDoctor}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="50"/>
+		</groupFooter>
+	</group>
+	<group name="bill">
+		<groupExpression><![CDATA[$P{mrNo}]]></groupExpression>
+		<groupHeader>
+			<band height="18">
+				<staticText>
+					<reportElement key="staticText-3" stretchType="RelativeToTallestObject" x="139" y="0" width="63" height="15"/>
+					<textElement verticalAlignment="Middle">
+						<font size="9" pdfFontName="Helvetica"/>	
+					</textElement>
+					<text><![CDATA[Bill Amount :]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement key="textField" stretchType="RelativeToTallestObject" x="211" y="-1" width="75" height="15" isPrintWhenDetailOverflows="true"/>
+					<textElement verticalAlignment="Middle">
+						<font size="9" pdfFontName="Helvetica"/>	
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{billAmount}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement key="staticText-5" stretchType="RelativeToTallestObject" x="351" y="0" width="75" height="15"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="9" pdfFontName="Helvetica"/>	
+					</textElement>
+					<text><![CDATA[Paid By Patient :]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement key="textField" stretchType="RelativeToTallestObject" x="426" y="0" width="102" height="15" isPrintWhenDetailOverflows="true"/>
+					<textElement verticalAlignment="Middle">
+						<font size="9" pdfFontName="Helvetica"/>	
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{paidByPatient}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement key="line-1" stretchType="RelativeToTallestObject" x="0" y="17" width="535" height="1"/>
+				</line>
+				<staticText>
+					<reportElement key="staticText-15" stretchType="RelativeToTallestObject" x="0" y="0" width="65" height="13" isPrintWhenDetailOverflows="true"/>
+					<textElement verticalAlignment="Middle"/>
+					<text><![CDATA[Department:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement key="textField-2" x="66" y="0" width="73" height="15" isPrintWhenDetailOverflows="true"/>
+					<textElement verticalAlignment="Middle"/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{dept}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<group name="InsuranceAmtDetails">
+		<groupExpression><![CDATA[]]></groupExpression>
+		<groupHeader>
+			<band height="49">
+				<subreport isUsingCache="true">
+					<reportElement key="subreport-1" x="-1" y="1" width="259" height="43"/>
+					<subreportParameter name="insId">
+						<subreportParameterExpression><![CDATA[$P{insuranceId}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR}+"/InsuranceAmtDetails.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<group name="transheader">
+		<groupExpression><![CDATA[]]></groupExpression>
+		<groupHeader>
+			<band height="34">
+				<staticText>
+					<reportElement key="staticText-7" x="0" y="19" width="91" height="15"/>
+					<box>
+						<pen lineWidth="0.25" lineStyle="Solid"/>
+						<topPen lineWidth="0.25" lineStyle="Solid"/>
+						<leftPen lineWidth="0.25" lineStyle="Solid"/>
+						<bottomPen lineWidth="0.25" lineStyle="Solid"/>
+						<rightPen lineWidth="0.25" lineStyle="Solid"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[Sent Date & Time]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-8" x="91" y="19" width="91" height="15"/>
+					<box>
+						<pen lineWidth="0.25" lineStyle="Solid"/>
+						<topPen lineWidth="0.25" lineStyle="Solid"/>
+						<leftPen lineWidth="0.25" lineStyle="Solid"/>
+						<bottomPen lineWidth="0.25" lineStyle="Solid"/>
+						<rightPen lineWidth="0.25" lineStyle="Solid"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[Type]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-9" x="182" y="19" width="100" height="15"/>
+					<box>
+						<pen lineWidth="0.25" lineStyle="Solid"/>
+						<topPen lineWidth="0.25" lineStyle="Solid"/>
+						<leftPen lineWidth="0.25" lineStyle="Solid"/>
+						<bottomPen lineWidth="0.25" lineStyle="Solid"/>
+						<rightPen lineWidth="0.25" lineStyle="Solid"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[Description]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-10" x="282" y="19" width="177" height="15"/>
+					<box>
+						<pen lineWidth="0.25" lineStyle="Solid"/>
+						<topPen lineWidth="0.25" lineStyle="Solid"/>
+						<leftPen lineWidth="0.25" lineStyle="Solid"/>
+						<bottomPen lineWidth="0.25" lineStyle="Solid"/>
+						<rightPen lineWidth="0.25" lineStyle="Solid"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[Document]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-11" x="459" y="19" width="69" height="15"/>
+					<box>
+						<pen lineWidth="0.25" lineStyle="Solid"/>
+						<topPen lineWidth="0.25" lineStyle="Solid"/>
+						<leftPen lineWidth="0.25" lineStyle="Solid"/>
+						<bottomPen lineWidth="0.25" lineStyle="Solid"/>
+						<rightPen lineWidth="0.25" lineStyle="Solid"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[Amount]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-13" x="0" y="0" width="130" height="15"/>
+					<textElement verticalAlignment="Middle">
+						<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[Transaction Details]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<background>
+		<band/>
+	</background>
+	<title>
+		<band height="48">
+			<staticText>
+				<reportElement key="staticText-12" x="96" y="7" width="352" height="38"/>
+				<textElement textAlignment="Center">
+					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Insurance Summary]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band/>
+	</pageHeader>
+	<columnHeader>
+		<band/>
+	</columnHeader>
+	<detail>
+		<band height="19">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField" stretchType="RelativeToTallestObject" x="0" y="0" width="91" height="19" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<pen lineWidth="0.25" lineStyle="Solid"/>
+					<topPen lineWidth="0.25" lineStyle="Solid"/>
+					<leftPen lineWidth="0.25" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.25" lineStyle="Solid"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="9" pdfFontName="Helvetica"/>	
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sent_tpa_date}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement key="textField" stretchType="RelativeToTallestObject" mode="Transparent" x="91" y="0" width="91" height="19" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<pen lineWidth="0.25" lineStyle="Solid"/>
+					<topPen lineWidth="0.25" lineStyle="Solid"/>
+					<leftPen lineWidth="0.25" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.25" lineStyle="Solid"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="9" pdfFontName="Helvetica"/>	
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{type}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField" stretchType="RelativeToTallestObject" x="182" y="0" width="100" height="19" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<pen lineWidth="0.25" lineStyle="Solid"/>
+					<topPen lineWidth="0.25" lineStyle="Solid"/>
+					<leftPen lineWidth="0.25" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.25" lineStyle="Solid"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="9" pdfFontName="Helvetica"/>	
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{transaction_desc}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField" stretchType="RelativeToTallestObject" x="282" y="0" width="177" height="19" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<pen lineWidth="0.25" lineStyle="Solid"/>
+					<topPen lineWidth="0.25" lineStyle="Solid"/>
+					<leftPen lineWidth="0.25" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.25" lineStyle="Solid"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="9" pdfFontName="Helvetica"/>	
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{attch_filename}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField" stretchType="RelativeToTallestObject" x="459" y="0" width="69" height="19" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid"/>
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="9" pdfFontName="Helvetica"/>	
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{amt_value}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band/>
+	</columnFooter>
+	<pageFooter>
+		<band/>
+	</pageFooter>
+	<summary>
+		<band/>
+	</summary>
+	<noData>
+		<band height="30">
+			<staticText>
+				<reportElement key="staticText-14" x="207" y="5" width="122" height="25"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[No Data]]></text>
+			</staticText>
+		</band>
+	</noData>
+</jasperReport>

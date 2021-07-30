@@ -1,0 +1,1576 @@
+FORMAT: 1A
+HOST: http://polls.apiblueprint.org/
+
+# Insta Orders API
+
+Documents API Enpoints for Orders.
+
+## Glossary of Terms
+
+**Activity** - An Orderable Item thats part of a package
+
+## Service Groups [/master/servicegroups]
+
+### List Service groups [GET /master/servicegroups/list.json]
+Get all service groups
+
++ Response 200 (application/json)
+    + Attributes (array[`Service Group -1`, Service Group 0, Service Group 1, Service Group 2, Service Group 3, Service Group 5, Service Group 6, Service Group 7, Service Group 8, Service Group 9, Service Group 10, Service Group 11, Service Group 12, Service Group 13, Service Group 14, Service Group 15])
+
+## Service Sub Groups [/master/servicesubgroups]
+
+### List Service sub groups [GET /master/servicesubgroups/list.json{?service_group_id}]
+Get all service sub groups
+
++ Parameters
+    + `service_group_id`: null (number, optional) - Service group ID to filter on.
+    
++ Response 200 (application/json)
+    + Attributes (array[`Service Sub Group -1`, Service Sub Group 0, Service Sub Group 1, Service Sub Group 2, Service Sub Group 3, Service Sub Group 5, Service Sub Group 18, Service Sub Group 19, Service Sub Group 20, Service Sub Group 21, Service Sub Group 22, Service Sub Group 28, Service Sub Group 32, Service Sub Group 33, Service Sub Group 34, Service Sub Group 35, Service Sub Group 36, Service Sub Group 37, Service Sub Group 38, Service Sub Group 39, Service Sub Group 40, Service Sub Group 41, Service Sub Group 42, Service Sub Group 43, Service Sub Group 44, Service Sub Group 45, Service Sub Group 46])
+
+## Order Items [/master/orderitems.do]
+
+### List Orderable Items [GET /master/orderItems.do/method=getOrderableItems{?visit_type,orderable,tpa_id,org_id,mts,new_ui,center_id,bill_no,filter,visit_id,is_multi_visit_package,direct_billing,operation_applicable,package_applicable}]
+Read endpoint as ```/master/orderItems.do?method=getOrderableItems```
+Get all items that can be ordered for current center
+
++ Parameters
+    + `visit_type`: o,i (enum, required) - Visit Type
+    + orderable: Y, N (enum, required) - List Only Orderable Items
+    + tpa_id (string, optional) - TPA/Sponsor ID
+    + center_id (int, optional) - Center ID
+    + org_id - Organization ID
+    + bill_no
+    + filter
+    + direct_billing
+    + operation_applicable
+    + package_applicable
+    + visit_id
+    + is_multi_visit_package: true (boolean, optional) - Include Multi visit packages
+    + new_ui: true (boolean, required) - true for New UI and json response, false to receive as js script code
+    + mts (string, optional) - If Master Timestamp is provided than orderable items are returned only if there has been a change in dataset
+    
++ Response 200 (application/json)
+    + Attributes 
+        + org_id : ORG0001 (string) - Organization ID
+        + orderable_items : array[Equipment Order Item, Doctor Order Item, Multivisit Package Order Item, Package Order Item, Template Order Item, Service Order Item, Dental Service Order Item, Other Charges Order Item, Radiology Order Item , Laboratory Order Item] - Orderable Items
+        + mts : 3167177 (number) - Master Timestamp
+
+### Fetch Equipment Details [GET /master/orderItems.do/method=getItemDetails{?id,type,new_ui}]
+Read endpoint as ```/master/orderItems.do?method=getItemDetails```
+Get details for given equipment id
+
++ Parameters
+  + id (string, required) - Equipment ID
+  + type: equipment (string, required) - Type = equipment
+  + `new_ui`: true,false (enum, optional) - true for New UI, false returns json in existing format
+  
++ Response 200 (application/json)
+    + Attributes (Equipment)
+
+### Fetch Package/MultivisitPackage/Template Details [GET /master/orderItems.do/method=getPackageComponents{?id,mr_no,multi_visit_package,new_ui}]
+Read endpoint as ```/master/orderItems.do?method=getPackageComponents```
+Get details for given package
+
++ Parameters
+    + id : 2 (string, required) - Package ID
+    + `new_ui`: true, false (enum) - true for New UI, false returns json in existing format
+    + `mr_no` (string, optional) - MR no if available. For multi visit package will return consumed quantity for given mr no
+    + `multi_visit_package`: true,false (enum, optional) - true if package id passed is a multi visit package, false otherwise.
+
++ Response 200 (application/json)
+    + Attributes (Package)
+
+### Calculate Charges for selected Item [GET /master/orderItems.do/method=getItemCharges{?new_ui,bill_no,multi_visit_package,pack_ob_id,package_id,insurance_discount_plan,type,id,bed_type,org_id,insurance,from_date,to_date,quantity,charge_type,visit_type,finalized,patient_id,first_of_category,plan_ids}]
+Read endpoint as ```/master/orderItems.do?method=getItemCharges```
+Calculate charges for an order item or direct charge.
+
++ Parameters
+    + new_ui: true,false (enum, optional) - true for New UI, false returns json in existing format
+    + type: Laboratory (string, required) Order Item Type
+    + id: DGC0001 (string, required) - Order Item ID
+    + `bed_type`: GENERAL (string) - Bed Type for which charges are to be calculated (Refer `billing_bed_type_for_op` in generic preferences)
+    + `org_id`: ORG0001 (string) - Organization ID
+    + insurance: false, true (enum) - Opting Insurance
+    + `from_date` (string) - Timestamp in `dd-MM-yyyy hh:mm` format
+    + `to_date` (string) - Timestamp in `dd-MM-yyyy hh:mm` format
+    + quantity (number) - Quantity of Order Item
+    + `charge_type`: H, D (enum, optional) - Charge Type where ever applicable
+    + `visit_type`: o, i (enum) - Visit Type o = OP, i = IP
+    + `finalized`: F, N (enum) - Finalized Status F = Finalized, N = Not Finalized
+    + `patient_id` (string) - Visit ID
+    + `first_of_category`: true, false (enum) - Only entry in order list of this Type
+    + `bill_no`: null (string, optional)
+    + `multi_visit_package`: false, true (enum, optional) - Is part of Multivisit package
+    + `pack_ob_id` (number, optional) - Package Component ID
+    + `package_id` (number, optional) - Package ID
+    + `insurance_discount_plan` (number)
+    + `plan_ids` (string)
+
++ Response 200 (application/json)
+    + Attributes (Charge)
+
+### Get Charge Heads [GET /master/orderItems.do/method=getChargeHeadJSON{?new_ui}]
+Read endpoint as ```/master/orderItems.do?method=getChargeHeadJSON```
+Get Charge heads
+
++ Parameters
+    + new_ui: true,false (enum, optional) - true for New UI, false returns json in existing format
+
++ Response 200 (application/json)
+    + Attributes (array[Charge Head GREG, Charge Head IPREG, Charge Head OPREG, Charge Head EMREG, Charge Head MLREG, Charge Head OPDOC, Charge Head ROPDOC, Charge Head IPDOC, Charge Head LTDIA, Charge Head RTDIA, Charge Head SERSNP, Charge Head PHCMED, Charge Head PKGPKG, Charge Head EQUOTC, Charge Head OCOTC, Charge Head CONOTC, Charge Head MISOTC, Charge Head IMPOTC, Charge Head MEMED, Charge Head PHMED, Charge Head CONMED, Charge Head LTAX, Charge Head STAX, Charge Head CSTAX, Charge Head BSTAX, Charge Head BIDIS, Charge Head ROF, Charge Head PHRET, Charge Head INVITE, Charge Head INVRET, Charge Head PHCRET])
+
+
+# Data Structures
+
+## Equipment Order Item (object) - Order Item of type Equipment
++ `conducting_doc_mandatory`: false (boolean) - Item requires Conducting Doctor
++ `mandate_additional_info`: N, Y (enum) - Additional Info Required
++ `prior_auth_required`: N, A, S (enum) - Insurance prior authorization required
++ department: Radiology (string) - Name of Department which owns this item
++ `tooth_num_required`: N, Y (enum) - Order Item requires tooth number to be specified
++ code: MRI70 (string, nullable) - Short Code for this Item
++ tpa_id: `-1` (string) - 
++ `multi_visit_package`: false (boolean) - Item is a Multi Visit Package
++ type: Equipment (fixed) - Type = Equipment
++ `additional_info_reqts` (string) - 
++ `conduction_applicable`: false (boolean) - 
++ subgrpid: 39 (number) - Service Subgroup ID
++ `results_entry_applicable`: false (boolean) - 
++ `insurance_category_id`: 1 (number) - Category ID for Insurance Claims
++ id: EQID0001 (string) - Item ID
++ name: MRI Scanner 70 cm (string) - Name of Order Item
++ groupid: 6 (number) - Service Group Id
++ center_id: `-1` (number) - Center ID. Default center = 0 or -1
+
+## Laboratory Order Item (object) - Order Item of type Laboratory
++ `conducting_doc_mandatory`: false (boolean) - Item requires Conducting Doctor
++ `mandate_additional_info`: N, Y (enum) - Additional Info Required
++ `prior_auth_required`: N, A, S (enum) - Insurance prior authorization required
++ department: Laboratory (string) - Name of Department which owns this item
++ `tooth_num_required`: N, Y (enum) - Order Item requires tooth number to be specified
++ code: CBC (string, nullable) - Short Code for this Item
++ tpa_id: `-1` (string) - 
++ `multi_visit_package`: false (boolean) - Item is a Multi Visit Package
++ type: Laboratory (fixed) - Type = Laboratory
++ `additional_info_reqts` (string)
++ `conduction_applicable`: true (boolean)
++ subgrpid: 37 (number) - Service Subgroup ID
++ `results_entry_applicable`: true (boolean)
++ `insurance_category_id`: 3 (number) - Category ID for Insurance Claims
++ id: DGC0001 (string) - Item ID
++ name: Complete Haemogram (string) - Name of Order Item
++ groupid: 5 (number) - Service Group Id
++ center_id: `-1` (number) - Center ID. Default center = 0 or -1
+
+## Radiology Order Item (object) - Order Item of type Radiology
++ `conducting_doc_mandatory`: true (boolean) - Item requires Conducting Doctor
++ `mandate_additional_info`: N, Y (enum) - Additional Info Required
++ `prior_auth_required`: N, A, S (enum) - Insurance prior authorization required
++ department: Radiology (string) - Name of Department which owns this item
++ `tooth_num_required`: N, Y (enum) - Order Item requires tooth number to be specified
++ code: USNT (string, nullable) - Short Code for this Item
++ tpa_id: `-1` (string) - 
++ `multi_visit_package`: false (boolean) - Item is a Multi Visit Package
++ type: Radiology (fixed) - Type = Radiology
++ `additional_info_reqts` (string)
++ `conduction_applicable`: true (boolean)
++ subgrpid: 40 (number) - Service Subgroup ID
++ `results_entry_applicable`: true (boolean)
++ `insurance_category_id`: 4 (number) - Category ID for Insurance Claims
++ id: DOC0115 (string) - Item ID
++ name: NT Scan (string) - Name of Order Item
++ groupid: 6 (number) - Service Group Id
++ center_id: `-1` (number) - Center ID. Default center = 0 or -1
+
+## Dental Service Order Item (object) - Order Item of type Dental Service
++ `conducting_doc_mandatory`: true (boolean) - Item requires Conducting Doctor
++ `mandate_additional_info`: N, Y (enum) - Additional Info Required
++ `prior_auth_required`: N, A, S (enum) - Insurance prior authorization required
++ department: Dental (string) - Name of Department which owns this item
++ `tooth_num_required`: Y, N (enum) - Order Item requires tooth number to be specified
++ code: DENTALPROC (string, nullable) - Short Code for this Item
++ tpa_id: `-1` (string) - 
++ `multi_visit_package`: false (boolean) - Item is a Multi Visit Package
++ type: Service (enum) - Type = Service
++ `additional_info_reqts` (string)
++ `conduction_applicable`: true (boolean)
++ subgrpid: 45 (number) - Service Subgroup ID
++ `results_entry_applicable` (boolean)
++ `insurance_category_id`: 6 (number) - Category ID for Insurance Claims
++ id: SERV0001 (string) - Item ID
++ name: Root Canal Treatment (string) - Name of Order Item
++ groupid: 8 (number) - Service Group Id
++ center_id: `-1` (number) - Center ID. Default center = 0 or -1
+
+## Service Order Item (object) - Order Item of type Service
++ `conducting_doc_mandatory`: false (boolean) - Item requires Conducting Doctor
++ `mandate_additional_info`: N, Y (enum) - Additional Info Required
++ `prior_auth_required`: N, A, S (enum) - Insurance prior authorization required
++ department: Nephrology (string) - Name of Department which owns this item
++ `tooth_num_required`: N, Y (enum) - Order Item requires tooth number to be specified
++ code: NEPHDIAL (string, nullable) - Short Code for this Item
++ tpa_id: `-1` (string) - 
++ `multi_visit_package`: false (boolean) - Item is a Multi Visit Package
++ type: Service (enum) - Type = Service
++ `additional_info_reqts` (string)
++ `conduction_applicable`: false (boolean)
++ subgrpid: 47 (number) - Service Subgroup ID
++ `results_entry_applicable` (boolean)
++ `insurance_category_id`: 6 (number) - Category ID for Insurance Claims
++ id: SERV0002 (string) - Item ID
++ name: Dialysis (string) - Name of Order Item
++ groupid: 8 (number) - Service Group Id
++ center_id: `-1` (number) - Center ID. Default center = 0 or -1
+
+## Other Charges Order Item (object) - Order Item of type Other Charges
++ `conducting_doc_mandatory`: false (boolean) - Item requires Conducting Doctor
++ `mandate_additional_info`: N, Y (enum) - Additional Info Required
++ `prior_auth_required`: N, A, S (enum) - Insurance prior authorization required
++ department  (string) - Name of Department which owns this item
++ `tooth_num_required`: N, Y (enum) - Order Item requires tooth number to be specified
++ code (string, nullable) - Short Code for this Item
++ tpa_id: `-1` (string) - 
++ `multi_visit_package`: false (boolean) - Item is a Multi Visit Package
++ type: Other Charge (fixed),
++ `additional_info_reqts` (string)
++ `conduction_applicable`: false (boolean)
++ subgrpid: `-1` (number) - Service Subgroup ID
++ `results_entry_applicable` (boolean)
++ `insurance_category_id`: 1 (number) - Category ID for Insurance Claims
++ id: Some Random Charge For OP (string) - Item ID
++ name: Some Random Charge For OP (string) - Name of Order Item
++ groupid: 11 (number) - Service Group Id
++ center_id: `-1` (number) - Center ID. Default center = 0 or -1
+
+## Template Order Item (object) - Order Item of type Template
++ `conducting_doc_mandatory`: false (boolean) - Item requires Conducting Doctor
++ `mandate_additional_info`: N, Y (enum) - Additional Info Required
++ `prior_auth_required`: N, A, S (enum) - Insurance prior authorization required
++ department: DIAG, OP, IP (enum) - Type of Package
++ `tooth_num_required`: N, Y (enum) - Order Item requires tooth number to be specified
++ code: PKTMPL (string, nullable) - Short Code for this Item
++ tpa_id: `-1` (string) - 
++ `multi_visit_package`: false (boolean) - Item is a Multi Visit Package
++ type: Template (fixed) - Type = Package
++ `additional_info_reqts` (string)
++ `conduction_applicable`: false (boolean)
++ subgrpid: 34 (number) - Service Subgroup ID
++ `results_entry_applicable` (boolean)
++ `insurance_category_id`: 3 (number) - Category ID for Insurance Claims
++ id: 1 (string) - Item ID
++ name: Template Package - Iron Profiling (string) - Name of Order Item
++ groupid: 12 (number) - Service Group Id
++ center_id: `-1` (number) - Center ID. Default center = 0 or -1
+
+## Package Order Item (object) - Order Item of type Package
++ `conducting_doc_mandatory`: false (boolean) - Item requires Conducting Doctor
++ `mandate_additional_info`: N, Y (enum) - Additional Info Required
++ `prior_auth_required`: N, A, S (enum) - Insurance prior authorization required
++ department: DIAG, OP, IP (enum) - Type of Package
++ `tooth_num_required`: N, Y (enum) - Order Item requires tooth number to be specified
++ code: PKIRON (string, nullable) - Short Code for this Item
++ tpa_id: `-1` (string) - 
++ `multi_visit_package`: false (boolean) - Item is a Multi Visit Package
++ type: Package (fixed) - Type = Template
++ `additional_info_reqts` (string)
++ `conduction_applicable`: false (boolean)
++ subgrpid: 5 (number) - Service Subgroup ID
++ `results_entry_applicable` (boolean)
++ `insurance_category_id`: 3 (number) - Category ID for Insurance Claims
++ id: 2 (string) - Item ID
++ name: Lab Package - Iron Profiling (string) - Name of Order Item
++ groupid: 5 (number) - Service Group Id
++ center_id: `-1` (number) - Center ID. Default center = 0 or -1
+
+## Doctor Order Item (object) - Order Item of type Doctor (Consultation)
++ `conducting_doc_mandatory`: false (boolean) - Item requires Conducting Doctor
++ `mandate_additional_info`: N, Y (enum) - Additional Info Required
++ `prior_auth_required`: N, A, S (enum) - Insurance prior authorization required
++ department: Urology (string) - Name of Department which owns this item
++ `tooth_num_required`: N, Y (enum) - Order Item requires tooth number to be specified
++ code (string, nullable) - Short Code for this Item
++ tpa_id: `-1` (string) - 
++ `multi_visit_package`: false (boolean) - Item is a Multi Visit Package
++ type: Doctor (fixed) - Type = Doctor
++ `additional_info_reqts` (string)
++ `conduction_applicable`: false (boolean)
++ subgrpid: `-1` (number) - Service Subgroup ID
++ `results_entry_applicable` (boolean)
++ `insurance_category_id`: 0 (number) - Category ID for Insurance Claims
++ id: DOC0053 (string) - Item ID
++ name: Manohar T (string) - Name of Order Item
++ groupid: `-1` (number) - Service Group Id
++ center_id: 0 (number) - Center ID. Default center = 0 or -1
+
+## Multivisit Package Order Item (object) - Order Item of type Multivisit Package
++ `conducting_doc_mandatory`: false (boolean) - Item requires Conducting Doctor
++ `mandate_additional_info`: N, Y (enum) - Additional Info Required
++ `prior_auth_required`: N, A, S (enum) - Insurance prior authorization required
++ department: OP, DIAG, IP (enum) - Type of Package
++ `tooth_num_required`: N, Y (enum) - Order Item requires tooth number to be specified
++ code: MVPKMAT (string, nullable) - Short Code for this Item
++ tpa_id: `-1` (string) - 
++ `multi_visit_package`: true (boolean) - Item is a Multi Visit Package
++ type: Package (fixed) - Type = Package
++ `additional_info_reqts` (string)
++ `conduction_applicable`: false (boolean)
++ subgrpid: 34 (number) - Service Subgroup ID
++ `results_entry_applicable` (boolean)
++ `insurance_category_id`: 7 (number) - Category ID for Insurance Claims
++ id: 3 (string) - Item ID
++ name: Maternity Package (string) - Name of Order Item
++ groupid: 12 (number) - Service Group Id
++ center_id: `-1` (number) - Center ID. Default center = 0 or -1
+
+## Equipment (object) - Equipment Details
++ `eq_id`: EQID0001 (string) - Equipment ID
++ `equipment_name`: MRI Scanner 70 cm (string) - Name of Equipment
++ `equipment_code`: MRI70 (string) - Short Code for Equipment
++ status: A, I (enum) - Status A = Active, I = Inactive
++ `duration_in_minutes`: 30 (number) - Size of each chargable unit in minutes.
++ `dept_id`: DEP_RAD (string) - ID of department which owns this equipment
++ `min_duration`: 2 (number) - Minimum units to charge. For example, if `duration_in_minutes` = 30, `min_duration` = 2, actual utilization is 25 minutes, then charged units is 2, which is 1 hour.
++ `dept_name`: Radiology (string) - Name of department which owns this equipment
++ `charge_basis`: B, D, U (enum) - Allowed method of charge. B = Both, D = Daily, U = Units or Hourly
++ `slab_1_threshold`: 4 - Initial units to charge under slab 1 rates. For example, if `duration_in_minutes` = 30, `min_duration` = 2, `slab_1_threshold` = 6, actual utilization is between 1 hour and 3 hours, a flat rate defined as slab 1 rate is charged.
++ `incr_duration`: 1 (number) - After `slab_1_threshold` has elapsed, size of each step in charged units. For example, if `duration_in_minutes` = 30, `slab_1_threshold` = 6, `incr_duration` = 2, then post 6 units for every 2 units, 1 x incr charge is calculated.
+
+## Package (object) - Package Object
++ `components` (array[Component CBC, Component Iron])
++ `usage` (array)
+
+## Multivisit Package (object) - MultiVisit Package Object
++ `components` (array[MV Component CBC, MV Component Iron, MV Component NT, MV Component Doctor])
++ `usage` (array[Usage CBC, Usage Iron, Usage NT, Usage Doctor])
+
+## Usage Doctor
++ `item_id`: Doctor (string)
++ `consumed_qty`: 1 (number)
++ `status`: P (string)
++ `pat_package_id`: 1 (number)
++ `deposit_balance`: 0 (number)
++ `package_id`: 3 (number)
++ `mr_no` (string, optional)
++ `last_ordered`: 2017-06-21 09:10:00` (string, optional)
+
+## Usage CBC
++ `item_id`: DGC0001 (string)
++ `consumed_qty`: 1 (number)
++ `status`: P (string)
++ `pat_package_id`: 1 (number)
++ `deposit_balance`: 0 (number)
++ `package_id`: 3 (number)
++ `mr_no` (string, optional)
++ `last_ordered`: `2017-06-18 14:54:00` (string, optional)
+
+## Usage Iron
++ `item_id`: DGC0002 (string)
++ `consumed_qty`: 1 (number)
++ `status`: P (string, optional) - 
++ `pat_package_id`: 1 (number, optional)
++ `deposit_balance`: 0 (number, optional)
++ `package_id`: 3 (number, optional)
++ `mr_no` (string, optional)
++ `last_ordered`: `2017-06-14 16:26:00` (string, optional)
+
+## Usage NT
++ `item_id`: DGC0003 (string)
++ `consumed_qty`: 0 (number)
+
+## MV Component CBC (object) - Multivisit Package Component CBC Test
++ `conducting_doc_mandatory`: false (boolean) - Item requires Conducting Doctor
++ `operation_id`: null (string, nullable) - Operation Id, Not applicable for OP
++ `mandate_additional_info`: N, Y (enum) - Additional Info Required
++ `activity_qty`: 10 (number) - Total Quantity of this activity in Package. Is always 1 for Simple package. For Multivisit Package `activity_package - usage` gives available quantity.
++ `operation_name`: null (string, nullable)
++ `activity_id`: DGC0001 (string) - ID for Activity
++ `package_name`: Maternity Package (string) - Name of Package
++ `consultation_type_id`: null (number, nullable) - Consultation Type ID
++ `remarks` (string) - Activity Remarks
++ `chargehead_name`: Lab Tests (string) - Name of Charge head for Activity
++ `multi_visit_package`: true (boolean) - Activity is part of a Multi Visit Package
++ `type`: P, T (enum) - Package or Template
++ `additional_info_reqts` (string)
++ `pack_ob_id`: 6 (string) - Package Component ID
++ `activity_description`: Complete Haemogram - Activity Description
++ `insurance_category_id`: 7 (number) - Insurance Claims Category ID for Package
++ `service_sub_group_id`: 34 (number) - Service Subgroup ID for Package
++ `activity_units` (string) - UOM for Activity Quantity
++ `item_name`: Complete Haemogram - Activity Name
++ `activity_charge`: 300 (number) - Cost of Activity
++ `description` (string) - Package Description
++ `package_id`: 3 (number) - Package ID
++ `charge_head`: LTDIA - ID of Charge Head for Activity
++ `package_category_id`: `-1` (number) - Package category  ID
++ `item_type`: Laboratory, Radiology, Doctor, Service, Template, Package, Other Charges, Equipment (enum) - Type of Activity
+
+## Component CBC (object) - Package Component CBC Test
++ `conducting_doc_mandatory`: false (boolean) - Item requires Conducting Doctor
++ `operation_id`: null (string, nullable) - Operation Id, Not applicable for OP
++ `mandate_additional_info`: N, Y (enum) - Additional Info Required
++ `activity_qty`: 1 (number) - Total Quantity of this activity in Package. Is always 1 for Simple package. For Multivisit Package `activity_package - usage` gives available quantity.
++ `operation_name`: null (string, nullable)
++ `activity_id`: DGC0001 (string) - ID for Activity
++ `package_name`: `Lab Package - Iron Profiling` (string) - Name of Package
++ `consultation_type_id`: null (number, nullable) - Consultation Type ID
++ `remarks` (string) - Activity Remarks
++ `chargehead_name`: Lab Tests (string) - Name of Charge head for Activity
++ `multi_visit_package`: false (boolean) - Activity is part of a Multi Visit Package
++ `type`: P, T (enum) - Package or Template
++ `additional_info_reqts` (string)
++ `pack_ob_id`: 3 (string) - Package Component ID
++ `activity_description`: Complete Haemogram - Activity Description
++ `insurance_category_id`: 3 (number) - Insurance Claims Category ID for Package
++ `service_sub_group_id`: 5 (number) - Service Subgroup ID for Package
++ `activity_units` (string) - UOM for Activity Quantity
++ `item_name`: Complete Haemogram - Activity Name
++ `activity_charge`: 300 (number) - Cost of Activity
++ `description` (string) - Package Description
++ `package_id`: 2 (number) - Package ID
++ `charge_head`: LTDIA - ID of Charge Head for Activity
++ `package_category_id`: `-1` (number) - Package category  ID
++ `item_type`: Laboratory, Radiology, Doctor, Service, Template, Package, Other Charges, Equipment (enum) - Type of Activity
+
+## MV Component Iron (object) - Multivisit Package Component Iron Profile Test
++ `conducting_doc_mandatory`: false (boolean) - Item requires Conducting Doctor
++ `operation_id`: null (string, nullable) - Operation Id, Not applicable for OP
++ `mandate_additional_info`: N, Y (enum) - Additional Info Required
++ `activity_qty`: 1 (number) - Total Quantity of this activity in Package. Is always 1 for Simple package. For Multivisit Package `activity_package - usage` gives available quantity.
++ `operation_name`: null (string, nullable)
++ `activity_id`: DGC0002 (string) - ID for Activity
++ `package_name`: Maternity Package - Name of Package
++ `consultation_type_id`: null (number, nullable) - Consultation Type ID
++ `remarks` (string) - Activity Remarks
++ `chargehead_name`: Lab Tests (string) - Name of Charge head for Activity
++ `multi_visit_package`: true (boolean) - Activity is part of a Multi Visit Package
++ `type`: P, T (enum) - Package or Template
++ `additional_info_reqts` (string)
++ `pack_ob_id`: 7 (number) - Package Component ID
++ `activity_description`: Iron Profile - Activity Description
++ `insurance_category_id`: 7 (number) - Insurance Claims Category ID for Package
++ `service_sub_group_id`: 34 (number) - Service Subgroup ID for Package
++ `activity_units` (string) - UOM for Activity Quantity
++ `item_name`: Iron Profile - Activity Name
++ `activity_charge`: 800 (number) - Cost of Activity
++ `description` (string) - Package Description
++ `package_id`: 3 (number) - Package ID
++ `charge_head`: LTDIA - ID of Charge Head for Activity
++ `package_category_id`: `-1` (number) - Package category  ID
++ `item_type`: Laboratory (fixed) - Type of Activity
+
+## Component Iron (object) - Package Component Iron Profile Test
++ `conducting_doc_mandatory`: false (boolean) - Item requires Conducting Doctor
++ `operation_id`: null (string, nullable) - Operation Id, Not applicable for OP
++ `mandate_additional_info`: N, Y (enum) - Additional Info Required
++ `activity_qty`: 1 (number) - Total Quantity of this activity in Package. Is always 1 for Simple package. For Multivisit Package `activity_package - usage` gives available quantity.
++ `operation_name`: null (string, nullable)
++ `activity_id`: DGC0002 (string) - ID for Activity
++ `package_name`: Lab Package - Iron Profiling - Name of Package
++ `consultation_type_id`: null (number, nullable) - Consultation Type ID
++ `remarks` (string) - Activity Remarks
++ `chargehead_name`: Lab Tests (string) - Name of Charge head for Activity
++ `multi_visit_package`: true (boolean) - Activity is part of a Multi Visit Package
++ `type`: P, T (enum) - Package or Template
++ `additional_info_reqts` (string)
++ `pack_ob_id`: 4 (number) - Package Component ID
++ `activity_description`: Iron Profile - Activity Description
++ `insurance_category_id`: 3 (number) - Insurance Claims Category ID for Package
++ `service_sub_group_id`: 5 (number) - Service Subgroup ID for Package
++ `activity_units` (string) - UOM for Activity Quantity
++ `item_name`: Iron Profile - Activity Name
++ `activity_charge`: 800 (number) - Cost of Activity
++ `description` (string) - Package Description
++ `package_id`: 2 (number) - Package ID
++ `charge_head`: LTDIA - ID of Charge Head for Activity
++ `package_category_id`: `-1` (number) - Package category  ID
++ `item_type`: Laboratory (fixed) - Type of Activity
+
+## MV Component NT (object) - Package Component NT Scan Test
++ `conducting_doc_mandatory`: false (boolean) - Item requires Conducting Doctor
++ `operation_id`: null (string, nullable) - Operation Id, Not applicable for OP
++ `mandate_additional_info`: N, Y (enum) - Additional Info Required
++ `activity_qty`: 1 (number) - Total Quantity of this activity in Package. Is always 1 for Simple package. For Multivisit Package `activity_package - usage` gives available quantity.
++ `operation_name`: null (string, nullable)
++ `activity_id`: DGC0003 (string) - ID for Activity
++ `package_name`: Maternity Package - Name of Package
++ `consultation_type_id`: null (number, nullable) - Consultation Type ID
++ `remarks` (string) - Activity Remarks
++ `chargehead_name`: Radiology Tests (string) - Name of Charge head for Activity
++ `multi_visit_package`: true (boolean) - Activity is part of a Multi Visit Package
++ `type`: P, T (enum) - Package or Template
++ `additional_info_reqts` (string)
++ `pack_ob_id`: 8 (number) - Package Component ID
++ `activity_description`: NT Scan - Activity Description
++ `insurance_category_id`: 7 (number) - Insurance Claims Category ID for Package
++ `service_sub_group_id`: 34 (number) - Service Subgroup ID for Package
++ `activity_units` (string) - UOM for Activity Quantity
++ `item_name`: NT Scan - Activity Name
++ `activity_charge`: 2100 (number) - Cost of Activity
++ `description` (string) - Package Description
++ `package_id`: 3 (number) - Package ID
++ `charge_head`: RTDIA - ID of Charge Head for Activity
++ `package_category_id`: `-1` (number) - Package category  ID
++ `item_type`: Radiology (fixed) - Type of Activity
+
+## MV Component Doctor (object) - Multivisit Package Doctor OP Consultation
++ `conducting_doc_mandatory`: false (boolean) - Item requires Conducting Doctor
++ `operation_id`: null (string, nullable) - Operation Id, Not applicable for OP
++ `mandate_additional_info`: N, Y (enum) - Additional Info Required
++ `activity_qty`: 10 (number) - Total Quantity of this activity in Package. Is always 1 for Simple package. For Multivisit Package `activity_package - usage` gives available quantity.
++ `operation_name`: null (string, nullable)
++ `activity_id`: Doctor (string) - ID for Activity
++ `package_name`: Maternity Package - Name of Package
++ `consultation_type_id`: null (number, nullable) - Consultation Type ID
++ `remarks` (string) - Activity Remarks
++ `chargehead_name`: OP Consultation (string) - Name of Charge head for Activity
++ `multi_visit_package`: true (boolean) - Activity is part of a Multi Visit Package
++ `type`: P, T (enum) - Package or Template
++ `additional_info_reqts` (string)
++ `pack_ob_id`: 11 (number) - Package Component ID
++ `activity_description`: Doctor - Activity Description
++ `insurance_category_id`: 7 (number) - Insurance Claims Category ID for Package
++ `service_sub_group_id`: 34 (number) - Service Subgroup ID for Package
++ `activity_units` (string) - UOM for Activity Quantity
++ `item_name`: Doctor - Activity Name
++ `activity_charge`: 0 (number) - Cost of Activity
++ `description` (string) - Package Description
++ `package_id`: 3 (number) - Package ID
++ `charge_head`: OPDOC - ID of Charge Head for Activity
++ `package_category_id`: `-1` (number) - Package category  ID
++ `item_type`: Doctor (fixed) - Type of Activity
+
+## Service Sub Group (object)
++ `service_sub_group_id`: 0 (number) - Service Group ID
++ `service_sub_group_name`: Direct Charge (string) - Name of service group
++ `status`: A, I (enum) - Status
++ `display_order`: 0 (number) - precedence in drop down list where lower value has higher precedence
++ `service_sub_group_code` (string, nullable) - Short code for service group
++ `service_sub_group_id`: 0 (number) - ID of Service Group to which this Service Sub group belongs
++ `account_head_id` (number) - ID of Charge Head under which entries associated with this service sub group are to be billed.
++ `elgible_to_earn_points`: N, Y (enum) - Does entires charged under this sub group earn reward points. Applicable if `mod_reward_points` is enabled.
++ `elgible_to_redeem_points`: N, Y (enum) - Does entires charged under this sub group can be redeemed against reward points. Applicable if `mod_reward_points` is enabled.
++ `redemption_cap` (number) - Float value representing percentage of total reward points that can be redeemed against entires charged under this sub group. Applicable if `mod_reward_points` is enabled.
+
+## Charge (object)
++ `account_group`: 0
++ `act_department_id`: null
++ `act_department_name`: null
++ `act_description`: Complete Haemogram (string) - Activity Name
++ `act_description_id`: DGC0001 (string) - Activity ID
++ `act_item_code`: null
++ `act_quantity`: 1 (number) - Activity Quantity
++ `act_rate`: 300.00 (number) - Rate of this Activity
++ `act_rate_plan_item_code`: null
++ `act_remarks`: null
++ `act_unit` (string)
++ `activity_code`: null
++ `activity_conducted`: null
++ `activity_id`: 0
++ `actual_amount`: 0
++ `allow_discount`: true
++ `allow_rate_decrease`: false
++ `allow_rate_increase`: false
++ `allow_rate_variation`: true
++ `amount`: 300.00 (number) - Billable Amount for this Activity
++ `amount_included`: 0
++ `approval_id`: null
++ `bill_finalized_date`: null
++ `bill_no`: null
++ `bill_status`: null
++ `bill_type`: null
++ `charge_activity_id`: null
++ `charge_excluded`: null
++ `charge_group`: DIA (string) - Charge head group ID
++ `charge_group_name`: null (string, nullable) - Charge head group name 
++ `charge_head`: LTDIA (string) - Charge head ID
++ `charge_head_name`: null (string, nullable) - Charge head name
++ `charge_id`: null
++ `charge_ref`: null
++ `claim_amounts`: null (array[number], nullable) - Amount to be claimed from Insurer
++ `claim_recd_amount`: null
++ `claim_status`: null
++ `code_type`: null
++ `conducted_date_time`: null
++ `conducting_doc_mandatory`: null
++ `conduction_required`: false
++ `consultation_token`: 0
++ `consultation_type_id`: 0
++ `customer_name`: null
++ `discount`: 0
++ `discount_and_change_amount`: null
++ `discount_reason`: null
++ `discount_auth_dr`: 0
++ `discount_auth_dr_name`: null
++ `discount_auth_hosp`: 0
++ `discount_auth_hosp_name`: null
++ `discount_auth_pres_dr`: 0
++ `discount_auth_pres_dr_name`: null
++ `discount_auth_ref`: 0
++ `discount_auth_ref_name`: null
++ `doc_payment_id`: null
++ `doctor_amount`: 0
++ `doctor_name`: null
++ `dr_discount_amt`: 0
++ `eligible_to_redeem_points`: N, Y (enum)
++ `first_of_category`: true
++ `from_date`: null
++ `has_activity`: false
++ `hosp_discount_amt`: 0
++ `include_in_claim_calc`: null
++ `insurance_bill`: false
++ `insurance_category_id`: 1
++ `insurance_claim_amount`: 0
++ `insurance_claim_taxable`: null
++ `insurance_payable`: null
++ `is_claim_locked`: null
++ `item_remarks`: null
++ `mod_time`: 1495621351255
++ `mr_no`: null
++ `oh_amount`: 0
++ `oh_payment_id`: null
++ `op_id`: null
++ `order_number`: null
++ `orig_insurance_claim_amount`: null
++ `original_rate`: 300.00 (number) - Actual Cost of Order Item
++ `overall_discount_amt`: 0
++ `overall_discount_auth`: 0
++ `overall_discount_auth_name`: null
++ `package_finalized`: N, Y (enum)
++ `package_unit`: 1
++ `patient_last_name`: null
++ `patient_name`: null
++ `payee_doctor_id`: null
++ `posted_date`: 1495621351254
++ `pre_auth_id`: null
++ `pre_auth_ids`: null
++ `pre_auth_mode_id`: null
++ `pre_auth_mode_ids`: null
++ `pres_dr_discount_amt`: 0
++ `prescribing_dr_amount`: 0
++ `prescribing_dr_id`: null
++ `prescribing_dr_payment_id`: null
++ `qty_included`: 0
++ `redeemed_points`: 0
++ `redemption_cap_percent`: 0
++ `ref_payment_id`: null
++ `ref_discount_amt`: 0
++ `referal_amount`: 0
++ `return_amt`: null
++ `return_insurance_claim_amt`: null
++ `return_qty`: null
++ `service_chrg_applicable`: null
++ `service_group_id`: 0 (number) - Service Group ID for Order Item
++ `service_group_name`: null
++ `service_sub_group_id`: 34 (number) - Service Subgroup ID for Order Item
++ `service_sub_group_name`: null
++ `status`: A, I (enum) - Status
++ `surgery_anesthesia_details_id`: null
++ `to_date`: null
++ `user_remarks`: null
++ `username`: null
++ `visit_id` (string)
++ `visit_type`: o,i (enum) - Visit Type
++ `ward_name`: null (string, nullable)
+
+## `Service Group -1` (object)
++ `service_group_id`: `-1` (number) - Service Group ID
++ `status`: A, I (enum) - Status
++ `service_group_name`: Doctor (string) - Name of service group
++ `display_order`: 4 (number) - Precedence in drop down list. Lower value has higher precedence.
++ `service_group_code` (string, nullable) - Short code for service group
+
+## Service Group 0 (object)
++ `service_group_id`: 0 (number) - Service Group ID
++ `status`: A, I (enum) - Status
++ `service_group_name`: Others (string) - Name of service group
++ `display_order`: 1000 (number) - Precedence in drop down list. Lower value has higher precedence.
++ `service_group_code` (string, nullable) - Short code for service group
+
+## Service Group 1 (object)
++ `service_group_id`: 1 (number) - Service Group ID
++ `status`: A, I (enum) - Status
++ `service_group_name`: Direct Charge (string) - Name of service group
++ `display_order`: 1 (number) - Precedence in drop down list. Lower value has higher precedence.
++ `service_group_code` (string, nullable) - Short code for service group
+
+## Service Group 2 (object)
++ `service_group_id`: 2 (number) - Service Group ID
++ `status`: A, I (enum) - Status
++ `service_group_name`: Bed (string) - Name of service group
++ `display_order`: 2 (number) - Precedence in drop down list. Lower value has higher precedence.
++ `service_group_code` (string, nullable) - Short code for service group
+
+## Service Group 3 (object)
++ `service_group_id`: 3 (number) - Service Group ID
++ `status`: A, I (enum) - Status
++ `service_group_name`: ICU (string) - Name of service group
++ `display_order`: 3 (number) - Precedence in drop down list. Lower value has higher precedence.
++ `service_group_code` (string, nullable) - Short code for service group
+
+## Service Group 5 (object)
++ `service_group_id`: 5 (number) - Service Group ID
++ `status`: A, I (enum) - Status
++ `service_group_name`: Laboratory (string) - Name of service group
++ `display_order`: 5 (number) - Precedence in drop down list. Lower value has higher precedence.
++ `service_group_code` (string, nullable) - Short code for service group
+
+## Service Group 6 (object)
++ `service_group_id`: 6 (number) - Service Group ID
++ `status`: A, I (enum) - Status
++ `service_group_name`: Radiology (string) - Name of service group
++ `display_order`: 6 (number) - Precedence in drop down list. Lower value has higher precedence.
++ `service_group_code` (string, nullable) - Short code for service group
+
+## Service Group 7 (object)
++ `service_group_id`: 7 (number) - Service Group ID
++ `status`: A, I (enum) - Status
++ `service_group_name`: Operation (string) - Name of service group
++ `display_order`: 7 (number) - Precedence in drop down list. Lower value has higher precedence.
++ `service_group_code` (string, nullable) - Short code for service group
+
+## Service Group 8 (object)
++ `service_group_id`: 8 (number) - Service Group ID
++ `status`: A, I (enum) - Status
++ `service_group_name`: Service (string) - Name of service group
++ `display_order`: 8 (number) - Precedence in drop down list. Lower value has higher precedence.
++ `service_group_code` (string, nullable) - Short code for service group
+
+## Service Group 9 (object)
++ `service_group_id`: 9 (number) - Service Group ID
++ `status`: A, I (enum) - Status
++ `service_group_name`: Equipment (string) - Name of service group
++ `display_order`: 9 (number) - Precedence in drop down list. Lower value has higher precedence.
++ `service_group_code` (string, nullable) - Short code for service group
+
+## Service Group 10 (object)
++ `service_group_id`: 10 (number) - Service Group ID
++ `status`: A, I (enum) - Status
++ `service_group_name`: Meal (string) - Name of service group
++ `display_order`: 10 (number) - Precedence in drop down list. Lower value has higher precedence.
++ `service_group_code` (string, nullable) - Short code for service group
+
+## Service Group 11 (object)
++ `service_group_id`: 11 (number) - Service Group ID
++ `status`: A, I (enum) - Status
++ `service_group_name`: Other Charge (string) - Name of service group
++ `display_order`: 11 (number) - Precedence in drop down list. Lower value has higher precedence.
++ `service_group_code` (string, nullable) - Short code for service group
+
+## Service Group 12 (object)
++ `service_group_id`: 12 (number) - Service Group ID
++ `status`: A, I (enum) - Status
++ `service_group_name`: Package (string) - Name of service group
++ `display_order`: 12 (number) - Precedence in drop down list. Lower value has higher precedence.
++ `service_group_code` (string, nullable) - Short code for service group
+
+## Service Group 13 (object)
++ `service_group_id`: 13 (number) - Service Group ID
++ `status`: A, I (enum) - Status
++ `service_group_name`: Pharmacy Bill (string) - Name of service group
++ `display_order`: 13 (number) - Precedence in drop down list. Lower value has higher precedence.
++ `service_group_code` (string, nullable) - Short code for service group
+
+## Service Group 14 (object)
++ `service_group_id`: 14 (number) - Service Group ID
++ `status`: A, I (enum) - Status
++ `service_group_name`: Inventory item (string) - Name of service group
++ `display_order`: 14 (number) - Precedence in drop down list. Lower value has higher precedence.
++ `service_group_code` (string, nullable) - Short code for service group
+
+## Service Group 15 (object)
++ `service_group_id`: 15 (number) - Service Group ID
++ `status`: A, I (enum) - Status
++ `service_group_name`: Pharmacy item (string) - Name of service group
++ `display_order`: 15 (number) - Precedence in drop down list. Lower value has higher precedence.
++ `service_group_code` (string, nullable) - Short code for service group
+
+## `Service Sub Group -1` (object)
++ `service_sub_group_id`: `-1`  (number) - Service Sub Group ID
++ `status`: A, I (enum) - Status
++ `service_group_id`: `-1` (number) - ID of service group to which this Service sub group belongs
++ `service_sub_group_name`: Doctor (string) - Name of this service sub group
++ `display_order`: 3  (number) - Precedence in drop down list. Lower value has higher precedence.
++ `service_sub_group_code` (string, nullable) - Short code for this service sub group
++ `account_head_id`  (number) - ID of charge head under which entries associated with this service sub group are to be billed.
++ `elgible_to_earn_points`: N, Y (enum) - Does entires charged under this sub group earn reward points. Applicable if `mod_reward_points` is enabled.
++ `elgible_to_redeem_points`: N, Y (enum) - Does entires charged under this sub group can be redeemed against reward points. Applicable if `mod_reward_points` is enabled.
++ `redemption_cap` (number) - Float value representing percentage of total reward points that can be redeemed against entires charged under this sub group. Applicable if `mod_reward_points` is enabled.
+
+## Service Sub Group 0 (object)
++ `service_sub_group_id`: 0  (number) - Service Sub Group ID
++ `status`: A, I (enum) - Status
++ `service_group_id`: 0 (number) - ID of service group to which this Service sub group belongs
++ `service_sub_group_name`: Others (string) - Name of this service sub group
++ `display_order`: 1000  (number) - Precedence in drop down list. Lower value has higher precedence.
++ `service_sub_group_code` (string, nullable) - Short code for this service sub group
++ `account_head_id`  (number) - ID of charge head under which entries associated with this service sub group are to be billed.
++ `elgible_to_earn_points`: N, Y (enum) - Does entires charged under this sub group earn reward points. Applicable if `mod_reward_points` is enabled.
++ `elgible_to_redeem_points`: N, Y (enum) - Does entires charged under this sub group can be redeemed against reward points. Applicable if `mod_reward_points` is enabled.
++ `redemption_cap` (number) - Float value representing percentage of total reward points that can be redeemed against entires charged under this sub group. Applicable if `mod_reward_points` is enabled.
+
+## Service Sub Group 1 (object)
++ `service_sub_group_id`: 1  (number) - Service Sub Group ID
++ `status`: A, I (enum) - Status
++ `service_group_id`: 1 (number) - ID of service group to which this Service sub group belongs
++ `service_sub_group_name`: Direct Charge (string) - Name of this service sub group
++ `display_order`: 1  (number) - Precedence in drop down list. Lower value has higher precedence.
++ `service_sub_group_code` (string, nullable) - Short code for this service sub group
++ `account_head_id`  (number) - ID of charge head under which entries associated with this service sub group are to be billed.
++ `elgible_to_earn_points`: N, Y (enum) - Does entires charged under this sub group earn reward points. Applicable if `mod_reward_points` is enabled.
++ `elgible_to_redeem_points`: N, Y (enum) - Does entires charged under this sub group can be redeemed against reward points. Applicable if `mod_reward_points` is enabled.
++ `redemption_cap` (number) - Float value representing percentage of total reward points that can be redeemed against entires charged under this sub group. Applicable if `mod_reward_points` is enabled.
+
+## Service Sub Group 2 (object)
++ `service_sub_group_id`: 2  (number) - Service Sub Group ID
++ `status`: A, I (enum) - Status
++ `service_group_id`: 2 (number) - ID of service group to which this Service sub group belongs
++ `service_sub_group_name`: Bed (string) - Name of this service sub group
++ `display_order`: 2  (number) - Precedence in drop down list. Lower value has higher precedence.
++ `service_sub_group_code` (string, nullable) - Short code for this service sub group
++ `account_head_id`  (number) - ID of charge head under which entries associated with this service sub group are to be billed.
++ `elgible_to_earn_points`: N, Y (enum) - Does entires charged under this sub group earn reward points. Applicable if `mod_reward_points` is enabled.
++ `elgible_to_redeem_points`: N, Y (enum) - Does entires charged under this sub group can be redeemed against reward points. Applicable if `mod_reward_points` is enabled.
++ `redemption_cap` (number) - Float value representing percentage of total reward points that can be redeemed against entires charged under this sub group. Applicable if `mod_reward_points` is enabled.
+
+## Service Sub Group 3 (object)
++ `service_sub_group_id`: 3  (number) - Service Sub Group ID
++ `status`: A, I (enum) - Status
++ `service_group_id`: 3 (number) - ID of service group to which this Service sub group belongs
++ `service_sub_group_name`: ICU (string) - Name of this service sub group
++ `display_order`: 2  (number) - Precedence in drop down list. Lower value has higher precedence.
++ `service_sub_group_code` (string, nullable) - Short code for this service sub group
++ `account_head_id` (number) - ID of charge head under which entries associated with this service sub group are to be billed.
++ `elgible_to_earn_points`: N, Y (enum) - Does entires charged under this sub group earn reward points. Applicable if `mod_reward_points` is enabled.
++ `elgible_to_redeem_points`: N, Y (enum) - Does entires charged under this sub group can be redeemed against reward points. Applicable if `mod_reward_points` is enabled.
++ `redemption_cap` (number) - Float value representing percentage of total reward points that can be redeemed against entires charged under this sub group. Applicable if `mod_reward_points` is enabled.
+
+## Service Sub Group 5 (object)
++ `service_sub_group_id`: 5  (number) - Service Sub Group ID
++ `status`: A, I (enum) - Status
++ `service_group_id`: 5 (number) - ID of service group to which this Service sub group belongs
++ `service_sub_group_name`: Biochemistry (string) - Name of this service sub group
++ `display_order`: 5  (number) - Precedence in drop down list. Lower value has higher precedence.
++ `service_sub_group_code` (string, nullable) - Short code for this service sub group
++ `account_head_id`  (number) - ID of charge head under which entries associated with this service sub group are to be billed.
++ `elgible_to_earn_points`: N, Y (enum) - Does entires charged under this sub group earn reward points. Applicable if `mod_reward_points` is enabled.
++ `elgible_to_redeem_points`: N, Y (enum) - Does entires charged under this sub group can be redeemed against reward points. Applicable if `mod_reward_points` is enabled.
++ `redemption_cap` (number) - Float value representing percentage of total reward points that can be redeemed against entires charged under this sub group. Applicable if `mod_reward_points` is enabled.
+
+## Service Sub Group 18 (object)
++ `service_sub_group_id`: 18  (number) - Service Sub Group ID
++ `status`: A, I (enum) - Status
++ `service_group_id`: 7 (number) - ID of service group to which this Service sub group belongs
++ `service_sub_group_name`: Radiology (string) - Name of this service sub group
++ `display_order`: 7  (number) - Precedence in drop down list. Lower value has higher precedence.
++ `service_sub_group_code` (string, nullable) - Short code for this service sub group
++ `account_head_id`  (number) - ID of charge head under which entries associated with this service sub group are to be billed.
++ `elgible_to_earn_points`: N, Y (enum) - Does entires charged under this sub group earn reward points. Applicable if `mod_reward_points` is enabled.
++ `elgible_to_redeem_points`: N, Y (enum) - Does entires charged under this sub group can be redeemed against reward points. Applicable if `mod_reward_points` is enabled.
++ `redemption_cap` (number) - Float value representing percentage of total reward points that can be redeemed against entires charged under this sub group. Applicable if `mod_reward_points` is enabled.
+
+## Service Sub Group 19 (object)
++ `service_sub_group_id`: 19  (number) - Service Sub Group ID
++ `status`: A, I (enum) - Status
++ `service_group_id`: 7 (number) - ID of service group to which this Service sub group belongs
++ `service_sub_group_name`: Laboratory (string) - Name of this service sub group
++ `display_order`: 7  (number) - Precedence in drop down list. Lower value has higher precedence.
++ `service_sub_group_code` (string, nullable) - Short code for this service sub group
++ `account_head_id`  (number) - ID of charge head under which entries associated with this service sub group are to be billed.
++ `elgible_to_earn_points`: N, Y (enum) - Does entires charged under this sub group earn reward points. Applicable if `mod_reward_points` is enabled.
++ `elgible_to_redeem_points`: N, Y (enum) - Does entires charged under this sub group can be redeemed against reward points. Applicable if `mod_reward_points` is enabled.
++ `redemption_cap` (number) - Float value representing percentage of total reward points that can be redeemed against entires charged under this sub group. Applicable if `mod_reward_points` is enabled.
+
+## Service Sub Group 20 (object)
++ `service_sub_group_id`: 20  (number) - Service Sub Group ID
++ `status`: A, I (enum) - Status
++ `service_group_id`: 7 (number) - ID of service group to which this Service sub group belongs
++ `service_sub_group_name`: Pharmacy (string) - Name of this service sub group
++ `display_order`: 7  (number) - Precedence in drop down list. Lower value has higher precedence.
++ `service_sub_group_code` (string, nullable) - Short code for this service sub group
++ `account_head_id`  (number) - ID of charge head under which entries associated with this service sub group are to be billed.
++ `elgible_to_earn_points`: N, Y (enum) - Does entires charged under this sub group earn reward points. Applicable if `mod_reward_points` is enabled.
++ `elgible_to_redeem_points`: N, Y (enum) - Does entires charged under this sub group can be redeemed against reward points. Applicable if `mod_reward_points` is enabled.
++ `redemption_cap` (number) - Float value representing percentage of total reward points that can be redeemed against entires charged under this sub group. Applicable if `mod_reward_points` is enabled.
+
+## Service Sub Group 21 (object)
++ `service_sub_group_id`: 21  (number) - Service Sub Group ID
++ `status`: A, I (enum) - Status
++ `service_group_id`: 7 (number) - ID of service group to which this Service sub group belongs
++ `service_sub_group_name`: General (string) - Name of this service sub group
++ `display_order`: 7  (number) - Precedence in drop down list. Lower value has higher precedence.
++ `service_sub_group_code` (string, nullable) - Short code for this service sub group
++ `account_head_id`  (number) - ID of charge head under which entries associated with this service sub group are to be billed.
++ `elgible_to_earn_points`: N, Y (enum) - Does entires charged under this sub group earn reward points. Applicable if `mod_reward_points` is enabled.
++ `elgible_to_redeem_points`: N, Y (enum) - Does entires charged under this sub group can be redeemed against reward points. Applicable if `mod_reward_points` is enabled.
++ `redemption_cap` (number) - Float value representing percentage of total reward points that can be redeemed against entires charged under this sub group. Applicable if `mod_reward_points` is enabled.
+
+## Service Sub Group 22 (object)
++ `service_sub_group_id`: 22  (number) - Service Sub Group ID
++ `status`: A, I (enum) - Status
++ `service_group_id`: 7 (number) - ID of service group to which this Service sub group belongs
++ `service_sub_group_name`: Anaesthesiology (string) - Name of this service sub group
++ `display_order`: 7  (number) - Precedence in drop down list. Lower value has higher precedence.
++ `service_sub_group_code` (string, nullable) - Short code for this service sub group
++ `account_head_id`  (number) - ID of charge head under which entries associated with this service sub group are to be billed.
++ `elgible_to_earn_points`: N, Y (enum) - Does entires charged under this sub group earn reward points. Applicable if `mod_reward_points` is enabled.
++ `elgible_to_redeem_points`: N, Y (enum) - Does entires charged under this sub group can be redeemed against reward points. Applicable if `mod_reward_points` is enabled.
++ `redemption_cap` (number) - Float value representing percentage of total reward points that can be redeemed against entires charged under this sub group. Applicable if `mod_reward_points` is enabled.
+
+## Service Sub Group 28 (object)
++ `service_sub_group_id`: 28  (number) - Service Sub Group ID
++ `status`: A, I (enum) - Status
++ `service_group_id`: 9 (number) - ID of service group to which this Service sub group belongs
++ `service_sub_group_name`: General (string) - Name of this service sub group
++ `display_order`: 9  (number) - Precedence in drop down list. Lower value has higher precedence.
++ `service_sub_group_code` (string, nullable) - Short code for this service sub group
++ `account_head_id`  (number) - ID of charge head under which entries associated with this service sub group are to be billed.
++ `elgible_to_earn_points`: N, Y (enum) - Does entires charged under this sub group earn reward points. Applicable if `mod_reward_points` is enabled.
++ `elgible_to_redeem_points`: N, Y (enum) - Does entires charged under this sub group can be redeemed against reward points. Applicable if `mod_reward_points` is enabled.
++ `redemption_cap` (number) - Float value representing percentage of total reward points that can be redeemed against entires charged under this sub group. Applicable if `mod_reward_points` is enabled.
+
+## Service Sub Group 32 (object)
++ `service_sub_group_id`: 32  (number) - Service Sub Group ID
++ `status`: A, I (enum) - Status
++ `service_group_id`: 10 (number) - ID of service group to which this Service sub group belongs
++ `service_sub_group_name`: Meal (string) - Name of this service sub group
++ `display_order`: 10  (number) - Precedence in drop down list. Lower value has higher precedence.
++ `service_sub_group_code` (string, nullable) - Short code for this service sub group
++ `account_head_id`  (number) - ID of charge head under which entries associated with this service sub group are to be billed.
++ `elgible_to_earn_points`: N, Y (enum) - Does entires charged under this sub group earn reward points. Applicable if `mod_reward_points` is enabled.
++ `elgible_to_redeem_points`: N, Y (enum) - Does entires charged under this sub group can be redeemed against reward points. Applicable if `mod_reward_points` is enabled.
++ `redemption_cap` (number) - Float value representing percentage of total reward points that can be redeemed against entires charged under this sub group. Applicable if `mod_reward_points` is enabled.
+
+## Service Sub Group 33 (object)
++ `service_sub_group_id`: 33  (number) - Service Sub Group ID
++ `status`: A, I (enum) - Status
++ `service_group_id`: 11 (number) - ID of service group to which this Service sub group belongs
++ `service_sub_group_name`: Other Charge (string) - Name of this service sub group
++ `display_order`: 11  (number) - Precedence in drop down list. Lower value has higher precedence.
++ `service_sub_group_code` (string, nullable) - Short code for this service sub group
++ `account_head_id`  (number) - ID of charge head under which entries associated with this service sub group are to be billed.
++ `elgible_to_earn_points`: N, Y (enum) - Does entires charged under this sub group earn reward points. Applicable if `mod_reward_points` is enabled.
++ `elgible_to_redeem_points`: N, Y (enum) - Does entires charged under this sub group can be redeemed against reward points. Applicable if `mod_reward_points` is enabled.
++ `redemption_cap` (number) - Float value representing percentage of total reward points that can be redeemed against entires charged under this sub group. Applicable if `mod_reward_points` is enabled.
+
+## Service Sub Group 34 (object)
++ `service_sub_group_id`: 34  (number) - Service Sub Group ID
++ `status`: A, I (enum) - Status
++ `service_group_id`: 12 (number) - ID of service group to which this Service sub group belongs
++ `service_sub_group_name`: Package (string) - Name of this service sub group
++ `display_order`: 12  (number) - Precedence in drop down list. Lower value has higher precedence.
++ `service_sub_group_code` (string, nullable) - Short code for this service sub group
++ `account_head_id`  (number) - ID of charge head under which entries associated with this service sub group are to be billed.
++ `elgible_to_earn_points`: N, Y (enum) - Does entires charged under this sub group earn reward points. Applicable if `mod_reward_points` is enabled.
++ `elgible_to_redeem_points`: N, Y (enum) - Does entires charged under this sub group can be redeemed against reward points. Applicable if `mod_reward_points` is enabled.
++ `redemption_cap` (number) - Float value representing percentage of total reward points that can be redeemed against entires charged under this sub group. Applicable if `mod_reward_points` is enabled.
+
+## Service Sub Group 35 (object)
++ `service_sub_group_id`: 35  (number) - Service Sub Group ID
++ `status`: A, I (enum) - Status
++ `service_group_id`: 15 (number) - ID of service group to which this Service sub group belongs
++ `service_sub_group_name`: general (string) - Name of this service sub group
++ `display_order`: 16  (number) - Precedence in drop down list. Lower value has higher precedence.
++ `service_sub_group_code` (string, nullable) - Short code for this service sub group
++ `account_head_id`  (number) - ID of charge head under which entries associated with this service sub group are to be billed.
++ `elgible_to_earn_points`: N, Y (enum) - Does entires charged under this sub group earn reward points. Applicable if `mod_reward_points` is enabled.
++ `elgible_to_redeem_points`: N, Y (enum) - Does entires charged under this sub group can be redeemed against reward points. Applicable if `mod_reward_points` is enabled.
++ `redemption_cap` (number) - Float value representing percentage of total reward points that can be redeemed against entires charged under this sub group. Applicable if `mod_reward_points` is enabled.
+
+## Service Sub Group 36 (object)
++ `service_sub_group_id`: 36  (number) - Service Sub Group ID
++ `status`: A, I (enum) - Status
++ `service_group_id`: 13 (number) - ID of service group to which this Service sub group belongs
++ `service_sub_group_name`: Pharmacy Bill (string) - Name of this service sub group
++ `display_order`: 13  (number) - Precedence in drop down list. Lower value has higher precedence.
++ `service_sub_group_code` (string, nullable) - Short code for this service sub group
++ `account_head_id`  (number) - ID of charge head under which entries associated with this service sub group are to be billed.
++ `elgible_to_earn_points`: N, Y (enum) - Does entires charged under this sub group earn reward points. Applicable if `mod_reward_points` is enabled.
++ `elgible_to_redeem_points`: N, Y (enum) - Does entires charged under this sub group can be redeemed against reward points. Applicable if `mod_reward_points` is enabled.
++ `redemption_cap` (number) - Float value representing percentage of total reward points that can be redeemed against entires charged under this sub group. Applicable if `mod_reward_points` is enabled.
+
+## Service Sub Group 37 (object)
++ `service_sub_group_id`: 37  (number) - Service Sub Group ID
++ `status`: A, I (enum) - Status
++ `service_group_id`: 5 (number) - ID of service group to which this Service sub group belongs
++ `service_sub_group_name`: Pathology (string) - Name of this service sub group
++ `display_order`: 5  (number) - Precedence in drop down list. Lower value has higher precedence.
++ `service_sub_group_code` (string, nullable) - Short code for this service sub group
++ `account_head_id`: 5 (number) - ID of charge head under which entries associated with this service sub group are to be billed.
++ `elgible_to_earn_points`: N, Y (enum) - Does entires charged under this sub group earn reward points. Applicable if `mod_reward_points` is enabled.
++ `elgible_to_redeem_points`: N, Y (enum) - Does entires charged under this sub group can be redeemed against reward points. Applicable if `mod_reward_points` is enabled.
++ `redemption_cap` (number) - Float value representing percentage of total reward points that can be redeemed against entires charged under this sub group. Applicable if `mod_reward_points` is enabled.
+
+## Service Sub Group 38 (object)
++ `service_sub_group_id`: 38  (number) - Service Sub Group ID
++ `status`: A, I (enum) - Status
++ `service_group_id`: 5 (number) - ID of service group to which this Service sub group belongs
++ `service_sub_group_name`: Microbiology (string) - Name of this service sub group
++ `display_order`: 5  (number) - Precedence in drop down list. Lower value has higher precedence.
++ `service_sub_group_code` (string, nullable) - Short code for this service sub group
++ `account_head_id`: 5 (number) - ID of charge head under which entries associated with this service sub group are to be billed.
++ `elgible_to_earn_points`: N, Y (enum) - Does entires charged under this sub group earn reward points. Applicable if `mod_reward_points` is enabled.
++ `elgible_to_redeem_points`: N, Y (enum) - Does entires charged under this sub group can be redeemed against reward points. Applicable if `mod_reward_points` is enabled.
++ `redemption_cap` (number) - Float value representing percentage of total reward points that can be redeemed against entires charged under this sub group. Applicable if `mod_reward_points` is enabled.
+
+## Service Sub Group 39 (object)
++ `service_sub_group_id`: 39  (number) - Service Sub Group ID
++ `status`: A, I (enum) - Status
++ `service_group_id`: 6 (number) - ID of service group to which this Service sub group belongs
++ `service_sub_group_name`: MRI (string) - Name of this service sub group
++ `display_order`: 1  (number) - Precedence in drop down list. Lower value has higher precedence.
++ `service_sub_group_code` (string, nullable) - Short code for this service sub group
++ `account_head_id`: 6 (number) - ID of charge head under which entries associated with this service sub group are to be billed.
++ `elgible_to_earn_points`: N, Y (enum) - Does entires charged under this sub group earn reward points. Applicable if `mod_reward_points` is enabled.
++ `elgible_to_redeem_points`: N, Y (enum) - Does entires charged under this sub group can be redeemed against reward points. Applicable if `mod_reward_points` is enabled.
++ `redemption_cap` (number) - Float value representing percentage of total reward points that can be redeemed against entires charged under this sub group. Applicable if `mod_reward_points` is enabled.
+
+## Service Sub Group 40 (object)
++ `service_sub_group_id`: 40  (number) - Service Sub Group ID
++ `status`: A, I (enum) - Status
++ `service_group_id`: 6 (number) - ID of service group to which this Service sub group belongs
++ `service_sub_group_name`: Ultrasound (string) - Name of this service sub group
++ `display_order`: 2  (number) - Precedence in drop down list. Lower value has higher precedence.
++ `service_sub_group_code` (string, nullable) - Short code for this service sub group
++ `account_head_id`: 6 (number) - ID of charge head under which entries associated with this service sub group are to be billed.
++ `elgible_to_earn_points`: N, Y (enum) - Does entires charged under this sub group earn reward points. Applicable if `mod_reward_points` is enabled.
++ `elgible_to_redeem_points`: N, Y (enum) - Does entires charged under this sub group can be redeemed against reward points. Applicable if `mod_reward_points` is enabled.
++ `redemption_cap` (number) - Float value representing percentage of total reward points that can be redeemed against entires charged under this sub group. Applicable if `mod_reward_points` is enabled.
+
+## Service Sub Group 41 (object)
++ `service_sub_group_id`: 41  (number) - Service Sub Group ID
++ `status`: A, I (enum) - Status
++ `service_group_id`: 6 (number) - ID of service group to which this Service sub group belongs
++ `service_sub_group_name`: Mammography (string) - Name of this service sub group
++ `display_order`: 3  (number) - Precedence in drop down list. Lower value has higher precedence.
++ `service_sub_group_code` (string, nullable) - Short code for this service sub group
++ `account_head_id`: 6 (number) - ID of charge head under which entries associated with this service sub group are to be billed.
++ `elgible_to_earn_points`: N, Y (enum) - Does entires charged under this sub group earn reward points. Applicable if `mod_reward_points` is enabled.
++ `elgible_to_redeem_points`: N, Y (enum) - Does entires charged under this sub group can be redeemed against reward points. Applicable if `mod_reward_points` is enabled.
++ `redemption_cap` (number) - Float value representing percentage of total reward points that can be redeemed against entires charged under this sub group. Applicable if `mod_reward_points` is enabled.
+
+## Service Sub Group 42 (object)
++ `service_sub_group_id`: 42  (number) - Service Sub Group ID
++ `status`: A, I (enum) - Status
++ `service_group_id`: 6 (number) - ID of service group to which this Service sub group belongs
++ `service_sub_group_name`: Nuclear Medicine and Molecular Imaging (string) - Name of this service sub group
++ `display_order`: 4  (number) - Precedence in drop down list. Lower value has higher precedence.
++ `service_sub_group_code` (string, nullable) - Short code for this service sub group
++ `account_head_id`: 6 (number) - ID of charge head under which entries associated with this service sub group are to be billed.
++ `elgible_to_earn_points`: N, Y (enum) - Does entires charged under this sub group earn reward points. Applicable if `mod_reward_points` is enabled.
++ `elgible_to_redeem_points`: N, Y (enum) - Does entires charged under this sub group can be redeemed against reward points. Applicable if `mod_reward_points` is enabled.
++ `redemption_cap` (number) - Float value representing percentage of total reward points that can be redeemed against entires charged under this sub group. Applicable if `mod_reward_points` is enabled.
+
+## Service Sub Group 43 (object)
++ `service_sub_group_id`: 43  (number) - Service Sub Group ID
++ `status`: A, I (enum) - Status
++ `service_group_id`: 6 (number) - ID of service group to which this Service sub group belongs
++ `service_sub_group_name`: `Computed Tomography (CT)` (string) - Name of this service sub group
++ `display_order`: 5  (number) - Precedence in drop down list. Lower value has higher precedence.
++ `service_sub_group_code` (string, nullable) - Short code for this service sub group
++ `account_head_id`: 6 (number) - ID of charge head under which entries associated with this service sub group are to be billed.
++ `elgible_to_earn_points`: N, Y (enum) - Does entires charged under this sub group earn reward points. Applicable if `mod_reward_points` is enabled.
++ `elgible_to_redeem_points`: N, Y (enum) - Does entires charged under this sub group can be redeemed against reward points. Applicable if `mod_reward_points` is enabled.
++ `redemption_cap` (number) - Float value representing percentage of total reward points that can be redeemed against entires charged under this sub group. Applicable if `mod_reward_points` is enabled.
+
+## Service Sub Group 44 (object)
++ `service_sub_group_id`: 44  (number) - Service Sub Group ID
++ `status`: A, I (enum) - Status
++ `service_group_id`: 6 (number) - ID of service group to which this Service sub group belongs
++ `service_sub_group_name`: Diagnostic Radiology (string) - Name of this service sub group
++ `display_order`: 6  (number) - Precedence in drop down list. Lower value has higher precedence.
++ `service_sub_group_code` (string, nullable) - Short code for this service sub group
++ `account_head_id`: 6 (number) - ID of charge head under which entries associated with this service sub group are to be billed.
++ `elgible_to_earn_points`: N, Y (enum) - Does entires charged under this sub group earn reward points. Applicable if `mod_reward_points` is enabled.
++ `elgible_to_redeem_points`: N, Y (enum) - Does entires charged under this sub group can be redeemed against reward points. Applicable if `mod_reward_points` is enabled.
++ `redemption_cap` (number) - Float value representing percentage of total reward points that can be redeemed against entires charged under this sub group. Applicable if `mod_reward_points` is enabled.
+
+## Service Sub Group 45 (object)
++ `service_sub_group_id`: 45  (number) - Service Sub Group ID
++ `status`: A, I (enum) - Status
++ `service_group_id`: 8 (number) - ID of service group to which this Service sub group belongs
++ `service_sub_group_name`: Dental Procedure (string) - Name of this service sub group
++ `display_order`: 2  (number) - Precedence in drop down list. Lower value has higher precedence.
++ `service_sub_group_code`: DENTALPROC (string, nullable) - Short code for this service sub group
++ `account_head_id`: 17 (number) - ID of charge head under which entries associated with this service sub group are to be billed.
++ `elgible_to_earn_points`: N, Y (enum) - Does entires charged under this sub group earn reward points. Applicable if `mod_reward_points` is enabled.
++ `elgible_to_redeem_points`: N, Y (enum) - Does entires charged under this sub group can be redeemed against reward points. Applicable if `mod_reward_points` is enabled.
++ `redemption_cap` (number) - Float value representing percentage of total reward points that can be redeemed against entires charged under this sub group. Applicable if `mod_reward_points` is enabled.
+
+## Service Sub Group 46 (object)
++ `service_sub_group_id`: 46  (number) - Service Sub Group ID
++ `status`: A, I (enum) - Status
++ `service_group_id`: 8 (number) - ID of service group to which this Service sub group belongs
++ `service_sub_group_name`: Nephrological Procedures (string) - Name of this service sub group
++ `display_order`: 2  (number) - Precedence in drop down list. Lower value has higher precedence.
++ `service_sub_group_code`: NEPHPROC (string, nullable) - Short code for this service sub group
++ `account_head_id`: 17 (number) - ID of charge head under which entries associated with this service sub group are to be billed.
++ `elgible_to_earn_points`: N, Y (enum) - Does entires charged under this sub group earn reward points. Applicable if `mod_reward_points` is enabled.
++ `elgible_to_redeem_points`: N, Y (enum) - Does entires charged under this sub group can be redeemed against reward points. Applicable if `mod_reward_points` is enabled.
++ `redemption_cap` (number) - Float value representing percentage of total reward points that can be redeemed against entires charged under this sub group. Applicable if `mod_reward_points` is enabled.
+
+## Charge Head GREG (object) - Charge Head GREG
++ chargegroup_id: REG (string) - Charge Head Group ID
++ chargehead_name: General Registration (string) - Charge Head Name
++ associated_module: `mod_billing` (string) - Module ID that provides this charge head
++ dependent_module (string, nullable)
++ display_order: 11 (string) - Position in display or dropdown list
++ insurance_category_id: `-1` (string) - Insurance Category ID
++ insurance_payable: Y, N (enum) - Whether Insurance coverage for this chargehead is allowed
++ op_applicable: Y, N (enum) - Is this charge head applicable for OP
++ claim_service_tax_applicable: Y, N (enum) - Service tax applicable on claim
++ chargehead_id: GREG (string) - Charge Head ID
++ ordereable: f, t (enum) - Is Charge Head Orderable from order screen 
++ ip_applicable: Y, N (enum) - Is charge head applicable for IP
++ service_charge_applicable: Y, N (enum) - Is Service Tax applicable on this charge head
+
+## Charge Head IPREG (object) - Charge Head IPREG
++ chargegroup_id: REG (string) - Charge Head Group ID
++ chargehead_name: Admission Charge (string) - Charge Head Name
++ associated_module: `mod_billing` (string) - Module ID that provides this charge head
++ dependent_module (string, nullable)
++ display_order: 12 (string) - Position in display or dropdown list
++ insurance_category_id: `-1` (string) - Insurance Category ID
++ insurance_payable: Y, N (enum) - Whether Insurance coverage for this chargehead is allowed
++ op_applicable: N, Y (enum) - Is this charge head applicable for OP
++ claim_service_tax_applicable: Y, N (enum) - Service tax applicable on claim
++ chargehead_id: IPREG (string) - Charge Head ID
++ ordereable: f, t (enum) - Is Charge Head Orderable from order screen 
++ ip_applicable: Y, N (enum) - Is charge head applicable for IP
++ service_charge_applicable: Y, N (enum) - Is Service Tax applicable on this charge head
+
+## Charge Head OPREG (object) - Charge Head OPREG
++ chargegroup_id: REG (string) - Charge Head Group ID
++ chargehead_name: OP Visit Registration (string) - Charge Head Name
++ associated_module: `mod_billing` (string) - Module ID that provides this charge head
++ dependent_module (string, nullable)
++ display_order: 13 (string) - Position in display or dropdown list
++ insurance_category_id: `-1` (string) - Insurance Category ID
++ insurance_payable: Y, N (enum) - Whether Insurance coverage for this chargehead is allowed
++ op_applicable: Y, N (enum) - Is this charge head applicable for OP
++ claim_service_tax_applicable: Y, N (enum) - Service tax applicable on claim
++ chargehead_id: OPREG (string) - Charge Head ID
++ ordereable: f, t (enum) - Is Charge Head Orderable from order screen 
++ ip_applicable: N, Y (enum) - Is charge head applicable for IP
++ service_charge_applicable: Y, N (enum) - Is Service Tax applicable on this charge head
+
+## Charge Head EMREG (object) - Charge Head EMREG
++ chargegroup_id: REG (string) - Charge Head Group ID
++ chargehead_name: EMR Charge (string) - Charge Head Name
++ associated_module: `mod_billing` (string) - Module ID that provides this charge head
++ dependent_module (string, nullable)
++ display_order: 15 (string) - Position in display or dropdown list
++ insurance_category_id: `-1` (string) - Insurance Category ID
++ insurance_payable: Y, N (enum) - Whether Insurance coverage for this chargehead is allowed
++ op_applicable: Y, N (enum) - Is this charge head applicable for OP
++ claim_service_tax_applicable: Y, N (enum) - Service tax applicable on claim
++ chargehead_id: EMREG (string) - Charge Head ID
++ ordereable: f, t (enum) - Is Charge Head Orderable from order screen 
++ ip_applicable: Y, N (enum) - Is charge head applicable for IP
++ service_charge_applicable: Y, N (enum) - Is Service Tax applicable on this charge head
+
+## Charge Head MLREG (object) - Charge Head MLREG
++ chargegroup_id: REG (string) - Charge Head Group ID
++ chargehead_name: MLC Charge (string) - Charge Head Name
++ associated_module: `mod_billing` (string) - Module ID that provides this charge head
++ dependent_module (string, nullable)
++ display_order: 16 (string) - Position in display or dropdown list
++ insurance_category_id: `-1` (string) - Insurance Category ID
++ insurance_payable: Y, N (enum) - Whether Insurance coverage for this chargehead is allowed
++ op_applicable: Y, N (enum) - Is this charge head applicable for OP
++ claim_service_tax_applicable: Y, N (enum) - Service tax applicable on claim
++ chargehead_id: MLREG (string) - Charge Head ID
++ ordereable: f, t (enum) - Is Charge Head Orderable from order screen 
++ ip_applicable: Y, N (enum) - Is charge head applicable for IP
++ service_charge_applicable: Y, N (enum) - Is Service Tax applicable on this charge head
+
+## Charge Head OPDOC (object) - Charge Head OPDOC
++ chargegroup_id: DOC (string) - Charge Head Group ID
++ chargehead_name: OP Consultation (string) - Charge Head Name
++ associated_module: `` (string) - Module ID that provides this charge head
++ dependent_module (string, nullable)
++ display_order: 21 (string) - Position in display or dropdown list
++ insurance_category_id: `-1` (string) - Insurance Category ID
++ insurance_payable: Y, N (enum) - Whether Insurance coverage for this chargehead is allowed
++ op_applicable: Y, N (enum) - Is this charge head applicable for OP
++ claim_service_tax_applicable: Y, N (enum) - Service tax applicable on claim
++ chargehead_id: OPDOC (string) - Charge Head ID
++ ordereable: t, t (enum) - Is Charge Head Orderable from order screen 
++ ip_applicable: N, Y (enum) - Is charge head applicable for IP
++ service_charge_applicable: Y, N (enum) - Is Service Tax applicable on this charge head
+
+## Charge Head ROPDOC (object) - Charge Head ROPDOC
++ chargegroup_id: DOC (string) - Charge Head Group ID
++ chargehead_name: OP Revisit Consultation (string) - Charge Head Name
++ associated_module: `` (string) - Module ID that provides this charge head
++ dependent_module (string, nullable)
++ display_order: 22 (string) - Position in display or dropdown list
++ insurance_category_id: `-1` (string) - Insurance Category ID
++ insurance_payable: Y, N (enum) - Whether Insurance coverage for this chargehead is allowed
++ op_applicable: Y, N (enum) - Is this charge head applicable for OP
++ claim_service_tax_applicable: Y, N (enum) - Service tax applicable on claim
++ chargehead_id: ROPDOC (string) - Charge Head ID
++ ordereable: f, t (enum) - Is Charge Head Orderable from order screen 
++ ip_applicable: N, Y (enum) - Is charge head applicable for IP
++ service_charge_applicable: Y, N (enum) - Is Service Tax applicable on this charge head
+
+## Charge Head IPDOC (object) - Charge Head IPDOC
++ chargegroup_id: DOC (string) - Charge Head Group ID
++ chargehead_name: IP Doctor Visit (string) - Charge Head Name
++ associated_module: `` (string) - Module ID that provides this charge head
++ dependent_module (string, nullable)
++ display_order: 23 (string) - Position in display or dropdown list
++ insurance_category_id: `-1` (string) - Insurance Category ID
++ insurance_payable: Y, N (enum) - Whether Insurance coverage for this chargehead is allowed
++ op_applicable: N, Y (enum) - Is this charge head applicable for OP
++ claim_service_tax_applicable: Y, N (enum) - Service tax applicable on claim
++ chargehead_id: IPDOC (string) - Charge Head ID
++ ordereable: t, t (enum) - Is Charge Head Orderable from order screen 
++ ip_applicable: Y, N (enum) - Is charge head applicable for IP
++ service_charge_applicable: Y, N (enum) - Is Service Tax applicable on this charge head
+
+## Charge Head LTDIA (object) - Charge Head LTDIA
++ chargegroup_id: DIA (string) - Charge Head Group ID
++ chargehead_name: Lab Tests (string) - Charge Head Name
++ associated_module: `` (string) - Module ID that provides this charge head
++ dependent_module (string, nullable)
++ display_order: 52 (string) - Position in display or dropdown list
++ insurance_category_id: `-1` (string) - Insurance Category ID
++ insurance_payable: Y, N (enum) - Whether Insurance coverage for this chargehead is allowed
++ op_applicable: Y, N (enum) - Is this charge head applicable for OP
++ claim_service_tax_applicable: Y, N (enum) - Service tax applicable on claim
++ chargehead_id: LTDIA (string) - Charge Head ID
++ ordereable: t, t (enum) - Is Charge Head Orderable from order screen 
++ ip_applicable: Y, N (enum) - Is charge head applicable for IP
++ service_charge_applicable: Y, N (enum) - Is Service Tax applicable on this charge head
+
+## Charge Head RTDIA (object) - Charge Head RTDIA
++ chargegroup_id: DIA (string) - Charge Head Group ID
++ chargehead_name: Radiology Tests (string) - Charge Head Name
++ associated_module: `` (string) - Module ID that provides this charge head
++ dependent_module (string, nullable)
++ display_order: 53 (string) - Position in display or dropdown list
++ insurance_category_id: `-1` (string) - Insurance Category ID
++ insurance_payable: Y, N (enum) - Whether Insurance coverage for this chargehead is allowed
++ op_applicable: Y, N (enum) - Is this charge head applicable for OP
++ claim_service_tax_applicable: Y, N (enum) - Service tax applicable on claim
++ chargehead_id: RTDIA (string) - Charge Head ID
++ ordereable: t, t (enum) - Is Charge Head Orderable from order screen 
++ ip_applicable: Y, N (enum) - Is charge head applicable for IP
++ service_charge_applicable: Y, N (enum) - Is Service Tax applicable on this charge head
+
+
+## Charge Head SERSNP (object) - Charge Head SERSNP
++ chargegroup_id: SNP (string) - Charge Head Group ID
++ chargehead_name: Service (string) - Charge Head Name
++ associated_module: `` (string) - Module ID that provides this charge head
++ dependent_module (string, nullable)
++ display_order: 71 (string) - Position in display or dropdown list
++ insurance_category_id: `-1` (string) - Insurance Category ID
++ insurance_payable: Y, N (enum) - Whether Insurance coverage for this chargehead is allowed
++ op_applicable: Y, N (enum) - Is this charge head applicable for OP
++ claim_service_tax_applicable: Y, N (enum) - Service tax applicable on claim
++ chargehead_id: SERSNP (string) - Charge Head ID
++ ordereable: t, t (enum) - Is Charge Head Orderable from order screen 
++ ip_applicable: Y, N (enum) - Is charge head applicable for IP
++ service_charge_applicable: Y, N (enum) - Is Service Tax applicable on this charge head
+
+## Charge Head PHCMED (object) - Charge Head PHCMED
++ chargegroup_id: MED (string) - Charge Head Group ID
++ chargehead_name: Pharmacy Medicine (string) - Charge Head Name
++ associated_module: `` (string) - Module ID that provides this charge head
++ dependent_module (string, nullable)
++ display_order: 74 (string) - Position in display or dropdown list
++ insurance_category_id: `-1` (string) - Insurance Category ID
++ insurance_payable: Y, N (enum) - Whether Insurance coverage for this chargehead is allowed
++ op_applicable: N, Y (enum) - Is this charge head applicable for OP
++ claim_service_tax_applicable: Y, N (enum) - Service tax applicable on claim
++ chargehead_id: PHCMED (string) - Charge Head ID
++ ordereable: f, t (enum) - Is Charge Head Orderable from order screen 
++ ip_applicable: N, Y (enum) - Is charge head applicable for IP
++ service_charge_applicable: N, Y (enum) - Is Service Tax applicable on this charge head
+
+## Charge Head PKGPKG (object) - Charge Head PKGPKG
++ chargegroup_id: PKG (string) - Charge Head Group ID
++ chargehead_name: Package Charges (string) - Charge Head Name
++ associated_module: `` (string) - Module ID that provides this charge head
++ dependent_module (string, nullable)
++ display_order: 81 (string) - Position in display or dropdown list
++ insurance_category_id: `-1` (string) - Insurance Category ID
++ insurance_payable: Y, N (enum) - Whether Insurance coverage for this chargehead is allowed
++ op_applicable: Y, N (enum) - Is this charge head applicable for OP
++ claim_service_tax_applicable: Y, N (enum) - Service tax applicable on claim
++ chargehead_id: PKGPKG (string) - Charge Head ID
++ ordereable: f, t (enum) - Is Charge Head Orderable from order screen 
++ ip_applicable: Y, N (enum) - Is charge head applicable for IP
++ service_charge_applicable: Y, N (enum) - Is Service Tax applicable on this charge head
+
+## Charge Head EQUOTC (object) - Charge Head EQUOTC
++ chargegroup_id: OTC (string) - Charge Head Group ID
++ chargehead_name: Equipment (string) - Charge Head Name
++ associated_module: `` (string) - Module ID that provides this charge head
++ dependent_module (string, nullable)
++ display_order: 91 (string) - Position in display or dropdown list
++ insurance_category_id: `-1` (string) - Insurance Category ID
++ insurance_payable: Y, N (enum) - Whether Insurance coverage for this chargehead is allowed
++ op_applicable: Y, N (enum) - Is this charge head applicable for OP
++ claim_service_tax_applicable: Y, N (enum) - Service tax applicable on claim
++ chargehead_id: EQUOTC (string) - Charge Head ID
++ ordereable: t, t (enum) - Is Charge Head Orderable from order screen 
++ ip_applicable: Y, N (enum) - Is charge head applicable for IP
++ service_charge_applicable: Y, N (enum) - Is Service Tax applicable on this charge head
+
+## Charge Head OCOTC (object) - Charge Head OCOTC
++ chargegroup_id: OTC (string) - Charge Head Group ID
++ chargehead_name: Other charge (string) - Charge Head Name
++ associated_module: `` (string) - Module ID that provides this charge head
++ dependent_module (string, nullable)
++ display_order: 92 (string) - Position in display or dropdown list
++ insurance_category_id: `-1` (string) - Insurance Category ID
++ insurance_payable: Y, N (enum) - Whether Insurance coverage for this chargehead is allowed
++ op_applicable: Y, N (enum) - Is this charge head applicable for OP
++ claim_service_tax_applicable: Y, N (enum) - Service tax applicable on claim
++ chargehead_id: OCOTC (string) - Charge Head ID
++ ordereable: t, t (enum) - Is Charge Head Orderable from order screen 
++ ip_applicable: Y, N (enum) - Is charge head applicable for IP
++ service_charge_applicable: Y, N (enum) - Is Service Tax applicable on this charge head
+
+## Charge Head CONOTC (object) - Charge Head CONOTC
++ chargegroup_id: OTC (string) - Charge Head Group ID
++ chargehead_name: Consumables (string) - Charge Head Name
++ associated_module: `` (string) - Module ID that provides this charge head
++ dependent_module (string, nullable)
++ display_order: 93 (string) - Position in display or dropdown list
++ insurance_category_id: `-1` (string) - Insurance Category ID
++ insurance_payable: Y, N (enum) - Whether Insurance coverage for this chargehead is allowed
++ op_applicable: Y, N (enum) - Is this charge head applicable for OP
++ claim_service_tax_applicable: Y, N (enum) - Service tax applicable on claim
++ chargehead_id: CONOTC (string) - Charge Head ID
++ ordereable: t, t (enum) - Is Charge Head Orderable from order screen 
++ ip_applicable: Y, N (enum) - Is charge head applicable for IP
++ service_charge_applicable: Y, N (enum) - Is Service Tax applicable on this charge head
+
+## Charge Head MISOTC (object) - Charge Head MISOTC
++ chargegroup_id: OTC (string) - Charge Head Group ID
++ chargehead_name: Miscellaneous (string) - Charge Head Name
++ associated_module: `mod_billing` (string) - Module ID that provides this charge head
++ dependent_module (string, nullable)
++ display_order: 94 (string) - Position in display or dropdown list
++ insurance_category_id: `-1` (string) - Insurance Category ID
++ insurance_payable: Y, N (enum) - Whether Insurance coverage for this chargehead is allowed
++ op_applicable: Y, N (enum) - Is this charge head applicable for OP
++ claim_service_tax_applicable: Y, N (enum) - Service tax applicable on claim
++ chargehead_id: MISOTC (string) - Charge Head ID
++ ordereable: f, t (enum) - Is Charge Head Orderable from order screen 
++ ip_applicable: Y, N (enum) - Is charge head applicable for IP
++ service_charge_applicable: Y, N (enum) - Is Service Tax applicable on this charge head
+
+## Charge Head IMPOTC (object) - Charge Head IMPOTC
++ chargegroup_id: OTC (string) - Charge Head Group ID
++ chargehead_name: Implant Charge (string) - Charge Head Name
++ associated_module: `` (string) - Module ID that provides this charge head
++ dependent_module (string, nullable)
++ display_order: 95 (string) - Position in display or dropdown list
++ insurance_category_id: `-1` (string) - Insurance Category ID
++ insurance_payable: Y, N (enum) - Whether Insurance coverage for this chargehead is allowed
++ op_applicable: Y, N (enum) - Is this charge head applicable for OP
++ claim_service_tax_applicable: Y, N (enum) - Service tax applicable on claim
++ chargehead_id: IMPOTC (string) - Charge Head ID
++ ordereable: t, t (enum) - Is Charge Head Orderable from order screen 
++ ip_applicable: Y, N (enum) - Is charge head applicable for IP
++ service_charge_applicable: Y, N (enum) - Is Service Tax applicable on this charge head
+
+## Charge Head MEMED (object) - Charge Head MEMED
++ chargegroup_id: MED (string) - Charge Head Group ID
++ chargehead_name: Medicine (string) - Charge Head Name
++ associated_module: `` (string) - Module ID that provides this charge head
++ dependent_module (string, nullable)
++ display_order: 101 (string) - Position in display or dropdown list
++ insurance_category_id: `-1` (string) - Insurance Category ID
++ insurance_payable: Y, N (enum) - Whether Insurance coverage for this chargehead is allowed
++ op_applicable: Y, N (enum) - Is this charge head applicable for OP
++ claim_service_tax_applicable: Y, N (enum) - Service tax applicable on claim
++ chargehead_id: MEMED (string) - Charge Head ID
++ ordereable: f, t (enum) - Is Charge Head Orderable from order screen 
++ ip_applicable: Y, N (enum) - Is charge head applicable for IP
++ service_charge_applicable: Y, N (enum) - Is Service Tax applicable on this charge head
+
+## Charge Head PHMED (object) - Charge Head PHMED
++ chargegroup_id: MED (string) - Charge Head Group ID
++ chargehead_name: Pharmacy Sales (string) - Charge Head Name
++ associated_module: `` (string) - Module ID that provides this charge head
++ dependent_module (string, nullable)
++ display_order: 102 (string) - Position in display or dropdown list
++ insurance_category_id: `-1` (string) - Insurance Category ID
++ insurance_payable: Y, N (enum) - Whether Insurance coverage for this chargehead is allowed
++ op_applicable: N, Y (enum) - Is this charge head applicable for OP
++ claim_service_tax_applicable: Y, N (enum) - Service tax applicable on claim
++ chargehead_id: PHMED (string) - Charge Head ID
++ ordereable: f, t (enum) - Is Charge Head Orderable from order screen 
++ ip_applicable: N, Y (enum) - Is charge head applicable for IP
++ service_charge_applicable: N, Y (enum) - Is Service Tax applicable on this charge head
+
+## Charge Head CONMED (object) - Charge Head CONMED
++ chargegroup_id: MED (string) - Charge Head Group ID
++ chargehead_name: Consumables (string) - Charge Head Name
++ associated_module: `` (string) - Module ID that provides this charge head
++ dependent_module (string, nullable)
++ display_order: 103 (string) - Position in display or dropdown list
++ insurance_category_id: `-1` (string) - Insurance Category ID
++ insurance_payable: Y, N (enum) - Whether Insurance coverage for this chargehead is allowed
++ op_applicable: Y, N (enum) - Is this charge head applicable for OP
++ claim_service_tax_applicable: Y, N (enum) - Service tax applicable on claim
++ chargehead_id: CONMED (string) - Charge Head ID
++ ordereable: f, t (enum) - Is Charge Head Orderable from order screen 
++ ip_applicable: Y, N (enum) - Is charge head applicable for IP
++ service_charge_applicable: Y, N (enum) - Is Service Tax applicable on this charge head
+
+## Charge Head LTAX (object) - Charge Head LTAX
++ chargegroup_id: TAX (string) - Charge Head Group ID
++ chargehead_name: Luxury Tax (string) - Charge Head Name
++ associated_module: `mod_billing` (string) - Module ID that provides this charge head
++ dependent_module (string, nullable)
++ display_order: 111 (string) - Position in display or dropdown list
++ insurance_category_id: `-1` (string) - Insurance Category ID
++ insurance_payable: Y, N (enum) - Whether Insurance coverage for this chargehead is allowed
++ op_applicable: N, Y (enum) - Is this charge head applicable for OP
++ claim_service_tax_applicable: Y, N (enum) - Service tax applicable on claim
++ chargehead_id: LTAX (string) - Charge Head ID
++ ordereable: f, t (enum) - Is Charge Head Orderable from order screen 
++ ip_applicable: N, Y (enum) - Is charge head applicable for IP
++ service_charge_applicable: N, Y (enum) - Is Service Tax applicable on this charge head
+
+## Charge Head STAX (object) - Charge Head STAX
++ chargegroup_id: TAX (string) - Charge Head Group ID
++ chargehead_name: Service Tax (string) - Charge Head Name
++ associated_module: `mod_billing` (string) - Module ID that provides this charge head
++ dependent_module (string, nullable)
++ display_order: 112 (string) - Position in display or dropdown list
++ insurance_category_id: `-1` (string) - Insurance Category ID
++ insurance_payable: Y, N (enum) - Whether Insurance coverage for this chargehead is allowed
++ op_applicable: N, Y (enum) - Is this charge head applicable for OP
++ claim_service_tax_applicable: Y, N (enum) - Service tax applicable on claim
++ chargehead_id: STAX (string) - Charge Head ID
++ ordereable: f, t (enum) - Is Charge Head Orderable from order screen 
++ ip_applicable: N, Y (enum) - Is charge head applicable for IP
++ service_charge_applicable: N, Y (enum) - Is Service Tax applicable on this charge head
+
+## Charge Head CSTAX (object) - Charge Head CSTAX
++ chargegroup_id: TAX (string) - Charge Head Group ID
++ chargehead_name: Claim Service Tax (string) - Charge Head Name
++ associated_module: `mod_billing` (string) - Module ID that provides this charge head
++ dependent_module (string, nullable)
++ display_order: 114 (string) - Position in display or dropdown list
++ insurance_category_id: `-1` (string) - Insurance Category ID
++ insurance_payable: Y, N (enum) - Whether Insurance coverage for this chargehead is allowed
++ op_applicable: Y, N (enum) - Is this charge head applicable for OP
++ claim_service_tax_applicable: N, Y (enum) - Service tax applicable on claim
++ chargehead_id: CSTAX (string) - Charge Head ID
++ ordereable: f, t (enum) - Is Charge Head Orderable from order screen 
++ ip_applicable: Y, N (enum) - Is charge head applicable for IP
++ service_charge_applicable: N, Y (enum) - Is Service Tax applicable on this charge head
+
+## Charge Head BSTAX (object) - Charge Head BSTAX
++ chargegroup_id: TAX (string) - Charge Head Group ID
++ chargehead_name: Service Charge (string) - Charge Head Name
++ associated_module: `mod_billing` (string) - Module ID that provides this charge head
++ dependent_module (string, nullable)
++ display_order: 115 (string) - Position in display or dropdown list
++ insurance_category_id: `-1` (string) - Insurance Category ID
++ insurance_payable: N, Y (enum) - Whether Insurance coverage for this chargehead is allowed
++ op_applicable: Y, N (enum) - Is this charge head applicable for OP
++ claim_service_tax_applicable: N, Y (enum) - Service tax applicable on claim
++ chargehead_id: BSTAX (string) - Charge Head ID
++ ordereable: f, t (enum) - Is Charge Head Orderable from order screen 
++ ip_applicable: Y, N (enum) - Is charge head applicable for IP
++ service_charge_applicable: N, Y (enum) - Is Service Tax applicable on this charge head
+
+## Charge Head BIDIS (object) - Charge Head BIDIS
++ chargegroup_id: DIS (string) - Charge Head Group ID
++ chargehead_name: Bill Discounts (string) - Charge Head Name
++ associated_module: `mod_billing` (string) - Module ID that provides this charge head
++ dependent_module (string, nullable)
++ display_order: 121 (string) - Position in display or dropdown list
++ insurance_category_id: `-1` (string) - Insurance Category ID
++ insurance_payable: Y, N (enum) - Whether Insurance coverage for this chargehead is allowed
++ op_applicable: Y, N (enum) - Is this charge head applicable for OP
++ claim_service_tax_applicable: Y, N (enum) - Service tax applicable on claim
++ chargehead_id: BIDIS (string) - Charge Head ID
++ ordereable: f, t (enum) - Is Charge Head Orderable from order screen 
++ ip_applicable: Y, N (enum) - Is charge head applicable for IP
++ service_charge_applicable: Y, N (enum) - Is Service Tax applicable on this charge head
+
+## Charge Head ROF (object) - Charge Head ROF
++ chargegroup_id: DIS (string) - Charge Head Group ID
++ chargehead_name: Round Off (string) - Charge Head Name
++ associated_module: `mod_billing` (string) - Module ID that provides this charge head
++ dependent_module (string, nullable)
++ display_order: 122 (string) - Position in display or dropdown list
++ insurance_category_id: `-1` (string) - Insurance Category ID
++ insurance_payable: Y, N (enum) - Whether Insurance coverage for this chargehead is allowed
++ op_applicable: N, Y (enum) - Is this charge head applicable for OP
++ claim_service_tax_applicable: Y, N (enum) - Service tax applicable on claim
++ chargehead_id: ROF (string) - Charge Head ID
++ ordereable: f, t (enum) - Is Charge Head Orderable from order screen 
++ ip_applicable: N, Y (enum) - Is charge head applicable for IP
++ service_charge_applicable: Y, N (enum) - Is Service Tax applicable on this charge head
+
+## Charge Head PHRET (object) - Charge Head PHRET
++ chargegroup_id: RET (string) - Charge Head Group ID
++ chargehead_name: Pharmacy Sales Returns (string) - Charge Head Name
++ associated_module: `` (string) - Module ID that provides this charge head
++ dependent_module (string, nullable)
++ display_order: 130 (string) - Position in display or dropdown list
++ insurance_category_id: `-1` (string) - Insurance Category ID
++ insurance_payable: Y, N (enum) - Whether Insurance coverage for this chargehead is allowed
++ op_applicable: N, Y (enum) - Is this charge head applicable for OP
++ claim_service_tax_applicable: Y, N (enum) - Service tax applicable on claim
++ chargehead_id: PHRET (string) - Charge Head ID
++ ordereable: f, t (enum) - Is Charge Head Orderable from order screen 
++ ip_applicable: N, Y (enum) - Is charge head applicable for IP
++ service_charge_applicable: N, Y (enum) - Is Service Tax applicable on this charge head
+
+## Charge Head INVITE (object) - Charge Head INVITE
++ chargegroup_id: ITE (string) - Charge Head Group ID
++ chargehead_name: Inventory Item (string) - Charge Head Name
++ associated_module: `` (string) - Module ID that provides this charge head
++ dependent_module (string, nullable)
++ display_order: 131 (string) - Position in display or dropdown list
++ insurance_category_id: `-1` (string) - Insurance Category ID
++ insurance_payable: Y, N (enum) - Whether Insurance coverage for this chargehead is allowed
++ op_applicable: N, Y (enum) - Is this charge head applicable for OP
++ claim_service_tax_applicable: Y, N (enum) - Service tax applicable on claim
++ chargehead_id: INVITE (string) - Charge Head ID
++ ordereable: f, t (enum) - Is Charge Head Orderable from order screen 
++ ip_applicable: N, Y (enum) - Is charge head applicable for IP
++ service_charge_applicable: Y, N (enum) - Is Service Tax applicable on this charge head
+
+## Charge Head INVRET (object) - Charge Head INVRET
++ chargegroup_id: RET (string) - Charge Head Group ID
++ chargehead_name: Inventory Returns (string) - Charge Head Name
++ associated_module: `` (string) - Module ID that provides this charge head
++ dependent_module (string, nullable)
++ display_order: 132 (string) - Position in display or dropdown list
++ insurance_category_id: `-1` (string) - Insurance Category ID
++ insurance_payable: Y, N (enum) - Whether Insurance coverage for this chargehead is allowed
++ op_applicable: N, Y (enum) - Is this charge head applicable for OP
++ claim_service_tax_applicable: Y, N (enum) - Service tax applicable on claim
++ chargehead_id: INVRET (string) - Charge Head ID
++ ordereable: f, t (enum) - Is Charge Head Orderable from order screen 
++ ip_applicable: N, Y (enum) - Is charge head applicable for IP
++ service_charge_applicable: Y, N (enum) - Is Service Tax applicable on this charge head
+
+## Charge Head PHCRET (object) - Charge Head PHCRET
++ chargegroup_id: RET (string) - Charge Head Group ID
++ chargehead_name: Pharmacy Returns (string) - Charge Head Name
++ associated_module: `` (string) - Module ID that provides this charge head
++ dependent_module (string, nullable)
++ display_order: 133 (string) - Position in display or dropdown list
++ insurance_category_id: `-1` (string) - Insurance Category ID
++ insurance_payable: Y, N (enum) - Whether Insurance coverage for this chargehead is allowed
++ op_applicable: N, Y (enum) - Is this charge head applicable for OP
++ claim_service_tax_applicable: Y, N (enum) - Service tax applicable on claim
++ chargehead_id: PHCRET (string) - Charge Head ID
++ ordereable: f, t (enum) - Is Charge Head Orderable from order screen 
++ ip_applicable: N, Y (enum) - Is charge head applicable for IP
++ service_charge_applicable: N, Y (enum) - Is Service Tax applicable on this charge head

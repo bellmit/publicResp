@@ -1,0 +1,6 @@
+priority,bill_type,visit_type,pattern_id,restriction_type,payment_type,center_id,receipt_number_seq_id
+10,'*','*','RECEIPT_PHARMACY','P','R',0,1
+20,'*','*','REFUND_DEFAULT','*','F',0,2
+40,'*','*','RECEIPT_DEFAULT','*','R',0,3
+100,'*','*','RECEIPT_DEFAULT','*','*',0,4
+30,'*','*','SPONSOR_RECEIPT_DEFAULT','*','S',0,5

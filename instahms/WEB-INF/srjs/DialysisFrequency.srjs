@@ -1,0 +1,187 @@
+{
+    "title": "Dialysis Frequency Report",
+    "description": "This report builder gives a comparison of dialysis prescription vs. actual service completion for every day, for every patient. The detailed report gives one row per patient-day, with the number of dialysis sessions prescribed as 1 or 0 and the number of dialysis sessions conducted as 0 or 1.",
+    "reportGroup": "Dialysis Reports",
+    "defaultOrder": "dt",
+    "dateFields": [
+        "dt"
+    ],
+    "queryLines": [
+        [
+            "WITH ",
+            "all_patient_days AS ( ",
+            "  SELECT mr_no, end_date, ",
+            "    generate_series(${fromDate}, ${toDate}, interval '1 day')::date dt ",
+            "  FROM dialysis_prescriptions ",
+            "), ",
+            " ",
+            "presc_slots AS ( ",
+            "  SELECT mr_no, new_value AS dow, mod_time::date AS start_dt, ",
+            "    coalesce((SELECT mod_time::date - 1 ",
+            "      FROM dialysis_prescriptions_audit_log dpal2 ",
+            "      WHERE dpal2.mr_no = dpal.mr_no ",
+            "        AND dpal2.field_name = dpal.field_name ",
+            "        AND dpal2.old_value = dpal.new_value ",
+            "      ORDER BY mod_time LIMIT 1), current_date) AS change_dt ",
+            "   FROM dialysis_prescriptions_audit_log dpal ",
+            "   WHERE (field_name LIKE 'day%') AND new_value != '' ",
+            "), ",
+            " ",
+            "patient_presc_days AS ( ",
+            "  SELECT mr_no, dt, 1 AS presc_count FROM ( ",
+            "    SELECT presc_slots.mr_no, dow, ",
+            "      generate_series(GREATEST(start_dt, ${fromDate}), LEAST(change_dt, ${toDate}, dp.end_date), ",
+            "        interval '1 day')::date as dt ",
+            "      FROM presc_slots ",
+            "      JOIN dialysis_prescriptions dp ON (dp.mr_no = presc_slots.mr_no) ",
+            "    ) as presc_days ",
+            "  WHERE extract('isodow' FROM dt)::text = dow ",
+            ") ",
+            " ",
+            "SELECT apd.mr_no, apd.dt, coalesce(ppd.presc_count,0) as presc_count, to_char(apd.dt,'Dy') AS dow, ",
+            "  CASE WHEN sp.specialization IS NOT NULL THEN 1 ELSE 0 END AS conducted_count, pd.name_local_language,",
+            "  coalesce(ppd.presc_count,0) - (CASE WHEN sp.specialization IS NOT NULL THEN 1 ELSE 0 END) AS shortfall, ",
+            "  category_name, sm.service_name, hcm.center_name, bc.amount as billed_amount, ",
+            "  get_patient_full_name(s.salutation, pd.patient_name, pd.middle_name, pd.last_name)::text ",
+            "    AS patient_name ",
+            "FROM all_patient_days apd ",
+            "LEFT JOIN patient_presc_days ppd ON (ppd.mr_no = apd.mr_no AND ppd.dt = apd.dt) ",
+            "LEFT JOIN services_prescribed sp ON (sp.mr_no = apd.mr_no AND date(sp.presc_date) = apd.dt ",
+            "  AND sp.specialization = 'D' AND conducted != 'X') ",
+            "LEFT JOIN services sm ON (sm.service_id = sp.service_id) ",
+            "LEFT JOIN patient_registration pr ON (sp.patient_id = pr.patient_id) ",
+            "LEFT JOIN hospital_center_master hcm ON (hcm.center_id = pr.center_id) ",
+            "LEFT JOIN bill_activity_charge bac ON (bac.activity_id = sp.prescription_id::text ",
+            " AND bac.activity_code = 'SER') ",
+            "LEFT JOIN bill_charge bc ON (bac.charge_id = bc.charge_id) ",
+            "JOIN patient_details pd ON (pd.mr_no = apd.mr_no) ",
+            "JOIN salutation_master s ON (s.salutation_id = pd.salutation) ",
+            "JOIN patient_category_master pcm ON (pd.patient_category_id = pcm.category_id) "
+        ]
+    ],
+    "skipDateFilter": true,
+    "comment": [
+        " presc_slots query:",
+        "  Goes through audit log and gets the start date for any day of the week (field name is like 'day%')",
+        "  as the date the audit log was inserted. Now, go through audit logs again (dpal2) and find out if",
+        "  this particular day got a new value, in which case the day of week was stopped on that date.",
+        "  This will result in one row per patient-day_of_week with a start and end date. Eg, for one mr_no:",
+        "  mr_no    | dow |  start_dt  | change_dt   ",
+        "  ---------+-----+------------+------------ ",
+        "  MR001474 | 1   | 2011-02-20 | 2011-04-17 ",
+        "  MR001474 | 2   | 2011-02-20 | 2011-04-17 ",
+        "  MR001474 | 3   | 2011-04-18 | 2011-08-07 ",
+        "  MR001474 | 4   | 2011-08-08 | 2013-02-20 ",
+        "  MR001474 | 3   | 2011-02-20 | 2011-04-17 ",
+        "  MR001474 | 5   | 2011-04-18 | 2011-08-07 ",
+        "  MR001474 | 6   | 2011-08-08 | 2013-02-20 ",
+        "  MR001474 | 6   | 2011-02-20 | 2011-04-17 ",
+        "",
+        " patient_presc_days query:",
+        "  Does a generate series so that the above is repeated for every day between the start and the",
+        "  change date (or the prescription end date, whichever is earlier). But this will repeat all",
+        "  Mondays between start and end dates, as well as Tuesdays, so there is a filter on the date's",
+        "  day-of-week (isodow) to match the day of week in presc_slots. This will result in one row",
+        "  for every day that there was a prescription, like:",
+        "",
+        "  mr_no    | dt   ",
+        "  ---------+------------- ",
+        "  MR001474 | 2011-02-20  ",
+        "  MR001474 | 2011-02-23  ",
+        "  MR001474 | 2011-02-25  ",
+        "  ... ",
+        "",
+        " Main query:",
+        "  This is one row per mr_no x all days between the given range.",
+        "  To this, we join the patient_presc_days to get presc_count for that day.",
+        "  Next, we join with services prescribed etc. to get count of services prescribed for that day"
+    ],
+    "fields": {
+        "dt": {
+            "displayName": "Date",
+            "dataType": "date",
+            "filterable": true
+        },
+        "dow": {
+            "displayName": "Day of Week",
+            "width": 50,
+            "groupable": true
+        },
+        "mr_no": {
+            "displayName": "MR No.",
+            "width": 100,
+            "filterable": true,
+            "groupable": true
+        },
+        "patient_name": {
+            "displayName": "Patient Name",
+            "width": 140,
+            "filterable": true,
+            "groupable": true
+        },
+        "category_name": {
+            "displayName": "Patient Category",
+            "width": 100,
+            "filterable": true,
+            "groupable": true
+        },
+        "name_local_language": {
+              "displayName": "Name In Local Language",
+              "width": 150
+        },
+        "presc_count": {
+            "displayName": "Prescribed Count",
+            "width": 100,
+            "description": "Number of dialysis prescriptions for the day, 0 or 1",
+            "dataType": "numeric",
+            "decimalType": "integer",
+            "filterable": true,
+            "aggFunction": "sum"
+        },
+        "conducted_count": {
+            "displayName": "Completed Count",
+            "width": 100,
+            "description": "Number of sessions actually conducted for the day, 0 or 1",
+            "dataType": "numeric",
+            "decimalType": "integer",
+            "filterable": true,
+            "aggFunction": "sum"
+        },
+        "shortfall": {
+            "displayName": "Shortfall",
+            "width": 100,
+            "description": "Difference between prescribed and completed, 0, 1 or -1",
+            "dataType": "numeric",
+            "decimalType": "integer",
+            "filterable": true,
+            "aggFunction": "sum"
+        },
+        "service_name": {
+            "displayName": "Service Name",
+            "width": 100,
+            "filterable": true,
+            "groupable": true
+        },
+        "center_name": {
+            "displayName": "Center",
+            "width": 100,
+            "filterable": true,
+            "groupable": true
+        },
+        "billed_amount": {
+            "displayName": "Billed Amount",
+            "dataType": "numeric",
+            "decimalType": "amount",
+            "filterable": true,
+            "aggFunction": "sum"
+        }
+    },
+    "defaultShowFields": [
+        "dt",
+        "mr_no",
+        "patient_full_name",
+        "presc_count",
+        "conducted_count",
+        "service_name"
+    ]
+}

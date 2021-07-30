@@ -1,0 +1,27 @@
+-- liquibase formatted sql
+-- changeset manjular:created-index-for-dialysis-tables failOnError:false
+
+CREATE INDEX idx_mr_no_patient_sponsor_approvals ON patient_sponsor_approvals(mr_no);
+
+CREATE INDEX idx_is_monthly_limits_patient_sponsor_approvals ON patient_sponsor_approvals(is_monthly_limits);
+
+CREATE INDEX idx_validity_start_patient_sponsor_approvals ON patient_sponsor_approvals(validity_start);
+
+CREATE INDEX idx_validity_end_patient_sponsor_approvals ON patient_sponsor_approvals(validity_end);
+
+CREATE INDEX idx_charge_id_sponsor_approved_charges ON sponsor_approved_charges(charge_id);
+
+CREATE INDEX idx_consolidated_bill_no_consolidated_patient_bill ON consolidated_patient_bill(consolidated_bill_no);
+
+CREATE INDEX idx_sponsor_approval_detail_id_sponsor_approved_charges ON sponsor_approved_charges(sponsor_approval_detail_id);
+
+CREATE INDEX idx_sponsor_approval_detail_id_patient_sponsor_approval_details ON patient_sponsor_approval_details(sponsor_approval_detail_id);
+
+CREATE INDEX idx_sponsor_approval_id_patient_sponsor_approval_details ON patient_sponsor_approval_details(sponsor_approval_id);
+
+CREATE INDEX idx_sponsor_id_patient_sponsor_approvals ON patient_sponsor_approvals(sponsor_id);
+
+CREATE INDEX idx_main_visit_id_cpb ON consolidated_patient_bill(main_visit_id);
+
+
+

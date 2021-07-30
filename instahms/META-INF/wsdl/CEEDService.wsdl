@@ -1,0 +1,1047 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://www.Dimensions-healthcare.net/DHCEG/CommonTypes" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" targetNamespace="http://www.Dimensions-healthcare.net/DHCEG/CommonTypes" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://www.Dimensions-healthcare.net/DHCEG/CommonTypes">
+      <s:import />
+      <s:element name="DHCEG">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="service" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="request" />
+            <s:element minOccurs="0" maxOccurs="1" name="user" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="password" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="DHCEGResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="DHCEGResult" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" ref="response" />
+            <s:element minOccurs="0" maxOccurs="1" name="infoMessage" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:simpleType name="ClaimEditRank">
+        <s:restriction base="s:string">
+          <s:enumeration value="A" />
+          <s:enumeration value="R" />
+          <s:enumeration value="I" />
+          <s:enumeration value="NA" />
+        </s:restriction>
+      </s:simpleType>
+      <s:element name="DHCEG_Update">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="service" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="request" />
+            <s:element minOccurs="0" maxOccurs="1" name="user" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="password" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="logId" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="DHCEG_UpdateResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="DHCEG_UpdateResult" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" ref="response" />
+            <s:element minOccurs="0" maxOccurs="1" name="infoMessage" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="DHCEG_Claims">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="service" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" ref="request" />
+            <s:element minOccurs="0" maxOccurs="1" name="user" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="password" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:simpleType name="Gender">
+        <s:restriction base="s:string">
+          <s:enumeration value="M" />
+          <s:enumeration value="F" />
+          <s:enumeration value="U" />
+        </s:restriction>
+      </s:simpleType>
+      <s:simpleType name="BreastFeeding">
+        <s:restriction base="s:string">
+          <s:enumeration value="1" />
+          <s:enumeration value="2" />
+          <s:enumeration value="3" />
+          <s:enumeration value="4" />
+        </s:restriction>
+      </s:simpleType>
+      <s:simpleType name="EncounterType">
+        <s:restriction base="s:string">
+          <s:enumeration value="1" />
+          <s:enumeration value="2" />
+          <s:enumeration value="3" />
+          <s:enumeration value="4" />
+          <s:enumeration value="5" />
+          <s:enumeration value="6" />
+          <s:enumeration value="7" />
+          <s:enumeration value="8" />
+          <s:enumeration value="9" />
+          <s:enumeration value="12" />
+          <s:enumeration value="13" />
+          <s:enumeration value="15" />
+          <s:enumeration value="41" />
+          <s:enumeration value="42" />
+        </s:restriction>
+      </s:simpleType>
+      <s:simpleType name="EncounterStartType">
+        <s:restriction base="s:string">
+          <s:enumeration value="1" />
+          <s:enumeration value="2" />
+          <s:enumeration value="3" />
+          <s:enumeration value="4" />
+          <s:enumeration value="5" />
+          <s:enumeration value="6" />
+          <s:enumeration value="7" />
+          <s:enumeration value="8" />
+        </s:restriction>
+      </s:simpleType>
+      <s:simpleType name="EncounterEndType">
+        <s:restriction base="s:string">
+          <s:enumeration value="1" />
+          <s:enumeration value="2" />
+          <s:enumeration value="3" />
+          <s:enumeration value="4" />
+          <s:enumeration value="5" />
+          <s:enumeration value="6" />
+          <s:enumeration value="7" />
+        </s:restriction>
+      </s:simpleType>
+      <s:simpleType name="DiagnosisCodeTerm">
+        <s:restriction base="s:string">
+          <s:enumeration value="ICD10" />
+          <s:enumeration value="ICD9" />
+        </s:restriction>
+      </s:simpleType>
+      <s:simpleType name="DiagnosisType">
+        <s:restriction base="s:string">
+          <s:enumeration value="Principal" />
+          <s:enumeration value="Secondary" />
+          <s:enumeration value="Admitting" />
+        </s:restriction>
+      </s:simpleType>
+      <s:simpleType name="ActivityCodeTerm">
+        <s:restriction base="s:string">
+          <s:enumeration value="CPT4v2012" />
+          <s:enumeration value="CPT4v2011" />
+          <s:enumeration value="DSL" />
+          <s:enumeration value="DDC" />
+          <s:enumeration value="HCPCS" />
+          <s:enumeration value="ADA" />
+          <s:enumeration value="CDT" />
+          <s:enumeration value="HAAD" />
+          <s:enumeration value="MEDD" />
+          <s:enumeration value="ASL" />
+        </s:restriction>
+      </s:simpleType>
+      <s:simpleType name="ObservationType">
+        <s:restriction base="s:string">
+          <s:enumeration value="LOINC" />
+          <s:enumeration value="Text" />
+          <s:enumeration value="File" />
+          <s:enumeration value="UniversalDental" />
+          <s:enumeration value="Universal Dental" />
+          <s:enumeration value="Financial" />
+          <s:enumeration value="Grouping" />
+          <s:enumeration value="Modifier" />
+          <s:enumeration value="ERX" />
+          <s:enumeration value="Result" />
+        </s:restriction>
+      </s:simpleType>
+      <s:element name="DHCEG_ClaimsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="DHCEG_ClaimsResult" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" ref="response" />
+            <s:element minOccurs="0" maxOccurs="1" name="infoMessage" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="DrugContraindicationAlerts">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ContraRequest" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="user" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="password" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="DrugContraindicationAlertsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="DrugContraindicationAlertsResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="DrugPrecautionsAlerts">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ContraRequest" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="user" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="password" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="DrugPrecautionsAlertsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="DrugPrecautionsAlertsResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="DrugInteractionAlerts">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="InteractionRequest" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="user" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="password" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="DrugInteractionAlertsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="DrugInteractionAlertsResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SearchAllergyAlerts">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="AllergyRequest" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="user" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="password" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SearchAllergyAlertsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SearchAllergyAlertsResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="Cim10Service">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="PreRequest" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="user" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="password" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="Cim10ServiceResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Cim10ServiceResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CreateUser">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="appUser" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="appPassword" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="newUser" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="newUserPassword" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CreateUserResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="CreateUserResult" type="s:boolean" />
+            <s:element minOccurs="0" maxOccurs="1" name="message" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UpdateUser">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="appUser" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="appPassword" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="updateUser" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="newPassword" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UpdateUserResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="UpdateUserResult" type="s:boolean" />
+            <s:element minOccurs="0" maxOccurs="1" name="message" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="RegisterService">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="mac" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="ip" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="user" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="password" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="RegisterServiceResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="RegisterServiceResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetMyIpService">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="user" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="password" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetMyIpServiceResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetMyIpServiceResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetCurVersionService">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="user" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="password" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetCurVersionServiceResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetCurVersionServiceResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetDHCEGValueService">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="user" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="password" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="value" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="type" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetDHCEGValueServiceResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="GetDHCEGValueServiceResult" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="message" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="string" nillable="true" type="s:string" />
+    </s:schema>
+    <s:schema elementFormDefault="qualified">
+      <s:import namespace="http://www.Dimensions-healthcare.net/DHCEG/CommonTypes" />
+      <s:element name="response">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="unbounded" name="ClaimEdit">
+              <s:complexType>
+                <s:sequence>
+                  <s:element minOccurs="0" maxOccurs="1" name="ID" type="s:string" />
+                  <s:element minOccurs="0" maxOccurs="1" name="RefNum" type="s:string" />
+                  <s:element minOccurs="0" maxOccurs="1" name="DateTime" type="s:string" />
+                  <s:element minOccurs="0" maxOccurs="1" name="EngineVersion" type="s:string" />
+                  <s:element minOccurs="0" maxOccurs="unbounded" name="Edit">
+                    <s:complexType>
+                      <s:sequence>
+                        <s:element minOccurs="0" maxOccurs="1" name="ID" type="s:string" />
+                        <s:element minOccurs="0" maxOccurs="1" name="Type" type="s:string" />
+                        <s:element minOccurs="0" maxOccurs="1" name="SubType" type="s:string" />
+                        <s:element minOccurs="0" maxOccurs="1" name="Code" type="s:string" />
+                        <s:element minOccurs="1" maxOccurs="1" name="Rank" type="tns:ClaimEditRank" />
+                        <s:element minOccurs="0" maxOccurs="1" name="ResultCode" type="s:string" />
+                        <s:element minOccurs="0" maxOccurs="1" name="Result" type="s:string" />
+                        <s:element minOccurs="0" maxOccurs="1" name="Comment" type="s:string" />
+                      </s:sequence>
+                    </s:complexType>
+                  </s:element>
+                  <s:element minOccurs="0" maxOccurs="unbounded" name="ActivityEdit">
+                    <s:complexType>
+                      <s:sequence>
+                        <s:element minOccurs="0" maxOccurs="1" name="ID" type="s:string" />
+                        <s:element minOccurs="0" maxOccurs="1" name="Code" type="s:string" />
+                        <s:element minOccurs="0" maxOccurs="unbounded" name="EditId" type="s:string" />
+                      </s:sequence>
+                    </s:complexType>
+                  </s:element>
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="request">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="unbounded" name="Claim">
+              <s:complexType>
+                <s:sequence>
+                  <s:element minOccurs="0" maxOccurs="1" name="ID" type="s:string" />
+                  <s:element minOccurs="0" maxOccurs="1" name="Person">
+                    <s:complexType>
+                      <s:sequence>
+                        <s:element minOccurs="0" maxOccurs="1" name="ID" type="s:string" />
+                        <s:element minOccurs="0" maxOccurs="1" name="BirthDate" type="s:string" />
+                        <s:element minOccurs="0" maxOccurs="1" name="Gender" type="tns:Gender" />
+                        <s:element minOccurs="0" maxOccurs="1" name="Weight" type="s:integer" />
+                        <s:element minOccurs="0" maxOccurs="1" name="BreastFeeding" type="tns:BreastFeeding" />
+                        <s:element minOccurs="0" maxOccurs="1" name="WeeksOfAmenorrhoea" type="s:integer" />
+                        <s:element minOccurs="0" maxOccurs="1" name="CreatinClearance" type="s:integer" />
+                      </s:sequence>
+                    </s:complexType>
+                  </s:element>
+                  <s:element minOccurs="0" maxOccurs="1" name="Encounter">
+                    <s:complexType>
+                      <s:sequence>
+                        <s:element minOccurs="1" maxOccurs="1" name="Type" type="tns:EncounterType" />
+                        <s:element minOccurs="0" maxOccurs="1" name="Start" type="s:string" />
+                        <s:element minOccurs="0" maxOccurs="1" name="End" type="s:string" />
+                        <s:element minOccurs="0" maxOccurs="1" name="StartType" type="tns:EncounterStartType" />
+                        <s:element minOccurs="0" maxOccurs="1" name="EndType" type="tns:EncounterEndType" />
+                      </s:sequence>
+                    </s:complexType>
+                  </s:element>
+                  <s:element minOccurs="0" maxOccurs="unbounded" name="Diagnosis">
+                    <s:complexType>
+                      <s:sequence>
+                        <s:element minOccurs="1" maxOccurs="1" name="CodeTerm" type="tns:DiagnosisCodeTerm" />
+                        <s:element minOccurs="1" maxOccurs="1" name="Type" type="tns:DiagnosisType" />
+                        <s:element minOccurs="0" maxOccurs="1" name="Code" type="s:string" />
+                      </s:sequence>
+                    </s:complexType>
+                  </s:element>
+                  <s:element minOccurs="0" maxOccurs="unbounded" name="Activity">
+                    <s:complexType>
+                      <s:sequence>
+                        <s:element minOccurs="0" maxOccurs="1" name="ID" type="s:string" />
+                        <s:element minOccurs="1" maxOccurs="1" name="CodeTerm" type="tns:ActivityCodeTerm" />
+                        <s:element minOccurs="0" maxOccurs="1" name="Start" type="s:string" />
+                        <s:element minOccurs="0" maxOccurs="1" name="Code" type="s:string" />
+                        <s:element minOccurs="1" maxOccurs="1" name="Quantity" type="s:float" />
+                        <s:element minOccurs="0" maxOccurs="1" name="Clinician" type="s:string" />
+                        <s:element minOccurs="0" maxOccurs="unbounded" name="Observation">
+                          <s:complexType>
+                            <s:sequence>
+                              <s:element minOccurs="0" maxOccurs="1" name="ID" type="s:string" />
+                              <s:element minOccurs="1" maxOccurs="1" name="Type" type="tns:ObservationType" />
+                              <s:element minOccurs="0" maxOccurs="1" name="Code" type="s:string" />
+                              <s:element minOccurs="0" maxOccurs="1" name="Value" type="s:string" />
+                              <s:element minOccurs="0" maxOccurs="1" name="ValueType" type="s:string" />
+                            </s:sequence>
+                          </s:complexType>
+                        </s:element>
+                      </s:sequence>
+                    </s:complexType>
+                  </s:element>
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="DHCEGSoapIn">
+    <wsdl:part name="parameters" element="tns:DHCEG" />
+  </wsdl:message>
+  <wsdl:message name="DHCEGSoapOut">
+    <wsdl:part name="parameters" element="tns:DHCEGResponse" />
+  </wsdl:message>
+  <wsdl:message name="DHCEG_UpdateSoapIn">
+    <wsdl:part name="parameters" element="tns:DHCEG_Update" />
+  </wsdl:message>
+  <wsdl:message name="DHCEG_UpdateSoapOut">
+    <wsdl:part name="parameters" element="tns:DHCEG_UpdateResponse" />
+  </wsdl:message>
+  <wsdl:message name="DHCEG_ClaimsSoapIn">
+    <wsdl:part name="parameters" element="tns:DHCEG_Claims" />
+  </wsdl:message>
+  <wsdl:message name="DHCEG_ClaimsSoapOut">
+    <wsdl:part name="parameters" element="tns:DHCEG_ClaimsResponse" />
+  </wsdl:message>
+  <wsdl:message name="DrugContraindicationAlertsSoapIn">
+    <wsdl:part name="parameters" element="tns:DrugContraindicationAlerts" />
+  </wsdl:message>
+  <wsdl:message name="DrugContraindicationAlertsSoapOut">
+    <wsdl:part name="parameters" element="tns:DrugContraindicationAlertsResponse" />
+  </wsdl:message>
+  <wsdl:message name="DrugPrecautionsAlertsSoapIn">
+    <wsdl:part name="parameters" element="tns:DrugPrecautionsAlerts" />
+  </wsdl:message>
+  <wsdl:message name="DrugPrecautionsAlertsSoapOut">
+    <wsdl:part name="parameters" element="tns:DrugPrecautionsAlertsResponse" />
+  </wsdl:message>
+  <wsdl:message name="DrugInteractionAlertsSoapIn">
+    <wsdl:part name="parameters" element="tns:DrugInteractionAlerts" />
+  </wsdl:message>
+  <wsdl:message name="DrugInteractionAlertsSoapOut">
+    <wsdl:part name="parameters" element="tns:DrugInteractionAlertsResponse" />
+  </wsdl:message>
+  <wsdl:message name="SearchAllergyAlertsSoapIn">
+    <wsdl:part name="parameters" element="tns:SearchAllergyAlerts" />
+  </wsdl:message>
+  <wsdl:message name="SearchAllergyAlertsSoapOut">
+    <wsdl:part name="parameters" element="tns:SearchAllergyAlertsResponse" />
+  </wsdl:message>
+  <wsdl:message name="Cim10ServiceSoapIn">
+    <wsdl:part name="parameters" element="tns:Cim10Service" />
+  </wsdl:message>
+  <wsdl:message name="Cim10ServiceSoapOut">
+    <wsdl:part name="parameters" element="tns:Cim10ServiceResponse" />
+  </wsdl:message>
+  <wsdl:message name="CreateUserSoapIn">
+    <wsdl:part name="parameters" element="tns:CreateUser" />
+  </wsdl:message>
+  <wsdl:message name="CreateUserSoapOut">
+    <wsdl:part name="parameters" element="tns:CreateUserResponse" />
+  </wsdl:message>
+  <wsdl:message name="UpdateUserSoapIn">
+    <wsdl:part name="parameters" element="tns:UpdateUser" />
+  </wsdl:message>
+  <wsdl:message name="UpdateUserSoapOut">
+    <wsdl:part name="parameters" element="tns:UpdateUserResponse" />
+  </wsdl:message>
+  <wsdl:message name="RegisterServiceSoapIn">
+    <wsdl:part name="parameters" element="tns:RegisterService" />
+  </wsdl:message>
+  <wsdl:message name="RegisterServiceSoapOut">
+    <wsdl:part name="parameters" element="tns:RegisterServiceResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetMyIpServiceSoapIn">
+    <wsdl:part name="parameters" element="tns:GetMyIpService" />
+  </wsdl:message>
+  <wsdl:message name="GetMyIpServiceSoapOut">
+    <wsdl:part name="parameters" element="tns:GetMyIpServiceResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetCurVersionServiceSoapIn">
+    <wsdl:part name="parameters" element="tns:GetCurVersionService" />
+  </wsdl:message>
+  <wsdl:message name="GetCurVersionServiceSoapOut">
+    <wsdl:part name="parameters" element="tns:GetCurVersionServiceResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetDHCEGValueServiceSoapIn">
+    <wsdl:part name="parameters" element="tns:GetDHCEGValueService" />
+  </wsdl:message>
+  <wsdl:message name="GetDHCEGValueServiceSoapOut">
+    <wsdl:part name="parameters" element="tns:GetDHCEGValueServiceResponse" />
+  </wsdl:message>
+  <wsdl:message name="DrugContraindicationAlertsHttpPostIn">
+    <wsdl:part name="ContraRequest" type="s:string" />
+    <wsdl:part name="user" type="s:string" />
+    <wsdl:part name="password" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="DrugContraindicationAlertsHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="DrugPrecautionsAlertsHttpPostIn">
+    <wsdl:part name="ContraRequest" type="s:string" />
+    <wsdl:part name="user" type="s:string" />
+    <wsdl:part name="password" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="DrugPrecautionsAlertsHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="DrugInteractionAlertsHttpPostIn">
+    <wsdl:part name="InteractionRequest" type="s:string" />
+    <wsdl:part name="user" type="s:string" />
+    <wsdl:part name="password" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="DrugInteractionAlertsHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="SearchAllergyAlertsHttpPostIn">
+    <wsdl:part name="AllergyRequest" type="s:string" />
+    <wsdl:part name="user" type="s:string" />
+    <wsdl:part name="password" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="SearchAllergyAlertsHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="Cim10ServiceHttpPostIn">
+    <wsdl:part name="PreRequest" type="s:string" />
+    <wsdl:part name="user" type="s:string" />
+    <wsdl:part name="password" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="Cim10ServiceHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="RegisterServiceHttpPostIn">
+    <wsdl:part name="mac" type="s:string" />
+    <wsdl:part name="ip" type="s:string" />
+    <wsdl:part name="user" type="s:string" />
+    <wsdl:part name="password" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="RegisterServiceHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="GetMyIpServiceHttpPostIn">
+    <wsdl:part name="user" type="s:string" />
+    <wsdl:part name="password" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetMyIpServiceHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="GetCurVersionServiceHttpPostIn">
+    <wsdl:part name="user" type="s:string" />
+    <wsdl:part name="password" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetCurVersionServiceHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:portType name="GatewaySoap">
+    <wsdl:operation name="DHCEG">
+      <wsdl:input message="tns:DHCEGSoapIn" />
+      <wsdl:output message="tns:DHCEGSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="DHCEG_Update">
+      <wsdl:input message="tns:DHCEG_UpdateSoapIn" />
+      <wsdl:output message="tns:DHCEG_UpdateSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="DHCEG_Claims">
+      <wsdl:input message="tns:DHCEG_ClaimsSoapIn" />
+      <wsdl:output message="tns:DHCEG_ClaimsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="DrugContraindicationAlerts">
+      <wsdl:input message="tns:DrugContraindicationAlertsSoapIn" />
+      <wsdl:output message="tns:DrugContraindicationAlertsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="DrugPrecautionsAlerts">
+      <wsdl:input message="tns:DrugPrecautionsAlertsSoapIn" />
+      <wsdl:output message="tns:DrugPrecautionsAlertsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="DrugInteractionAlerts">
+      <wsdl:input message="tns:DrugInteractionAlertsSoapIn" />
+      <wsdl:output message="tns:DrugInteractionAlertsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SearchAllergyAlerts">
+      <wsdl:input message="tns:SearchAllergyAlertsSoapIn" />
+      <wsdl:output message="tns:SearchAllergyAlertsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="Cim10Service">
+      <wsdl:input message="tns:Cim10ServiceSoapIn" />
+      <wsdl:output message="tns:Cim10ServiceSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CreateUser">
+      <wsdl:input message="tns:CreateUserSoapIn" />
+      <wsdl:output message="tns:CreateUserSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="UpdateUser">
+      <wsdl:input message="tns:UpdateUserSoapIn" />
+      <wsdl:output message="tns:UpdateUserSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="RegisterService">
+      <wsdl:input message="tns:RegisterServiceSoapIn" />
+      <wsdl:output message="tns:RegisterServiceSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetMyIpService">
+      <wsdl:input message="tns:GetMyIpServiceSoapIn" />
+      <wsdl:output message="tns:GetMyIpServiceSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetCurVersionService">
+      <wsdl:input message="tns:GetCurVersionServiceSoapIn" />
+      <wsdl:output message="tns:GetCurVersionServiceSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetDHCEGValueService">
+      <wsdl:input message="tns:GetDHCEGValueServiceSoapIn" />
+      <wsdl:output message="tns:GetDHCEGValueServiceSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:portType name="GatewayHttpPost">
+    <wsdl:operation name="DrugContraindicationAlerts">
+      <wsdl:input message="tns:DrugContraindicationAlertsHttpPostIn" />
+      <wsdl:output message="tns:DrugContraindicationAlertsHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="DrugPrecautionsAlerts">
+      <wsdl:input message="tns:DrugPrecautionsAlertsHttpPostIn" />
+      <wsdl:output message="tns:DrugPrecautionsAlertsHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="DrugInteractionAlerts">
+      <wsdl:input message="tns:DrugInteractionAlertsHttpPostIn" />
+      <wsdl:output message="tns:DrugInteractionAlertsHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SearchAllergyAlerts">
+      <wsdl:input message="tns:SearchAllergyAlertsHttpPostIn" />
+      <wsdl:output message="tns:SearchAllergyAlertsHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="Cim10Service">
+      <wsdl:input message="tns:Cim10ServiceHttpPostIn" />
+      <wsdl:output message="tns:Cim10ServiceHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="RegisterService">
+      <wsdl:input message="tns:RegisterServiceHttpPostIn" />
+      <wsdl:output message="tns:RegisterServiceHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetMyIpService">
+      <wsdl:input message="tns:GetMyIpServiceHttpPostIn" />
+      <wsdl:output message="tns:GetMyIpServiceHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetCurVersionService">
+      <wsdl:input message="tns:GetCurVersionServiceHttpPostIn" />
+      <wsdl:output message="tns:GetCurVersionServiceHttpPostOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="GatewaySoap" type="tns:GatewaySoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="DHCEG">
+      <soap:operation soapAction="http://www.Dimensions-healthcare.net/DHCEG/CommonTypes/DHCEG" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DHCEG_Update">
+      <soap:operation soapAction="http://www.Dimensions-healthcare.net/DHCEG/CommonTypes/DHCEG_Update" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DHCEG_Claims">
+      <soap:operation soapAction="http://www.Dimensions-healthcare.net/DHCEG/CommonTypes/DHCEG_Claims" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DrugContraindicationAlerts">
+      <soap:operation soapAction="http://www.Dimensions-healthcare.net/DHCEG/CommonTypes/DrugContraindicationAlerts" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DrugPrecautionsAlerts">
+      <soap:operation soapAction="http://www.Dimensions-healthcare.net/DHCEG/CommonTypes/DrugPrecautionsAlerts" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DrugInteractionAlerts">
+      <soap:operation soapAction="http://www.Dimensions-healthcare.net/DHCEG/CommonTypes/DrugInteractionAlerts" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SearchAllergyAlerts">
+      <soap:operation soapAction="http://www.Dimensions-healthcare.net/DHCEG/CommonTypes/SearchAllergyAlerts" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Cim10Service">
+      <soap:operation soapAction="http://www.Dimensions-healthcare.net/DHCEG/CommonTypes/Cim10Service" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CreateUser">
+      <soap:operation soapAction="http://www.Dimensions-healthcare.net/DHCEG/CommonTypes/CreateUser" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateUser">
+      <soap:operation soapAction="http://www.Dimensions-healthcare.net/DHCEG/CommonTypes/UpdateUser" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RegisterService">
+      <soap:operation soapAction="http://www.Dimensions-healthcare.net/DHCEG/CommonTypes/RegisterService" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMyIpService">
+      <soap:operation soapAction="http://www.Dimensions-healthcare.net/DHCEG/CommonTypes/GetMyIpService" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetCurVersionService">
+      <soap:operation soapAction="http://www.Dimensions-healthcare.net/DHCEG/CommonTypes/GetCurVersionService" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDHCEGValueService">
+      <soap:operation soapAction="http://www.Dimensions-healthcare.net/DHCEG/CommonTypes/GetDHCEGValueService" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="GatewaySoap12" type="tns:GatewaySoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="DHCEG">
+      <soap12:operation soapAction="http://www.Dimensions-healthcare.net/DHCEG/CommonTypes/DHCEG" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DHCEG_Update">
+      <soap12:operation soapAction="http://www.Dimensions-healthcare.net/DHCEG/CommonTypes/DHCEG_Update" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DHCEG_Claims">
+      <soap12:operation soapAction="http://www.Dimensions-healthcare.net/DHCEG/CommonTypes/DHCEG_Claims" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DrugContraindicationAlerts">
+      <soap12:operation soapAction="http://www.Dimensions-healthcare.net/DHCEG/CommonTypes/DrugContraindicationAlerts" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DrugPrecautionsAlerts">
+      <soap12:operation soapAction="http://www.Dimensions-healthcare.net/DHCEG/CommonTypes/DrugPrecautionsAlerts" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DrugInteractionAlerts">
+      <soap12:operation soapAction="http://www.Dimensions-healthcare.net/DHCEG/CommonTypes/DrugInteractionAlerts" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SearchAllergyAlerts">
+      <soap12:operation soapAction="http://www.Dimensions-healthcare.net/DHCEG/CommonTypes/SearchAllergyAlerts" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Cim10Service">
+      <soap12:operation soapAction="http://www.Dimensions-healthcare.net/DHCEG/CommonTypes/Cim10Service" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CreateUser">
+      <soap12:operation soapAction="http://www.Dimensions-healthcare.net/DHCEG/CommonTypes/CreateUser" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateUser">
+      <soap12:operation soapAction="http://www.Dimensions-healthcare.net/DHCEG/CommonTypes/UpdateUser" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RegisterService">
+      <soap12:operation soapAction="http://www.Dimensions-healthcare.net/DHCEG/CommonTypes/RegisterService" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMyIpService">
+      <soap12:operation soapAction="http://www.Dimensions-healthcare.net/DHCEG/CommonTypes/GetMyIpService" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetCurVersionService">
+      <soap12:operation soapAction="http://www.Dimensions-healthcare.net/DHCEG/CommonTypes/GetCurVersionService" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDHCEGValueService">
+      <soap12:operation soapAction="http://www.Dimensions-healthcare.net/DHCEG/CommonTypes/GetDHCEGValueService" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="GatewayHttpPost" type="tns:GatewayHttpPost">
+    <http:binding verb="POST" />
+    <wsdl:operation name="DrugContraindicationAlerts">
+      <http:operation location="/DrugContraindicationAlerts" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DrugPrecautionsAlerts">
+      <http:operation location="/DrugPrecautionsAlerts" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DrugInteractionAlerts">
+      <http:operation location="/DrugInteractionAlerts" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SearchAllergyAlerts">
+      <http:operation location="/SearchAllergyAlerts" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Cim10Service">
+      <http:operation location="/Cim10Service" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RegisterService">
+      <http:operation location="/RegisterService" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMyIpService">
+      <http:operation location="/GetMyIpService" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetCurVersionService">
+      <http:operation location="/GetCurVersionService" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="Gateway">
+    <wsdl:port name="GatewaySoap" binding="tns:GatewaySoap">
+      <soap:address location="https://eclaimlink.dimensions-healthcare.net/DHCEG/gateway.asmx" />
+    </wsdl:port>
+    <wsdl:port name="GatewaySoap12" binding="tns:GatewaySoap12">
+      <soap12:address location="https://eclaimlink.dimensions-healthcare.net/DHCEG/gateway.asmx" />
+    </wsdl:port>
+    <wsdl:port name="GatewayHttpPost" binding="tns:GatewayHttpPost">
+      <http:address location="https://eclaimlink.dimensions-healthcare.net/DHCEG/gateway.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

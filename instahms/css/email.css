@@ -1,0 +1,107 @@
+.emailDialog {
+	display: none;
+	height: 150px;
+	width: 376px;
+	position: absolute;
+	border: 1px solid #979797;
+	border-radius: 3px;
+}
+.emailDialog:after, .emailDialog:before {
+	top: 100%;
+	left: 73%;
+	border: solid transparent;
+	content: " ";
+	height: 0;
+	width: 0;
+	position: absolute;
+	pointer-events: none;
+}
+
+.emailDialog:after {
+	border-color: rgba(136, 183, 213, 0);
+	border-top-color: #F5F5F5;
+	border-width: 20px;
+	margin-left: -20px;
+}
+
+.emailDialog:before {
+	border-color: rgba(151, 151, 151, 0);
+	border-top-color: #979797;
+	border-width: 21px;
+	margin-left: -21px;
+}
+
+#emailVal::-webkit-input-placeholder { /* Chrome */
+	color: #FF6666;
+}
+
+#emailVal:-ms-input-placeholder { /* IE 10+ */
+	color: #FF6666;
+}
+
+#emailVal::-moz-placeholder { /* Firefox 19+ */
+	color: #FF6666;
+	opacity: 1;
+}
+
+#emailVal:-moz-placeholder { /* Firefox 4 - 18 */
+	color: #FF6666;
+	opacity: 1;
+}
+
+.blue-btn {
+	background-color: #4071A3;
+	color: white;
+	font-size: 8pt;
+	border-radius: 4px;
+	height: 17px;
+	border: 1px transparent solid;
+	margin-left:5px;
+	cursor:pointer
+}
+.blue-btn:disabled {
+    background-color: #9DB7D0;
+}
+#errormsg {
+	color: #D0021B;
+	font-size: 8pt;
+	visibility: hidden;
+	height: 15px
+}
+.emailContent{
+	height:122px; 
+	width:376px
+}
+.emailHeading {
+	color: #737373;
+	padding-top: 7px;
+	padding-left: 12px;
+	font-size: 14px;
+	float: left;
+}
+
+.emailTable {
+	border-spacing: 5px;
+	padding-top: 21px;
+	padding-left: 12px;
+}
+
+#emailVal {
+	width: 330px;
+	height: 22px;
+	border-radius: 4px;
+}
+
+.emailHeader {
+	height: 28px;
+	width: 376px
+}
+#closeButton {
+    float: right;
+    margin: 5px;
+    cursor:pointer;
+}
+#emailStatusVal{
+	text-align:center;
+	margin-top:38px;	
+}

@@ -1,0 +1,54 @@
+.dialog-style {
+	padding: 16px;
+}
+
+.fieldSetBorder-style {
+	cursor: pointer; 
+	height: 252px; 
+	overflow: auto;
+	width:161px;
+	float:left;
+	padding: 0px 6px 0px 8px;
+}
+
+.select-box-style {
+	border: none;
+	width:100%;
+}
+
+.select-box-option {
+	width: 157px;
+	text-overflow: ellipsis;
+	overflow: hidden;
+}
+
+.add-to-home-page-divider {
+	width:34px;
+	float:left;
+	text-align: center;
+	margin: 121px 0px 122px;
+	color:#BABABA;
+}
+
+.selected-value {
+	font-size: 12px; 
+	color: #BABABA;
+}
+
+#sel-add-to-home-page {
+	color: #030303;
+}
+
+#value-option,
+#type-option {
+	display:none;
+}
+
+.dialog-button-position {
+	padding: 10px 0px 0px;
+}
+
+#add-to-home-page-dialog,
+#delete-dialog {
+	display:none;
+}

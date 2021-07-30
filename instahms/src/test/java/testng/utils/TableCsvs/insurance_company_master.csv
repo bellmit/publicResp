@@ -1,0 +1,3 @@
+insurance_co_id,insurance_co_name,insurance_co_address,insurance_co_city,insurance_co_state,insurance_co_country,insurance_co_phone,insurance_co_email,status,default_rate_plan,insurance_co_code_obsolete,insurance_rules_doc_bytea,insurance_rules_doc_name,insurance_rules_doc_type,tin_number,interface_code
+'ICM00002','Default Insurance Company',,,,,,,'A',,,,,,,
+'ICM00014','insurance company jd',,,,,,,'A',,,,,,,

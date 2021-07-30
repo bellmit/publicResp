@@ -1,0 +1,2521 @@
+FORMAT: 1A
+HOST: http://polls.apiblueprint.org/
+
+# PackageMaster
+
+Package Master API contracts
+
+## Package List Metadata Collection [/master/packages/metadata.json]
+
+### List Metadata [GET]
+    
++ Response 200 (application/json)
+
+    + Body
+            
+            {
+                "item_insurance_categories": [
+                    {
+                      "insurance_payable": "Y",
+                      "system_category": "N",
+                      "insurance_category_name": "GP Consultation",
+                      "insurance_category_id": 1
+                    },
+                    {
+                      "insurance_payable": "Y",
+                      "system_category": "N",
+                      "insurance_category_name": "SP Consultation",
+                      "insurance_category_id": 2
+                    }
+                ],
+                "code_type_list": [
+                    {
+                        "code_type": "Drug"
+                    },
+                    {
+                        "code_type": "IR-DRG"
+                    },
+                    {
+                        "code_type": "CPT"
+                    },
+                    {
+                        "code_type": "HCPCS"
+                    },
+                    {
+                        "code_type": "Service Code"
+                    },
+                    {
+                        "code_type": "Dental"
+                    }
+                ],
+                "taxGroupDetails": {
+                    "i-GST": [
+                        {
+                            "item_subgroup_display_order": 11,
+                            "item_subgroup_name": "iGST-0",
+                            "item_subgroup_id": 13,
+                            "validity_end": null,
+                            "status": "A",
+                            "subgroup_code": null,
+                            "item_group_id": 3,
+                            "tax_rate_expr": null,
+                            "tax_rate": 0,
+                            "validity_start": "29-05-2018"
+                        },
+                        {
+                            "item_subgroup_id": 14,
+                            "item_subgroup_display_order": 12,
+                            "validity_end": null,
+                            "status": "A",
+                            "item_subgroup_name": "iGST-5",
+                            "tax_rate": 5,
+                            "subgroup_code": null,
+                            "item_group_id": 3,
+                            "tax_rate_expr": null,
+                            "validity_start": "29-05-2018"
+                        },
+                        {
+                            "item_subgroup_display_order": 13,
+                            "item_subgroup_id": 15,
+                            "validity_end": null,
+                            "item_subgroup_name": "iGST-12",
+                            "status": "A",
+                            "tax_rate": 12,
+                            "subgroup_code": null,
+                            "item_group_id": 3,
+                            "tax_rate_expr": null,
+                            "validity_start": "29-05-2018"
+                        },
+                        {
+                            "item_subgroup_id": 16,
+                            "item_subgroup_display_order": 14,
+                            "validity_end": null,
+                            "status": "A",
+                            "tax_rate": 18,
+                            "subgroup_code": null,
+                            "item_group_id": 3,
+                            "tax_rate_expr": null,
+                            "item_subgroup_name": "iGST-18",
+                            "validity_start": "29-05-2018"
+                        },
+                        {
+                            "validity_end": null,
+                            "item_subgroup_display_order": 15,
+                            "tax_rate": 28,
+                            "item_subgroup_id": 17,
+                            "status": "A",
+                            "subgroup_code": null,
+                            "item_group_id": 3,
+                            "tax_rate_expr": null,
+                            "validity_start": "29-05-2018",
+                            "item_subgroup_name": "iGST-28"
+                        }
+                    ],
+                    "SGST": [
+                        {
+                            "validity_end": null,
+                            "status": "A",
+                            "subgroup_code": null,
+                            "item_group_id": 2,
+                            "item_subgroup_name": "SGST-0",
+                            "item_subgroup_display_order": 6,
+                            "item_subgroup_id": 7,
+                            "tax_rate_expr": null,
+                            "tax_rate": 0,
+                            "validity_start": "29-05-2018"
+                        },
+                        {
+                            "validity_end": null,
+                            "tax_rate": 2.5,
+                            "status": "A",
+                            "item_subgroup_name": "SGST-2.5",
+                            "subgroup_code": null,
+                            "item_group_id": 2,
+                            "item_subgroup_id": 8,
+                            "tax_rate_expr": null,
+                            "item_subgroup_display_order": 7,
+                            "validity_start": "29-05-2018"
+                        },
+                        {
+                            "item_subgroup_name": "SGST-6",
+                            "validity_end": null,
+                            "item_subgroup_id": 9,
+                            "status": "A",
+                            "subgroup_code": null,
+                            "item_group_id": 2,
+                            "tax_rate_expr": null,
+                            "item_subgroup_display_order": 8,
+                            "tax_rate": 6,
+                            "validity_start": "29-05-2018"
+                        },
+                        {
+                            "item_subgroup_name": "SGST-9",
+                            "validity_end": null,
+                            "item_subgroup_id": 10,
+                            "status": "A",
+                            "subgroup_code": null,
+                            "tax_rate": 9,
+                            "item_group_id": 2,
+                            "tax_rate_expr": null,
+                            "item_subgroup_display_order": 9,
+                            "validity_start": "29-05-2018"
+                        },
+                        {
+                            "validity_end": null,
+                            "status": "A",
+                            "item_subgroup_id": 11,
+                            "subgroup_code": null,
+                            "item_group_id": 2,
+                            "tax_rate_expr": null,
+                            "tax_rate": 14,
+                            "item_subgroup_name": "SGST-14",
+                            "validity_start": "29-05-2018",
+                            "item_subgroup_display_order": 10
+                        }
+                    ],
+                    "CGST": [
+                        {
+                            "item_subgroup_display_order": 1,
+                            "validity_end": null,
+                            "status": "A",
+                            "subgroup_code": null,
+                            "item_subgroup_name": "CGST-0",
+                            "item_group_id": 1,
+                            "tax_rate_expr": null,
+                            "tax_rate": 0,
+                            "item_subgroup_id": 1,
+                            "validity_start": "29-05-2018"
+                        },
+                        {
+                            "item_subgroup_display_order": 2,
+                            "validity_end": null,
+                            "tax_rate": 2.5,
+                            "status": "A",
+                            "item_subgroup_name": "CGST-2.5",
+                            "subgroup_code": null,
+                            "item_group_id": 1,
+                            "tax_rate_expr": null,
+                            "item_subgroup_id": 2,
+                            "validity_start": "29-05-2018"
+                        },
+                        {
+                            "item_subgroup_name": "CGST-6",
+                            "validity_end": null,
+                            "status": "A",
+                            "subgroup_code": null,
+                            "item_subgroup_display_order": 3,
+                            "item_group_id": 1,
+                            "tax_rate_expr": null,
+                            "tax_rate": 6,
+                            "validity_start": "29-05-2018",
+                            "item_subgroup_id": 3
+                        },
+                        {
+                            "validity_end": null,
+                            "status": "A",
+                            "subgroup_code": null,
+                            "item_subgroup_display_order": 4,
+                            "tax_rate": 9,
+                            "item_group_id": 1,
+                            "tax_rate_expr": null,
+                            "item_subgroup_id": 4,
+                            "validity_start": "29-05-2018",
+                            "item_subgroup_name": "CGST-9"
+                        },
+                        {
+                            "validity_end": null,
+                            "status": "A",
+                            "subgroup_code": null,
+                            "item_subgroup_id": 5,
+                            "item_subgroup_display_order": 5,
+                            "item_group_id": 1,
+                            "tax_rate_expr": null,
+                            "tax_rate": 14,
+                            "item_subgroup_name": "CGST-14",
+                            "validity_start": "29-05-2018"
+                        }
+                    ]
+                },
+                "bed_type_list": [
+                    {
+                        "bed_type": "raj bed"
+                    },
+                    {
+                        "bed_type": "rerewre"
+                    },
+                    {
+                        "bed_type": "test"
+                    },
+                    {
+                        "bed_type": "besss"
+                    },
+                    {
+                        "bed_type": "BT-3"
+                    },
+                    {
+                        "bed_type": "BT-1"
+                    },
+                    {
+                        "bed_type": "first"
+                    },
+                    {
+                        "bed_type": "j brs"
+                    },
+                    {
+                        "bed_type": "au bed"
+                    },
+                    {
+                        "bed_type": "lavish bed"
+                    },
+                    {
+                        "bed_type": "normal bed"
+                    },
+                    {
+                        "bed_type": "prac bed"
+                    },
+                    {
+                        "bed_type": "bed c1"
+                    },
+                    {
+                        "bed_type": "SEMI PRIVATE"
+                    },
+                    {
+                        "bed_type": "GENERAL"
+                    },
+                    {
+                        "bed_type": "ICU"
+                    }
+                ],
+                "billing_groups": [
+                    {
+                        "item_group_name": "name",
+                        "item_group_id": 5
+                    },
+                    {
+                        "item_group_id": 6,
+                        "item_group_name": "name 2"
+                    }
+                ],
+                "service_groups": [
+                    {
+                        "service_group_id": 2,
+                        "service_group_name": "Bed"
+                    },
+            
+                    {
+                        "service_group_name": "Vascualr Access",
+                     "service_group_id": 18
+                    },
+                    {
+                        "service_group_id": 28,
+                        "service_group_name": "X-RAY"
+                    }
+                ],
+                "service_sub_groups": [
+                    {
+                        "service_sub_group_id": 122,
+                        "service_group_id": 22,
+                        "service_sub_group_name": "Vitamin"
+                    },
+                    {
+                        "service_sub_group_id": 95,
+                        "service_sub_group_name": "general",
+                        "service_group_id": 15
+                 }
+                ],
+                "departments_list": [
+                    {
+                        "dept_name": "ANAESTHESIOLOGY",
+                        "dept_id": "DEP0002"
+                    },
+                    {
+                        "dept_name": "APIDept1",
+                        "dept_id": "DEPT01"
+                    },
+                    {
+                        "dept_name": "Accident & Emergency",
+                        "dept_id": "DEP0003"
+                    },
+                    {
+                        "dept_id": "ABC0004",
+                        "dept_name": "WebAPI4"
+                    },
+                    {
+                        "dept_name": "WebAPI5",
+                        "dept_id": "ABC0005"
+                    }
+                ],
+                "charge_heads": [
+                    {
+                        "chargehead_name": "Service Tax",
+                        "chargehead_id": "STAX"
+                    },
+                    {
+                        "chargehead_id": "SUOPE",
+                        "chargehead_name": "Surgeon Fees"
+                    },
+                    {
+                        "chargehead_name": "Additional Theatre Charge",
+                        "chargehead_id": "TCAOPE"
+                    },
+                    {
+                        "chargehead_name": "Theater Charge",
+                        "chargehead_id": "TCOPE"
+                    },
+                    {
+                        "chargehead_name": "VAT",
+                        "chargehead_id": "VTAX"
+                    },
+                    {
+                        "chargehead_name": "IP Ward Visit",
+                        "chargehead_id": "WIPDOC"
+                    }
+                ],
+                "consultation_types": [
+                    {
+                        "charge_head": "OPDOC",
+                        "org_ids": "ORG0001",
+                        "duration": 15,
+                        "status": "A",
+                        "visit_consultation_type": -1,
+                        "consultation_type_id": 31,
+                        "patient_type": "o",
+                        "insurance_category_id": -1,
+                        "consultation_code": "",
+                        "service_sub_group_id": -1,
+                        "consultation_type": "cons 1",
+                        "doctor_charge_type": "op_charge",
+                        "mod_time": "16-09-2015 17:25:46",
+                        "username": "InstaAdmin"
+                    },
+                    {
+                        "visit_consultation_type": 0,
+                        "org_ids": "ORG0001",
+                        "consultation_type": "Specialist OP Revisit Consultation",
+                        "duration": 15,
+                        "status": "A",
+                        "patient_type": "o",
+                        "mod_time": "21-09-2015 12:51:30",
+                        "consultation_type_id": 6,
+                        "consultation_code": "",
+                        "charge_head": "SPRDOC",
+                        "service_sub_group_id": -1,
+                        "doctor_charge_type": "op_revisit_charge",
+                        "username": "InstaAdmin",
+                        "insurance_category_id": 1
+                    }
+                ],
+                "hospital_centers_list": [
+                    {
+                        "center_id": 6,
+                        "center_name": "ANANYA",
+                        "city_id": "CT0088",
+                        "city_name": "BANGALORE",
+                        "state_name": "KARNATAKA",
+                        "status": "I",
+                        "state_id": "ST0017"
+                    },
+                    {
+                        "city_id": null,
+                        "center_name": "center two ",
+                        "center_id": 20,
+                        "state_id": null,
+                        "city_name": null,
+                        "state_name": null,
+                        "status": "A"
+                    },
+                    {
+                        "city_id": null,
+                        "center_id": 19,
+                        "state_id": null,
+                        "city_name": null,
+                        "status": "A",
+                        "center_name": "center_ud1",
+                        "state_name": null
+                    }
+                ],
+                "package_categories" : 
+                    [
+                        {
+                            "package_category_id" : -1,
+                            "package_category" : "General",
+                            "status" : "A"
+                        }
+                    ],
+                    
+                "rate_sheets" :
+                    [
+                        {
+                            "org_name": "FHPL",
+                            "org_id": "ORG0005"
+                        },
+                        {
+                            "org_id": "ORG0136",
+                            "org_name": "Bhar_RS_1"
+                        },
+                        {
+                            "org_id": "ORG0011",
+                            "org_name": "Medicare"
+                        },
+                        {
+                            "org_name": "Kidney Free Sreening Camp",
+                            "org_id": "ORG0013"
+                        },
+                        {
+                            "org_name": "BEM",
+                            "org_id": "ORG0014"
+                        },
+                        {
+                            "org_name": "BEML",
+                            "org_id": "ORG0015"
+                        },
+                        {
+                            "org_name": "E MEDITEK",
+                            "org_id": "ORG0017"
+                        },
+                        {
+                            "org_name": "TPA",
+                            "org_id": "ORG0019"
+                        },
+                        {
+                            "org_name": "TPA/SHB_BLR",
+                            "org_id": "ORG0021"
+                        },
+                        {
+                            "org_id": "ORG0022",
+                            "org_name": "TUM_BLR"
+                        },
+                        {
+                            "org_id": "ORG0025",
+                            "org_name": "KUM_CHN"
+                        },
+                        {
+                            "org_id": "ORG0024",
+                            "org_name": "TPA/KLP_CHN"
+                        },
+                        {
+                            "org_name": "TPA/DNH_HOS",
+                            "org_id": "ORG0028"
+                        },
+                        {
+                            "org_name": "PMM_PON",
+                            "org_id": "ORG0030"
+                        },
+                        {
+                            "org_name": "ESI_PMM",
+                            "org_id": "ORG0031"
+                        },
+                        {
+                            "org_name": "FOREIGN PATIENT_PMM",
+                            "org_id": "ORG0032"
+                        },
+                        {
+                            "org_id": "ORG0033",
+                            "org_name": "PKF_PMM"
+                        },
+                        {
+                            "org_id": "ORG0034",
+                            "org_name": "TN SCHEME_PMM"
+                        },
+                        {
+                            "org_name": "TTK_PMM",
+                            "org_id": "ORG0035"
+                        },
+                        {
+                            "org_name": "VIP_PMM",
+                            "org_id": "ORG0036"
+                        },
+                        {
+                            "org_id": "ORG0037",
+                            "org_name": "AWAY WITH U"
+                        },
+                        {
+                            "org_name": "POU_HYD",
+                            "org_id": "ORG0040"
+                        },
+                        {
+                            "org_id": "ORG0041",
+                            "org_name": "EXC_BLR"
+                        },
+                        {
+                            "org_name": "PRM_DEL",
+                            "org_id": "ORG0042"
+                        },
+                        {
+                            "org_name": "ANY_BLR",
+                            "org_id": "ORG0026"
+                        },
+                        {
+                            "org_id": "ORG0039",
+                            "org_name": "CHL_HYD"
+                        },
+                        {
+                            "org_id": "ORG0038",
+                            "org_name": "EXC_BLR"
+                        },
+                        {
+                            "org_name": "B E M L",
+                            "org_id": "ORG0016"
+                        },
+                        {
+                            "org_id": "ORG0009",
+                            "org_name": "CGHS - BSNL"
+                        },
+                        {
+                            "org_id": "ORG0007",
+                            "org_name": "Medi Assist"
+                        },
+                        {
+                            "org_name": "Medicare.",
+                            "org_id": "ORG0012"
+                        },
+                        {
+                            "org_name": "Medi Care",
+                            "org_id": "ORG0010"
+                        },
+                        {
+                            "org_id": "ORG0002",
+                            "org_name": "Nephrolife"
+                        },
+                        {
+                            "org_name": "Raksha",
+                            "org_id": "ORG0006"
+                        },
+                        {
+                            "org_name": "SHB",
+                            "org_id": "ORG0018"
+                        },
+                        {
+                            "org_name": "TTK",
+                            "org_id": "ORG0003"
+                        },
+                        {
+                            "org_id": "ORG0004",
+                            "org_name": "Vipul MedCorp"
+                        },
+                        {
+                            "org_name": "RELIANCE_SHB",
+                            "org_id": "ORG0044"
+                        },
+                        {
+                            "org_id": "ORG0045",
+                            "org_name": "TTK_SHB"
+                        },
+                        {
+                            "org_id": "ORG0067",
+                            "org_name": "ESI_HOS"
+                        },
+                        {
+                            "org_name": "HDFC_SHB",
+                            "org_id": "ORG0046"
+                        },
+                        {
+                            "org_name": "HDFC_SHB.",
+                            "org_id": "ORG0047"
+                        },
+                        {
+                            "org_name": "MEDIASSIST_SHB",
+                            "org_id": "ORG0048"
+                        },
+                        {
+                            "org_name": "E MEDITECK_SHB",
+                            "org_id": "ORG0049"
+                        },
+                        {
+                            "org_id": "ORG0050",
+                            "org_name": "GENINS_SHB"
+                        },
+                        {
+                            "org_id": "ORG0051",
+                            "org_name": "FUTURE GENERALI_SHB"
+                        },
+                        {
+                            "org_id": "ORG0052",
+                            "org_name": "RAKSHA_SHB"
+                        },
+                        {
+                            "org_name": "MEDICARE_SHB",
+                            "org_id": "ORG0053"
+                        },
+                        {
+                            "org_name": "UHC_SHB",
+                            "org_id": "ORG0054"
+                        },
+                        {
+                            "org_id": "ORG0055",
+                            "org_name": "VIPUL_SHB"
+                        },
+                        {
+                            "org_id": "ORG0056",
+                            "org_name": "RELIANCE_HOS"
+                        },
+                        {
+                            "org_name": "HDFC_HOS",
+                            "org_id": "ORG0057"
+                        },
+                        {
+                            "org_name": "MEDIASSIST_HOS",
+                            "org_id": "ORG0058"
+                        },
+                        {
+                            "org_name": "FUTURE GENERALI_HOS",
+                            "org_id": "ORG0059"
+                        },
+                        {
+                            "org_name": "GENINS_HOS",
+                            "org_id": "ORG0060"
+                        },
+                        {
+                            "org_id": "ORG0061",
+                            "org_name": "RAKSHA_HOS"
+                        },
+                        {
+                            "org_name": "VIPUL_HOS",
+                            "org_id": "ORG0062"
+                        },
+                        {
+                            "org_id": "ORG0063",
+                            "org_name": "E MEDITECK_HOS"
+                        },
+                        {
+                            "org_name": "MEDICARE_HOS",
+                            "org_id": "ORG0064"
+                        },
+                        {
+                            "org_id": "ORG0065",
+                            "org_name": "UHC_HOS"
+                        },
+                        {
+                            "org_name": "TTK_HOS",
+                            "org_id": "ORG0066"
+                        },
+                        {
+                            "org_name": "BANGALORE CHEMIST",
+                            "org_id": "ORG0068"
+                        },
+                        {
+                            "org_id": "ORG0069",
+                            "org_name": "BHEL"
+                        },
+                        {
+                            "org_id": "ORG0070",
+                            "org_name": "NIGERIAN PATIENT_PRIMUS"
+                        },
+                        {
+                            "org_name": "OTHER NATIONAL_PRIMUS",
+                            "org_id": "ORG0071"
+                        },
+                        {
+                            "org_name": "EMERGENCY_PRIMUS",
+                            "org_id": "ORG0072"
+                        },
+                        {
+                            "org_name": "ESI_PRIMUS",
+                            "org_id": "ORG0073"
+                        },
+                        {
+                            "org_id": "ORG0074",
+                            "org_name": "SITA BHATEJA"
+                        },
+                        {
+                            "org_name": "NOBLE",
+                            "org_id": "ORG0043"
+                        },
+                        {
+                            "org_name": "HDFC_KLP",
+                            "org_id": "ORG0075"
+                        },
+                        {
+                            "org_name": "MAX BUPA_KLP",
+                            "org_id": "ORG0076"
+                        },
+                        {
+                            "org_name": "Bhar_RS_2",
+                            "org_id": "ORG0137"
+                        },
+                        {
+                            "org_name": "TTK_KLP",
+                            "org_id": "ORG0077"
+                        },
+                        {
+                            "org_id": "ORG0078",
+                            "org_name": "PRIME INDIA HEALTHCARE_BLR"
+                        },
+                        {
+                            "org_name": "PRIME INDIA HEALTHCARE_CHN",
+                            "org_id": "ORG0079"
+                        },
+                        {
+                            "org_name": "INTERNATIONAL PLAN",
+                            "org_id": "ORG0080"
+                        },
+                        {
+                            "org_name": "BSNL_POU",
+                            "org_id": "ORG0082"
+                        },
+                        {
+                            "org_name": "RAS_POU",
+                            "org_id": "ORG0081"
+                        },
+                        {
+                            "org_name": "FREE DIALYSIS",
+                            "org_id": "ORG0083"
+                        },
+                        {
+                            "org_name": "TTK_CHL",
+                            "org_id": "ORG0084"
+                        },
+                        {
+                            "org_name": "FHPL_CHL",
+                            "org_id": "ORG0085"
+                        },
+                        {
+                            "org_name": "TNS_KUM",
+                            "org_id": "ORG0086"
+                        },
+                        {
+                            "org_name": "BEML_SHB",
+                            "org_id": "ORG0087"
+                        },
+                        {
+                            "org_id": "ORG0088",
+                            "org_name": "BSNL_SHB"
+                        },
+                        {
+                            "org_name": "INTERNATIONAL PLAN_BLR",
+                            "org_id": "ORG0116"
+                        },
+                        {
+                            "org_id": "ORG0090",
+                            "org_name": "ESI_KLP"
+                        },
+                        {
+                            "org_name": "CGHS_NOBEL",
+                            "org_id": "ORG0091"
+                        },
+                        {
+                            "org_name": "MEDICLAIM_NOBEL",
+                            "org_id": "ORG0092"
+                        },
+                        {
+                            "org_name": "UHC_PMM",
+                            "org_id": "ORG0008"
+                        },
+                        {
+                            "org_id": "ORG0020",
+                            "org_name": "SHB_BLR"
+                        },
+                        {
+                            "org_name": "KLP_CHN",
+                            "org_id": "ORG0023"
+                        },
+                        {
+                            "org_name": "HOS_BLR",
+                            "org_id": "ORG0027"
+                        },
+                        {
+                            "org_id": "ORG0093",
+                            "org_name": "Royal Sundaram_PMM"
+                        },
+                        {
+                            "org_name": "MEDI ASSIST_EXC",
+                            "org_id": "ORG0094"
+                        },
+                        {
+                            "org_id": "ORG0095",
+                            "org_name": "ICICI_EXC"
+                        },
+                        {
+                            "org_name": "ICICI_SHB",
+                            "org_id": "ORG0096"
+                        },
+                        {
+                            "org_name": "BSNL_EXC",
+                            "org_id": "ORG0097"
+                        },
+                        {
+                            "org_name": "PARAMOUNT_CHL",
+                            "org_id": "ORG0098"
+                        },
+                        {
+                            "org_name": "CM RELIEF FUND_CHL",
+                            "org_id": "ORG0099"
+                        },
+                        {
+                            "org_id": "ORG0100",
+                            "org_name": "UHC_EXC"
+                        },
+                        {
+                            "org_name": "NEPHRINE_DEL",
+                            "org_id": "ORG0101"
+                        },
+                        {
+                            "org_id": "ORG0102",
+                            "org_name": "ESI_NEPHRINE"
+                        },
+                        {
+                            "org_name": "ICICI_BDH",
+                            "org_id": "ORG0103"
+                        },
+                        {
+                            "org_id": "ORG0104",
+                            "org_name": "UHC_POU"
+                        },
+                        {
+                            "org_id": "ORG0105",
+                            "org_name": "HERITAGE_POU"
+                        },
+                        {
+                            "org_name": "MK_KLP",
+                            "org_id": "ORG0106"
+                        },
+                        {
+                            "org_name": "DHS_POU",
+                            "org_id": "ORG0107"
+                        },
+                        {
+                            "org_name": "VELLAMMAL_KLP",
+                            "org_id": "ORG0108"
+                        },
+                        {
+                            "org_id": "ORG0109",
+                            "org_name": "FLL_KLP"
+                        },
+                        {
+                            "org_name": "MAX BUPA_SHB",
+                            "org_id": "ORG0110"
+                        },
+                        {
+                            "org_id": "ORG0111",
+                            "org_name": "VIP CUBICLE_PRIMUS"
+                        },
+                        {
+                            "org_id": "ORG0089",
+                            "org_name": "BDH_BLR"
+                        },
+                        {
+                            "org_name": "VIP_BLR",
+                            "org_id": "ORG0112"
+                        },
+                        {
+                            "org_id": "ORG0113",
+                            "org_name": "Sarayu_KLP"
+                        },
+                        {
+                            "org_name": "UHC_BDH",
+                            "org_id": "ORG0114"
+                        },
+                        {
+                            "org_id": "ORG0115",
+                            "org_name": "RUBY HALL WANOWARIE"
+                        },
+                        {
+                            "org_id": "ORG0117",
+                            "org_name": "ICICI_KLP"
+                        },
+                        {
+                            "org_name": "MEDIASSIST_BDH",
+                            "org_id": "ORG0118"
+                        },
+                        {
+                            "org_name": "FOOD CORPORATION OF INDIA_POU",
+                            "org_id": "ORG0119"
+                        },
+                        {
+                            "org_name": "STAR HEALTH INSURANCE_KLP",
+                            "org_id": "ORG0120"
+                        },
+                        {
+                            "org_id": "ORG0121",
+                            "org_name": "TITAN_HOS"
+                        },
+                        {
+                            "org_name": "MAHARASHTRA POLICE_NOBLE",
+                            "org_id": "ORG0122"
+                        },
+                        {
+                            "org_id": "ORG0123",
+                            "org_name": "PUNE MUNICIPAL CORPORATION_NOBLE"
+                        },
+                        {
+                            "org_name": "SAHARI GARIB YOJNA_NOBLE",
+                            "org_id": "ORG0124"
+                        },
+                        {
+                            "org_name": "RETTERI SRI KUMARAN HOSP_KLP",
+                            "org_id": "ORG0125"
+                        },
+                        {
+                            "org_name": "ADIVA_DEL",
+                            "org_id": "ORG0126"
+                        },
+                        {
+                            "org_name": "TNS_KUM(CASH)",
+                            "org_id": "ORG0127"
+                        },
+                        {
+                            "org_name": "TTK_EXC",
+                            "org_id": "ORG0128"
+                        },
+                        {
+                            "org_name": "BRS_CHN",
+                            "org_id": "ORG0029"
+                        },
+                        {
+                            "org_name": "RT1",
+                            "org_id": "ORG0129"
+                        },
+                        {
+                            "org_name": "Rate Sheet 1",
+                            "org_id": "ORG0135"
+                        },
+                        {
+                            "org_id": "ORG0171",
+                            "org_name": "Sh_center"
+                        },
+                        {
+                            "org_name": "Bhar_RS_3",
+                            "org_id": "ORG0138"
+                        },
+                        {
+                            "org_id": "ORG0139",
+                            "org_name": "Bhar_RS_3_copy"
+                        },
+                        {
+                            "org_name": "Copy",
+                            "org_id": "ORG0140"
+                        },
+                        {
+                            "org_name": "A_ratesheet",
+                            "org_id": "ORG0143"
+                        },
+                        {
+                            "org_name": "B_ratesheet",
+                            "org_id": "ORG0144"
+                        },
+                        {
+                            "org_id": "ORG0145",
+                            "org_name": "Abc"
+                        },
+                        {
+                            "org_name": "CP_Ratesheet",
+                            "org_id": "ORG0146"
+                        },
+                        {
+                            "org_name": "Sadhana_RS1",
+                            "org_id": "ORG0148"
+                        },
+                        {
+                            "org_name": "Sadhana_RS2",
+                            "org_id": "ORG0149"
+                        },
+                        {
+                            "org_id": "ORG0150",
+                            "org_name": "Sadhana_RS3"
+                        },
+                        {
+                            "org_id": "ORG0155",
+                            "org_name": "VRS1"
+                        },
+                        {
+                            "org_name": "VRS2",
+                            "org_id": "ORG0156"
+                        },
+                        {
+                            "org_name": "VRS3",
+                            "org_id": "ORG0157"
+                        },
+                        {
+                            "org_name": "VRS4",
+                            "org_id": "ORG0158"
+                        },
+                        {
+                            "org_id": "ORG0160",
+                            "org_name": "Doctor_RateSheet"
+                        },
+                        {
+                            "org_name": "Diagnostics_RateSheet",
+                            "org_id": "ORG0161"
+                        },
+                        {
+                            "org_id": "ORG0164",
+                            "org_name": "V-RS1"
+                        },
+                        {
+                            "org_name": "V-RS2",
+                            "org_id": "ORG0165"
+                        },
+                        {
+                            "org_name": "Sh_insu",
+                            "org_id": "ORG0172"
+                        },
+                        {
+                            "org_name": "GENERAL",
+                            "org_id": "ORG0001"
+                        },
+                        {
+                            "org_id": "ORG0173",
+                            "org_name": "Sh_plan"
+                        },
+                        {
+                            "org_name": "Sheet1",
+                            "org_id": "ORG0169"
+                        },
+                        {
+                            "org_name": "Sf",
+                            "org_id": "ORG0180"
+                        },
+                        {
+                            "org_id": "ORG0177",
+                            "org_name": "211215 Sheet"
+                        },
+                        {
+                            "org_name": "Aaa",
+                            "org_id": "ORG0183"
+                        },
+                        {
+                            "org_id": "ORG0184",
+                            "org_name": "Rate S1"
+                        },
+                        {
+                            "org_id": "ORG0186",
+                            "org_name": "P Sheet"
+                        },
+                        {
+                            "org_id": "ORG0188",
+                            "org_name": "Raj Sheet"
+                        },
+                        {
+                            "org_name": "Rsh 1",
+                            "org_id": "ORG0190"
+                        }
+                    ],
+                "anesthesia_types" : [
+                    {
+                        "anesthesia_type_id": "AT0001",
+                        "anesthesia_type_name": "GENERAL ANAESTHESIA"
+                    },
+                    {
+                        "anesthesia_type_id": "AT0002",
+                        "anesthesia_type_name": "LOCAL ANAESTHESIA"
+                    }
+                ]
+            }
+
+
+
+## List of Packages [/master/packages/advanceList.json?page_num=0&page_size=15&center_applicability=&dept_applicability=&gender_applicability=&status=A&valid_from=&valid_till=&visit_applicability=n]
+### List of Packages [GET]
+
++ Response 200 (application/json)
+
+        
+        {
+        "result_list": [
+            {
+                "package_id": 102,
+                "count": 1,
+                "visit_applicability": "o",
+                "status": "A",
+                "valid_till": null,
+                "package_name": "op templateee"
+            }
+        ],
+        "page_size": 15,
+        "page_num": 0,
+        "total_records": 1
+        }
+        
+## Save Package [/master/packages/save.json]
+### Save Package [POST]    
+
+
++ Request 
+
+            {
+            "packages_model": {
+    
+                "package_name": "ndndn",
+                "package_code": "111",
+                "type": "P",
+                "status": "A",
+                "description": "description",
+                "visit_applicability": "i",
+                "gender_applicability": "F",
+                "service_sub_group_id": null,
+                "valid_from": null,
+                "valid_till": null,
+                "created_by": null,
+                "created_at": null,
+                "modified_by": null,
+                "modified_at": null,
+                "package_category_id": null,
+                "allow_discount": false,
+                "prior_auth_required": null,
+                "allow_rate_increase": false,
+                "allow_rate_decrease": true,
+                "billing_group_id": null,
+                "handover_to": null,
+                "allow_customization": true,
+                "allowed_loss": 1,
+                "bill_display_type": null,
+                "submission_batch_type": null,
+                "approval_status": null,
+                "multi_visit_package": false,
+                "approval_remarks": null,
+                "approval_status_time": null,
+                "conditions": null,
+                "pre_requisites": null,
+                "min_age": 0,
+                "max_age": 0,
+                "age_unit": null
+              },
+            "insurance_category_ids": [
+                1,
+                2
+            ],
+            "package_contents_models": [
+                {
+                  "activity_id": "5000",
+                  "activity_type": "A",
+                  "activity_qty": 1,
+                  "activity_qty_uom": "11",
+                  "activity_qty_uom": "11",
+                  "activity_description" : "activity name",
+                  "consultation_type_id": null,
+                  "charge_head": null,
+                  "panel_id": null,
+                  "visit_qty_limit" : 1
+                },
+                {
+                  "activity_id": "11",
+                  "activity_type": "A",
+                  "activity_qty": 1,
+                  "activity_qty_uom": "11",
+                  "activity_description" : "activity name",
+                  "consultation_type_id": null,
+                  "charge_head": null,
+                  "panel_id": null,
+                   "visit_qty_limit" : 1
+                },
+                {
+                  "activity_id": "5000",
+                  "activity_type": "A",
+                  "activity_qty": 1,
+                  "activity_qty_uom": "11",
+                  "activity_description" : "activity name",
+                  "consultation_type_id": null,
+                  "charge_head": null,
+                  "panel_id": null,
+                   "visit_qty_limit" : 1
+                }
+              ],
+            
+        }
+        
++ Response 201
+
+
+## Update Package [/master/packages/update.json]
+### Update Package [POST]    
+
+
++ Request 
+        
+        {
+            "packages_model": {
+            "package_name": "ndndn",
+            "package_code": "111",
+            "type": "P",
+            "status": "A",
+            "description": "description",
+            "visit_applicability": "i",
+            "gender_applicability": "F",
+            "service_sub_group_id": null,
+            "valid_from": null,
+            "valid_till": null,
+            "created_by": null,
+            "created_at": null,
+            "modified_by": null,
+            "modified_at": null,
+            "package_category_id": null,
+            "allow_discount": false,
+            "prior_auth_required": null,
+            "allow_rate_increase": false,
+            "allow_rate_decrease": true,
+            "billing_group_id": null,
+            "handover_to": null,
+            "allow_customization": true,
+            "allowed_loss": 1,
+            "bill_display_type": null,
+            "submission_batch_type": null,
+            "approval_status": null,
+            "multi_visit_package": false,
+            "approval_remarks": null,
+            "approval_status_time": null,
+            "conditions": null,
+            "pre_requisites": null,
+            "min_age": 0,
+            "max_age": 0,
+            "age_unit": null
+          },
+
+        "insurance_category_ids" : [
+            1,
+            2
+        ],
+
+        "package_contents_models" :
+            [ 
+                {
+                    "package_content_id" : 994,
+                    "package_id" : 193,
+                    "activity_id" : "5000",
+                    "activity_type" : "A",
+                    "activity_qty" : 1,
+                    "activity_qty_uom" : "11",
+                     "visit_qty_limit" : 1
+        
+                },
+    
+                {
+                "activity_id" : "5000",
+                "activity_type" : "A",
+                "activity_qty" : 1,
+                "activity_qty_uom" : "11",
+                 "visit_qty_limit" : 1
+                }
+            ]
+        }
+            
++ Response 200
+
+
+## Find Package By Id [/master/packages/findById.json?packageId=193]
+
+### Find by package id [GET]
+    
++ Response 200 (application/json)
+
+    + Body
+
+            {
+                "packages_model": 
+                    {
+                        "package_id": 193,
+                        "package_name": "poowoowjen",
+                        "package_code": "111",
+                        "type": "P",
+                        "status": "A",
+                        "description": "description",
+                        "visit_applicability": "i",
+                        "gender_applicability": "F",
+                        "service_sub_group_id": null,
+                        "valid_from": null,
+                        "valid_till": null,
+                        "created_by": null,
+                        "created_at": null,
+                        "modified_by": null,
+                        "modified_at": null,
+                        "package_category_id": null,
+                        "allow_discount": false,
+                        "prior_auth_required": null,
+                        "allow_rate_increase": false,
+                        "allow_rate_decrease": true,
+                        "billing_group_id": null,
+                        "handover_to": null,
+                        "allow_customization": true,
+                        "allowed_loss": 1,
+                        "bill_display_type": null,
+                        "submission_batch_type": null,
+                        "approval_status": null,
+                        "multi_visit_package": false,
+                        "approval_remarks": null,
+                        "approval_status_time": null,
+                        "conditions": null,
+                        "pre_requisites": null,
+                        "min_age": 0,
+                        "max_age": 0,
+                        "age_unit": null
+                    },
+                "insurance_category_ids": 
+                    [
+                        1,
+                        2
+                    ],
+                "package_contents_models":
+                    [
+                        {
+                            "package_content_id": 996,
+                            "package_id": 193,
+                            "activity_id": "5000",
+                            "activity_type": "A",
+                            "activity_qty": 1,
+                            "activity_qty_uom": "11",
+                            "activity_remarks": null,
+                            "activity_description" : "activity name",
+                            "doctor_id": null,
+                            "dept_id": null,
+                            "display_order": null,
+                            "modified_by": null,
+                            "modified_at": null,
+                            "created_by": null,
+                            "created_at": null,
+                            "consultation_type_id": null,
+                            "charge_head": null,
+                            "conduction_gap": null,
+                            "conduction_gap_unit": null,
+                            "parent_pack_ob_id": null,
+                            "panel_id": null,
+                             "visit_qty_limit" : 1
+                        },
+                        {
+                            "package_content_id": 995,
+                            "package_id": 193,
+                            "activity_id": "11",
+                            "activity_type": "A",
+                            "activity_qty": 1,
+                            "activity_qty_uom": "11",
+                            "activity_remarks": null,
+                            "activity_description" : "activity name",
+                            "doctor_id": null,
+                            "dept_id": null,
+                            "display_order": null,
+                            "modified_by": null,
+                            "modified_at": null,
+                            "created_by": null,
+                            "created_at": null,
+                            "consultation_type_id": null,
+                            "charge_head": null,
+                            "conduction_gap": null,
+                            "conduction_gap_unit": null,
+                            "parent_pack_ob_id": null,
+                            "panel_id": null,
+                             "visit_qty_limit" : 1
+                        },
+                        {
+                            "package_content_id": 994,
+                            "package_id": 193,
+                            "activity_id": "5000",
+                            "activity_type": "A",
+                            "activity_qty": 1,
+                            "activity_qty_uom": "11",
+                            "activity_remarks": null,
+                            "activity_description" : "activity name",
+                            "doctor_id": null,
+                            "dept_id": null,
+                            "display_order": null,
+                            "modified_by": null,
+                            "modified_at": null,
+                            "created_by": null,
+                            "created_at": null,
+                            "consultation_type_id": null,
+                            "charge_head": null,
+                            "conduction_gap": null,
+                            "conduction_gap_unit": null,
+                            "parent_pack_ob_id": null,
+                            "panel_id": null,
+                             "visit_qty_limit" : 1
+                        }
+                    ]
+            }
+            
+            
+## Package Charges find [/master/packages/charges/find.json?orgId=ORG0013&packageId=254]
+
+### Find by package id and org id [GET]
+    
++ Response 200 (application/json)
+
+    + Body
+    
+            {
+            "package_id" : 21,
+            "org_id" : "ORG0001",
+            "org_name" : "org name",
+            "code_type" : "Drug",
+            "rate_plan_code":"rate plan code",
+            "package_charges": [
+                {
+                    "package_charge_id": 1900,
+                    "bed_type": "BT-1",
+                    "charge": 0,
+                    "discount": 0,
+                    "is_override": "N"
+                },
+                {
+                    "package_charge_id": 1901,
+                    "bed_type": "BT-3",
+                    "charge": 0,
+                    "discount": 0,
+                    "is_override": "N"
+                },
+                {
+                    "package_charge_id": 1902,
+                    "bed_type": "GENERAL",
+                    "charge": 0,
+                    "discount": 0,
+                    "is_override": "N"
+                },
+                {
+                    "package_charge_id": 1903,
+                    "bed_type": "ICU",
+                    "charge": 0,
+                    "discount": 0,
+                    "is_override": "N"
+                },
+                {
+                    "package_charge_id": 1904,
+                    "bed_type": "SEMI PRIVATE",
+                    "charge": 0,
+                    "discount": 0,
+                    "is_override": "N"
+                },
+                {
+                    "package_charge_id": 1905,
+                    "bed_type": "au bed",
+                    "charge": 0,
+                    "discount": 0,
+                    "is_override": "N"
+                },
+                {
+                    "package_charge_id": 1906,
+                    "bed_type": "bed c1",
+                    "charge": 0,
+                    "discount": 0,
+                    "is_override": "N"
+                },
+                {
+                    "package_charge_id": 1907,
+                    "bed_type": "besss",
+                    "charge": 0,
+                    "discount": 0,
+                    "is_override": "N"
+                },
+                {
+                    "package_charge_id": 1908,
+                    "bed_type": "first",
+                    "charge": 0,
+                    "discount": 0,
+                    "is_override": "N"
+                },
+                {
+                    "package_charge_id": 1909,
+                    "bed_type": "j brs",
+                    "charge": 0,
+                    "discount": 0,
+                    "is_override": "N"
+                },
+                {
+                    "package_charge_id": 1910,
+                    "bed_type": "lavish bed",
+                    "charge": 0,
+                    "discount": 0,
+                    "is_override": "N"
+                },
+                {
+                    "package_charge_id": 1911,
+                    "bed_type": "normal bed",
+                    "charge": 0,
+                    "discount": 0,
+                    "is_override": "N"
+                },
+                {   "package_charge_id": 1912,
+                    "bed_type": "prac bed",
+                    "charge": 0,
+                    "discount": 0,
+                    "is_override": "N"
+                },
+                {
+                    "package_charge_id": 1913,
+                    "bed_type": "raj bed",
+                    "charge": 0,
+                    "discount": 0,
+                    "is_override": "N"
+                },
+                {
+                    "package_charge_id": 1914,
+                    "bed_type": "rerewre",
+                    "charge": 0,
+                    "discount": 0,
+                    "is_override": "N"
+                },
+                {
+                    "package_charge_id": 1915,
+                    "bed_type": "test",
+                    "charge": 0,
+                    "discount": 0,
+                    "is_override": "N"
+                }
+            ],
+            
+            "package_content_charges": [
+                {
+                    "content_charge_id": 146985,
+                    "package_content_id": 1583,
+                    "package_content_name" : "name",
+                    "content_quantity" : 15,
+                    "bed_type": "raj bed",
+                    "charge": 5,
+                    "discount": 0,
+                    "is_override": "N"
+                },
+                {
+                    "content_charge_id": 146986,
+                    "package_content_id": 1583,
+                    "package_content_name" : "name",
+                    "content_quantity" : 15,
+                    "bed_type": "rerewre",
+                    "charge": 0,
+                    "discount": 0,
+                    "is_override": "N"
+                },
+                {
+                    "content_charge_id": 146987,
+                    "package_content_id": 1583,
+                    "package_content_name" : "name",
+                    "content_quantity" : 15,
+                    "bed_type": "test",
+                    "charge": 5,
+                    "discount": 0,
+                    "is_override": "N"
+                },
+                {
+                    "content_charge_id": 146988,
+                    "package_content_id": 1583,
+                    "package_content_name" : "name",
+                    "content_quantity" : 15,
+                    "bed_type": "besss",
+                    "charge": 0,
+                    "discount": 0,
+                    "is_override": "N"
+                },
+                {
+                    "content_charge_id": 146989,
+                    "package_content_id": 1583,
+                    "package_content_name" : "name",
+                    "content_quantity" : 15,
+                    "bed_type": "BT-3",
+                    "charge": 0,
+                    "discount": 0,
+                    "is_override": "N"
+                },
+                {
+                    "content_charge_id": 146990,
+                    "package_content_id": 1583,
+                    "package_content_name" : "name",
+                    "content_quantity" : 15,
+                    "bed_type": "BT-1",
+                    "charge": 0,
+                    "discount": 0,
+                    "is_override": "N"
+                },
+                {
+                    "content_charge_id": 146991,
+                    "package_content_id": 1583,
+                    "package_content_name" : "name",
+                    "content_quantity" : 15,
+                    "bed_type": "first",
+                    "charge": 0,
+                    "discount": 0,
+                    "is_override": "N"
+                },
+                {
+                    "content_charge_id": 146992,
+                    "package_content_id": 1583,
+                    "package_content_name" : "name",
+                    "content_quantity" : 15,
+                    "bed_type": "j brs",
+                    "charge": 0,
+                    "discount": 0,
+                    "is_override": "N"
+                },
+                {
+                    "content_charge_id": 146993,
+                    "package_content_id": 1583,
+                    "package_content_name" : "name",
+                    "content_quantity" : 15,
+                    "bed_type": "au bed",
+                    "charge": 0,
+                    "discount": 0,
+                    "is_override": "N"
+                },
+                {
+                    "content_charge_id": 146994,
+                    "package_content_id": 1583,
+                    "package_content_name" : "name",
+                    "content_quantity" : 15,
+                    "bed_type": "lavish bed",
+                    "charge": 0,
+                    "discount": 0,
+                    "is_override": "N"
+                },
+                {
+                    "content_charge_id": 146995,
+                    "package_content_id": 1583,
+                    "package_content_name" : "name",
+                    "content_quantity" : 15,
+                    "bed_type": "normal bed",
+                    "charge": 0,
+                    "discount": 0,
+                    "is_override": "N"
+                },
+                {
+                    "content_charge_id": 146996,
+                    "package_content_id": 1583,
+                    "package_content_name" : "name",
+                    "content_quantity" : 15,
+                    "bed_type": "prac bed",
+                    "charge": 0,
+                    "discount": 0,
+                    "is_override": "N"
+                },
+                {
+                    "content_charge_id": 146997,
+                    "package_content_id": 1583,
+                    "package_content_name" : "name",
+                    "content_quantity" : 15,
+                    "bed_type": "bed c1",
+                    "charge": 0,
+                    "discount": 0,
+                    "is_override": "N"
+                },
+                {
+                    "content_charge_id": 146998,
+                    "package_content_id": 1583,
+                    "package_content_name" : "name",
+                    "content_quantity" : 15,
+                    "bed_type": "SEMI PRIVATE",
+                    "charge": 0,
+                    "discount": 0,
+                    "is_override": "N"
+                },
+                {
+                    "content_charge_id": 146999,
+                    "package_content_id": 1583,
+                    "package_content_name" : "name",
+                    "content_quantity" : 15,
+                    "bed_type": "GENERAL",
+                    "charge": 0,
+                    "discount": 0,
+                    "is_override": "N"
+                },
+                {
+                    "content_charge_id": 147000,
+                    "package_content_id": 1583,
+                    "package_content_name" : "name",
+                    "content_quantity" : 15,
+                    "bed_type": "ICU",
+                    "charge": 0,
+                    "discount": 0,
+                    "is_override": "N"
+                },
+                {
+                    "content_charge_id": 147985,
+                    "package_content_id": 1584,
+                    "package_content_name" : "name",
+                    "content_quantity" : 1,
+                    "bed_type": "raj bed",
+                    "charge": 0,
+                    "discount": 0,
+                    "is_override": "N"
+                },
+                {
+                    "content_charge_id": 147986,
+                    "package_content_id": 1584,
+                    "package_content_name" : "name",
+                    "content_quantity" : 1,
+                    "bed_type": "rerewre",
+                    "charge": 0,
+                    "discount": 0,
+                    "is_override": "N"
+                },
+                {
+                    "content_charge_id": 147987,
+                    "package_content_id": 1584,
+                    "package_content_name" : "name",
+                    "content_quantity" : 1,
+                    "bed_type": "test",
+                    "charge": 0,
+                    "discount": 0,
+                    "is_override": "N"
+                },
+                {
+                    "content_charge_id": 147988,
+                    "package_content_id": 1584,
+                    "package_content_name" : "name",
+                    "content_quantity" : 1,
+                    "bed_type": "besss",
+                    "charge": 0,
+                    "discount": 0,
+                    "is_override": "N"
+                },
+                {
+                    "content_charge_id": 147989,
+                    "package_content_id": 1584,
+                    "package_content_name" : "name",
+                    "content_quantity" : 1,
+                    "bed_type": "BT-3",
+                    "charge": 0,
+                    "discount": 0,
+                    "is_override": "N"
+                },
+                {
+                    "content_charge_id": 147990,
+                    "package_content_id": 1584,
+                    "package_content_name" : "name",
+                    "content_quantity" : 1,
+                    "bed_type": "BT-1",
+                    "charge": 0,
+                    "discount": 0,
+                    "is_override": "N"
+                },
+                {
+                    "content_charge_id": 147991,
+                    "package_content_id": 1584,
+                    "package_content_name" : "name",
+                    "content_quantity" : 1,
+                    "bed_type": "first",
+                    "charge": 0,
+                    "discount": 0,
+                    "is_override": "N"
+                },
+                {
+                    "content_charge_id": 147992,
+                    "package_content_id": 1584,
+                    "package_content_name" : "name",
+                    "content_quantity" : 1,
+                    "bed_type": "j brs",
+                    "charge": 0,
+                    "discount": 0,
+                    "is_override": "N"
+                },
+                {
+                    "content_charge_id": 147993,
+                    "package_content_id": 1584,
+                    "package_content_name" : "name",
+                    "content_quantity" : 1,
+                    "bed_type": "au bed",
+                    "charge": 0,
+                    "discount": 0,
+                    "is_override": "N"
+                },
+                {
+                    "content_charge_id": 147994,
+                    "package_content_id": 1584,
+                    "package_content_name" : "name",
+                    "content_quantity" : 1,
+                    "bed_type": "lavish bed",
+                    "charge": 0,
+                    "discount": 0,
+                    "is_override": "N"
+                },
+                {
+                    "content_charge_id": 147995,
+                    "package_content_id": 1584,
+                    "package_content_name" : "name",
+                    "content_quantity" : 1,
+                    "bed_type": "normal bed",
+                    "charge": 0,
+                    "discount": 0,
+                    "is_override": "N"
+                },
+                {
+                    "content_charge_id": 147996,
+                    "package_content_id": 1584,
+                    "package_content_name" : "name",
+                    "content_quantity" : 1,
+                    "bed_type": "prac bed",
+                    "charge": 0,
+                    "discount": 0,
+                    "is_override": "N"
+                },
+                {
+                    "content_charge_id": 147997,
+                    "package_content_id": 1584,
+                    "package_content_name" : "name",
+                    "content_quantity" : 1,
+                    "bed_type": "bed c1",
+                    "charge": 0,
+                    "discount": 0,
+                    "is_override": "N"
+                },
+                {
+                    "content_charge_id": 147998,
+                    "package_content_id": 1584,
+                    "package_content_name" : "name",
+                    "content_quantity" : 1,
+                    "bed_type": "SEMI PRIVATE",
+                    "charge": 0,
+                    "discount": 0,
+                    "is_override": "N"
+                },
+                {
+                    "content_charge_id": 147999,
+                    "package_content_id": 1584,
+                    "package_content_name" : "name",
+                    "content_quantity" : 1,
+                    "bed_type": "GENERAL",
+                    "charge": 0,
+                    "discount": 0,
+                    "is_override": "N"
+                },
+                {
+                    "content_charge_id": 148000,
+                    "package_content_id": 1584,
+                    "package_content_name" : "name",
+                    "content_quantity" : 1,
+                    "bed_type": "ICU",
+                    "charge": 0,
+                    "discount": 0,
+                    "is_override": "N"
+                }
+
+                ],
+                "derived_rate_plans" :
+                        [
+                            {
+                                "org_id" : "ORG0034",
+                                "org_name" : "Rate plan 1",
+                                "discormarkup" : "Increased By",
+                                "rate_variation_percent" : 10,
+                                "is_override" : "Y",
+                                "applicable" : false
+                            },
+                            {
+                                "org_id" : "ORG019w2",
+                                "org_name" : "Rate plan 2",
+                                "discormarkup" : "Increase By",
+                                "rate_variation_percent" : 10,
+                                "is_override" : "N",
+                                "applicable" : true
+                            }
+                         ]
+               }
+         
+## Package Charges Update [/master/packages/charges/update.json]
+
+### Update package charge [POST]
+
++ Request 
+
+       
+            {
+                    "package_id" : 21,
+                    "org_id" : "ORG0001",
+                    "org_name" : "org name",
+                    "code_type" : "code type",
+                    "rate_plan_code":"rate plan code",
+                    "package_charges": [
+                        {   "package_charge_id" : 1,
+                            "bed_type": "BT-1",
+                            "charge": 0,
+                            "discount": 0,
+                            "is_override": "N"
+                        },
+                        {
+                            "package_charge_id" : 1,
+                            "bed_type": "BT-3",
+                            "charge": 0,
+                            "discount": 0,
+                            "is_override": "N"
+                        },
+                        {
+                            "package_charge_id" : 1,
+                            "bed_type": "GENERAL",
+                            "charge": 0,
+                            "discount": 0,
+                            "is_override": "N"
+                        },
+                        {
+                            "package_charge_id" : 1,
+                            "bed_type": "ICU",
+                            "charge": 0,
+                            "discount": 0,
+                            "is_override": "N"
+                        },
+                        {
+                            "package_charge_id" : 1,
+                            "bed_type": "SEMI PRIVATE",
+                            "charge": 0,
+                            "discount": 0,
+                            "is_override": "N"
+                        },
+                        {
+                            "package_charge_id" : 1,
+                            "bed_type": "au bed",
+                            "charge": 0,
+                            "discount": 0,
+                            "is_override": "N"
+                        },
+                        {
+                            "package_charge_id" : 1,
+                            "bed_type": "bed c1",
+                            "charge": 0,
+                            "discount": 0,
+                            "is_override": "N"
+                        },
+                        {
+                            "package_charge_id" : 1,
+                            "bed_type": "besss",
+                            "charge": 0,
+                            "discount": 0,
+                            "is_override": "N"
+                        },
+                        {   
+                            "package_charge_id" : 1,
+                            "bed_type": "first",
+                            "charge": 0,
+                            "discount": 0,
+                            "is_override": "N"
+                        },
+                        {   
+                            "package_charge_id" : 1,
+                            "bed_type": "j brs",
+                            "charge": 0,
+                            "discount": 0,
+                            "is_override": "N"
+                        },
+                        {
+                            "package_charge_id" : 1,
+                            "bed_type": "lavish bed",
+                            "charge": 0,
+                            "discount": 0,
+                            "is_override": "N"
+                        },
+                        {   
+                            "package_charge_id" : 1,
+                            "bed_type": "normal bed",
+                            "charge": 0,
+                            "discount": 0,
+                            "is_override": "N"
+                        },
+                        {   
+                            "package_charge_id" : 1,
+                            "bed_type": "prac bed",
+                            "charge": 0,
+                            "discount": 0,
+                            "is_override": "N"
+                        },
+                        {
+                            "package_charge_id" : 1,
+                            "bed_type": "raj bed",
+                            "charge": 0,
+                            "discount": 0,
+                            "is_override": "N"
+                        },
+                        {
+                            "package_charge_id" : 1,
+                            "bed_type": "rerewre",
+                            "charge": 0,
+                            "discount": 0,
+                            "is_override": "N"
+                        },
+                        {
+                            "package_charge_id" : 1,
+                            "bed_type": "test",
+                            "charge": 0,
+                            "discount": 0,
+                            "is_override": "N"
+                        }
+                    ],
+                
+                "package_content_charges": [
+                    {
+                        "content_charge_id": 146985,
+                        "package_content_id": 1583,
+                        "package_content_name" : "name",
+                        "content_quantity" : 1,
+                        "bed_type": "raj bed",
+                        "charge": 0,
+                        "discount": 0,
+                        "is_override": "N"
+                    },
+                    {
+                        "content_charge_id": 146986,
+                        "package_content_id": 1583,
+                        "package_content_name" : "name",
+                        "content_quantity" : 1,
+                        "bed_type": "rerewre",
+                        "charge": 0,
+                        "discount": 0,
+                        "is_override": "N"
+                    },
+                    {
+                        "content_charge_id": 146987,
+                        "package_content_id": 1583,
+                        "package_content_name" : "name",
+                        "content_quantity" : 1,
+                        "bed_type": "test",
+                        "charge": 0,
+                        "discount": 0,
+                        "is_override": "N"
+                    },
+                    {
+                        "content_charge_id": 146988,
+                        "package_content_id": 1583,
+                        "package_content_name" : "name",
+                        "content_quantity" : 1,
+                        "bed_type": "besss",
+                        "charge": 0,
+                        "discount": 0,
+                        "is_override": "N"
+                    },
+                    {
+                        "content_charge_id": 146989,
+                        "package_content_id": 1583,
+                        "package_content_name" : "name",
+                        "content_quantity" : 1,
+                        "bed_type": "BT-3",
+                        "charge": 0,
+                        "discount": 0,
+                        "is_override": "N"
+                    },
+                    {
+                        "content_charge_id": 146990,
+                        "package_content_id": 1583,
+                        "package_content_name" : "name",
+                        "content_quantity" : 1,
+                        "bed_type": "BT-1",
+                        "charge": 0,
+                        "discount": 0,
+                        "is_override": "N"
+                    },
+                    {
+                        "content_charge_id": 146991,
+                        "package_content_id": 1583,
+                        "package_content_name" : "name",
+                        "content_quantity" : 1,
+                        "bed_type": "first",
+                        "charge": 0,
+                        "discount": 0,
+                        "is_override": "N"
+                    },
+                    {
+                        "content_charge_id": 146992,
+                        "package_content_id": 1583,
+                        "package_content_name" : "name",
+                        "content_quantity" : 1,
+                        "bed_type": "j brs",
+                        "charge": 0,
+                        "discount": 0,
+                        "is_override": "N"
+                    },
+                    {
+                        "content_charge_id": 146993,
+                        "package_content_id": 1583,
+                        "package_content_name" : "name",
+                        "content_quantity" : 1,
+                        "bed_type": "au bed",
+                        "charge": 0,
+                        "discount": 0,
+                        "is_override": "N"
+                    },
+                    {
+                        "content_charge_id": 146994,
+                        "package_content_id": 1583,
+                        "package_content_name" : "name",
+                        "content_quantity" : 1,
+                        "bed_type": "lavish bed",
+                        "charge": 0,
+                        "discount": 0,
+                        "is_override": "N"
+                    },
+                    {
+                        "content_charge_id": 146995,
+                        "package_content_id": 1583,
+                        "package_content_name" : "name",
+                        "content_quantity" : 1,
+                        "bed_type": "normal bed",
+                        "charge": 0,
+                        "discount": 0,
+                        "is_override": "N"
+                    },
+                    {
+                        "content_charge_id": 146996,
+                        "package_content_id": 1583,
+                        "package_content_name" : "name",
+                        "content_quantity" : 1,
+                        "bed_type": "prac bed",
+                        "charge": 0,
+                        "discount": 0,
+                        "is_override": "N"
+                    },
+                    {
+                        "content_charge_id": 146997,
+                        "package_content_id": 1583,
+                        "package_content_name" : "name",
+                        "content_quantity" : 1,
+                        "bed_type": "bed c1",
+                        "charge": 0,
+                        "discount": 0,
+                        "is_override": "N"
+                    },
+                    {
+                        "content_charge_id": 146998,
+                        "package_content_id": 1583,
+                        "content_quantity" : 1,
+                        "package_content_name" : "name",
+                        "bed_type": "SEMI PRIVATE",
+                        "charge": 0,
+                        "discount": 0,
+                        "is_override": "N"
+                    },
+                    {
+                        "content_charge_id": 146999,
+                        "package_content_id": 1583,
+                        "package_content_name" : "name",
+                        "content_quantity" : 1,
+                        "bed_type": "GENERAL",
+                        "charge": 0,
+                        "discount": 0,
+                        "is_override": "N"
+                    },
+                    {
+                        "content_charge_id": 147000,
+                        "package_content_id": 1583,
+                        "package_content_name" : "name",
+                        "content_quantity" : 1,
+                        "bed_type": "ICU",
+                        "charge": 0,
+                        "discount": 0,
+                        "is_override": "N"
+                    }
+                    ],
+                    "derived_rate_plans" :
+                            [
+                                {
+                                    "org_id" : "ORG0191",
+                                    "org_name" : "Rate plan 1",
+                                    "discormarkup" : "Increased By",
+                                    "rate_variation_percent" : 10,
+                                    "is_override" : "Y",
+                                    "applicable" : true
+                                },
+                                {
+                                    "org_id" : "ORG0191",
+                                    "org_name" : "Rate plan 2",
+                                    "discormarkup" : "Increase By",
+                                    "rate_variation_percent" : 10,
+                                    "is_override" : "Y",
+                                    "applicable" : false
+                                }
+                             ]
+                   }
+    
++ Response 200 (application/json)
+
+    + Body
+         
+            
+                {
+                    "package_id" : 21,
+                    "org_id" : "ORG0001",
+                    "org_name" : "org name",
+                    "code_type" : "code type",
+                    "rate_plan_code":"rate plan code",
+                    "package_charges": [
+                        {   "package_charge_id" : 1,
+                            "bed_type": "BT-1",
+                            "charge": 0,
+                            "discount": 0,
+                            "is_override": "N"
+                        },
+                        {
+                            "package_charge_id" : 1,
+                            "bed_type": "BT-3",
+                            "charge": 0,
+                            "discount": 0,
+                            "is_override": "N"
+                        },
+                        {
+                            "package_charge_id" : 1,
+                            "bed_type": "GENERAL",
+                            "charge": 0,
+                            "discount": 0,
+                            "is_override": "N"
+                        },
+                        {
+                            "package_charge_id" : 1,
+                            "bed_type": "ICU",
+                            "charge": 0,
+                            "discount": 0,
+                            "is_override": "N"
+                        },
+                        {
+                            "package_charge_id" : 1,
+                            "bed_type": "SEMI PRIVATE",
+                            "charge": 0,
+                            "discount": 0,
+                            "is_override": "N"
+                        },
+                        {
+                            "package_charge_id" : 1,
+                            "bed_type": "au bed",
+                            "charge": 0,
+                            "discount": 0,
+                            "is_override": "N"
+                        },
+                        {
+                            "package_charge_id" : 1,
+                            "bed_type": "bed c1",
+                            "charge": 0,
+                            "discount": 0,
+                            "is_override": "N"
+                        },
+                        {
+                            "package_charge_id" : 1,
+                            "bed_type": "besss",
+                            "charge": 0,
+                            "discount": 0,
+                            "is_override": "N"
+                        },
+                        {   
+                            "package_charge_id" : 1,
+                            "bed_type": "first",
+                            "charge": 0,
+                            "discount": 0,
+                            "is_override": "N"
+                        },
+                        {   
+                            "package_charge_id" : 1,
+                            "bed_type": "j brs",
+                            "charge": 0,
+                            "discount": 0,
+                            "is_override": "N"
+                        },
+                        {
+                            "package_charge_id" : 1,
+                            "bed_type": "lavish bed",
+                            "charge": 0,
+                            "discount": 0,
+                            "is_override": "N"
+                        },
+                        {   
+                            "package_charge_id" : 1,
+                            "bed_type": "normal bed",
+                            "charge": 0,
+                            "discount": 0,
+                            "is_override": "N"
+                        },
+                        {   
+                            "package_charge_id" : 1,
+                            "bed_type": "prac bed",
+                            "charge": 0,
+                            "discount": 0,
+                            "is_override": "N"
+                        },
+                        {
+                            "package_charge_id" : 1,
+                            "bed_type": "raj bed",
+                            "charge": 0,
+                            "discount": 0,
+                            "is_override": "N"
+                        },
+                        {
+                            "package_charge_id" : 1,
+                            "bed_type": "rerewre",
+                            "charge": 0,
+                            "discount": 0,
+                            "is_override": "N"
+                        },
+                        {
+                            "package_charge_id" : 1,
+                            "bed_type": "test",
+                            "charge": 0,
+                            "discount": 0,
+                            "is_override": "N"
+                        }
+                    ],
+                
+                "package_content_charges": [
+                    {
+                        "content_charge_id": 146985,
+                        "package_content_id": 1583,
+                        "package_content_name" : "name",
+                        "content_quantity" : 1,
+                        "bed_type": "raj bed",
+                        "charge": 0,
+                        "discount": 0,
+                        "is_override": "N"
+                    },
+                    {
+                        "content_charge_id": 146986,
+                        "package_content_id": 1583,
+                        "package_content_name" : "name",
+                        "content_quantity" : 1,
+                        "bed_type": "rerewre",
+                        "charge": 0,
+                        "discount": 0,
+                        "is_override": "N"
+                    },
+                    {
+                        "content_charge_id": 146987,
+                        "package_content_id": 1583,
+                        "package_content_name" : "name",
+                        "content_quantity" : 1,
+                        "bed_type": "test",
+                        "charge": 0,
+                        "discount": 0,
+                        "is_override": "N"
+                    },
+                    {
+                        "content_charge_id": 146988,
+                        "package_content_id": 1583,
+                        "package_content_name" : "name",
+                        "content_quantity" : 1,
+                        "bed_type": "besss",
+                        "charge": 0,
+                        "discount": 0,
+                        "is_override": "N"
+                    },
+                    {
+                        "content_charge_id": 146989,
+                        "package_content_id": 1583,
+                        "package_content_name" : "name",
+                        "content_quantity" : 1,
+                        "bed_type": "BT-3",
+                        "charge": 0,
+                        "discount": 0,
+                        "is_override": "N"
+                    },
+                    {
+                        "content_charge_id": 146990,
+                        "package_content_id": 1583,
+                        "package_content_name" : "name",
+                        "content_quantity" : 1,
+                        "bed_type": "BT-1",
+                        "charge": 0,
+                        "discount": 0,
+                        "is_override": "N"
+                    },
+                    {
+                        "content_charge_id": 146991,
+                        "package_content_id": 1583,
+                        "package_content_name" : "name",
+                        "content_quantity" : 1,
+                        "bed_type": "first",
+                        "charge": 0,
+                        "discount": 0,
+                        "is_override": "N"
+                    },
+                    {
+                        "content_charge_id": 146992,
+                        "package_content_id": 1583,
+                        "package_content_name" : "name",
+                        "content_quantity" : 1,
+                        "bed_type": "j brs",
+                        "charge": 0,
+                        "discount": 0,
+                        "is_override": "N"
+                    },
+                    {
+                        "content_charge_id": 146993,
+                        "package_content_id": 1583,
+                        "package_content_name" : "name",
+                        "content_quantity" : 1,
+                        "bed_type": "au bed",
+                        "charge": 0,
+                        "discount": 0,
+                        "is_override": "N"
+                    },
+                    {
+                        "content_charge_id": 146994,
+                        "package_content_id": 1583,
+                        "package_content_name" : "name",
+                        "bed_type": "lavish bed",
+                        "charge": 0,
+                        "discount": 0,
+                        "is_override": "N"
+                    },
+                    {
+                        "content_charge_id": 146995,
+                        "package_content_id": 1583,
+                        "package_content_name" : "name",
+                        "content_quantity" : 1,
+                        "bed_type": "normal bed",
+                        "charge": 0,
+                        "discount": 0,
+                        "is_override": "N"
+                    },
+                    {
+                        "content_charge_id": 146996,
+                        "package_content_id": 1583,
+                        "package_content_name" : "name",
+                        "content_quantity" : 1,
+                        "bed_type": "prac bed",
+                        "charge": 0,
+                        "discount": 0,
+                        "is_override": "N"
+                    },
+                    {
+                        "content_charge_id": 146997,
+                        "package_content_id": 1583,
+                        "package_content_name" : "name",
+                        "content_quantity" : 1,
+                        "bed_type": "bed c1",
+                        "charge": 0,
+                        "discount": 0,
+                        "is_override": "N"
+                    },
+                    {
+                        "content_charge_id": 146998,
+                        "package_content_id": 1583,
+                        "package_content_name" : "name",
+                        "content_quantity" : 1,
+                        "bed_type": "SEMI PRIVATE",
+                        "charge": 0,
+                        "discount": 0,
+                        "is_override": "N"
+                    },
+                    {
+                        "content_charge_id": 146999,
+                        "package_content_id": 1583,
+                        "package_content_name" : "name",
+                        "content_quantity" : 1,
+                        "bed_type": "GENERAL",
+                        "charge": 0,
+                        "discount": 0,
+                        "is_override": "N"
+                    },
+                    {
+                        "content_charge_id": 147000,
+                        "package_content_id": 1583,
+                        "package_content_name" : "name",
+                        "content_quantity" : 1,
+                        "bed_type": "ICU",
+                        "charge": 0,
+                        "discount": 0,
+                        "is_override": "N"
+                    }
+                    ],
+                    "derived_rate_plans" :
+                            [
+                                {
+                                    "org_id" : "ORG0191",
+                                    "org_name" : "Rate plan 1",
+                                    "discormarkup" : "Increased By",
+                                    "rate_variation_percent" : 10,
+                                    "is_override" : "Y",
+                                    "applicable" : true
+                                },
+                                {
+                                    "org_id" : "ORG0191",
+                                    "org_name" : "Rate plan 2",
+                                    "discormarkup" : "Increase By",
+                                    "rate_variation_percent" : 10,
+                                    "is_override" : "Y",
+                                    "applicable" : false
+                                }
+                             ]
+            }
+                   
+                   
+## List of charge head by item type [/master/packages/chargehead/find.json?itemType=type&id=idd&consultationTypeId=consultationTypeId]
+### List of charge head by item type [GET]
+
++ Response 200 (application/json)
+
+    
+        "chargeHead"
+    

@@ -1,0 +1,141 @@
+.resultList {
+    border: 1px solid #e6e6e6;  
+}
+
+.left-pannel {
+    width: 356px;
+    float: left;
+    min-height: 360px;
+    position: relative;
+    display: inline-block;
+    border-right: 1px solid #e6e6e6;
+    box-shadow: 1px 0px 2px rgba(0,0,0,0.14);
+    height: 376px;
+    overflow-y: scroll;
+}
+
+.left-pannel-main {
+    width: 356px;
+    float: left;
+    min-height: 360px;
+    position: relative;
+    display: inline-block;
+    border-right: 1px solid #e6e6e6;
+    box-shadow: 1px 0px 2px rgba(0,0,0,0.14);
+    height: 436px;
+}
+
+.left-pannel-btn {
+    float: right;
+    padding: 5px 10px 0px 0px;  
+}
+
+.right-pannel {
+    float: right;
+    width: 596px;
+    min-height: 360px;
+    display: inline-block;
+}
+
+.left-pannel-header{
+    height: 33px;
+    border-bottom: 1px solid #bbb;
+}
+
+.left-pannel-header h2 {
+    padding: 10px 10px 0px;
+    float: left;
+}
+
+table.resultList {
+    border: none;
+}
+
+table.resultList th {
+    font: normal 11px Arial;
+    color: #000;
+    background-image: none;
+    background-color: #e4e3e3;
+}
+
+.left-pannel-list-item {
+    height: 30px;
+}
+
+.right-pannel-header {
+    padding: 0px 10px;
+    margin: 0px 0px 0px 10px;
+}
+
+.card-header {
+    padding: 12px 0px;
+}
+
+.truncate {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.card-details-element {
+    width: inherit;
+    margin:20px 0px 8px 0px;
+    color: #7b7b7b;
+    font-size: 15px;
+}
+
+input[type=text] {
+    border:none;    
+    border-bottom: solid 2px #c9c9c9;
+} 
+
+.input-style-header {
+    border:none;
+    border-bottom: solid 2px #c9c9c9;
+    transition: border 1.0s;
+    margin-top:7px;
+    font-weight: normal; 
+    color: black;
+    width:220px; 
+    font-weight: normal;
+}
+
+.input-style {
+    border:none;
+    border-bottom: solid 2px #c9c9c9;
+    transition: border 0.5s;
+    margin:7px 0px 0px 0px;
+    font-weight: normal; 
+    color: black;
+    float:left;
+    width:inherit;
+}
+
+.input-style:focus,
+.input-style-header:focus,
+.input-style-header.focus,
+.input-style.focus {
+  border-bottom: solid 2px #49596E;
+}
+
+input[type=text][readonly] {
+    background-color: #FFFFFF;
+}
+
+.positioning {
+    width:170px;
+    margin: 0px 20px 0px 0px;
+}
+
+.menu-options {
+    padding:  20px 0px 0px 0px;
+}
+
+.update-button {
+    float: right;
+    margin: 30px 0px 0px 0px;
+}
+
+.selected-job-card {
+    background-color: #F0F8FF;
+}

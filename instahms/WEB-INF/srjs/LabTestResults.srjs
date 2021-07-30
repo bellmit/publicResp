@@ -1,0 +1,310 @@
+{
+    "title": "Lab Test Results Report",
+    "defaultOrder": "test_name",
+    "reportGroup": "Diagnostics Reports",
+    "dateFields": [
+        "conducted_date",
+        "sample_date"
+    ],
+    "description": "This report builder gives a description of all lab test results within the selected date range.",
+    "defaultShowFields": [
+        "cust_id",
+        "test_name",
+        "patient_name",
+        "conducted_date",
+        "resultlabel",
+        "test_value",
+        "test_result",
+        "withinnormal"
+    ],
+    "includes": [
+        "VisitDetails.srjs"
+    ],
+    "fields": {
+        "cust_id": {
+            "displayName": "Patient ID",
+            "expression": "coalesce(pr.patient_id,isr.incoming_visit_id) ",
+            "width": "65"
+        },
+        "mrno": {
+            "displayName": "MR No.",
+            "expression": "coalesce(pdd.mr_no, '')",
+            "width": "65"
+        },
+        "test_name": {
+            "displayName": "Test Name",
+            "width": "100",
+            "allowNull": true,
+            "filterable": true,
+            "expression": "d.test_name",
+            "groupable": true,
+            "allowedValuesQuery": "SELECT test_name FROM diagnostics GROUP BY test_name ORDER BY test_name"
+        },
+        "ddept_name": {
+            "displayName": "Diag Department",
+            "width": "100",
+            "allowNull": true,
+            "filterable": true,
+            "expression": "ddp.ddept_name",
+            "groupable": true,
+            "allowedValuesQuery": "SELECT ddept_name FROM diagnostics_departments GROUP BY ddept_name ORDER BY ddept_name"
+        },
+        "patient_name": {
+            "displayName": "Patient Name",
+            "expression": "coalesce(get_patient_full_name(smm.salutation, pdd.patient_name, pdd.middle_name, pdd.last_name),isr.patient_name)",
+            "width": "130"
+        },
+        "name_local_language": {
+                    "table": "pdd",
+                    "displayName": "Name In Local Language",
+                    "width": 150,
+                    "expression": "pd.name_local_language"
+         },
+        "patient_type": {
+            "displayName": "Patient Type",
+            "width": "80",
+            "allowNull": true,
+            "filterable": true,
+            "expressionLines": [
+                " CASE WHEN pr.visit_type='i' THEN 'In-Patient' ",
+                " WHEN pr.visit_type='o' THEN 'Out-Patient' ",
+                " ELSE 'Incoming Sample' ",
+                " END "
+            ],
+            "groupable": true,
+            "allowedValues": [
+                "In-Patient",
+                "Out-Patient",
+                "Incoming Sample"
+            ]
+        },
+        "age": {
+            "displayName": "Age",
+            "expression": "get_patient_age(pdd.dateofbirth, pdd.expected_dob,isr.isr_dateofbirth,isr.patient_age)",
+            "width": "50"
+        },
+        "age_in": {
+            "displayName": "Age In",
+            "expression": "get_patient_age_in(pdd.dateofbirth, pdd.expected_dob,isr.isr_dateofbirth,isr.age_unit)",
+            "width": "50"
+        },
+        "gender": {
+            "displayName": "Gender",
+            "width": "50",
+            "filterable": true,
+            "expressionLines": [
+                " CASE WHEN coalesce(pdd.patient_gender,isr.patient_gender)='M' THEN 'Male' ",
+                " WHEN coalesce(pdd.patient_gender,isr.patient_gender)='F' THEN 'Female' ",
+                " WHEN coalesce(pdd.patient_gender,isr.patient_gender)='C' THEN 'Couple' ",
+                " ELSE 'Others' ",
+                " END "
+            ],
+            "groupable": true,
+            "allowedValues": [
+                "Male",
+                "Female",
+                "Couple",
+                "Others"
+            ]
+        },
+        "op_type_name": {
+            "displayName": "Visit/OP Type",
+            "width": "80",
+            "groupable": true,
+            "filterable": true,
+            "expression": "otn.op_type_name",
+            "allowedValuesQuery": "SELECT op_type_name FROM op_type_names"
+        },
+        "conducted_date": {
+            "displayName": "Conducted Date",
+            "width": "70",
+            "dataType": "date",
+            "expression": "date(tc.conducted_date)"
+        },
+        "sample_date": {
+            "displayName": "Sample Date",
+            "width": "70",
+            "expression": "date(sc.sample_date)",
+            "dataType": "date"
+        },
+        "resultlabel": {
+            "displayName": "Result Label",
+            "expression": "td.resultlabel",
+            "width": "100"
+        },
+        "method_name": {
+            "displayName": "Methodology",
+            "width": "100",
+            "filterable": true,
+            "expression": "dmm.method_name",
+            "allowNull": true
+        },
+        "test_value": {
+            "displayName": "Test Value (Numeric)",
+            "width": "70",
+            "filterable": true,
+            "expression": "coalesce(convert_to_numeric(report_value),0)",
+            "dataType": "numeric",
+            "description": "If the Test Result is numeric then numeric conversion(Test Result) otherwise 0"
+        },
+        "test_result": {
+            "displayName": "Test Value",
+            "width": "70",
+            "filterable": true,
+            "expression": "report_value",
+            "description": "The actual text of the Test Result"
+        },
+        "remarks": {
+            "displayName": "Remarks",
+            "expression": "td.comments",
+            "width": "70"
+        },
+        "withinnormal": {
+            "displayName": "With In Normal",
+            "width": "50",
+            "filterable": true,
+            "expressionLines": [
+                " CASE WHEN td.withinnormal='Y' THEN 'Yes' ",
+                " ELSE 'No' ",
+                " END "
+            ],
+            "groupable": true,
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "units": {
+            "displayName": "Units",
+            "expression": "td.units",
+            "width": "60"
+        },
+        "reference_range": {
+            "displayName": "Reference Range",
+            "expression": "td.reference_range",
+            "width": "70"
+        },
+        "result_disclaimer": {
+            "displayName": "Disclaimer",
+            "expression": "td.result_disclaimer",
+            "width": "70"
+        },
+        "signed_off": {
+            "displayName": "Signed-Off",
+            "width": "40",
+            "filterable": true,
+            "expressionLines": [
+                " CASE WHEN td.test_detail_status='S' THEN 'Yes' ",
+                " ELSE 'No' ",
+                " END "
+            ],
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "center_name": {
+            "displayName": "Center Name",
+            "width": 100,
+            "allowHorizGroup": true,
+            "allowNull": true,
+            "expression": "COALESCE(hcm.center_name, incoming_center.center_name)",
+            "allowedValuesQuery": "SELECT center_name FROM hospital_center_master WHERE center_id!=0",
+            "filterable": true,
+            "groupable": true
+        },
+        "sample_no": {
+            "table": "tp",
+            "displayName": "Sample No",
+            "width": "60",
+            "filterable": true,
+            "expression": "CASE WHEN coll_prescribed_id is null THEN tp.sample_no ELSE (select sample_no from tests_prescribed where prescribed_id =tp.coll_prescribed_id) END"
+        }
+    },
+    "queryUnits": [
+        {
+            "mainTableAlias": "td",
+            "mainTableName": "test_details",
+            "groupBy": false,
+            "whereExpression": "tp.conducted != 'N,P,RP,RBS,RAS' AND td.conducted_in_reportformat = 'N' AND td.report_value is not null AND td.report_value != '' AND td.test_detail_status != 'A'",
+            "whereTable": "tp,tc,smm,sc,d,dmm,isr,pr,otn,hcm,incoming_center,ddp",
+            "joinTables": [
+                {
+                    "name": "tests_prescribed",
+                    "alias": "tp",
+                    "expression": "ON (td.prescribed_id = tp.prescribed_id)",
+                    "dependsOn": "td"
+                },
+                {
+                    "name": "tests_conducted",
+                    "alias": "tc",
+                    "expression": "ON (tc.prescribed_id = td.prescribed_id)",
+                    "dependsOn": "td",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "sample_collection",
+                    "alias": "sc",
+                    "expression": "ON (sc.sample_sno = tp.sample_no)",
+                    "dependsOn": "tp",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "diagnostics",
+                    "alias": "d",
+                    "expression": "ON (d.test_id = tp.test_id)",
+                    "dependsOn": "tp"
+                },
+                {
+                    "name": "patient_details",
+                    "alias": "pdd",
+                    "expression": "ON (pdd.mr_no = tp.mr_no)",
+                    "dependsOn": "tp",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "salutation_master",
+                    "alias": "smm",
+                    "expression": "ON (smm.salutation_id = pdd.salutation)",
+                    "dependsOn": "pdd",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "patient_registration",
+                    "alias": "pr",
+                    "expression": "ON (pr.patient_id = td.patient_id)",
+                    "dependsOn": "td",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "incoming_sample_registration",
+                    "alias": "isr",
+                    "expression": "ON (isr.incoming_visit_id = td.patient_id)",
+                    "dependsOn": "td",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "hospital_center_master",
+                    "alias": "incoming_center",
+                    "expression": "ON (isr.center_id=incoming_center.center_id)",
+                    "dependsOn": "isr",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "diag_methodology_master",
+                    "alias": "dmm",
+                    "expression": "ON (dmm.method_id = td.method_id)",
+                    "dependsOn": "td",
+                    "type": "LEFT"
+                },
+                {
+                    "name": "diagnostics_departments",
+                    "alias": "ddp",
+                    "expression": "ON (ddp.ddept_id = d.ddept_id)",
+                    "dependsOn": "d",
+                    "type": "LEFT"
+                }
+            ]
+        }
+    ]
+}

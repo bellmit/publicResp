@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<suite name="RemittanceTest" verbose="10" allow-return-values="true">
+	<test name="remittance">
+		<classes>
+			<class name="testng.com.insta.hms.integration.insurance.remittance.RemittanceServiceTest" />
+			<methods>
+			</methods>
+		</classes>
+	</test>
+
+</suite>  

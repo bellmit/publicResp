@@ -1,0 +1,70 @@
+{
+  "title": "Contracts Reports",
+  "allowNoDate": true,
+  "reportGroup": "Misc. Report",
+  "dateFields": ["contract_start_date","contract_end_date","contract_renewal_date"],
+  "description": "This report shows the Contracts Details.",
+  "tableName": ["contracts_view"],
+  "defaultShowFields": [
+    "contract_id",
+    "contract_company",
+    "contract_start_date",
+    "contract_end_date",
+    "contract_renewal_date",
+    "status"
+  ],
+  "fields": {
+    "contract_id": {
+      "displayName": "Contract Id",
+      "width": "60",
+      "filterable": true,
+      "dataType": "numeric"
+    },
+    "contract_company": {
+      "displayName": "Contract Company",
+      "width": "100",
+      "filterable": true
+    },
+    "contract_start_date": {
+      "displayName": "Contract Start Date",
+      "dataType": "date",
+      "width": "80",
+      "filterable": true
+    },
+    "contract_end_date": {
+      "displayName": "Contract End Date",
+      "dataType": "date",
+      "width": "80",
+      "filterable": true
+    },
+    "contract_renewal_date": {
+      "displayName": "Contract Renewal Date",
+      "dataType": "date",
+      "width": "80",
+      "filterable": true
+    },
+    "status": {
+      "displayName": "Status",
+      "width": "80",
+      "filterable": true,
+      "groupable": true,
+      "allowedValues": ["Expired Contract","Coming Up for Renewal"]
+    },
+    "contract_file_name": {
+      "displayName": "Contract File Name",
+      "width": "80"
+    },
+    "contract_value": {
+      "displayName": "Contract Value",
+      "width": "60"
+    },
+    "contract_note": {
+      "displayName": "Contract Note",
+      "width": "100"
+    },
+    "contractor_name": {
+      "displayName": "Contractor Name",
+      "width": "100"
+    }
+  }
+}

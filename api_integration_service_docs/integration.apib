@@ -1,0 +1,236 @@
+FORMAT: 1A
+HOST: http://localhost:8080
+
+# Insta Integration API
+
+Contains APIs in integration package for UI
+
+# Group Practo Book Integration
+
+## Validate the Integration key [/instahms/integrations/book/validate.json]
+
+### Validate the Integration key [POST]
+
+Validates The integration key
+
++ Request (application/x-www-form-urlencoded)
+
+        establishment_key:d9fc5b73a8d78fad3d6dffe419384e70
+        center_id:9
+        
+
++ Response 200 (application/json)
+
+## Register Doctors on Practo [/instahms/integrations/book/doctors.json]
+
+### Register Doctors [POST]
+
+Register the list of selected doctors for the given center
+
++ Request (application/x-www-form-urlencoded)
+
+        doctor_ids: DOC0237,DOC0234,DOC123
+        center_id: 9
+    
++ Response 200 (application/json)
+
+        {
+            "result" : {
+                "registered" : 1,
+                "failed" : 2,
+                "total_processed" : 3
+            
+            },
+            
+            "errors" : {
+                "DOC0234" : "Weekly availability is not found for doctor davis for selected center. Please add it and re-try ",
+                "DOC123" :  "Weekly availability is not found for doctor davis for selected center. Please add it and re-try"
+            }
+            
+        }
+        
+
+
+## Doctor details department wise [/instahms/integrations/book/doctors/{centerId}.json]
+ 
+### Get the doctor details department wise  [GET]
+Get the doctors list with information of doctor's center and department details.
+The list is sorted by department. Only the Active doctors are listed
+
++ Parameters
+    + centerId (number) - The center for which doctors are to be fetched. Ex: 9
+
++ Response 200 (application/json)
+
+        {
+          
+          "ABC0001": [
+            {
+              "allowed_revisit_count": null,
+              "doctor_mail_id": "",
+              "chanelling": "N",
+              "doctor_id": "DOC0215",
+              "doctor_license_number": "",
+              "payment_eligible": "N",
+              "practition_type": " ",
+              "obsolete_overbook": true,
+              "allow_sig_usage_by_others": "N",
+              "custom_field4_value": null,
+              "doctor_mobile_country_code": null,
+              "qualification": "",
+              "dhpo_clinician_user_id": null,
+              "ip_discharge_consultation_validity": null,
+              "created_timestamp": 1442040134877,
+              "custom_field3_value": null,
+              "ot_doctor_flag": "N",
+              "schedule": true,
+              "prescribe_by_favourites": "N",
+              "custom_field1_value": null,
+              "doctor_type": "HOSPITAL",
+              "ip_template_id": 0,
+              "consulting_doctor_flag": "N",
+              "speciality_id": "",
+              "specialization": "",
+              "payment_category": 1,
+              "dept_name": "WebAPI1",
+              "doctor_name": "sampledoctor1",
+              "ip_discharge_consultation_count": null,
+              "dhpo_clinician_password": null,
+              "center_id_obsolete": null,
+              "status": "A",
+              "custom_field2_value": null,
+              "res_phone": "",
+              "op_template_id": 0,
+              "overbook_limit": null,
+              "doctor_mobile": "",
+              "registration_no": "",
+              "updated_timestamp": 1442040135072,
+              "doctor_address": "",
+              "op_consultation_validity": null,
+              "service_sub_group_id": -1,
+              "clinic_phone": "",
+              "custom_field5_value": null,
+              "status_on_practo": null,
+              "dept_id": "ABC0001"
+            }
+        ]
+    }
+    
+## Center Preferences [/instahms/integrations/book/centerprefs/{centerId}.json]
+
+### Get the preferences for center [GET]
+
++ Response 200 (application/json)
+    
+        {
+          "integration_preferences": [
+            {
+              "establishment_key": "d9fc5b73a8d78fad3d6dffe419384e70",
+              "integration_id": 36,
+              "center_integration_id": 5,
+              "center_id": 9
+            }
+          ],
+          "center_preferences": [
+            {
+              "pref_smart_card_enabled": "N",
+              "pref_default_ip_bill_type": "C",
+              "share_pat_details_to_practo": true,
+              "pref_op_default_category": null,
+              "pref_osp_default_category": 22,
+              "pacs_mrno_url": null,
+              "pref_pre_reg_default_category": 12,
+              "smart_card_id_pattern": null,
+              "pacs_order_url": null,
+              "government_id_provider_url": null,
+              "government_id_provider": null,
+              "pref_rate_plan_for_non_insured_bill": "ORG0029",
+              "center_id": 9,
+              "pref_default_op_bill_type": "P",
+              "pref_ip_default_category": 20
+            }
+          ]
+        }
+
+## Update center Preferences [/instahms/integrations/book/centerprefs.json]
+
+### Update the preferences for center [POST]
++ Request (application/x-www-form-urlencoded)
+
+        share_pat_details_to_practo: false
+        center_id: 9
+
++ Response 200 (application/json)
+
+
+# Group OP Registration
+
+Open OP Registration page of Insta. Use Insta Version Endpoint to determine Version of Insta HMS
+
+## OP Registration on v11.6.4 or earlier [GET /instahms/pages/registration/quickregistration.do{?_method,patient_name,mobile_no,mr_no,doctor_id,cons_date_time}]
+
++ Parameters
+    + `_method` : `getdetails` (string, required) - View to open in registration action
+    + `patient_name` : `Cersei` (string, optional) - Patient First Name
+    + `mobile_no` : `+911234567890` (string, optional)
+    + `mr_no` : `MR1234` (string, optional) - Patient id in insta. This fetches patient details corresponding to mr_no. It has highest priority
+    + `doctor_id` : `DOC1234` (string, optional) - Insta doctorId
+    + `cons_date_time` : `2017-01-01T12:00:00+05:30` (string, optional) - Doctor consultation time (ISO8601 format) (YYYY-MM-DD'T'HH:MM:SSTZD)
+
++ Response 302
+
+## OP Registration on v11.6.5 to v11.7 [GET /instahms/pages/registration/quickregistration.do{?_method,patient_salutation,pat_gender,patient_name,patient_middle_name,patient_last_name,mobile_no,patient_dob,patient_age,next_of_kin_name,pat_city,pat_address,patient_email,mr_no,doctor_id,cons_date_time,oldmrno}]
+
++ Parameters
+    + `_method` : `getdetails` (string, required) - View to open in registration action
+    + `patient_salutation`: `SALU0002` (string, optional) - Id of salutation, This gives salutation name and assocaited gender. SALU0002 (Mr. M) SALU0003 (Mrs F) SALU0004 (Ms. F) SALU0005(Master M) SALU0006 (Miss F) SALU0007 (Dr.) SALU0008 (Baby)
+    + `pat_gender`: `F` (string, optional) - 'F'-Female, 'M'-Male, 'C'-couple, 'O'-other. (Gender of salutation_id will be given more priority)
+    + `patient_name` : `Cersei` (string, optional) - Patient First Name
+    + `patient_last_name` : `Lannister` (string, optional) - Patient Last name
+    + `patient_middle_name`: `indra` (string, optional) - Patient middle name
+    + `patient_age` : `22Y` (string, optional) - Patient age. we can pass age value & it's unit allowed units are D-days M-months Y-year,if user didn't pass unit by default it'll be Y (year)
+    + `patient_dob`: `2000-01-01` (string, optional) - Date of Birth of patient - yyyy-mm-dd or yy-mm-dd, This will automatically calculate `patient_age`. This has highest priority than `patient_age`
+    + `pat_address` : `Cersie, H.No:123, Kings Landing, Westeros` (string, optional) - Address of Patient
+    + `next_of_kin_name` :  `Jaime Lannister`(string, optional) - Kins name
+    + `patient_email`: `cersie@got.com` (string, optional)
+    + `mobile_no` : `+911234567890` (string, optional)
+    + `mr_no` : `MR1234` (string, optional) - Patient id in insta. This fetches patient details corresponding to mr_no. It has highest priority
+    + `doctor_id` : `DOC1234` (string, optional) - Insta doctorId
+    + `cons_date_time` : `2017-01-01T12:00:00+05:30` (string, optional) - Doctor consultation time (ISO8601 format) (YYYY-MM-DD'T'HH:MM:SSTZD)
+    + `oldmrno` : `APOLLO123` (string, optional) - Extra reference ID of patient which needs to be captured
+    
++ Response 302
+
+## OP Registration on v11.7 or later [GET /instahms/integrations/redirect/patient/registration.htm{?patient_salutation,pat_gender,patient_name,patient_middle_name,patient_last_name,mobile_no,patient_dob,patient_age,next_of_kin_name,pat_city,pat_address,patient_email,mr_no,doctor_id,cons_date_time,oldmrno}]
+
++ Parameters
+    + `patient_salutation`: `SALU0002` (string, optional) - Id of salutation, This gives salutation name and assocaited gender. SALU0002 (Mr. M) SALU0003 (Mrs F) SALU0004 (Ms. F) SALU0005(Master M) SALU0006 (Miss F) SALU0007 (Dr.) SALU0008 (Baby)
+    + `pat_gender`: `F` (string, optional) - 'F'-Female, 'M'-Male, 'C'-couple, 'O'-other. (Gender of salutation_id will be given more priority)
+    + `patient_name` : 'Cersei` (string, optional) - Patient First Name
+    + `patient_last_name` : `Lannister` (string, optional) - Patient Last name
+    + `patient_middle_name`: `indra` (string, optional) - Patient middle name
+    + `patient_age` : `22Y` (string, optional) - Patient age. we can pass age value & it's unit allowed units are D-days M-months Y-year,if user didn't pass unit by default it'll be Y (year)
+    + `patient_dob`: `2000-01-01` (string, optional) - Date of Birth of patient - yyyy-mm-dd or yy-mm-dd, This will automatically calculate `patient_age`. This has highest priority than `patient_age`
+    + `pat_address` : `Cersie, H.No:123, Kings Landing, Westeros` (string, optional) - Address of Patient
+    + `next_of_kin_name` :  `Jaime Lannister`(string, optional) - Kins name
+    + `patient_email`: `cersie@got.com` (string, optional)
+    + `mobile_no` : `+911234567890` (string, optional)
+    + `mr_no` : `MR1234` (string, optional) - Patient id in insta. This fetches patient details corresponding to mr_no. It has highest priority
+    + `doctor_id` : `DOC1234` (string, optional) - Insta doctorId
+    + `cons_date_time` : `2017-01-01T12:00:00+05:30` (string, optional) - Doctor consultation time (ISO8601 format) (YYYY-MM-DD'T'HH:MM:SSTZD)
+    + `oldmrno` : `APOLLO123` (string, optional) - Extra reference ID of patient which needs to be captured
+    
++ Response 302
+
+## Insta Version Endpoint [/instaapps/getAPIVersion.do?_method=getAPIVersion]
+
+Get the version of Insta HMS
+### Insta HMS version [GET]
+
++ Response 200 (application/json)
+
+    {
+        "return_message": "Success",
+        "return_code": "2001",
+        "version": "11.7.1-7599"
+    }

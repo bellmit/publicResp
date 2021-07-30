@@ -1,0 +1,177 @@
+{
+	comment: "Custom report for Child Jesus hospital",
+	title: "Account Statement Report",
+	reportGroup: "Financial Reports",
+	defaultOrder: "receipt_no",
+	dateFields: ["date"],
+	description: "This report shows an account statement, which includes the billed amount, advances, settlements, advances and advances adjusted against bills finalized within the period. Useful for auditing purposes.",
+
+	queryLines: [[
+		" SELECT foo.*, date(date_trunc('MONTH',date)) as month_first, ",
+		" to_char(date, 'YYYY-MM') as year_month, to_char(date, 'Mon-YYYY') as month_words, ",
+		" case when b.bill_type='C' then 'Bill Later' else 'Bill Now' end as bill_type, ",
+		" vtn.visit_type_name, agm.account_group_name, cnt.counter_no as counter_name, ",
+		" CASE WHEN b.restriction_type = 'P' THEN 'Pharmacy' ",
+		"  WHEN b.restriction_type = 'T' THEN 'Test' ",
+		"  ELSE 'Hospital' END AS restriction_type, ",
+		" CASE WHEN b.status = 'A' THEN 'Open' WHEN b.status = 'F' THEN 'Finalized' ",
+		"  WHEN b.status = 'C' THEN 'Closed' ",
+		"  ELSE 'Canceled' END AS status, ",
+		" settlement + advance_adj AS total, settlement + advance - refund as net ",
+		" FROM (",
+		"  SELECT br.receipt_no, r.counter, bill_no, br.username, date(r.display_date) as date, r.amount as advance, ",
+		"   0 as settlement, 0 as refund, 0 as advance_adj ",
+		"  FROM bill_receipts br JOIN receipts r ON (r.receipt_id = br.receipt_no) WHERE r.receipt_type = 'R' AND r.tpa_id IS NOT NULL AND NOT is_settlement ",
+		"  UNION ALL ",
+		"  SELECT receipt_no, counter, bill_no, username, date(r.display_date) as date, 0 as advance, ",
+		"   r.amount as settlement, 0 as refund, 0 as advance_adj ",
+		"  FROM bill_receipts br  JOIN receipts r ON (r.receipt_id = br.receipt_no) ",
+		"  WHERE r.receipt_type IN ('R') AND is_settlement ",
+		"  UNION ALL ",
+		"  SELECT receipt_no, counter, bill_no, username, date(br.display_date) as date, 0 as advance, ",
+		"   0 as settlement, -r.amount as refund, 0 as advance_adj ",
+		"  FROM bill_receipts br JOIN receipts r ON (r.receipt_id = br.receipt_no) ",
+		"  WHERE r.receipt_type = 'F' ",
+		"  UNION ALL ",
+		"  SELECT receipt_no, counter, bill_no, br.username, date(b.finalized_date) as date, 0 as advance, ",
+		"   0 as settlement, 0 as refund, r.amount as advance_adj ",
+		"  FROM bill_receipts br JOIN receipts r ON (r.receipt_id = br.receipt_no) ",
+		"   JOIN bill b USING (bill_no) ",
+		"  WHERE r.receipt_type = 'R' AND r.tpa_id IS NOT NULL AND NOT is_settlement AND b.status NOT IN ('X') ",
+		" ) AS foo ",
+		"  JOIN bill b USING (bill_no) ",
+		"  JOIN account_group_master agm ON (agm.account_group_id = b.account_group) ",
+		"  JOIN visit_type_names vtn ON (vtn.visit_type = b.visit_type) ",
+		"  JOIN counters cnt ON (cnt.counter_id = foo.counter) "
+	]],
+
+	defaultShowFields: [
+		"receipt_no", "bill_no", "date", "total", "advance", "advance_adj",
+		"settlement", "refund", "net", "year_month", "month_first", "month_words", "status"
+	],
+	fields: {
+		receipt_no: {
+			displayName: "Receipt No.",
+			width: 65
+		},
+		bill_no: {
+			displayName: "Bill No.",
+			width: 65
+		},
+		username: {
+			displayName: "User Name",
+			width: 100,
+			groupable: true,
+			filterable: true,
+			allowNull: true,
+			allowedValuesQuery: "SELECT emp_username FROM u_user JOIN u_role USING(role_id) WHERE portal_id='N' ORDER BY emp_username"
+		},
+		counter_name: {
+			displayName: "Counter",
+			width: 100,
+			groupable: true,
+			filterable: true,
+			allowedValuesQuery: "SELECT counter_no FROM counters WHERE status = 'A' ORDER BY counter_no"
+		},
+		date: {
+			displayName: "Date",
+			dataType: "date",
+			width: 60,
+			groupable: true
+		},
+		total: {
+			dataType: "numeric",
+			aggFunction: "sum",
+			displayName: "Total",
+			width: 70,
+			filterable: true
+		},
+		advance: {
+			dataType: "numeric",
+			aggFunction: "sum",
+			displayName: "Advance",
+			width: 65,
+			filterable: true
+		},
+		advance_adj: {
+			dataType: "numeric",
+			aggFunction: "sum",
+			displayName: "Advance Adjusted",
+			width: 65,
+			filterable: true
+		},
+		settlement: {
+			dataType: "numeric",
+			aggFunction: "sum",
+			displayName: "Settlement",
+			width: 65,
+			filterable: true
+		},
+		refund: {
+			dataType: "numeric",
+			aggFunction: "sum",
+			displayName: "Refund",
+			width: 65,
+			filterable: true
+		},
+		net: {
+			dataType: "numeric",
+			aggFunction: "sum",
+			displayName: "Net Amount",
+			width: 70,
+			filterable: true
+		},
+		year_month: {
+			displayName: "Year-Month",
+			width: 50,
+			groupable: true
+		},
+		month_first: {
+			displayName: "Month First",
+			dataType: "date",
+			width: 60,
+			groupable: true
+		},
+		month_words: {
+			displayName: "Month Words",
+			width: 70,
+			groupable: true
+		},
+		bill_type: {
+			displayName: "Bill Type",
+			width: 50,
+			groupable: true,
+			filterable: true,
+			allowedValues: ["Bill Now","Bill Later"]
+		},
+		visit_type_name: {
+			displayName: "Patient Type",
+			width: 40,
+			groupable: true,
+			filterable: true,
+			allowedValues: ["IP","OP","Retail","Test"]
+		},
+		account_group_name: {
+			displayName: "Account Group",
+			width: 100,
+			groupable: true,
+			filterable: true,
+			allowNull: true,
+			allowedValuesQuery: "SELECT account_group_name FROM account_group_master ORDER by account_group_name"
+		},
+		restriction_type: {
+			displayName: "Usage Type",
+			width: 50,
+			groupable: true,
+			filterable: true,
+			allowedValues: ["Hospital","Pharmacy","Test"]
+		},
+		status: {
+			displayName: "Status",
+			width: 55,
+			groupable: true,
+			filterable: true,
+			allowedValues: ["Open","Finalized","Closed","Canceled"]
+		}
+	}
+}

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN" packages="org.apache.logging.log4j.core,io.sentry.log4j2">
+  <Appenders>
+    <Console name="console" target="SYSTEM_OUT">
+      <PatternLayout pattern="%-5p %c{1}: %enc{%m}{CRLF}%n"/>
+    </Console>
+    <Sentry name="sentry" />
+    <RollingFile name="logfile" fileName="/var/log/insta/apps.log" filePattern="/var/log/insta/apps-%i.log">
+      <PatternLayout>
+        <Pattern>%d{yyyy-MM-dd HH:mm:ss} [%X{username}@%X{schema}] %-5p %c{1}: %enc{%m}{CRLF}%n</Pattern>
+      </PatternLayout>
+      <Policies>
+        <SizeBasedTriggeringPolicy size="10 MB"/>
+      </Policies>
+      <DefaultRolloverStrategy max="5"/>
+    </RollingFile>
+    <RollingFile name="hl7log" fileName="/var/log/insta/hl7_hms.log" filePattern="/var/log/insta/hl7_hms-%i.log">
+      <PatternLayout>
+        <Pattern>%d{yyyy-MM-dd HH:mm:ss} [%X{username}@%X{schema}] %-5p %c{1}: %m%n</Pattern>
+      </PatternLayout>
+      <Policies>
+        <SizeBasedTriggeringPolicy size="20 MB"/>
+      </Policies>
+      <DefaultRolloverStrategy max="30"/>
+    </RollingFile>
+  </Appenders>
+  <Loggers>
+  	<Logger name="com.insta.hms.integration.hl7" level="debug" additivity="false">
+      <AppenderRef ref="hl7log"/>
+    </Logger>
+    <Logger name="com.insta.hms.messaging.hl7" level="debug" additivity="false">
+      <AppenderRef ref="hl7log"/>
+    </Logger>
+    <Logger name="com.insta.hms.messagingframework.MessagingService" level="debug">
+      <AppenderRef ref="hl7log"/>
+    </Logger>
+	<!--     
+	<Logger name="ca.uhn.hl7v2.app" level="debug" additivity="false">
+      <AppenderRef ref="hl7log"/>
+    </Logger>
+    -->
+    <Root level="info">
+      <AppenderRef ref="console"/>
+      <AppenderRef ref="logfile"/>
+      <AppenderRef ref="sentry" level="warn" />
+    </Root>
+  </Loggers>
+</Configuration>
